@@ -638,6 +638,8 @@ function render(parlays){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;
     node.querySelector('.parlay-name').textContent=p.name;
+    const sb=node.querySelector('.script-badge');
+    if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
     node.querySelector('.odds').textContent=fmtOdds(p.odds);
     node.querySelector('.summary').textContent=p.summary;
     node.querySelector('.score').textContent=`Confidence ${p.score}/100`;
