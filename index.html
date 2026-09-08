@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>NFL Parlay Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">NFL BETTING TOOL</p>
+        <h1>Parlay Generator</h1>
+      </div>
+      <button id="settingsBtn" class="icon-btn" aria-label="Open settings">⚙</button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="live-dot"></span>
+        <span id="dataStatus">Demo market data</span>
+      </div>
+      <p>Build logical NFL parlays from team lines and player props. FanDuel markets are used as the reference source when connected.</p>
+    </section>
+
+    <nav class="mode-tabs" aria-label="Parlay type">
+      <button class="tab active" data-mode="sgp">Same Game Parlay</button>
+      <button class="tab" data-mode="multi">Multi-Game</button>
+    </nav>
+
+    <main>
+      <section class="control-card">
+        <div class="section-head">
+          <div>
+            <p class="label">BUILD SETTINGS</p>
+            <h2 id="modeTitle">Same Game Parlay</h2>
+          </div>
+          <span class="pill" id="slateLabel">This week</span>
+        </div>
+
+        <div id="gameChooserWrap" class="field">
+          <label for="gameSelect">Game</label>
+          <select id="gameSelect"></select>
+        </div>
+
+        <div class="settings-grid">
+          <div class="field">
+            <label for="legsSelect">Legs</label>
+            <select id="legsSelect">
+              <option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="riskRange">Risk <span id="riskText">Balanced</span></label>
+            <input id="riskRange" type="range" min="0" max="100" value="45" />
+          </div>
+        </div>
+
+        <div class="market-box">
+          <p class="label">MARKETS</p>
+          <div class="chips" id="marketChips">
+            <button class="chip active" data-market="h2h">Moneyline</button>
+            <button class="chip active" data-market="spreads">Spread</button>
+            <button class="chip active" data-market="totals">Total</button>
+            <button class="chip active" data-market="passing">Passing</button>
+            <button class="chip active" data-market="rushing">Rushing</button>
+            <button class="chip active" data-market="receiving">Receiving</button>
+            <button class="chip active" data-market="td">Anytime TD</button>
+          </div>
+        </div>
+
+        <button id="generateBtn" class="primary-btn">Generate Parlays</button>
+      </section>
+
+      <section class="results-head">
+        <div>
+          <p class="label">RECOMMENDED BUILDS</p>
+          <h2 id="resultsTitle">Logical correlated SGPs</h2>
+        </div>
+      </section>
+
+      <section id="results" class="results-grid"></section>
+    </main>
+  </div>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="section-head">
+        <div>
+          <p class="label">DATA SETTINGS</p>
+          <h2>FanDuel odds source</h2>
+        </div>
+        <button class="icon-btn" value="cancel">✕</button>
+      </div>
+      <p class="muted">GitHub Pages is static, so a browser-side API key cannot be hidden. Your key is stored only in this browser's local storage and is never committed to GitHub.</p>
+      <div class="field">
+        <label for="apiKeyInput">The Odds API key</label>
+        <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" />
+      </div>
+      <div class="dialog-actions">
+        <button id="clearKeyBtn" type="button" class="secondary-btn">Use demo mode</button>
+        <button id="saveKeyBtn" type="button" class="primary-btn">Save & refresh</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="parlayTemplate">
+    <article class="parlay-card">
+      <div class="parlay-top">
+        <div>
+          <span class="grade"></span>
+          <h3 class="parlay-name"></h3>
+        </div>
+        <div class="odds"></div>
+      </div>
+      <p class="summary"></p>
+      <div class="legs"></div>
+      <div class="card-footer">
+        <span class="score"></span>
+        <span class="correlation"></span>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
