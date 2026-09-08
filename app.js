@@ -407,50 +407,162 @@ function overlapCount(a,b){
   return (b?.legs||[]).filter(l=>sa.has(l.name)).length;
 }
 
-function pickDistinctAlternative(game,count,risk,variant,previous){
-  const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
-  const props=pool.filter(m=>m.player);
-  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
-  const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
-
-  // Restrict to credible candidates, then run a small beam search rather than greedily taking rank 1.
-  const ranked=[...pool].sort((a,b)=>candidateScore(b,risk,variant)-candidateScore(a,risk,variant)).slice(0,48);
-  let beams=[{legs:[],score:0}];
-
-  for(let depth=0;depth<count;depth++){
-    const next=[];
-    for(const beam of beams){
-      for(const m of ranked){
-        if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
-        const propCount=beam.legs.filter(l=>l.player).length;
-        const remainingSlots=count-beam.legs.length;
-        const needProps=Math.max(0,desiredProps-propCount);
-        if(needProps>=remainingSlots && !m.player) continue;
-
-        const corr=beam.legs.reduce((s,l)=>s+correlation(l,m),0);
-        const diversityPenalty=previous.reduce((pen,p)=>pen + (p?.legs?.some(l=>l.name===m.name)?12:0),0);
-        const s=beam.score + candidateScore(m,risk,variant) + corr*cfg.corrWeight - diversityPenalty;
-        next.push({legs:[...beam.legs,m],score:s});
-      }
-    }
-    next.sort((a,b)=>b.score-a.score);
-    beams=next.slice(0,80);
-    if(!beams.length) break;
-  }
-
-  const finals=beams
-    .filter(b=>b.legs.length===count)
-    .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
-    .map(b=>({raw:b,parlay:packageParlay(b.legs,variant,true)}))
-    .filter(x=>x.parlay);
-
-  if(!finals.length) return null;
-
-  // Prefer a ticket that shares at most one leg with an earlier profile.
-  const distinct=finals.find(x=>previous.every(p=>overlapCount(p,x.parlay)<=1));
-  return (distinct||finals[0]).parlay;
+function favoriteTeam(game){
+  const mls=game.markets.filter(m=>m.type==='h2h' && typeof m.price==='number');
+  if(!mls.length) return null;
+  return [...mls].sort((a,b)=>a.price-b.price)[0]?.team||null;
 }
 
+function underdogTeam(game){
+  const fav=favoriteTeam(game);
+  return [game.away,game.home].find(t=>t!==fav)||null;
+}
+
+const GAME_SCRIPTS = {
+  favorite_control:{
+    name:'Favorite controls the game',
+    thesis:(game)=>(favoriteTeam(game)||'The favorite')+' is expected to play from ahead, keeping the game on schedule and leaning on efficient, lower-variance production.',
+    legFit:(m,game)=>{
+      let s=0;
+      const fav=favoriteTeam(game);
+      if(isTeamSide(m) && m.team===fav) s+=16;
+      if(m.type==='rushing' && m.side==='over') s+=10;
+      if(m.type==='totals' && m.side==='under') s+=5;
+      if(m.type==='passing' && m.side==='under') s+=4;
+      if(m.type==='td') s+=3;
+      return s;
+    }
+  },
+  shootout:{
+    name:'Aerial shootout',
+    thesis:()=> 'The game is expected to produce sustained passing volume and scoring, so the legs all benefit from an aggressive offensive environment.',
+    legFit:(m)=>{
+      let s=0;
+      if(m.type==='totals' && m.side==='over') s+=16;
+      if(m.type==='passing' && m.side==='over') s+=13;
+      if(m.type==='receiving' && m.side==='over') s+=13;
+      if(m.type==='td') s+=9;
+      if(m.type==='rushing' && m.side==='under') s+=2;
+      if(m.side==='under' && ['passing','receiving'].includes(m.type)) s-=12;
+      return s;
+    }
+  },
+  comeback:{
+    name:'Underdog forced to throw',
+    thesis:(game)=>(underdogTeam(game)||'The underdog')+' is expected to trail or play from behind, creating extra dropbacks and receiving volume while the favorite protects the lead.',
+    legFit:(m,game)=>{
+      let s=0;
+      const dog=underdogTeam(game);
+      if(m.type==='spreads' && m.team===dog) s+=8;
+      if(m.type==='passing' && m.side==='over') s+=12;
+      if(m.type==='receiving' && m.side==='over') s+=12;
+      if(m.type==='totals' && m.side==='over') s+=6;
+      if(m.type==='rushing' && m.side==='under') s+=4;
+      return s;
+    }
+  },
+  grind:{
+    name:'Low-scoring grind',
+    thesis:()=> 'The game is expected to stay compressed, with fewer explosive plays and a heavier reliance on rushing and conservative offensive volume.',
+    legFit:(m)=>{
+      let s=0;
+      if(m.type==='totals' && m.side==='under') s+=16;
+      if(m.type==='rushing' && m.side==='over') s+=11;
+      if(m.type==='passing' && m.side==='under') s+=10;
+      if(m.type==='receiving' && m.side==='under') s+=8;
+      if(m.type==='td') s-=8;
+      return s;
+    }
+  }
+};
+
+function scriptCandidatesForVariant(variant){
+  if(variant==='safe') return ['favorite_control','grind'];
+  if(variant==='balanced') return ['shootout','comeback','favorite_control'];
+  return ['shootout','comeback'];
+}
+
+function scriptMarketScore(m,game,variant,scriptKey,risk){
+  const script=GAME_SCRIPTS[scriptKey];
+  if(!script) return -999;
+  const base=candidateScore(m,risk,variant);
+  if(base<=-900) return base;
+  return base + script.legFit(m,game);
+}
+
+function pickDistinctAlternative(game,count,risk,variant,previous){
+  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
+  const scriptKeys=scriptCandidatesForVariant(variant);
+  let best=null;
+
+  for(const scriptKey of scriptKeys){
+    const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
+    const props=pool.filter(m=>m.player);
+    const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
+
+    const ranked=[...pool]
+      .sort((a,b)=>scriptMarketScore(b,game,variant,scriptKey,risk)-scriptMarketScore(a,game,variant,scriptKey,risk))
+      .slice(0,56);
+
+    let beams=[{legs:[],score:0}];
+
+    for(let depth=0;depth<count;depth++){
+      const next=[];
+      for(const beam of beams){
+        for(const m of ranked){
+          if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
+
+          const propCount=beam.legs.filter(l=>l.player).length;
+          const remainingSlots=count-beam.legs.length;
+          const needProps=Math.max(0,desiredProps-propCount);
+          if(needProps>=remainingSlots && !m.player) continue;
+
+          const corr=beam.legs.reduce((s,l)=>s+correlation(l,m),0);
+          const scriptFit=GAME_SCRIPTS[scriptKey].legFit(m,game);
+          if(scriptFit<0) continue;
+
+          const diversityPenalty=previous.reduce((pen,p)=>pen + (p?.legs?.some(l=>l.name===m.name)?18:0),0);
+
+          const s=beam.score
+            + scriptMarketScore(m,game,variant,scriptKey,risk)
+            + corr*cfg.corrWeight
+            + scriptFit*1.2
+            - diversityPenalty;
+
+          next.push({legs:[...beam.legs,m],score:s});
+        }
+      }
+
+      next.sort((a,b)=>b.score-a.score);
+      beams=next.slice(0,100);
+      if(!beams.length) break;
+    }
+
+    const finals=beams
+      .filter(b=>b.legs.length===count)
+      .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
+      .filter(b=>{
+        const positiveFits=b.legs.filter(l=>GAME_SCRIPTS[scriptKey].legFit(l,game)>=8).length;
+        return positiveFits>=Math.min(2,count);
+      })
+      .map(b=>{
+        const p=packageParlay(b.legs,variant,true,{
+          scriptKey,
+          scriptName:GAME_SCRIPTS[scriptKey].name,
+          thesis:GAME_SCRIPTS[scriptKey].thesis(game)
+        });
+        return {raw:b,parlay:p};
+      })
+      .filter(x=>x.parlay);
+
+    if(!finals.length) continue;
+
+    const distinct=finals.find(x=>previous.every(p=>overlapCount(p,x.parlay)<=1)) || finals[0];
+    if(!best || distinct.raw.score>best.raw.score) best=distinct;
+  }
+
+  return best?.parlay||null;
+}
 function buildSgp(game,count,risk,variant,previous=[]){
   const live=state.apiKey && !String(game.id).startsWith('demo-');
   const props=game.markets.filter(m=>m.player && state.selectedMarkets.has(m.type));
@@ -483,7 +595,7 @@ function buildMulti(count,risk,variant){
   return packageParlay(legs,variant,false);
 }
 
-function packageParlay(legs,variant,isSgp){
+function packageParlay(legs,variant,isSgp,meta={}){
   if(!legs?.length) return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
@@ -498,8 +610,10 @@ function packageParlay(legs,variant,isSgp){
     name:names[variant],grade:grades[variant],legs,
     odds:decimalToAmerican(decimal),score:Math.round(avg),
     corr,
+    scriptName:meta.scriptName||'',
+    thesis:meta.thesis||'',
     summary:isSgp
-      ? (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.')
+      ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
       : 'Spreads exposure across multiple games and prioritizes independently strong legs.'
   };
 }
