@@ -66,20 +66,23 @@ function riskLabel(v){
 function setStatus(msg){ $('#dataStatus').textContent=msg; }
 
 const PROP_MARKETS = [
-  'player_pass_yds','player_pass_tds','player_pass_attempts','player_pass_completions',
-  'player_rush_yds','player_rush_attempts',
-  'player_reception_yds','player_receptions',
+  'player_pass_yds','player_pass_yds_alternate','player_pass_tds','player_pass_attempts','player_pass_completions',
+  'player_rush_yds','player_rush_yds_alternate','player_rush_attempts',
+  'player_reception_yds','player_reception_yds_alternate','player_receptions',
   'player_anytime_td'
 ];
 
 const PROP_MARKET_META = {
   player_pass_yds:{type:'passing',label:'passing yards'},
+  player_pass_yds_alternate:{type:'passing',label:'passing yards'},
   player_pass_tds:{type:'passing',label:'passing TDs'},
   player_pass_attempts:{type:'passing',label:'pass attempts'},
   player_pass_completions:{type:'passing',label:'completions'},
   player_rush_yds:{type:'rushing',label:'rushing yards'},
+  player_rush_yds_alternate:{type:'rushing',label:'rushing yards'},
   player_rush_attempts:{type:'rushing',label:'rush attempts'},
   player_reception_yds:{type:'receiving',label:'receiving yards'},
+  player_reception_yds_alternate:{type:'receiving',label:'receiving yards'},
   player_receptions:{type:'receiving',label:'receptions'},
   player_anytime_td:{type:'td',label:'anytime TD'}
 };
@@ -92,7 +95,7 @@ function normalizePropOutcome(marketKey,out){
   const point=out.point;
   let name;
   if(marketKey==='player_anytime_td'){
-    if(side && side!=='yes') return null;
+    if(side && !['yes','over'].includes(side)) return null;
     name=`${player} anytime TD`;
   }else{
     if(!['over','under'].includes(side) || point==null) return null;
@@ -111,40 +114,83 @@ function normalizePropOutcome(marketKey,out){
   };
 }
 
+async function discoverFanDuelMarkets(game){
+  const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/markets`);
+  url.searchParams.set('apiKey',state.apiKey);
+  url.searchParams.set('regions','us');
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('Event markets API '+res.status);
+  const raw=await res.json();
+  const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
+  return new Set((book?.markets||[]).map(m=>typeof m==='string'?m:m.key).filter(Boolean));
+}
+
 async function ensurePropsForGame(game){
   if(!state.apiKey || !game || String(game.id).startsWith('demo-') || state.propsLoaded.has(game.id)) return;
   if(state.propsLoading.has(game.id)) return state.propsLoading.get(game.id);
 
   const task=(async()=>{
     try{
-      setStatus(`Loading FanDuel props: ${game.away} @ ${game.home}…`);
+      setStatus(`Checking FanDuel props: ${game.away} @ ${game.home}…`);
+      const available=await discoverFanDuelMarkets(game);
+      const requested=PROP_MARKETS.filter(k=>available.has(k));
+
+      if(!requested.length){
+        game.propStatus='none';
+        game.availablePropMarkets=[];
+        state.propsLoaded.add(game.id);
+        setStatus('FanDuel has not posted supported player props for this game yet');
+        return;
+      }
+
+      game.availablePropMarkets=requested;
+      setStatus(`Loading ${requested.length} FanDuel prop markets…`);
+
       const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/odds`);
       url.searchParams.set('apiKey',state.apiKey);
       url.searchParams.set('regions','us');
-      url.searchParams.set('markets',PROP_MARKETS.join(','));
+      url.searchParams.set('markets',requested.join(','));
       url.searchParams.set('oddsFormat','american');
       url.searchParams.set('bookmakers','fanduel');
+
       const res=await fetch(url);
       if(!res.ok) throw new Error('Prop odds API '+res.status);
       const raw=await res.json();
-      const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel') || raw.bookmakers?.[0];
+      const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
       const props=[];
+
       for(const m of book?.markets||[]){
         for(const out of m.outcomes||[]){
           const prop=normalizePropOutcome(m.key,out);
           if(prop) props.push(prop);
         }
       }
-      game.markets.push(...props);
+
+      const unique=new Map();
+      for(const p of props){
+        const key=[p.marketKey,p.player,p.side,p.point,p.price].join('|');
+        if(!unique.has(key)) unique.set(key,p);
+      }
+
+      const cleaned=[...unique.values()];
+      game.markets.push(...cleaned);
+      game.propStatus=cleaned.length?'loaded':'empty';
       state.propsLoaded.add(game.id);
-      setStatus(`Live FanDuel markets • ${props.length} player props loaded`);
+
+      setStatus(
+        cleaned.length
+          ? `Live FanDuel markets • ${cleaned.length} player props loaded`
+          : 'FanDuel prop markets were listed, but no usable outcomes were returned'
+      );
     }catch(err){
       console.error(err);
-      setStatus('Live team lines • player props unavailable for this game');
+      game.propStatus='error';
+      setStatus('Live team lines • player prop lookup failed');
     }finally{
       state.propsLoading.delete(game.id);
     }
   })();
+
   state.propsLoading.set(game.id,task);
   return task;
 }
@@ -345,6 +391,8 @@ function render(parlays){
   }
 }
 
+async function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
+
 async function generate(){
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
@@ -352,6 +400,14 @@ async function generate(){
   if(state.mode==='sgp'){
     const game=state.games.find(g=>g.id===$('#gameSelect').value) || state.games[0];
     await ensurePropsForGame(game);
+    const propCount=countPlayerProps(game);
+    if(state.apiKey && propCount===0 && game?.propStatus==='none'){
+      $('#resultsTitle').textContent='No FanDuel player props posted yet';
+    }else{
+      $('#resultsTitle').textContent=propCount
+        ? `Logical correlated SGPs • ${propCount} live props`
+        : 'Logical correlated SGPs';
+    }
     parlays=variants.map(v=>buildSgp(game,count,state.risk,v));
   }else{
     await ensurePropsForMultiGame(6);
