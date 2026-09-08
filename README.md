@@ -32,3 +32,16 @@ Repository settings:
 1. Settings → Pages
 2. Source: Deploy from a branch
 3. Branch: main / root
+
+
+## Live player props
+
+When an API key is connected, the app now lazily requests FanDuel event-level NFL player props only when they are needed. Supported live categories include passing yards/TDs/attempts/completions, rushing yards/attempts, receiving yards/receptions, and anytime TD.
+
+SGP correlation currently rewards:
+- Same-player volume combinations
+- Same-player yardage + touchdown combinations
+- Passing + receiving game scripts
+- Game Over + offensive Over props
+
+Player-team correlation is intentionally not inferred from names alone because the odds response does not provide a normalized team field for player outcomes. A roster-mapping layer can be added separately.
