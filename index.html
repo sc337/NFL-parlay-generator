@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260908-1532" />
+  <link rel="stylesheet" href="styles.css?v=20260908-1548" />
 </head>
 <body>
   <div class="shell">
@@ -39,6 +39,17 @@
         <span><b id="apiLast">—</b> last call</span>
       </div>
       <div class="api-meter"><span id="apiMeterFill"></span></div>
+    </section>
+
+    <section class="source-status-card">
+      <div>
+        <p class="label">DATA SOURCES</p>
+        <span>ESPN <b id="espnStatus">Idle</b></span>
+      </div>
+      <div>
+        <span>nflverse <b id="nflverseStatus">Idle</b></span>
+      </div>
+      <div class="source-note">ESPN = current roster context • nflverse = open roster/analytics fallback</div>
     </section>
 
     <nav class="mode-tabs" aria-label="Parlay type">
@@ -141,6 +152,6 @@
     </article>
   </template>
 
-  <script src="app.js?v=20260908-1532"></script>
+  <script src="app.js?v=20260908-1548"></script>
 </body>
 </html>
