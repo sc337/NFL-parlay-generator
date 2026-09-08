@@ -284,10 +284,28 @@ function correlation(a,b){
   return score;
 }
 
+function isTeamSide(m){ return m.type==='h2h' || m.type==='spreads'; }
+
 function incompatible(a,b){
-  if(a.marketKey && b.marketKey && a.player && b.player && a.player===b.player && a.marketKey===b.marketKey && a.point===b.point && a.side!==b.side) return true;
-  if(a.type==='h2h'&&b.type==='spreads'&&a.team===b.team) return true;
-  if(a.type==='spreads'&&b.type==='h2h'&&a.team===b.team) return true;
+  // Never mix opposite game totals in one SGP.
+  if(a.type==='totals' && b.type==='totals'){
+    if(a.side!==b.side) return true;
+    return true; // only one game-total leg per SGP
+  }
+
+  // Keep one coherent team-side opinion. No ML/spread stacking and no opposite teams.
+  if(isTeamSide(a) && isTeamSide(b)){
+    return true;
+  }
+
+  // Do not pair a team-side leg with an explicitly opposite team-side player/team assignment.
+  if(isTeamSide(a) && b.team && !['Game','Player',a.team].includes(b.team)) return true;
+  if(isTeamSide(b) && a.team && !['Game','Player',b.team].includes(a.team)) return true;
+
+  // Never mix two prices/thresholds from the same underlying player market.
+  if(a.marketKey && b.marketKey && a.player && b.player &&
+     a.player===b.player && a.marketKey===b.marketKey) return true;
+
   return false;
 }
 
@@ -300,21 +318,50 @@ function candidateScore(m,risk){
 
 function buildSgp(game,count,risk,variant){
   const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type));
+  const props=pool.filter(m=>m.player);
+  const teamMarkets=pool.filter(m=>!m.player);
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
-  const ranked=[...pool].sort((a,b)=>candidateScore(b,targetRisk)-candidateScore(a,targetRisk));
-  let legs=[];
-  if(!ranked.length) return null;
-  legs.push(ranked[0]);
+
+  // A live SGP should not masquerade as prop-driven if no props are available.
+  if(state.apiKey && !String(game.id).startsWith('demo-') && props.length===0) return null;
+
+  const score=(m)=>candidateScore(m,targetRisk);
+  const rankedProps=[...props].sort((a,b)=>score(b)-score(a));
+  const rankedTeam=[...teamMarkets].sort((a,b)=>score(b)-score(a));
+  const rankedAll=[...pool].sort((a,b)=>score(b)-score(a));
+
+  const legs=[];
+  const desiredPropLegs = props.length ? Math.max(1, Math.min(count-1, Math.ceil(count*0.67))) : 0;
+
+  // Seed with a player prop whenever live props exist so team lines cannot dominate.
+  const seedPool = rankedProps.length ? rankedProps : rankedAll;
+  if(!seedPool.length) return null;
+  legs.push(seedPool[0]);
+
   while(legs.length<count){
-    const remaining=ranked.filter(x=>!legs.includes(x) && !legs.some(l=>incompatible(l,x)));
+    const remaining=rankedAll.filter(x=>!legs.includes(x) && !legs.some(l=>incompatible(l,x)));
     if(!remaining.length) break;
-    remaining.sort((a,b)=>{
+
+    const currentPropCount=legs.filter(l=>l.player).length;
+    const needProp=currentPropCount<desiredPropLegs;
+    const eligible=needProp ? remaining.filter(x=>x.player) : remaining;
+    const choices=eligible.length ? eligible : remaining;
+
+    choices.sort((a,b)=>{
       const ca=legs.reduce((s,l)=>s+correlation(l,a),0);
       const cb=legs.reduce((s,l)=>s+correlation(l,b),0);
-      return (candidateScore(b,targetRisk)+cb*5)-(candidateScore(a,targetRisk)+ca*5);
+      const propBonusA=a.player?5:0;
+      const propBonusB=b.player?5:0;
+      return (score(b)+cb*7+propBonusB)-(score(a)+ca*7+propBonusA);
     });
-    legs.push(remaining[0]);
+
+    legs.push(choices[0]);
   }
+
+  // Requested 3+ leg live SGPs need at least two player legs to qualify.
+  if(state.apiKey && !String(game.id).startsWith('demo-') && count>=3 && legs.filter(l=>l.player).length<2) return null;
+  if(legs.length<count) return null;
+
   return packageParlay(legs,variant,true);
 }
 
@@ -352,7 +399,7 @@ function packageParlay(legs,variant,isSgp){
     odds:decimalToAmerican(decimal),score:Math.round(avg),
     corr,
     summary:isSgp
-      ? (corr>5?'Built around a coherent game script with positively related legs.':'Uses compatible legs while avoiding obvious duplicate exposure.')
+      ? (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.')
       : 'Spreads exposure across multiple games and prioritizes independently strong legs.'
   };
 }
@@ -391,7 +438,7 @@ function render(parlays){
   }
 }
 
-async function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
+function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
 
 async function generate(){
   const count=Number($('#legsSelect').value);
@@ -407,6 +454,11 @@ async function generate(){
       $('#resultsTitle').textContent=propCount
         ? `Logical correlated SGPs • ${propCount} live props`
         : 'Logical correlated SGPs';
+    }
+    if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
+      render([]);
+      $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
+      return;
     }
     parlays=variants.map(v=>buildSgp(game,count,state.risk,v));
   }else{
