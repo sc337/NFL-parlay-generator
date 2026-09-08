@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260908-1518" />
+  <link rel="stylesheet" href="styles.css?v=20260908-1532" />
 </head>
 <body>
   <div class="shell">
@@ -26,6 +26,19 @@
         <span id="dataStatus">Demo market data</span>
       </div>
       <p>Build logical NFL parlays from team lines and player props. FanDuel markets are used as the reference source when connected.</p>
+    </section>
+
+    <section class="api-usage-card" id="apiUsageCard">
+      <div>
+        <p class="label">API USAGE</p>
+        <strong id="apiRemaining">—</strong>
+        <span class="api-caption">credits remaining</span>
+      </div>
+      <div class="api-usage-stats">
+        <span><b id="apiUsed">—</b> used</span>
+        <span><b id="apiLast">—</b> last call</span>
+      </div>
+      <div class="api-meter"><span id="apiMeterFill"></span></div>
     </section>
 
     <nav class="mode-tabs" aria-label="Parlay type">
@@ -128,6 +141,6 @@
     </article>
   </template>
 
-  <script src="app.js?v=20260908-1518"></script>
+  <script src="app.js?v=20260908-1532"></script>
 </body>
 </html>
