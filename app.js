@@ -309,81 +309,160 @@ function incompatible(a,b){
   return false;
 }
 
-function candidateScore(m,risk,variant='balanced'){
-  const implied=impliedProbability(m.price)*100;
-  const confidence=(m.confidence||implied);
-  let score=confidence*.72 + implied*.28;
+const PROFILE_RULES = {
+  safe:{
+    minPrice:-450,maxPrice:125,
+    targetMin:-300,targetMax:-120,
+    corrWeight:5,
+    propShare:.67,
+    maxSamePlayer:1,
+    label:'Safer'
+  },
+  balanced:{
+    minPrice:-220,maxPrice:180,
+    targetMin:-160,targetMax:110,
+    corrWeight:9,
+    propShare:.75,
+    maxSamePlayer:1,
+    label:'Best Balance'
+  },
+  long:{
+    minPrice:-125,maxPrice:450,
+    targetMin:-110,targetMax:300,
+    corrWeight:7,
+    propShare:.75,
+    maxSamePlayer:2,
+    label:'Longshot'
+  }
+};
 
-  if(variant==='safe'){
-    score += Math.max(0,implied-50)*.65;
-    if(m.type==='td') score -= 22;
-    if(m.price>0) score -= 12;
-    if(m.side==='under') score += 2;
-  }else if(variant==='long'){
-    score += Math.max(0,55-implied)*.9;
-    if(m.type==='td') score += 16;
-    if(m.price>0) score += 10;
-    if(m.price<=-200) score -= 8;
-  }else{
-    if(m.type==='td') score -= 4;
+function marketQuality(m,variant){
+  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
+  if(typeof m.price!=='number') return -999;
+  if(m.price<cfg.minPrice || m.price>cfg.maxPrice) return -999;
+
+  // Avoid buying fake certainty through extreme alternate-line juice.
+  if(/_alternate$/.test(m.marketKey||'') && m.price<-350) return -999;
+
+  const implied=impliedProbability(m.price)*100;
+  let q=60;
+
+  // Reward prices near each profile's intended band.
+  if(m.price>=cfg.targetMin && m.price<=cfg.targetMax) q+=18;
+  else{
+    const distance=m.price<cfg.targetMin ? cfg.targetMin-m.price : m.price-cfg.targetMax;
+    q-=Math.min(24,distance/18);
   }
 
-  if(risk<25 && m.price>0) score-=10;
-  if(risk>65 && m.price>0) score+=6;
+  // Standard main lines are more informative than deeply shaded alternates.
+  if(m.marketKey && !/_alternate$/.test(m.marketKey)) q+=6;
+  if(/_alternate$/.test(m.marketKey||'')) q-=4;
+
+  if(variant==='safe'){
+    q += Math.max(0,implied-55)*.25;
+    if(m.type==='td') q-=16;
+    if(m.price>0) q-=8;
+  }else if(variant==='balanced'){
+    if(m.type==='td') q-=2;
+    if(m.price<-200) q-=8;
+  }else{
+    if(m.type==='td') q+=14;
+    if(m.price>0) q+=10;
+    if(m.price<-120) q-=10;
+  }
+
+  return q;
+}
+
+function candidateScore(m,risk,variant='balanced'){
+  const q=marketQuality(m,variant);
+  if(q<=-900) return q;
+  const implied=impliedProbability(m.price)*100;
+  let score=q + implied*.22;
+
+  // User risk slider nudges the profile but does not override its market discipline.
+  if(risk<25 && m.price>0) score-=8;
+  if(risk>65 && m.price>0) score+=7;
   return score;
 }
 
-function buildSgp(game,count,risk,variant){
-  const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type));
+function playerCount(legs,player){
+  if(!player) return 0;
+  return legs.filter(l=>l.player===player).length;
+}
+
+function coherentWithLegs(candidate,legs,variant){
+  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
+  if(legs.some(l=>incompatible(l,candidate))) return false;
+  if(candidate.player && playerCount(legs,candidate.player)>=cfg.maxSamePlayer) return false;
+  return true;
+}
+
+function parlaySignature(p){
+  return p?.legs?.map(l=>[l.marketKey||l.type,l.player||l.team,l.side||'',l.point??'',l.name].join(':')).sort().join('|')||'';
+}
+
+function overlapCount(a,b){
+  const sa=new Set((a?.legs||[]).map(l=>l.name));
+  return (b?.legs||[]).filter(l=>sa.has(l.name)).length;
+}
+
+function pickDistinctAlternative(game,count,risk,variant,previous){
+  const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
   const props=pool.filter(m=>m.player);
-  const teamMarkets=pool.filter(m=>!m.player);
-  const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
+  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
+  const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
 
-  // A live SGP should not masquerade as prop-driven if no props are available.
-  if(state.apiKey && !String(game.id).startsWith('demo-') && props.length===0) return null;
+  // Restrict to credible candidates, then run a small beam search rather than greedily taking rank 1.
+  const ranked=[...pool].sort((a,b)=>candidateScore(b,risk,variant)-candidateScore(a,risk,variant)).slice(0,48);
+  let beams=[{legs:[],score:0}];
 
-  const score=(m)=>candidateScore(m,targetRisk,variant);
-  const rankedProps=[...props].sort((a,b)=>score(b)-score(a));
-  const rankedTeam=[...teamMarkets].sort((a,b)=>score(b)-score(a));
-  const rankedAll=[...pool].sort((a,b)=>score(b)-score(a));
+  for(let depth=0;depth<count;depth++){
+    const next=[];
+    for(const beam of beams){
+      for(const m of ranked){
+        if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
+        const propCount=beam.legs.filter(l=>l.player).length;
+        const remainingSlots=count-beam.legs.length;
+        const needProps=Math.max(0,desiredProps-propCount);
+        if(needProps>=remainingSlots && !m.player) continue;
 
-  const legs=[];
-  const desiredPropLegs = props.length ? Math.max(1, Math.min(count-1, Math.ceil(count*0.67))) : 0;
-
-  // Seed each profile differently so the three outputs are intentionally distinct.
-  const seedPool = rankedProps.length ? rankedProps : rankedAll;
-  if(!seedPool.length) return null;
-  let seedIndex=0;
-  if(variant==='balanced' && seedPool.length>1) seedIndex=1;
-  if(variant==='long' && seedPool.length>2) seedIndex=2;
-  legs.push(seedPool[seedIndex]);
-
-  while(legs.length<count){
-    const remaining=rankedAll.filter(x=>!legs.includes(x) && !legs.some(l=>incompatible(l,x)));
-    if(!remaining.length) break;
-
-    const currentPropCount=legs.filter(l=>l.player).length;
-    const needProp=currentPropCount<desiredPropLegs;
-    const eligible=needProp ? remaining.filter(x=>x.player) : remaining;
-    const choices=eligible.length ? eligible : remaining;
-
-    choices.sort((a,b)=>{
-      const ca=legs.reduce((s,l)=>s+correlation(l,a),0);
-      const cb=legs.reduce((s,l)=>s+correlation(l,b),0);
-      const propBonusA=a.player?5:0;
-      const propBonusB=b.player?5:0;
-      const corrWeight=variant==='balanced'?9:variant==='safe'?5:7;
-      return (score(b)+cb*corrWeight+propBonusB)-(score(a)+ca*corrWeight+propBonusA);
-    });
-
-    legs.push(choices[0]);
+        const corr=beam.legs.reduce((s,l)=>s+correlation(l,m),0);
+        const diversityPenalty=previous.reduce((pen,p)=>pen + (p?.legs?.some(l=>l.name===m.name)?12:0),0);
+        const s=beam.score + candidateScore(m,risk,variant) + corr*cfg.corrWeight - diversityPenalty;
+        next.push({legs:[...beam.legs,m],score:s});
+      }
+    }
+    next.sort((a,b)=>b.score-a.score);
+    beams=next.slice(0,80);
+    if(!beams.length) break;
   }
 
-  // Requested 3+ leg live SGPs need at least two player legs to qualify.
-  if(state.apiKey && !String(game.id).startsWith('demo-') && count>=3 && legs.filter(l=>l.player).length<2) return null;
-  if(legs.length<count) return null;
+  const finals=beams
+    .filter(b=>b.legs.length===count)
+    .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
+    .map(b=>({raw:b,parlay:packageParlay(b.legs,variant,true)}))
+    .filter(x=>x.parlay);
 
-  return packageParlay(legs,variant,true);
+  if(!finals.length) return null;
+
+  // Prefer a ticket that shares at most one leg with an earlier profile.
+  const distinct=finals.find(x=>previous.every(p=>overlapCount(p,x.parlay)<=1));
+  return (distinct||finals[0]).parlay;
+}
+
+function buildSgp(game,count,risk,variant,previous=[]){
+  const live=state.apiKey && !String(game.id).startsWith('demo-');
+  const props=game.markets.filter(m=>m.player && state.selectedMarkets.has(m.type));
+
+  if(live && props.length===0) return null;
+
+  const p=pickDistinctAlternative(game,count,risk,variant,previous);
+  if(!p) return null;
+
+  // Live 3+ leg SGPs must have meaningful prop participation.
+  if(live && count>=3 && p.legs.filter(l=>l.player).length<2) return null;
+  return p;
 }
 
 function buildMulti(count,risk,variant){
@@ -481,7 +560,11 @@ async function generate(){
       $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
       return;
     }
-    parlays=variants.map(v=>buildSgp(game,count,state.risk,v));
+    parlays=[];
+    for(const v of variants){
+      const p=buildSgp(game,count,state.risk,v,parlays.filter(Boolean));
+      parlays.push(p);
+    }
   }else{
     await ensurePropsForMultiGame(6);
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
