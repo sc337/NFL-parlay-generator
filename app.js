@@ -3,7 +3,9 @@ const state = {
   risk:45,
   selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','td']),
   games:[],
-  apiKey:localStorage.getItem('nflParlayOddsApiKey') || ''
+  apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
+  propsLoaded:new Set(),
+  propsLoading:new Map()
 };
 
 const demoGames = [
@@ -63,6 +65,95 @@ function riskLabel(v){
 
 function setStatus(msg){ $('#dataStatus').textContent=msg; }
 
+const PROP_MARKETS = [
+  'player_pass_yds','player_pass_tds','player_pass_attempts','player_pass_completions',
+  'player_rush_yds','player_rush_attempts',
+  'player_reception_yds','player_receptions',
+  'player_anytime_td'
+];
+
+const PROP_MARKET_META = {
+  player_pass_yds:{type:'passing',label:'passing yards'},
+  player_pass_tds:{type:'passing',label:'passing TDs'},
+  player_pass_attempts:{type:'passing',label:'pass attempts'},
+  player_pass_completions:{type:'passing',label:'completions'},
+  player_rush_yds:{type:'rushing',label:'rushing yards'},
+  player_rush_attempts:{type:'rushing',label:'rush attempts'},
+  player_reception_yds:{type:'receiving',label:'receiving yards'},
+  player_receptions:{type:'receiving',label:'receptions'},
+  player_anytime_td:{type:'td',label:'anytime TD'}
+};
+
+function normalizePropOutcome(marketKey,out){
+  const meta=PROP_MARKET_META[marketKey];
+  if(!meta || !out?.description || typeof out.price!=='number') return null;
+  const player=out.description;
+  const side=(out.name||'').toLowerCase();
+  const point=out.point;
+  let name;
+  if(marketKey==='player_anytime_td'){
+    if(side && side!=='yes') return null;
+    name=`${player} anytime TD`;
+  }else{
+    if(!['over','under'].includes(side) || point==null) return null;
+    name=`${player} ${out.name} ${point} ${meta.label}`;
+  }
+  return {
+    type:meta.type,
+    marketKey,
+    player,
+    name,
+    price:out.price,
+    team:'Player',
+    confidence:Math.round(impliedProbability(out.price)*100),
+    side:marketKey==='player_anytime_td'?'yes':side,
+    point
+  };
+}
+
+async function ensurePropsForGame(game){
+  if(!state.apiKey || !game || String(game.id).startsWith('demo-') || state.propsLoaded.has(game.id)) return;
+  if(state.propsLoading.has(game.id)) return state.propsLoading.get(game.id);
+
+  const task=(async()=>{
+    try{
+      setStatus(`Loading FanDuel props: ${game.away} @ ${game.home}…`);
+      const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/odds`);
+      url.searchParams.set('apiKey',state.apiKey);
+      url.searchParams.set('regions','us');
+      url.searchParams.set('markets',PROP_MARKETS.join(','));
+      url.searchParams.set('oddsFormat','american');
+      url.searchParams.set('bookmakers','fanduel');
+      const res=await fetch(url);
+      if(!res.ok) throw new Error('Prop odds API '+res.status);
+      const raw=await res.json();
+      const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel') || raw.bookmakers?.[0];
+      const props=[];
+      for(const m of book?.markets||[]){
+        for(const out of m.outcomes||[]){
+          const prop=normalizePropOutcome(m.key,out);
+          if(prop) props.push(prop);
+        }
+      }
+      game.markets.push(...props);
+      state.propsLoaded.add(game.id);
+      setStatus(`Live FanDuel markets • ${props.length} player props loaded`);
+    }catch(err){
+      console.error(err);
+      setStatus('Live team lines • player props unavailable for this game');
+    }finally{
+      state.propsLoading.delete(game.id);
+    }
+  })();
+  state.propsLoading.set(game.id,task);
+  return task;
+}
+
+async function ensurePropsForMultiGame(limit=6){
+  const targets=state.games.filter(g=>!state.propsLoaded.has(g.id)).slice(0,limit);
+  for(const g of targets) await ensurePropsForGame(g);
+}
+
 async function loadData(){
   if(!state.apiKey){
     state.games = structuredClone(demoGames);
@@ -83,9 +174,10 @@ async function loadData(){
     if(!res.ok) throw new Error('Odds API '+res.status);
     const raw = await res.json();
     state.games = raw.map(normalizeGame).filter(g=>g.markets.length);
+    state.propsLoaded.clear();
     setStatus('Live FanDuel team markets');
     hydrateGames();
-    generate();
+    await generate();
   }catch(err){
     console.error(err);
     state.games = structuredClone(demoGames);
@@ -127,20 +219,30 @@ function hydrateGames(){
 
 function correlation(a,b){
   let score=0;
-  const sameTeam=a.team===b.team && a.team!=='Game';
+  const sameTeam=a.team===b.team && !['Game','Player'].includes(a.team);
+  const samePlayer=a.player && b.player && a.player===b.player;
   const aOver=a.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(a.name);
   const bOver=b.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(b.name);
 
+  if(samePlayer && aOver && bOver) score+=5;
+  if(samePlayer && ((a.type==='td'&&bOver)||(b.type==='td'&&aOver))) score+=4;
   if(sameTeam && aOver && bOver) score+=3;
   if(sameTeam && (a.type==='h2h'||a.type==='spreads') && ['passing','rushing','receiving','td'].includes(b.type)) score+=2;
   if(sameTeam && (b.type==='h2h'||b.type==='spreads') && ['passing','rushing','receiving','td'].includes(a.type)) score+=2;
-  if((a.type==='passing'&&b.type==='receiving')||(b.type==='passing'&&a.type==='receiving')) score+=4;
+  if((a.type==='passing'&&b.type==='receiving')||(b.type==='passing'&&a.type==='receiving')) score+=2;
   if((a.type==='passing'&&b.type==='td')||(b.type==='passing'&&a.type==='td')) score+=2;
   if(a.type==='totals' && /Over/.test(a.name) && bOver) score+=2;
   if(b.type==='totals' && /Over/.test(b.name) && aOver) score+=2;
   if(a.type==='h2h'&&b.type==='spreads'&&sameTeam) score-=6;
   if(a.type==='spreads'&&b.type==='h2h'&&sameTeam) score-=6;
   return score;
+}
+
+function incompatible(a,b){
+  if(a.marketKey && b.marketKey && a.player && b.player && a.player===b.player && a.marketKey===b.marketKey && a.point===b.point && a.side!==b.side) return true;
+  if(a.type==='h2h'&&b.type==='spreads'&&a.team===b.team) return true;
+  if(a.type==='spreads'&&b.type==='h2h'&&a.team===b.team) return true;
+  return false;
 }
 
 function candidateScore(m,risk){
@@ -158,7 +260,7 @@ function buildSgp(game,count,risk,variant){
   if(!ranked.length) return null;
   legs.push(ranked[0]);
   while(legs.length<count){
-    const remaining=ranked.filter(x=>!legs.includes(x));
+    const remaining=ranked.filter(x=>!legs.includes(x) && !legs.some(l=>incompatible(l,x)));
     if(!remaining.length) break;
     remaining.sort((a,b)=>{
       const ca=legs.reduce((s,l)=>s+correlation(l,a),0);
@@ -243,14 +345,16 @@ function render(parlays){
   }
 }
 
-function generate(){
+async function generate(){
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
   let parlays;
   if(state.mode==='sgp'){
     const game=state.games.find(g=>g.id===$('#gameSelect').value) || state.games[0];
+    await ensurePropsForGame(game);
     parlays=variants.map(v=>buildSgp(game,count,state.risk,v));
   }else{
+    await ensurePropsForMultiGame(6);
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
   }
   render(parlays);
@@ -267,8 +371,8 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
 
 $('#riskRange').addEventListener('input',e=>{state.risk=Number(e.target.value);$('#riskText').textContent=riskLabel(state.risk);generate();});
 $('#legsSelect').addEventListener('change',generate);
-$('#gameSelect').addEventListener('change',generate);
-$('#generateBtn').addEventListener('click',generate);
+$('#gameSelect').addEventListener('change',()=>generate());
+$('#generateBtn').addEventListener('click',()=>generate());
 $$('.chip').forEach(c=>c.addEventListener('click',()=>{
   c.classList.toggle('active');
   c.classList.contains('active')?state.selectedMarkets.add(c.dataset.market):state.selectedMarkets.delete(c.dataset.market);
