@@ -45,3 +45,17 @@ SGP correlation currently rewards:
 - Game Over + offensive Over props
 
 Player-team correlation is intentionally not inferred from names alone because the odds response does not provide a normalized team field for player outcomes. A roster-mapping layer can be added separately.
+
+
+## Context enrichment: ESPN + nflverse
+
+The parlay engine now enriches live player-prop outcomes with roster/team/position context.
+
+- ESPN Site API is used as the current-roster layer for the two teams in a selected matchup.
+- nflverse season roster data is loaded from the official nflverse-data GitHub release as an open fallback.
+- ESPN matches take priority when both sources identify the same player.
+- Enriched player props receive team, position, and context-source metadata before SGP construction.
+
+This improves same-team QB/WR/TE correlation, favorite-control rushing scripts, and underdog pass-volume scripts.
+
+ESPN's Site API endpoints are not a formally supported public developer API, so the integration is defensive and gracefully falls back to nflverse if ESPN changes or is unavailable.
