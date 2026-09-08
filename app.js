@@ -309,11 +309,28 @@ function incompatible(a,b){
   return false;
 }
 
-function candidateScore(m,risk){
+function candidateScore(m,risk,variant='balanced'){
   const implied=impliedProbability(m.price)*100;
-  const priceBonus = risk<25 ? Math.max(0,implied-50)*.45 : risk<60 ? 0 : Math.max(0,55-implied)*.28;
-  const tdPenalty = m.type==='td' ? (risk<25?12:risk<60?4:-2) : 0;
-  return (m.confidence||implied)*.75 + implied*.25 + priceBonus - tdPenalty;
+  const confidence=(m.confidence||implied);
+  let score=confidence*.72 + implied*.28;
+
+  if(variant==='safe'){
+    score += Math.max(0,implied-50)*.65;
+    if(m.type==='td') score -= 22;
+    if(m.price>0) score -= 12;
+    if(m.side==='under') score += 2;
+  }else if(variant==='long'){
+    score += Math.max(0,55-implied)*.9;
+    if(m.type==='td') score += 16;
+    if(m.price>0) score += 10;
+    if(m.price<=-200) score -= 8;
+  }else{
+    if(m.type==='td') score -= 4;
+  }
+
+  if(risk<25 && m.price>0) score-=10;
+  if(risk>65 && m.price>0) score+=6;
+  return score;
 }
 
 function buildSgp(game,count,risk,variant){
@@ -325,7 +342,7 @@ function buildSgp(game,count,risk,variant){
   // A live SGP should not masquerade as prop-driven if no props are available.
   if(state.apiKey && !String(game.id).startsWith('demo-') && props.length===0) return null;
 
-  const score=(m)=>candidateScore(m,targetRisk);
+  const score=(m)=>candidateScore(m,targetRisk,variant);
   const rankedProps=[...props].sort((a,b)=>score(b)-score(a));
   const rankedTeam=[...teamMarkets].sort((a,b)=>score(b)-score(a));
   const rankedAll=[...pool].sort((a,b)=>score(b)-score(a));
@@ -333,10 +350,13 @@ function buildSgp(game,count,risk,variant){
   const legs=[];
   const desiredPropLegs = props.length ? Math.max(1, Math.min(count-1, Math.ceil(count*0.67))) : 0;
 
-  // Seed with a player prop whenever live props exist so team lines cannot dominate.
+  // Seed each profile differently so the three outputs are intentionally distinct.
   const seedPool = rankedProps.length ? rankedProps : rankedAll;
   if(!seedPool.length) return null;
-  legs.push(seedPool[0]);
+  let seedIndex=0;
+  if(variant==='balanced' && seedPool.length>1) seedIndex=1;
+  if(variant==='long' && seedPool.length>2) seedIndex=2;
+  legs.push(seedPool[seedIndex]);
 
   while(legs.length<count){
     const remaining=rankedAll.filter(x=>!legs.includes(x) && !legs.some(l=>incompatible(l,x)));
@@ -352,7 +372,8 @@ function buildSgp(game,count,risk,variant){
       const cb=legs.reduce((s,l)=>s+correlation(l,b),0);
       const propBonusA=a.player?5:0;
       const propBonusB=b.player?5:0;
-      return (score(b)+cb*7+propBonusB)-(score(a)+ca*7+propBonusA);
+      const corrWeight=variant==='balanced'?9:variant==='safe'?5:7;
+      return (score(b)+cb*corrWeight+propBonusB)-(score(a)+ca*corrWeight+propBonusA);
     });
 
     legs.push(choices[0]);
@@ -369,7 +390,7 @@ function buildMulti(count,risk,variant){
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
   const byGame=state.games.map(g=>({
     game:g,
-    candidates:g.markets.filter(m=>state.selectedMarkets.has(m.type)).sort((a,b)=>candidateScore(b,targetRisk)-candidateScore(a,targetRisk))
+    candidates:g.markets.filter(m=>state.selectedMarkets.has(m.type)).sort((a,b)=>candidateScore(b,targetRisk,variant)-candidateScore(a,targetRisk,variant))
   })).filter(x=>x.candidates.length);
   let legs=[];
   let idx=0;
