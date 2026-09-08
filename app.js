@@ -6,7 +6,14 @@ const state = {
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),
   propsLoading:new Map(),
-  apiUsage:{remaining:null,used:null,last:null}
+  apiUsage:{remaining:null,used:null,last:null},
+  context:{
+    espnTeamIndex:null,
+    espnRosters:new Map(),
+    nflverseRoster:null,
+    espnStatus:'idle',
+    nflverseStatus:'idle'
+  }
 };
 
 const demoGames = [
@@ -102,6 +109,166 @@ function renderApiUsage(){
     }
   }
 }
+
+const NFL_TEAM_NAMES = {
+  ARI:'Arizona Cardinals',ATL:'Atlanta Falcons',BAL:'Baltimore Ravens',BUF:'Buffalo Bills',
+  CAR:'Carolina Panthers',CHI:'Chicago Bears',CIN:'Cincinnati Bengals',CLE:'Cleveland Browns',
+  DAL:'Dallas Cowboys',DEN:'Denver Broncos',DET:'Detroit Lions',GB:'Green Bay Packers',
+  HOU:'Houston Texans',IND:'Indianapolis Colts',JAX:'Jacksonville Jaguars',KC:'Kansas City Chiefs',
+  LV:'Las Vegas Raiders',LAC:'Los Angeles Chargers',LAR:'Los Angeles Rams',LA:'Los Angeles Rams',
+  MIA:'Miami Dolphins',MIN:'Minnesota Vikings',NE:'New England Patriots',NO:'New Orleans Saints',
+  NYG:'New York Giants',NYJ:'New York Jets',PHI:'Philadelphia Eagles',PIT:'Pittsburgh Steelers',
+  SEA:'Seattle Seahawks',SF:'San Francisco 49ers',TB:'Tampa Bay Buccaneers',TEN:'Tennessee Titans',
+  WAS:'Washington Commanders'
+};
+
+function normalizePlayerName(name){
+  return String(name||'')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]/g,'');
+}
+
+function renderContextStatus(){
+  const e=$('#espnStatus');
+  const n=$('#nflverseStatus');
+  if(e) e.textContent=state.context.espnStatus==='ready'?'Connected':state.context.espnStatus==='error'?'Unavailable':'Idle';
+  if(n) n.textContent=state.context.nflverseStatus==='ready'?'Connected':state.context.nflverseStatus==='error'?'Unavailable':'Idle';
+}
+
+async function loadEspnTeamIndex(){
+  if(state.context.espnTeamIndex) return state.context.espnTeamIndex;
+  state.context.espnStatus='loading'; renderContextStatus();
+  try{
+    const res=await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams?limit=40');
+    if(!res.ok) throw new Error('ESPN teams '+res.status);
+    const raw=await res.json();
+    const teams=raw?.sports?.[0]?.leagues?.[0]?.teams||[];
+    const index=new Map();
+    for(const entry of teams){
+      const t=entry.team||entry;
+      if(!t?.displayName) continue;
+      index.set(t.displayName,{id:t.id,displayName:t.displayName,abbreviation:t.abbreviation});
+      if(t.abbreviation) index.set(t.abbreviation,{id:t.id,displayName:t.displayName,abbreviation:t.abbreviation});
+    }
+    state.context.espnTeamIndex=index;
+    state.context.espnStatus='ready'; renderContextStatus();
+    return index;
+  }catch(err){
+    console.warn('ESPN team index unavailable',err);
+    state.context.espnStatus='error'; renderContextStatus();
+    return new Map();
+  }
+}
+
+async function loadEspnRoster(teamName){
+  if(state.context.espnRosters.has(teamName)) return state.context.espnRosters.get(teamName);
+  const index=await loadEspnTeamIndex();
+  const team=index.get(teamName);
+  if(!team?.id) return [];
+  try{
+    const res=await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/'+team.id+'/roster');
+    if(!res.ok) throw new Error('ESPN roster '+res.status);
+    const raw=await res.json();
+    const out=[];
+    for(const group of raw.athletes||[]){
+      const items=group.items||[];
+      for(const athlete of items){
+        out.push({
+          name:athlete.displayName||athlete.fullName,
+          team:team.displayName,
+          position:athlete.position?.abbreviation||group.position||'',
+          source:'ESPN'
+        });
+      }
+    }
+    state.context.espnRosters.set(teamName,out);
+    return out;
+  }catch(err){
+    console.warn('ESPN roster unavailable for',teamName,err);
+    return [];
+  }
+}
+
+function parseCsv(text){
+  const rows=[]; let row=[]; let cell=''; let quoted=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(ch==='"'){
+      if(quoted && text[i+1]==='"'){ cell+='"'; i++; }
+      else quoted=!quoted;
+    }else if(ch===',' && !quoted){ row.push(cell); cell=''; }
+    else if((ch==='\n'||ch==='\r') && !quoted){
+      if(ch==='\r' && text[i+1]==='\n') i++;
+      row.push(cell); cell='';
+      if(row.some(v=>v!=='')) rows.push(row);
+      row=[];
+    }else cell+=ch;
+  }
+  if(cell||row.length){ row.push(cell); rows.push(row); }
+  if(rows.length<2) return [];
+  const headers=rows[0].map(h=>h.trim());
+  return rows.slice(1).map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+}
+
+async function loadNflverseRoster(){
+  if(state.context.nflverseRoster) return state.context.nflverseRoster;
+  state.context.nflverseStatus='loading'; renderContextStatus();
+  const season=new Date().getFullYear();
+  const url='https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_'+season+'.csv';
+  try{
+    const res=await fetch(url);
+    if(!res.ok) throw new Error('nflverse roster '+res.status);
+    const rows=parseCsv(await res.text());
+    const mapped=rows.map(r=>{
+      const name=r.full_name||r.player_name||r.display_name||r.name||'';
+      const abbr=(r.team||r.team_abbr||r.recent_team||'').toUpperCase();
+      return {
+        name,
+        team:NFL_TEAM_NAMES[abbr]||abbr,
+        position:r.position||r.depth_chart_position||'',
+        source:'nflverse'
+      };
+    }).filter(r=>r.name);
+    state.context.nflverseRoster=mapped;
+    state.context.nflverseStatus='ready'; renderContextStatus();
+    return mapped;
+  }catch(err){
+    console.warn('nflverse roster unavailable',err);
+    state.context.nflverseStatus='error'; renderContextStatus();
+    return [];
+  }
+}
+
+async function enrichGameContext(game){
+  if(!game) return;
+  const [awayRoster,homeRoster,nflverse]=await Promise.all([
+    loadEspnRoster(game.away),
+    loadEspnRoster(game.home),
+    loadNflverseRoster()
+  ]);
+
+  const lookup=new Map();
+  for(const p of nflverse){
+    if(p.team===game.away || p.team===game.home) lookup.set(normalizePlayerName(p.name),p);
+  }
+  // ESPN wins when both sources have a match because it is our current-roster layer.
+  for(const p of [...awayRoster,...homeRoster]) lookup.set(normalizePlayerName(p.name),p);
+
+  let matched=0;
+  for(const m of game.markets){
+    if(!m.player) continue;
+    const hit=lookup.get(normalizePlayerName(m.player));
+    if(!hit) continue;
+    m.team=hit.team;
+    m.position=hit.position;
+    m.contextSource=hit.source;
+    matched++;
+  }
+  game.contextMatched=matched;
+  game.contextReady=true;
+}
+
 
 const PROP_MARKETS = [
   'player_pass_yds','player_pass_yds_alternate','player_pass_tds','player_pass_attempts','player_pass_completions',
@@ -214,6 +381,7 @@ async function ensurePropsForGame(game){
 
       const cleaned=[...unique.values()];
       game.markets.push(...cleaned);
+      await enrichGameContext(game);
       game.propStatus=cleaned.length?'loaded':'empty';
       state.propsLoaded.add(game.id);
 
@@ -308,9 +476,14 @@ function correlation(a,b){
   let score=0;
   const sameTeam=a.team===b.team && !['Game','Player'].includes(a.team);
   const samePlayer=a.player && b.player && a.player===b.player;
+  const qbReceiverPair=sameTeam && (
+    (a.position==='QB' && ['WR','TE'].includes(b.position)) ||
+    (b.position==='QB' && ['WR','TE'].includes(a.position))
+  );
   const aOver=a.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(a.name);
   const bOver=b.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(b.name);
 
+  if(qbReceiverPair && aOver && bOver) score+=6;
   if(samePlayer && aOver && bOver) score+=5;
   if(samePlayer && ((a.type==='td'&&bOver)||(b.type==='td'&&aOver))) score+=4;
   if(sameTeam && aOver && bOver) score+=3;
@@ -467,7 +640,7 @@ const GAME_SCRIPTS = {
       let s=0;
       const fav=favoriteTeam(game);
       if(isTeamSide(m) && m.team===fav) s+=16;
-      if(m.type==='rushing' && m.side==='over') s+=10;
+      if(m.type==='rushing' && m.side==='over' && (!m.team || m.team===fav) && (!m.position || ['RB','QB'].includes(m.position))) s+=12;
       if(m.type==='totals' && m.side==='under') s+=5;
       if(m.type==='passing' && m.side==='under') s+=4;
       if(m.type==='td') s+=3;
@@ -495,8 +668,8 @@ const GAME_SCRIPTS = {
       let s=0;
       const dog=underdogTeam(game);
       if(m.type==='spreads' && m.team===dog) s+=8;
-      if(m.type==='passing' && m.side==='over') s+=12;
-      if(m.type==='receiving' && m.side==='over') s+=12;
+      if(m.type==='passing' && m.side==='over' && (!m.team || m.team===dog)) s+=14;
+      if(m.type==='receiving' && m.side==='over' && (!m.team || m.team===dog)) s+=14;
       if(m.type==='totals' && m.side==='over') s+=6;
       if(m.type==='rushing' && m.side==='under') s+=4;
       return s;
