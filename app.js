@@ -5,7 +5,8 @@ const state = {
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),
-  propsLoading:new Map()
+  propsLoading:new Map(),
+  apiUsage:{remaining:null,used:null,last:null}
 };
 
 const demoGames = [
@@ -65,6 +66,43 @@ function riskLabel(v){
 
 function setStatus(msg){ $('#dataStatus').textContent=msg; }
 
+function trackApiUsage(res){
+  if(!res?.headers) return;
+  const remaining=res.headers.get('x-requests-remaining');
+  const used=res.headers.get('x-requests-used');
+  const last=res.headers.get('x-requests-last');
+
+  if(remaining!==null) state.apiUsage.remaining=Number(remaining);
+  if(used!==null) state.apiUsage.used=Number(used);
+  if(last!==null) state.apiUsage.last=Number(last);
+
+  renderApiUsage();
+}
+
+function renderApiUsage(){
+  const remaining=state.apiUsage.remaining;
+  const used=state.apiUsage.used;
+  const last=state.apiUsage.last;
+
+  const r=$('#apiRemaining');
+  const u=$('#apiUsed');
+  const l=$('#apiLast');
+  const fill=$('#apiMeterFill');
+
+  if(r) r.textContent=remaining ?? '—';
+  if(u) u.textContent=used ?? '—';
+  if(l) l.textContent=last ?? '—';
+
+  if(fill){
+    if(remaining==null || used==null || remaining+used<=0){
+      fill.style.width='0%';
+    }else{
+      const pct=Math.max(0,Math.min(100,(remaining/(remaining+used))*100));
+      fill.style.width=pct+'%';
+    }
+  }
+}
+
 const PROP_MARKETS = [
   'player_pass_yds','player_pass_yds_alternate','player_pass_tds','player_pass_attempts','player_pass_completions',
   'player_rush_yds','player_rush_yds_alternate','player_rush_attempts',
@@ -119,6 +157,7 @@ async function discoverFanDuelMarkets(game){
   url.searchParams.set('apiKey',state.apiKey);
   url.searchParams.set('regions','us');
   const res=await fetch(url);
+  trackApiUsage(res);
   if(!res.ok) throw new Error('Event markets API '+res.status);
   const raw=await res.json();
   const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
@@ -154,6 +193,7 @@ async function ensurePropsForGame(game){
       url.searchParams.set('bookmakers','fanduel');
 
       const res=await fetch(url);
+      trackApiUsage(res);
       if(!res.ok) throw new Error('Prop odds API '+res.status);
       const raw=await res.json();
       const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
@@ -217,6 +257,7 @@ async function loadData(){
     url.searchParams.set('oddsFormat','american');
     url.searchParams.set('bookmakers','fanduel');
     const res = await fetch(url);
+    trackApiUsage(res);
     if(!res.ok) throw new Error('Odds API '+res.status);
     const raw = await res.json();
     state.games = raw.map(normalizeGame).filter(g=>g.markets.length);
@@ -712,7 +753,8 @@ $('#settingsBtn').addEventListener('click',()=>{$('#apiKeyInput').value=state.ap
 $('#saveKeyBtn').addEventListener('click',()=>{
   state.apiKey=$('#apiKeyInput').value.trim();
   if(state.apiKey)localStorage.setItem('nflParlayOddsApiKey',state.apiKey); else localStorage.removeItem('nflParlayOddsApiKey');
-  dialog.close(); loadData();
+  dialog.close(); renderApiUsage();
+loadData();
 });
 $('#clearKeyBtn').addEventListener('click',()=>{
   state.apiKey=''; localStorage.removeItem('nflParlayOddsApiKey'); dialog.close(); loadData();
