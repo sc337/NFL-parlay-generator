@@ -26,9 +26,8 @@
         const url = new URL(rawUrl, window.location.href);
         oddsApiRequest = url.hostname === 'api.the-odds-api.com';
         if(oddsApiRequest){
-          if(url.searchParams.has('bookmakers')){
-            url.searchParams.set('bookmakers', BOOKMAKER_KEY);
-          }
+          // Scope every Odds API request, including event-market discovery, to Caesars.
+          url.searchParams.set('bookmakers', BOOKMAKER_KEY);
           request = typeof input === 'string' ? url.toString() : new Request(url.toString(), input);
         }
       }
