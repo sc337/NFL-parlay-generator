@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260911-0814" />
+  <link rel="stylesheet" href="styles.css?v=20260911-0822" />
 </head>
 <body>
   <div class="shell">
@@ -39,6 +39,16 @@
         <span><b id="apiLast">—</b> last call</span>
       </div>
       <div class="api-meter"><span id="apiMeterFill"></span></div>
+      <div class="api-saver-row">
+        <label for="apiSaverMode">API Saver</label>
+        <select id="apiSaverMode">
+          <option value="full">Full</option>
+          <option value="saver" selected>Saver</option>
+          <option value="ultra">Ultra Saver</option>
+        </select>
+        <span id="apiCacheStats">0 cache hits • 0 live fetches</span>
+        <button id="clearApiCacheBtn" type="button" class="cache-btn">Clear cache</button>
+      </div>
     </section>
 
     <section class="source-status-card">
@@ -155,7 +165,8 @@
     </article>
   </template>
 
-  <script src="sportsbook-caesars.js?v=20260911-0814"></script>
-  <script src="app.js?v=20260911-0814"></script>
+  <script src="sportsbook-caesars.js?v=20260911-0822"></script>
+  <script src="api-saver.js?v=20260911-0822"></script>
+  <script src="app.js?v=20260911-0822"></script>
 </body>
 </html>
