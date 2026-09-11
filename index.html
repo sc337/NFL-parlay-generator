@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260908-1548" />
+  <link rel="stylesheet" href="styles.css?v=20260911-0814" />
 </head>
 <body>
   <div class="shell">
@@ -25,7 +25,7 @@
         <span class="live-dot"></span>
         <span id="dataStatus">Demo market data</span>
       </div>
-      <p>Build logical NFL parlays from team lines and player props. FanDuel markets are used as the reference source when connected.</p>
+      <p>Build logical NFL parlays from team lines and player props. Caesars markets are the sportsbook reference source when connected.</p>
     </section>
 
     <section class="api-usage-card" id="apiUsageCard">
@@ -44,12 +44,15 @@
     <section class="source-status-card">
       <div>
         <p class="label">DATA SOURCES</p>
+        <span>Caesars <b>Primary odds</b></span>
+      </div>
+      <div>
         <span>ESPN <b id="espnStatus">Idle</b></span>
       </div>
       <div>
         <span>nflverse <b id="nflverseStatus">Idle</b></span>
       </div>
-      <div class="source-note">ESPN = current roster context • nflverse = open roster/analytics fallback</div>
+      <div class="source-note">Caesars = lines & props • ESPN = current roster context • nflverse = open roster/analytics fallback</div>
     </section>
 
     <nav class="mode-tabs" aria-label="Parlay type">
@@ -117,11 +120,11 @@
       <div class="section-head">
         <div>
           <p class="label">DATA SETTINGS</p>
-          <h2>FanDuel odds source</h2>
+          <h2>Caesars odds source</h2>
         </div>
         <button class="icon-btn" value="cancel">✕</button>
       </div>
-      <p class="muted">GitHub Pages is static, so a browser-side API key cannot be hidden. Your key is stored only in this browser's local storage and is never committed to GitHub.</p>
+      <p class="muted">Caesars is requested through The Odds API using bookmaker key williamhill_us. The Odds API currently lists Caesars as a paid-plan bookmaker. GitHub Pages is static, so your API key is stored only in this browser and is never committed to GitHub.</p>
       <div class="field">
         <label for="apiKeyInput">The Odds API key</label>
         <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" />
@@ -152,6 +155,7 @@
     </article>
   </template>
 
-  <script src="app.js?v=20260908-1548"></script>
+  <script src="sportsbook-caesars.js?v=20260911-0814"></script>
+  <script src="app.js?v=20260911-0814"></script>
 </body>
 </html>
