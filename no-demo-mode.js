@@ -12,9 +12,10 @@
   }
   function hasLiveGames(){try{return (state.games||[]).some(g=>g?.dataSource==='Kalshi'||g?.dataSource==='Caesars'||(!String(g?.id||'').startsWith('demo-')))}catch{return false}}
   async function kalshiFallback(){
-    clearLiveState('Loading Kalshi NFL markets…');
+    clearLiveState('Loading Kalshi NFL snapshot…');
     try{if(await window.NFL_KALSHI?.load?.())return true}catch(e){console.warn('Kalshi fallback failed',e)}
-    clearLiveState('No live Caesars or Kalshi NFL markets available');
+    const ks=document.getElementById('kalshiStatus')?.textContent||'';
+    clearLiveState(/Initializing/i.test(ks)?'Kalshi feed initializing — first server refresh pending':'No live Caesars or Kalshi NFL markets available');
     return false;
   }
   const caesarsLoad=async()=>{
@@ -32,6 +33,6 @@
   const originalGenerate=generate;
   generate=async function(...args){if(!hasLiveGames()){clearLiveState(state.apiKey?'Waiting for Caesars/Kalshi data…':'Waiting for Kalshi data…');return}return originalGenerate.apply(this,args)};
   window.NFL_NO_DEMO={clear:clearLiveState,hasLiveGames,load:caesarsLoad,fallback:kalshiFallback};
-  clearLiveState(state.apiKey?'Loading Caesars markets…':'Loading Kalshi NFL markets…');
+  clearLiveState(state.apiKey?'Loading Caesars markets…':'Loading Kalshi NFL snapshot…');
   setTimeout(()=>caesarsLoad(),60);
 })();
