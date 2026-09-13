@@ -21,9 +21,11 @@ h1{font-size:28px;letter-spacing:-.04em} h2{font-size:20px;letter-spacing:-.025e
 .control-card{padding:18px}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}
 .pill,.grade{font-size:11px;font-weight:800;border-radius:999px;padding:6px 9px;background:#16261d;color:var(--accent)}
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}.field label{font-size:12px;color:#c1c9d2;font-weight:700}
-select,input[type=password]{width:100%;background:#0c1117;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:12px}
+select,input[type=password],input[type=number]{width:100%;background:#0c1117;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:12px}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .settings-grid{display:grid;grid-template-columns:150px 1fr;gap:14px}
+.risk-behavior{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:2px}
+#riskValue{color:var(--accent);font-size:10px;margin-left:5px}
 .market-box{border-top:1px solid var(--line);padding-top:16px;margin-top:3px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .chip{border:1px solid var(--line);background:#0d1218;color:#aab4c0;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer}
 .chip.active{border-color:#285c3b;background:#132219;color:#bdf8d3}
@@ -79,3 +81,13 @@ dialog{background:transparent;border:0;padding:0;width:min(520px,calc(100% - 24p
 .daily-pick-card.daily-pass .daily-pick-label,.daily-pick-card.daily-pass .daily-pick-odds,.daily-pick-card.daily-pass .daily-pick-grade{color:var(--warning)}
 .daily-pick-card.daily-pass .daily-pick-grade{background:#2a2315}
 @media(max-width:680px){.daily-picks-grid{grid-template-columns:1fr}.daily-picks-head{align-items:center}.daily-picks-head .cache-btn{width:auto}}
+
+.bankroll-card{background:linear-gradient(145deg,#111820,#0e1319);border:1px solid var(--line);border-radius:18px;padding:16px;margin:16px 0}
+.bankroll-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.bankroll-head h2{margin-top:3px}
+.bankroll-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}.bankroll-field,.bankroll-stat{background:#0c1117;border:1px solid #202833;border-radius:12px;padding:11px}
+.bankroll-field label,.bankroll-stat span{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-bottom:7px}.bankroll-stat strong{display:block;font-size:16px}.bankroll-stat strong[data-sign="positive"]{color:var(--accent)}.bankroll-stat strong[data-sign="negative"]{color:var(--danger)}
+.money-input{display:flex;align-items:center;gap:6px}.money-input span{color:var(--muted);font-weight:700}.money-input input{padding:8px;border-radius:8px}
+.bankroll-note{color:var(--muted);font-size:10px;line-height:1.45;margin-top:10px}
+.stake-suggestion{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;margin-top:12px;padding:10px 11px;border-radius:11px;background:#0c1510;border:1px solid #1f442c}.stake-suggestion span{color:#b7c3bc;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.stake-suggestion strong{color:var(--accent);font-size:16px}.stake-suggestion small{grid-column:1/-1;color:var(--muted);font-size:9px}
+@media(max-width:760px){.bankroll-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.bankroll-grid{grid-template-columns:1fr}.bankroll-head .cache-btn{width:auto}}
