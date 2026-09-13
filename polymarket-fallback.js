@@ -1,135 +1,26 @@
 (() => {
-  const CACHE_KEY='nflParlayPolymarketFallback:v4';
-  const CACHE_TTL=10*60*1000;
-  const NFL_TEAMS=[
-    ['Arizona Cardinals',['arizona cardinals','cardinals','ari']],['Atlanta Falcons',['atlanta falcons','falcons','atl']],['Baltimore Ravens',['baltimore ravens','ravens','bal']],['Buffalo Bills',['buffalo bills','bills','buf']],['Carolina Panthers',['carolina panthers','panthers','car']],['Chicago Bears',['chicago bears','bears','chi']],['Cincinnati Bengals',['cincinnati bengals','bengals','cin']],['Cleveland Browns',['cleveland browns','browns','cle']],['Dallas Cowboys',['dallas cowboys','cowboys','dal']],['Denver Broncos',['denver broncos','broncos','den']],['Detroit Lions',['detroit lions','lions','det']],['Green Bay Packers',['green bay packers','packers','gb']],['Houston Texans',['houston texans','texans','hou']],['Indianapolis Colts',['indianapolis colts','colts','ind']],['Jacksonville Jaguars',['jacksonville jaguars','jaguars','jax']],['Kansas City Chiefs',['kansas city chiefs','chiefs','kc']],['Las Vegas Raiders',['las vegas raiders','raiders','lv']],['Los Angeles Chargers',['los angeles chargers','la chargers','chargers','lac']],['Los Angeles Rams',['los angeles rams','la rams','rams','lar']],['Miami Dolphins',['miami dolphins','dolphins','mia']],['Minnesota Vikings',['minnesota vikings','vikings','min']],['New England Patriots',['new england patriots','patriots','ne']],['New Orleans Saints',['new orleans saints','saints','no']],['New York Giants',['new york giants','ny giants','giants','nyg']],['New York Jets',['new york jets','ny jets','jets','nyj']],['Philadelphia Eagles',['philadelphia eagles','eagles','phi']],['Pittsburgh Steelers',['pittsburgh steelers','steelers','pit']],['San Francisco 49ers',['san francisco 49ers','49ers','niners','sf']],['Seattle Seahawks',['seattle seahawks','seahawks','sea']],['Tampa Bay Buccaneers',['tampa bay buccaneers','buccaneers','bucs','tb']],['Tennessee Titans',['tennessee titans','titans','ten']],['Washington Commanders',['washington commanders','commanders','was']]
-  ];
-  const PROP_STATS=[
-    {re:/passing yards?/i,type:'passing',marketKey:'player_pass_yds',label:'passing yards'},
-    {re:/passing (?:touchdowns?|tds?)|touchdowns? thrown/i,type:'passing',marketKey:'player_pass_tds',label:'passing TDs'},
-    {re:/pass(?:ing)? attempts?/i,type:'passing',marketKey:'player_pass_attempts',label:'pass attempts'},
-    {re:/pass(?:ing)? completions?|completions?/i,type:'passing',marketKey:'player_pass_completions',label:'completions'},
-    {re:/rushing yards?/i,type:'rushing',marketKey:'player_rush_yds',label:'rushing yards'},
-    {re:/rush(?:ing)? attempts?|carries/i,type:'rushing',marketKey:'player_rush_attempts',label:'rush attempts'},
-    {re:/receiving yards?/i,type:'receiving',marketKey:'player_reception_yds',label:'receiving yards'},
-    {re:/receptions?|catches/i,type:'receiving',marketKey:'player_receptions',label:'receptions'},
-    {re:/anytime (?:touchdown|td)|score (?:a |an )?touchdown|touchdown scorer/i,type:'td',marketKey:'player_anytime_td',label:'anytime TD',td:true}
-  ];
-
-  function parseArray(v){if(Array.isArray(v))return v;if(typeof v!=='string')return [];try{const x=JSON.parse(v);return Array.isArray(x)?x:[];}catch{return [];}}
-  function num(...vals){for(const v of vals){const n=Number(v);if(Number.isFinite(n))return n;}return 0;}
-  function americanFromProbability(p){p=Number(p);if(!Number.isFinite(p)||p<=0||p>=1)return null;return p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);}
-  function findTeams(text){const s=String(text||'').toLowerCase(),hits=[];for(const [name,aliases] of NFL_TEAMS){let best=-1;for(const alias of aliases){const re=new RegExp('(^|[^a-z0-9])'+alias.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^a-z0-9]|$)','i'),m=s.match(re);if(m){best=m.index??0;break;}}if(best>=0)hits.push({name,index:best});}return hits.sort((a,b)=>a.index-b.index).map(x=>x.name);}
-  function teamMention(text,teams){return findTeams(text).find(t=>teams.includes(t))||null;}
-  function pricePairs(m){const outcomes=parseArray(m.outcomes),prices=parseArray(m.outcomePrices).map(Number);return outcomes.map((name,i)=>({name:String(name),prob:prices[i]})).filter(x=>Number.isFinite(x.prob)&&x.prob>0&&x.prob<1);}
-  function sourceQuality(m,prob){
-    let q=50;const liquidity=num(m.liquidityNum,m.liquidity,m.liquidityClob),volume=num(m.volumeNum,m.volume,m.volume24hr,m.volume1wk),bid=num(m.bestBid),ask=num(m.bestAsk);
-    if(prob>=.15&&prob<=.85)q+=8;else if(prob<.06||prob>.94)q-=22;else q-=5;
-    if(liquidity>=10000)q+=14;else if(liquidity>=2500)q+=9;else if(liquidity>=500)q+=4;else if(liquidity>0&&liquidity<100)q-=8;
-    if(volume>=25000)q+=12;else if(volume>=5000)q+=8;else if(volume>=1000)q+=4;else if(volume>0&&volume<100)q-=5;
-    if(bid>0&&ask>0&&ask>=bid){const spread=ask-bid;if(spread<=.03)q+=10;else if(spread<=.07)q+=5;else if(spread>.15)q-=18;}
-    if(m.acceptingOrders===false)q-=12;return Math.max(0,Math.min(100,Math.round(q)));
-  }
-  function addMarket(markets,leg,m){
-    if(!leg||typeof leg.price!=='number')return;const quality=sourceQuality(m,leg.prob);if(quality<45)return;
-    const enriched={...leg,source:'Polymarket',confidence:Math.round(leg.prob*100),polymarketProbability:leg.prob,sourceQuality:quality,liquidity:num(m.liquidityNum,m.liquidity,m.liquidityClob),volume:num(m.volumeNum,m.volume,m.volume24hr,m.volume1wk)};
-    const key=[leg.marketKey||leg.type,leg.player||leg.team,leg.side||'',leg.point??''].join('|');const idx=markets.findIndex(x=>[x.marketKey||x.type,x.player||x.team,x.side||'',x.point??''].join('|')===key);
-    if(idx<0)markets.push(enriched);else if((markets[idx].sourceQuality||0)<quality)markets[idx]=enriched;
-  }
-  function plausiblePoint(type,point){if(!Number.isFinite(point))return false;if(type==='spreads')return Math.abs(point)<=20;if(type==='totals')return point>=25&&point<=75;if(type==='passing')return point>=0&&point<=500;if(type==='rushing'||type==='receiving')return point>=0&&point<=250;return true;}
-
-  function inferPlayerName(m,stat){
-    const candidates=[m.groupItemTitle,m.question,m.slug].filter(Boolean).map(String);
-    for(const raw of candidates){
-      let s=raw.replace(/[-_]/g,' ').replace(/\b(player props?|pro football|nfl)\b/ig,' ').replace(/\s+/g,' ').trim();
-      if(!s||findTeams(s).length) continue;
-      const idx=s.search(stat.re);if(idx>0)s=s.slice(0,idx);
-      s=s.replace(/\b(will|does|to|record|have|finish with|go|over|under|at least|more than|less than|fewer than)\b/ig,' ')
-        .replace(/[?:,+]/g,' ').replace(/\b\d+(?:\.\d+)?\+?\b/g,' ').replace(/\s+/g,' ').trim();
-      const words=s.split(' ').filter(Boolean).filter(w=>!/^(the|a|an|his|their)$/i.test(w));
-      if(words.length>=2){
-        const name=words.slice(-4).join(' ').replace(/\b(vs|versus)\b.*$/i,'').trim();
-        if(name.split(' ').length>=2 && name.length<=40) return name;
-      }
-    }
-    return null;
-  }
-
-  function propPoint(text,stat){
-    if(stat.td)return null;
-    const lower=String(text||'');
-    const before=lower.match(/(\d+(?:\.\d+)?)\s*\+?\s*(?=(?:passing yards?|passing (?:touchdowns?|tds?)|touchdowns? thrown|pass(?:ing)? attempts?|pass(?:ing)? completions?|completions?|rushing yards?|rush(?:ing)? attempts?|carries|receiving yards?|receptions?|catches))/i);
-    if(before)return Number(before[1]);
-    const ou=lower.match(/(?:over|under|at least|more than|less than|fewer than)[^0-9]*(\d+(?:\.\d+)?)/i);
-    if(ou)return Number(ou[1]);
-    return null;
-  }
-
-  function parsePlayerProp(m,markets){
-    const text=[m.question,m.groupItemTitle,m.slug].filter(Boolean).join(' '),stat=PROP_STATS.find(x=>x.re.test(text));
-    if(!stat)return false;
-    const player=inferPlayerName(m,stat);if(!player)return false;
-    const pairs=pricePairs(m);if(!pairs.length)return false;
-    const point=propPoint(text,stat);if(!stat.td && !plausiblePoint(stat.type,point))return false;
-    const byName=new Map(pairs.map(p=>[p.name.toLowerCase(),p]));
-    const over=byName.get('over'),under=byName.get('under'),yes=byName.get('yes'),no=byName.get('no');
-
-    const emit=(side,p)=>{if(!p)return;const odds=americanFromProbability(p.prob);if(odds==null)return;const name=stat.td?`${player} anytime TD`:`${player} ${side==='over'?'Over':'Under'} ${point} ${stat.label}`;addMarket(markets,{type:stat.type,marketKey:stat.marketKey,player,name,team:'Player',price:odds,prob:p.prob,side:stat.td?'yes':side,point},m);};
-
-    if(stat.td){emit('yes',yes||over);return !!(yes||over);}
-    if(over||under){emit('over',over);emit('under',under);return true;}
-    if(yes){
-      const lower=text.toLowerCase();let yesSide='over';
-      if(/\bunder\b|less than|fewer than/.test(lower))yesSide='under';
-      emit(yesSide,yes);if(no)emit(yesSide==='over'?'under':'over',no);return true;
-    }
-    return false;
-  }
-
-  function normalizeEvent(event){
-    let teams=findTeams(event.title||'');if(teams.length!==2){const eventText=[event.title,event.subtitle,event.slug,event.seriesSlug].filter(Boolean).join(' ');teams=[...new Set(findTeams(eventText))];}if(teams.length!==2)return null;
-    const markets=[];
-    for(const m of event.markets||[]){
-      if(m.closed||m.active===false)continue;
-      if(parsePlayerProp(m,markets))continue;
-      const text=[m.question,m.marketType,m.groupItemTitle,m.slug].filter(Boolean).join(' '),lower=text.toLowerCase(),pairs=pricePairs(m);if(!pairs.length)continue;
-      const byTeam=pairs.filter(p=>teams.some(t=>findTeams(p.name).includes(t)));
-      if(byTeam.length>=2){for(const p of byTeam){const t=teamMention(p.name,teams),odds=americanFromProbability(p.prob);if(t&&odds!=null)addMarket(markets,{type:'h2h',name:t+' ML',team:t,price:odds,prob:p.prob},m);}continue;}
-      const yes=pairs.find(p=>p.name.toLowerCase()==='yes'),no=pairs.find(p=>p.name.toLowerCase()==='no'),mentioned=teamMention(text,teams),other=mentioned?teams.find(t=>t!==mentioned):null;
-      const looksSpread=/spread|cover|\+\d|\-\d/.test(lower),looksTotal=/total|over|under/.test(lower),looksMoneyline=/moneyline|winner|\bwin\b|\bbeat\b/.test(lower);
-      if(looksSpread&&yes&&mentioned){const match=text.match(/([+-]\s*\d+(?:\.\d+)?)/);if(match){const point=Number(match[1].replace(/\s/g,'')),odds=americanFromProbability(yes.prob);if(plausiblePoint('spreads',point)&&odds!=null)addMarket(markets,{type:'spreads',name:mentioned+' '+(point>0?'+':'')+point,team:mentioned,price:odds,prob:yes.prob,point},m);}continue;}
-      if(looksTotal&&yes){const match=text.match(/(?:over|under|total(?:\s+of)?)[^0-9]*(\d+(?:\.\d+)?)/i);if(match){const point=Number(match[1]);if(!plausiblePoint('totals',point))continue;const side=/under/i.test(text)?'under':'over',yesOdds=americanFromProbability(yes.prob);if(yesOdds!=null)addMarket(markets,{type:'totals',name:(side==='over'?'Over ':'Under ')+point,team:'Game',price:yesOdds,prob:yes.prob,side,point},m);if(no){const noSide=side==='over'?'under':'over',noOdds=americanFromProbability(no.prob);if(noOdds!=null)addMarket(markets,{type:'totals',name:(noSide==='over'?'Over ':'Under ')+point,team:'Game',price:noOdds,prob:no.prob,side:noSide,point},m);}}continue;}
-      if((looksMoneyline||(!looksSpread&&!looksTotal))&&yes&&mentioned){const yesOdds=americanFromProbability(yes.prob);if(yesOdds!=null)addMarket(markets,{type:'h2h',name:mentioned+' ML',team:mentioned,price:yesOdds,prob:yes.prob},m);if(no&&other){const noOdds=americanFromProbability(no.prob);if(noOdds!=null)addMarket(markets,{type:'h2h',name:other+' ML',team:other,price:noOdds,prob:no.prob},m);}}
-    }
-    if(!markets.length)return null;const ranked=markets.sort((a,b)=>(b.sourceQuality||0)-(a.sourceQuality||0));const start=event.startTime||event.eventDate||event.startDate||event.markets?.[0]?.gameStartTime||event.markets?.[0]?.startDate;
-    return{id:'demo-poly-'+event.id,away:teams[0],home:teams[1],commence_time:start||new Date().toISOString(),markets:ranked,dataSource:'Polymarket',polymarketEvent:event.slug||event.id};
-  }
-  function readCache(){try{const x=JSON.parse(localStorage.getItem(CACHE_KEY));if(x?.time&&Date.now()-x.time<CACHE_TTL&&Array.isArray(x.games))return x.games;}catch{}return null;}
-  function writeCache(games){try{localStorage.setItem(CACHE_KEY,JSON.stringify({time:Date.now(),games}));}catch{}}
-  async function getJson(url){const res=await fetch(url);if(!res.ok)throw new Error('Polymarket '+res.status);return res.json();}
-  async function fetchGames(){
-    const cached=readCache();if(cached?.length)return cached;let events=[];
-    try{const tag=await getJson('https://gamma-api.polymarket.com/tags/slug/nfl');if(tag?.id){const url=new URL('https://gamma-api.polymarket.com/events');url.searchParams.set('tag_id',tag.id);url.searchParams.set('active','true');url.searchParams.set('closed','false');url.searchParams.set('limit','200');url.searchParams.set('order','startDate');url.searchParams.set('ascending','true');const raw=await getJson(url);events=Array.isArray(raw)?raw:(raw.events||[]);}}catch(err){console.warn('Polymarket NFL tag lookup failed',err);}
-    if(!events.length){for(const q of ['NFL Player Props','NFL','National Football League']){try{const url=new URL('https://gamma-api.polymarket.com/search');url.searchParams.set('q',q);url.searchParams.set('limit_per_type','100');url.searchParams.set('keep_closed_markets','0');url.searchParams.set('search_profiles','false');const raw=await getJson(url);events.push(...(raw.events||[]));}catch(err){console.warn('Polymarket search failed',q,err);}}}
-    const unique=[...new Map(events.map(e=>[e.id||e.slug,e])).values()];
-    const now=Date.now()-6*60*60*1000,horizon=Date.now()+14*24*60*60*1000;
-    const games=unique.filter(e=>!e.closed&&e.active!==false&&!e.ended).map(normalizeEvent).filter(Boolean).filter(g=>{const t=Date.parse(g.commence_time);return !Number.isFinite(t)||(t>=now&&t<=horizon);}).sort((a,b)=>Date.parse(a.commence_time)-Date.parse(b.commence_time));
-    if(games.length)writeCache(games);return games;
-  }
-  function markSource(games){const note=document.querySelector('.source-note');if(note)note.textContent='Caesars = primary lines & props • Polymarket = filtered fallback lines & player props • ESPN/nflverse = context';const p=document.getElementById('polymarketStatus');if(p){const props=games.reduce((n,g)=>n+g.markets.filter(m=>m.player).length,0);p.textContent=games.length?`Active • ${props} props`:'Unavailable';}}
-  async function loadFallback(){
-    try{
-      setStatus('Loading quality-filtered Polymarket NFL lines & props…');const games=await fetchGames();if(!games.length)throw new Error('No quality NFL markets returned by Polymarket');
-      state.games=games;state.propsLoaded.clear();hydrateGames();markSource(games);
-      try{await Promise.all(games.map(g=>enrichGameContext(g)));}catch(err){console.warn('Polymarket prop roster enrichment skipped',err);}
-      const marketCount=games.reduce((n,g)=>n+g.markets.length,0),propCount=games.reduce((n,g)=>n+g.markets.filter(m=>m.player).length,0);
-      setStatus(`Polymarket fallback • ${games.length} NFL games • ${propCount} player props • ${marketCount} total markets`);await generate();
-      const title=document.getElementById('resultsTitle');if(title&&state.mode==='sgp')title.textContent=propCount?'Polymarket fallback • lines + player props':'Polymarket fallback • team markets';
-      window.NFL_PARLAY_DAILY_PICKS?.refresh?.();window.NFL_BANKROLL?.refresh?.();return true;
-    }catch(err){console.warn('Polymarket fallback unavailable',err);markSource([]);state.games=structuredClone(demoGames);hydrateGames();setStatus('Live sources unavailable — demo data active');await generate();return false;}
-  }
-  const originalLoadData=loadData;loadData=async function(){if(!state.apiKey)return loadFallback();await originalLoadData();const status=document.getElementById('dataStatus')?.textContent||'';if(/API unavailable|demo data active/i.test(status))return loadFallback();};
-  window.NFL_POLYMARKET_FALLBACK={load:loadFallback,fetchGames,clearCache:()=>{['nflParlayPolymarketFallback:v1','nflParlayPolymarketFallback:v2','nflParlayPolymarketFallback:v3',CACHE_KEY].forEach(k=>localStorage.removeItem(k));}};
-  ['nflParlayPolymarketFallback:v1','nflParlayPolymarketFallback:v2','nflParlayPolymarketFallback:v3'].forEach(k=>localStorage.removeItem(k));
-  if(!state.apiKey)loadFallback();
+  const CACHE_KEY='nflParlayPolymarketFallback:v5', CACHE_TTL=10*60*1000;
+  const NFL_TEAMS=[['Arizona Cardinals',['arizona cardinals','cardinals']],['Atlanta Falcons',['atlanta falcons','falcons']],['Baltimore Ravens',['baltimore ravens','ravens']],['Buffalo Bills',['buffalo bills','bills']],['Carolina Panthers',['carolina panthers','panthers']],['Chicago Bears',['chicago bears','bears']],['Cincinnati Bengals',['cincinnati bengals','bengals']],['Cleveland Browns',['cleveland browns','browns']],['Dallas Cowboys',['dallas cowboys','cowboys']],['Denver Broncos',['denver broncos','broncos']],['Detroit Lions',['detroit lions','lions']],['Green Bay Packers',['green bay packers','packers']],['Houston Texans',['houston texans','texans']],['Indianapolis Colts',['indianapolis colts','colts']],['Jacksonville Jaguars',['jacksonville jaguars','jaguars']],['Kansas City Chiefs',['kansas city chiefs','chiefs']],['Las Vegas Raiders',['las vegas raiders','raiders']],['Los Angeles Chargers',['los angeles chargers','chargers']],['Los Angeles Rams',['los angeles rams','rams']],['Miami Dolphins',['miami dolphins','dolphins']],['Minnesota Vikings',['minnesota vikings','vikings']],['New England Patriots',['new england patriots','patriots']],['New Orleans Saints',['new orleans saints','saints']],['New York Giants',['new york giants','giants']],['New York Jets',['new york jets','jets']],['Philadelphia Eagles',['philadelphia eagles','eagles']],['Pittsburgh Steelers',['pittsburgh steelers','steelers']],['San Francisco 49ers',['san francisco 49ers','49ers','niners']],['Seattle Seahawks',['seattle seahawks','seahawks']],['Tampa Bay Buccaneers',['tampa bay buccaneers','buccaneers','bucs']],['Tennessee Titans',['tennessee titans','titans']],['Washington Commanders',['washington commanders','commanders']]];
+  const STATS=[[/passing yards?/i,'passing','player_pass_yds','passing yards'],[/passing (?:touchdowns?|tds?)|touchdowns? thrown/i,'passing','player_pass_tds','passing TDs'],[/pass(?:ing)? attempts?/i,'passing','player_pass_attempts','pass attempts'],[/pass(?:ing)? completions?|completions?/i,'passing','player_pass_completions','completions'],[/rushing yards?/i,'rushing','player_rush_yds','rushing yards'],[/rush(?:ing)? attempts?|carries/i,'rushing','player_rush_attempts','rush attempts'],[/receiving yards?/i,'receiving','player_reception_yds','receiving yards'],[/receptions?|catches/i,'receiving','player_receptions','receptions'],[/anytime (?:touchdown|td)|score(?:s| a| an)? touchdown|touchdown scorer/i,'td','player_anytime_td','anytime TD']];
+  const arr=v=>{if(Array.isArray(v))return v;try{return JSON.parse(v)||[]}catch{return[]}}, num=(...v)=>{for(const x of v){const n=Number(x);if(Number.isFinite(n))return n}return 0};
+  const american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);
+  function findTeams(text=''){const s=String(text).toLowerCase();return NFL_TEAMS.filter(([,a])=>a.some(x=>s.includes(x))).map(x=>x[0]);}
+  function pairs(m){const o=arr(m.outcomes),p=arr(m.outcomePrices).map(Number);return o.map((name,i)=>({name:String(name),prob:p[i]})).filter(x=>x.prob>0&&x.prob<1)}
+  function quality(m,p){let q=55,l=num(m.liquidityNum,m.liquidity,m.liquidityClob),v=num(m.volumeNum,m.volume,m.volume24hr);if(p>=.15&&p<=.85)q+=8;if(l>=500)q+=5;if(l>=2500)q+=5;if(v>=1000)q+=5;if(v>=5000)q+=5;const b=num(m.bestBid),a=num(m.bestAsk);if(b&&a&&a-b<=.07)q+=6;if(m.acceptingOrders===false)q-=15;return Math.max(0,Math.min(100,q))}
+  function add(g,leg,m){if(!leg||!Number.isFinite(leg.price))return;const q=quality(m,leg.prob);if(q<40)return;leg={...leg,source:'Polymarket',confidence:Math.round(leg.prob*100),polymarketProbability:leg.prob,sourceQuality:q,liquidity:num(m.liquidityNum,m.liquidity),volume:num(m.volumeNum,m.volume)};const k=x=>[x.marketKey||x.type,x.player||x.team,x.side||'',x.point??''].join('|');const i=g.markets.findIndex(x=>k(x)===k(leg));if(i<0)g.markets.push(leg);else if((g.markets[i].sourceQuality||0)<q)g.markets[i]=leg;}
+  function prop(m){const text=[m.question,m.groupItemTitle,m.title,m.description,m.rules,m.slug].filter(Boolean).join(' '),hit=STATS.find(x=>x[0].test(text));if(!hit)return[];const normalized=window.NFL_POLYMARKET_PROP_NORMALIZER?.extractProp?.(text);let player=normalized?.player,point=normalized?.point,side=normalized?.side||(/under|less than|fewer than/i.test(text)?'under':'over');if(!player){const z=text.match(/(?:will\s+)?([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s+(?:over|under|to record|records?|have|has)/i);player=z?.[1]}if(point==null){const z=text.match(/(?:over|under|more than|less than|at least|fewer than)[^0-9]*(\d+(?:\.\d+)?)/i);point=z?Number(z[1]):null}if(!player)return[];const ps=pairs(m),map=new Map(ps.map(x=>[x.name.toLowerCase(),x])),out=[];const emit=(s,p)=>{if(!p)return;out.push({type:hit[1],marketKey:hit[2],player,name:hit[1]==='td'?`${player} anytime TD`:`${player} ${s==='over'?'Over':'Under'} ${point} ${hit[3]}`,team:'Player',price:american(p.prob),prob:p.prob,side:hit[1]==='td'?'yes':s,point})};if(hit[1]==='td'){emit('yes',map.get('yes')||map.get('over'));return out}if(map.get('over')||map.get('under')){emit('over',map.get('over'));emit('under',map.get('under'));return out}if(map.get('yes')){emit(side,map.get('yes'));emit(side==='over'?'under':'over',map.get('no'));}return out;}
+  function baseEvent(e){const text=[e.title,e.subtitle,e.slug,e.description].filter(Boolean).join(' '),teams=[...new Set(findTeams(text))];if(teams.length!==2)return null;return{id:'demo-poly-'+e.id,away:teams[0],home:teams[1],commence_time:e.startTime||e.eventDate||e.startDate||new Date().toISOString(),markets:[],dataSource:'Polymarket',polymarketEvent:e.slug||e.id}}
+  function teamMarkets(e,g){for(const m of e.markets||[]){if(m.closed||m.active===false)continue;const text=[m.question,m.groupItemTitle,m.slug].filter(Boolean).join(' '),ps=pairs(m),yes=ps.find(x=>/^yes$/i.test(x.name)),no=ps.find(x=>/^no$/i.test(x.name));const direct=ps.filter(p=>findTeams(p.name).some(t=>[g.away,g.home].includes(t)));if(direct.length>=2){for(const p of direct){const t=findTeams(p.name).find(x=>[g.away,g.home].includes(x));add(g,{type:'h2h',name:t+' ML',team:t,price:american(p.prob),prob:p.prob},m)}continue}const mentioned=findTeams(text).find(x=>[g.away,g.home].includes(x)),other=mentioned?[g.away,g.home].find(x=>x!==mentioned):null;if(yes&&mentioned&&/win|winner|moneyline|beat/i.test(text)){add(g,{type:'h2h',name:mentioned+' ML',team:mentioned,price:american(yes.prob),prob:yes.prob},m);if(no&&other)add(g,{type:'h2h',name:other+' ML',team:other,price:american(no.prob),prob:no.prob},m)}}}
+  async function json(url){const r=await fetch(url);if(!r.ok)throw Error('Polymarket '+r.status);return r.json()}
+  async function searchEvents(q){const u=new URL('https://gamma-api.polymarket.com/search');u.searchParams.set('q',q);u.searchParams.set('limit_per_type','100');u.searchParams.set('keep_closed_markets','0');u.searchParams.set('search_profiles','false');const r=await json(u);return r.events||[]}
+  async function fetchGames(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c?.time&&Date.now()-c.time<CACHE_TTL&&c.games?.length)return c.games}catch{}let events=[];try{const tag=await json('https://gamma-api.polymarket.com/tags/slug/nfl');if(tag?.id){const u=new URL('https://gamma-api.polymarket.com/events');u.searchParams.set('tag_id',tag.id);u.searchParams.set('active','true');u.searchParams.set('closed','false');u.searchParams.set('limit','200');const r=await json(u);events.push(...(Array.isArray(r)?r:r.events||[]))}}catch(e){console.warn(e)}
+    // Props are separate Polymarket events/groups, so always search for them even when NFL-tag games were found.
+    for(const q of ['NFL Player Props','NFL passing yards','NFL rushing yards','NFL receiving yards','NFL receptions','NFL touchdown scorer']){try{events.push(...await searchEvents(q))}catch(e){console.warn('Polymarket prop search failed',q,e)}}
+    events=[...new Map(events.map(e=>[e.id||e.slug,e])).values()].filter(e=>!e.closed&&e.active!==false&&!e.ended);const games=new Map();for(const e of events){const g=baseEvent(e);if(g){if(!games.has(g.away+'|'+g.home))games.set(g.away+'|'+g.home,g);teamMarkets(e,games.get(g.away+'|'+g.home));}}
+    // Attach prop-only events to a matchup using team names from event/market metadata.
+    for(const e of events){for(const m of e.markets||[]){const legs=prop(m);if(!legs.length)continue;const text=[e.title,e.subtitle,e.slug,e.description,m.question,m.groupItemTitle,m.description,m.slug].filter(Boolean).join(' '),teams=[...new Set(findTeams(text))];let g;if(teams.length>=2){g=games.get(teams[0]+'|'+teams[1])||games.get(teams[1]+'|'+teams[0]);if(!g){g={id:'demo-poly-prop-'+e.id,away:teams[0],home:teams[1],commence_time:e.startTime||e.startDate||m.gameStartTime||new Date().toISOString(),markets:[],dataSource:'Polymarket',polymarketEvent:e.slug||e.id};games.set(g.away+'|'+g.home,g)}}else if(games.size===1)g=[...games.values()][0];if(g)for(const leg of legs)add(g,leg,m)}}
+    const now=Date.now()-6*3600000,horizon=Date.now()+14*86400000,result=[...games.values()].filter(g=>g.markets.length).filter(g=>{const t=Date.parse(g.commence_time);return !Number.isFinite(t)||(t>=now&&t<=horizon)}).sort((a,b)=>Date.parse(a.commence_time)-Date.parse(b.commence_time));if(result.length)try{localStorage.setItem(CACHE_KEY,JSON.stringify({time:Date.now(),games:result}))}catch{}return result;}
+  function mark(games){const p=document.getElementById('polymarketStatus'),props=games.reduce((n,g)=>n+g.markets.filter(m=>m.player).length,0);if(p)p.textContent=games.length?`Active • ${props} props`:'Unavailable';return props}
+  async function loadFallback(){try{setStatus('Loading Polymarket NFL lines & player props…');const games=await fetchGames();if(!games.length)throw Error('No usable NFL markets');state.games=games;state.propsLoaded.clear();hydrateGames();const props=mark(games);try{await Promise.all(games.map(g=>enrichGameContext(g)))}catch{}const total=games.reduce((n,g)=>n+g.markets.length,0);setStatus(`Polymarket fallback • ${games.length} NFL games • ${props} player props • ${total} total markets`);await generate();window.NFL_PARLAY_DAILY_PICKS?.refresh?.();window.NFL_BANKROLL?.refresh?.();return true}catch(e){console.warn('Polymarket fallback unavailable',e);mark([]);state.games=structuredClone(demoGames);hydrateGames();setStatus('Live sources unavailable — demo data active');await generate();return false}}
+  const originalLoadData=loadData;loadData=async function(){if(!state.apiKey)return loadFallback();await originalLoadData();if(/API unavailable|demo data active/i.test(document.getElementById('dataStatus')?.textContent||''))return loadFallback()};window.NFL_POLYMARKET_FALLBACK={load:loadFallback,fetchGames,clearCache:()=>{for(const k of Object.keys(localStorage))if(k.startsWith('nflParlayPolymarketFallback:'))localStorage.removeItem(k)}};for(const k of Object.keys(localStorage))if(k.startsWith('nflParlayPolymarketFallback:')&&k!==CACHE_KEY)localStorage.removeItem(k);if(!state.apiKey)loadFallback();
 })();
