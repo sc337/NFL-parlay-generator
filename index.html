@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260911-0822" />
+  <link rel="stylesheet" href="styles.css?v=20260913-0824" />
 </head>
 <body>
   <div class="shell">
@@ -63,6 +63,44 @@
         <span>nflverse <b id="nflverseStatus">Idle</b></span>
       </div>
       <div class="source-note">Caesars = lines & props • ESPN = current roster context • nflverse = open roster/analytics fallback</div>
+    </section>
+
+    <section class="daily-picks-section">
+      <div class="daily-picks-head">
+        <div>
+          <p class="label">BEST BETS</p>
+          <h2>Picks of the Day</h2>
+          <p id="dailyCoverage" class="daily-coverage">Scanning slate…</p>
+        </div>
+        <button id="refreshDailyPicksBtn" type="button" class="cache-btn">Refresh picks</button>
+      </div>
+      <div class="daily-picks-grid">
+        <article id="dailyPropCard" class="daily-pick-card">
+          <div class="daily-pick-top">
+            <div>
+              <span class="daily-pick-label">PLAYER PROP OF THE DAY</span>
+              <h3 class="daily-pick-title">Scanning…</h3>
+            </div>
+            <div class="daily-pick-odds">—</div>
+          </div>
+          <div class="daily-pick-game">Loading Caesars player props</div>
+          <p class="daily-pick-reason">Evaluating the strongest standalone player-prop fit.</p>
+          <span class="daily-pick-grade">SCANNING</span>
+        </article>
+
+        <article id="dailyTeamCard" class="daily-pick-card">
+          <div class="daily-pick-top">
+            <div>
+              <span class="daily-pick-label">TEAM LINE / ML OF THE DAY</span>
+              <h3 class="daily-pick-title">Scanning…</h3>
+            </div>
+            <div class="daily-pick-odds">—</div>
+          </div>
+          <div class="daily-pick-game">Loading Caesars team lines</div>
+          <p class="daily-pick-reason">Evaluating the strongest standalone moneyline or spread fit.</p>
+          <span class="daily-pick-grade">SCANNING</span>
+        </article>
+      </div>
     </section>
 
     <nav class="mode-tabs" aria-label="Parlay type">
@@ -165,8 +203,9 @@
     </article>
   </template>
 
-  <script src="sportsbook-caesars.js?v=20260911-0822"></script>
-  <script src="api-saver.js?v=20260911-0822"></script>
-  <script src="app.js?v=20260911-0822"></script>
+  <script src="sportsbook-caesars.js?v=20260913-0824"></script>
+  <script src="api-saver.js?v=20260913-0824"></script>
+  <script src="app.js?v=20260913-0824"></script>
+  <script src="daily-picks.js?v=20260913-0824"></script>
 </body>
 </html>
