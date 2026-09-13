@@ -62,98 +62,83 @@ def matchup(m):
     e=str(m.get('event_ticker') or '').upper()
     mm=re.search(r'-\d{2}[A-Z]{3}\d{2}([A-Z]+)$',e)
     if not mm:return None
-    tail=mm.group(1)
-    pairs=[]
+    tail=mm.group(1);pairs=[]
     for a,an in ALL_CODES.items():
         for b,bn in ALL_CODES.items():
-            if a==b:continue
-            if a+b==tail:pairs.append((a,b,an,bn))
+            if a!=b and a+b==tail:pairs.append((a,b,an,bn))
     if not pairs:return None
-    # Prefer canonical NFL abbreviations over aliases.
     pairs.sort(key=lambda x:(x[0] not in TEAM_CODES)+(x[1] not in TEAM_CODES))
     a,b,an,bn=pairs[0]
     return {'codes':(a,b),'teams':(an,bn),'key':'|'.join(sorted((an,bn)))}
 
+def kickoff_from_ticker(m):
+    # Kalshi NFL event tickers encode the scheduled game date, e.g. KXNFLGAME-26SEP13BUFHOU.
+    # Use noon UTC only as a date fallback; the browser applies the exact commence_time when available.
+    e=str(m.get('event_ticker') or '').upper()
+    mm=re.search(r'-(\d{2})([A-Z]{3})(\d{2})[A-Z]+$',e)
+    if not mm:return None
+    try:return datetime.strptime('20'+mm.group(1)+mm.group(2)+mm.group(3),'%Y%b%d').replace(tzinfo=timezone.utc)
+    except:return None
+
 def game_obj(info,m,now):
-    return {'id':'kalshi-'+re.sub(r'[^a-z0-9]+','-',info['key'].lower()).strip('-'),'away':info['teams'][0],'home':info['teams'][1],'commence_time':m.get('close_time') or m.get('expected_expiration_time') or now.isoformat(),'markets':[],'dataSource':'Kalshi','_candidates':{'totals':[],'spreads':[],'props':{}}}
+    kickoff=m.get('expected_expiration_time') or m.get('close_time')
+    return {'id':'kalshi-'+re.sub(r'[^a-z0-9]+','-',info['key'].lower()).strip('-'),'away':info['teams'][0],'home':info['teams'][1],'commence_time':kickoff or now.isoformat(),'markets':[],'dataSource':'Kalshi','_candidates':{'totals':[],'spreads':[],'props':{}}}
 
-def add_leg(g,leg):
-    g['markets'].append(leg)
-
+def add_leg(g,leg):g['markets'].append(leg)
 def base_leg(m,p):return {'price':american(p),'prob':p,'source':'Kalshi','sourceQuality':quality(m,p)}
 
 def parse_moneyline(m,g,info):
     p=prob(m)
     if p is None:return
-    suffix=str(m.get('ticker') or '').upper().rsplit('-',1)[-1]
-    team=None
+    suffix=str(m.get('ticker') or '').upper().rsplit('-',1)[-1];team=None
     for code,name in ALL_CODES.items():
         if suffix==code:team=name;break
-    if team not in info['teams']:return
-    add_leg(g,{'type':'h2h','marketKey':'h2h','name':team+' ML','team':team,**base_leg(m,p)})
+    if team in info['teams']:add_leg(g,{'type':'h2h','marketKey':'h2h','name':team+' ML','team':team,**base_leg(m,p)})
 
 def parse_total(m,g):
-    p=prob(m);title=str(m.get('title') or '')
-    mm=re.search(r'over\s+(\d+(?:\.\d+)?)\s+points',title,re.I)
-    if p is None or not mm:return
-    pt=float(mm.group(1));g['_candidates']['totals'].append((abs(p-.5),pt,m,p))
+    p=prob(m);mm=re.search(r'over\s+(\d+(?:\.\d+)?)\s+points',str(m.get('title') or ''),re.I)
+    if p is not None and mm:g['_candidates']['totals'].append((abs(p-.5),float(mm.group(1)),m,p))
 
 def parse_spread(m,g,info):
-    p=prob(m);title=str(m.get('title') or '')
-    mm=re.search(r'(.+?)\s+wins by over\s+(\d+(?:\.\d+)?)\s+points',title,re.I)
+    p=prob(m);mm=re.search(r'(.+?)\s+wins by over\s+(\d+(?:\.\d+)?)\s+points',str(m.get('title') or ''),re.I)
     if p is None or not mm:return
-    suffix=str(m.get('ticker') or '').upper().rsplit('-',1)[-1]
-    code=None
+    suffix=str(m.get('ticker') or '').upper().rsplit('-',1)[-1];code=None
     for c in info['codes']:
         if suffix.startswith(c):code=c;break
     if code is None:
         for c in ALL_CODES:
             if suffix.startswith(c) and ALL_CODES[c] in info['teams']:code=c;break
     if code is None:return
-    team=ALL_CODES[code];other=info['teams'][0] if info['teams'][1]==team else info['teams'][1]
-    line=float(mm.group(2));g['_candidates']['spreads'].append((abs(p-.5),line,team,other,m,p))
+    team=ALL_CODES[code];other=info['teams'][0] if info['teams'][1]==team else info['teams'][1];line=float(mm.group(2))
+    g['_candidates']['spreads'].append((abs(p-.5),line,team,other,m,p))
 
 def parse_prop(m,g,series):
     p=prob(m);title=str(m.get('title') or '')
     if p is None:return
     if series=='KXNFLTD':
         mm=re.match(r'^(.+?):\s*(\d+)\+\s+touchdowns?$',title,re.I)
-        if not mm or int(mm.group(2))!=1:return
-        player=mm.group(1).strip()
-        add_leg(g,{'type':'td','marketKey':'player_anytime_td','player':player,'team':'Player','side':'yes','name':player+' anytime TD',**base_leg(m,p)})
+        if mm and int(mm.group(2))==1:
+            player=mm.group(1).strip();add_leg(g,{'type':'td','marketKey':'player_anytime_td','player':player,'team':'Player','side':'yes','name':player+' anytime TD',**base_leg(m,p)})
         return
     maps={'KXNFLRECYDS':('receiving','player_reception_yds','receiving yards'),'KXNFLRUSHYDS':('rushing','player_rush_yds','rushing yards'),'KXNFLPASSYDS':('passing','player_pass_yds','passing yards'),'KXNFLRECEPTIONS':('receiving','player_receptions','receptions')}
     if series not in maps:return
-    typ,key,label=maps[series]
-    mm=re.match(r'^(.+?):\s*(\d+(?:\.\d+)?)\+\s+'+re.escape(label)+r'$',title,re.I)
+    typ,key,label=maps[series];mm=re.match(r'^(.+?):\s*(\d+(?:\.\d+)?)\+\s+'+re.escape(label)+r'$',title,re.I)
     if not mm:return
     player=mm.group(1).strip();threshold=float(mm.group(2));line=max(.5,threshold-.5)
-    k=(player,key)
-    g['_candidates']['props'].setdefault(k,[]).append((abs(p-.5),line,m,p,typ,label))
+    g['_candidates']['props'].setdefault((player,key),[]).append((abs(p-.5),line,m,p,typ,label))
 
 def finalize(g):
-    # Main total = binary threshold closest to 50/50. No side is exact complement at half-point lines.
-    totals=g['_candidates']['totals']
-    if totals:
-        _,pt,m,p=min(totals,key=lambda x:x[0])
-        add_leg(g,{'type':'totals','marketKey':'totals','name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)})
-        q=1-p;add_leg(g,{'type':'totals','marketKey':'totals','name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,q)})
-    spreads=g['_candidates']['spreads']
-    if spreads:
-        _,line,team,other,m,p=min(spreads,key=lambda x:x[0])
-        add_leg(g,{'type':'spreads','marketKey':'spreads','name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)})
-        q=1-p;add_leg(g,{'type':'spreads','marketKey':'spreads','name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,q)})
+    if g['_candidates']['totals']:
+        _,pt,m,p=min(g['_candidates']['totals'],key=lambda x:x[0]);add_leg(g,{'type':'totals','marketKey':'totals','name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)});q=1-p;add_leg(g,{'type':'totals','marketKey':'totals','name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,q)})
+    if g['_candidates']['spreads']:
+        _,line,team,other,m,p=min(g['_candidates']['spreads'],key=lambda x:x[0]);add_leg(g,{'type':'spreads','marketKey':'spreads','name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)});q=1-p;add_leg(g,{'type':'spreads','marketKey':'spreads','name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,q)})
     for (player,key),rows in g['_candidates']['props'].items():
-        _,line,m,p,typ,label=min(rows,key=lambda x:x[0])
-        add_leg(g,{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)})
-        q=1-p;add_leg(g,{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,q)})
-    g.pop('_candidates',None)
-    seen=set();out=[]
+        _,line,m,p,typ,label=min(rows,key=lambda x:x[0]);add_leg(g,{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)});q=1-p;add_leg(g,{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,q)})
+    g.pop('_candidates',None);seen=set();out=[]
     for x in g['markets']:
         k=(x.get('marketKey'),x.get('player') or x.get('team'),x.get('side'),x.get('point'))
         if k not in seen:seen.add(k);out.append(x)
-    g['markets']=out
-    return g
+    g['markets']=out;return g
 
 def main():
     now=datetime.now(timezone.utc);limit=now+timedelta(days=14);games={};series_counts={}
@@ -162,11 +147,12 @@ def main():
         for m in ms:
             info=matchup(m)
             if not info:continue
-            close=m.get('close_time') or m.get('expected_expiration_time')
+            # Never ingest a market whose actual Kalshi close/expiration time has passed.
+            raw_time=m.get('expected_expiration_time') or m.get('close_time')
             try:
-                dt=datetime.fromisoformat(str(close).replace('Z','+00:00')) if close else now
-                if dt<now-timedelta(hours=8) or dt>limit:continue
-            except:pass
+                dt=datetime.fromisoformat(str(raw_time).replace('Z','+00:00')) if raw_time else kickoff_from_ticker(m)
+                if dt and (dt<=now or dt>limit):continue
+            except:continue
             g=games.setdefault(info['key'],game_obj(info,m,now))
             if series=='KXNFLGAME':parse_moneyline(m,g,info)
             elif series=='KXNFLTOTAL':parse_total(m,g)
@@ -175,10 +161,14 @@ def main():
     out=[]
     for g in games.values():
         g=finalize(g)
+        # Final server-side guard: never publish a game at/after its commence time.
+        try:
+            if datetime.fromisoformat(str(g['commence_time']).replace('Z','+00:00'))<=now:continue
+        except:continue
         if g['markets']:out.append(g)
     out.sort(key=lambda g:g.get('commence_time') or '')
     payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(series_counts.values()),'series_counts':series_counts}
     Path('data').mkdir(exist_ok=True);Path('data/kalshi-nfl.json').write_text(json.dumps(payload,separators=(',',':')))
-    print('wrote',len(out),'games',sum(len(g['markets']) for g in out),'markets')
+    print('wrote',len(out),'future games',sum(len(g['markets']) for g in out),'markets')
 
 if __name__=='__main__':main()
