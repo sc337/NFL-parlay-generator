@@ -11,8 +11,14 @@
       if(!res.ok) throw new Error('Snapshot HTTP '+res.status);
       const data=await res.json();
       const games=Array.isArray(data.games)?data.games:[];
+      if(!games.length && !data.updated_at){
+        diag({source:'Kalshi snapshot',url:SNAPSHOT,status:202,ok:true,count:0,ms:Math.round(performance.now()-started),note:'awaiting first GitHub Actions refresh'});
+        if(status)status.textContent='Initializing';
+        setStatus('Kalshi feed initializing — first server refresh pending');
+        return false;
+      }
       diag({source:'Kalshi snapshot',url:SNAPSHOT,status:res.status,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:data.updated_at||'snapshot'});
-      if(!games.length) throw new Error('Kalshi snapshot has no usable NFL markets yet');
+      if(!games.length) throw new Error('Kalshi snapshot has no usable NFL markets');
       state.games=games;
       state.propsLoaded?.clear?.();
       hydrateGames();
