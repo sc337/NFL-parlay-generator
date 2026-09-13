@@ -1,78 +1,28 @@
 (() => {
-  const BASE='https://api.elections.kalshi.com/trade-api/v2/markets';
-  const CACHE_KEY='nflParlayKalshi:v1';
-  const TTL=5*60*1000;
+  const HOSTS=['https://api.elections.kalshi.com/trade-api/v2','https://external-api.kalshi.com/trade-api/v2'];
+  const SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLPASSYDS','KXNFLRUSHYDS','KXNFLRECYDS','KXNFLRECEPTIONS','KXNFLTD'];
+  const CACHE_KEY='nflParlayKalshi:v2',TTL=5*60*1000;
   const TEAM_CODES={ARI:'Arizona Cardinals',ATL:'Atlanta Falcons',BAL:'Baltimore Ravens',BUF:'Buffalo Bills',CAR:'Carolina Panthers',CHI:'Chicago Bears',CIN:'Cincinnati Bengals',CLE:'Cleveland Browns',DAL:'Dallas Cowboys',DEN:'Denver Broncos',DET:'Detroit Lions',GB:'Green Bay Packers',HOU:'Houston Texans',IND:'Indianapolis Colts',JAX:'Jacksonville Jaguars',KC:'Kansas City Chiefs',LV:'Las Vegas Raiders',LAC:'Los Angeles Chargers',LAR:'Los Angeles Rams',MIA:'Miami Dolphins',MIN:'Minnesota Vikings',NE:'New England Patriots',NO:'New Orleans Saints',NYG:'New York Giants',NYJ:'New York Jets',PHI:'Philadelphia Eagles',PIT:'Pittsburgh Steelers',SEA:'Seattle Seahawks',SF:'San Francisco 49ers',TB:'Tampa Bay Buccaneers',TEN:'Tennessee Titans',WAS:'Washington Commanders'};
-  const codes=Object.keys(TEAM_CODES).sort((a,b)=>b.length-a.length);
-  const diag=d=>window.NFL_DIAGNOSTICS?.add?.(d);
-  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-  const american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);
-  const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
-
-  function price(m,side='yes'){
-    const bid=num(m[side+'_bid_dollars']),ask=num(m[side+'_ask_dollars']),last=num(m.last_price_dollars);
-    if(bid>0&&ask>0&&ask>=bid) return clamp((bid+ask)/2,.01,.99);
-    if(side==='yes'&&last>0&&last<1) return last;
-    if(side==='no'&&last>0&&last<1) return 1-last;
-    if(bid>0&&bid<1) return bid;
-    if(ask>0&&ask<1) return ask;
-    const otherBid=num(m[(side==='yes'?'no':'yes')+'_bid_dollars']);
-    if(otherBid>0&&otherBid<1) return clamp(1-otherBid,.01,.99);
-    return null;
-  }
-  function matchup(m){
-    const e=String(m.event_ticker||m.ticker||'');
-    const seg=e.split('-').find(x=>/^\d{2}[A-Z]{3}\d{2}[A-Z]{4,6}$/.test(x))||e.split('-')[1]||'';
-    const suffix=seg.replace(/^\d{2}[A-Z]{3}\d{2}/,'');
-    for(const a of codes)for(const b of codes){if(a!==b&&a+b===suffix)return [TEAM_CODES[a],TEAM_CODES[b]]}
-    return null;
-  }
-  function gameKey(teams){return [...teams].sort().join('|')}
-  function text(m){return [m.title,m.yes_sub_title,m.no_sub_title,m.subtitle,m.rules_primary].filter(Boolean).join(' ')}
-  function teamFromText(s,teams){return teams.find(t=>s.toLowerCase().includes(t.toLowerCase())||s.toLowerCase().includes(t.split(' ').at(-1).toLowerCase()))||null}
-  function quality(m,p){let q=58;const vol=num(m.volume_24h_fp||m.volume_fp),liq=num(m.liquidity_dollars);if(vol>=25)q+=4;if(vol>=100)q+=5;if(vol>=500)q+=5;if(liq>=50)q+=4;if(p>=.2&&p<=.8)q+=5;return clamp(q,45,90)}
+  const codes=Object.keys(TEAM_CODES).sort((a,b)=>b.length-a.length),diag=d=>window.NFL_DIAGNOSTICS?.add?.(d),clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p),num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
+  function price(m,side='yes'){const bid=num(m[side+'_bid_dollars']),ask=num(m[side+'_ask_dollars']),last=num(m.last_price_dollars);if(bid>0&&ask>0&&ask>=bid)return clamp((bid+ask)/2,.01,.99);if(side==='yes'&&last>0&&last<1)return last;if(side==='no'&&last>0&&last<1)return 1-last;if(bid>0&&bid<1)return bid;if(ask>0&&ask<1)return ask;const ob=num(m[(side==='yes'?'no':'yes')+'_bid_dollars']);return ob>0&&ob<1?clamp(1-ob,.01,.99):null}
+  function matchup(m){const e=String(m.event_ticker||m.ticker||''),seg=e.split('-').find(x=>/^\d{2}[A-Z]{3}\d{2}[A-Z]{4,6}$/.test(x))||e.split('-')[1]||'',suffix=seg.replace(/^\d{2}[A-Z]{3}\d{2}/,'');for(const a of codes)for(const b of codes)if(a!==b&&a+b===suffix)return[TEAM_CODES[a],TEAM_CODES[b]];return null}
+  const gameKey=t=>[...t].sort().join('|'),text=m=>[m.title,m.yes_sub_title,m.no_sub_title,m.subtitle,m.rules_primary].filter(Boolean).join(' ');
+  function teamFromText(s,teams){s=s.toLowerCase();return teams.find(t=>s.includes(t.toLowerCase())||s.includes(t.split(' ').at(-1).toLowerCase()))||null}
+  function quality(m,p){let q=58,vol=num(m.volume_24h_fp||m.volume_fp),liq=num(m.liquidity_dollars);if(vol>=25)q+=4;if(vol>=100)q+=5;if(vol>=500)q+=5;if(liq>=50)q+=4;if(p>=.2&&p<=.8)q+=5;return clamp(q,45,90)}
   function add(g,leg,m,p){if(!leg||p==null||!Number.isFinite(p))return;leg={...leg,price:american(p),confidence:Math.round(p*100),source:'Kalshi',sourceQuality:quality(m,p),kalshiProbability:p};const k=x=>[x.marketKey||x.type,x.player||x.team,x.side||'',x.point??'',x.name].join('|');if(!g.markets.some(x=>k(x)===k(leg)))g.markets.push(leg)}
-  function parseThreshold(s){const m=String(s).match(/(\d+(?:\.\d+)?)\s*\+|over\s+(\d+(?:\.\d+)?)/i);return m?Number(m[1]||m[2]):null}
-  function playerName(s){const x=String(s).match(/(?:yes\s+)?([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s*:\s*\d+(?:\.\d+)?\+|(?:will\s+)?([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s+(?:record|have|score)/);return (x?.[1]||x?.[2]||'').trim()}
-  function parseMarket(m,g){
-    const t=text(m),tick=String(m.ticker||m.event_ticker||'').toUpperCase(),yp=price(m,'yes'),np=price(m,'no');
-    if(tick.startsWith('KXNFLGAME')){
-      const tm=teamFromText(t,g.teams);if(tm&&yp!=null)add(g,{type:'h2h',marketKey:'h2h',name:tm+' ML',team:tm},m,yp);return;
-    }
-    if(tick.startsWith('KXNFLSPREAD')){
-      const tm=teamFromText(t,g.teams),mm=t.match(/(?:over|more than)\s+(\d+(?:\.\d+)?)\s+points?/i);if(tm&&mm){const line=Number(mm[1]);if(yp!=null)add(g,{type:'spreads',marketKey:'spreads',name:`${tm} -${line}`,team:tm,point:-line},m,yp);if(np!=null){const other=g.teams.find(x=>x!==tm);if(other)add(g,{type:'spreads',marketKey:'spreads',name:`${other} +${line}`,team:other,point:line},m,np)}}return;
-    }
-    if(tick.startsWith('KXNFLTOTAL')){
-      const mm=t.match(/Over\s+(\d+(?:\.\d+)?)\s+points?/i);if(mm){const line=Number(mm[1]);if(yp!=null)add(g,{type:'totals',marketKey:'totals',name:`Over ${line}`,team:'Game',side:'over',point:line},m,yp);if(np!=null)add(g,{type:'totals',marketKey:'totals',name:`Under ${line}`,team:'Game',side:'under',point:line},m,np)}return;
-    }
-    const propMap=[['KXNFLPASSYDS','passing','player_pass_yds','passing yards'],['KXNFLRUSHYDS','rushing','player_rush_yds','rushing yards'],['KXNFLRECYDS','receiving','player_reception_yds','receiving yards'],['KXNFLRECEPTIONS','receiving','player_receptions','receptions']];
-    const hit=propMap.find(x=>tick.startsWith(x[0]));
-    if(hit){const p=playerName(t),th=parseThreshold(t);if(p&&th!=null&&yp!=null)add(g,{type:hit[1],marketKey:hit[2],player:p,team:'Player',name:`${p} ${th}+ ${hit[3]}`,side:'over',point:th},m,yp);return;}
+  const parseThreshold=s=>{const m=String(s).match(/(\d+(?:\.\d+)?)\s*\+|over\s+(\d+(?:\.\d+)?)/i);return m?Number(m[1]||m[2]):null};
+  function playerName(s){const x=String(s).match(/(?:yes\s+)?([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s*:\s*\d+(?:\.\d+)?\+|(?:will\s+)?([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+){1,3})\s+(?:record|have|score)/);return(x?.[1]||x?.[2]||'').trim()}
+  function parseMarket(m,g){const t=text(m),tick=String(m.ticker||m.event_ticker||'').toUpperCase(),yp=price(m,'yes'),np=price(m,'no');
+    if(tick.startsWith('KXNFLGAME')){const tm=teamFromText(t,g.teams);if(tm&&yp!=null)add(g,{type:'h2h',marketKey:'h2h',name:tm+' ML',team:tm},m,yp);return}
+    if(tick.startsWith('KXNFLSPREAD')){const tm=teamFromText(t,g.teams),mm=t.match(/(?:over|more than)\s+(\d+(?:\.\d+)?)\s+points?/i);if(tm&&mm){const line=Number(mm[1]);if(yp!=null)add(g,{type:'spreads',marketKey:'spreads',name:`${tm} -${line}`,team:tm,point:-line},m,yp);if(np!=null){const other=g.teams.find(x=>x!==tm);if(other)add(g,{type:'spreads',marketKey:'spreads',name:`${other} +${line}`,team:other,point:line},m,np)}}return}
+    if(tick.startsWith('KXNFLTOTAL')){const mm=t.match(/Over\s+(\d+(?:\.\d+)?)\s+points?/i);if(mm){const line=Number(mm[1]);if(yp!=null)add(g,{type:'totals',marketKey:'totals',name:`Over ${line}`,team:'Game',side:'over',point:line},m,yp);if(np!=null)add(g,{type:'totals',marketKey:'totals',name:`Under ${line}`,team:'Game',side:'under',point:line},m,np)}return}
+    const propMap=[['KXNFLPASSYDS','passing','player_pass_yds','passing yards'],['KXNFLRUSHYDS','rushing','player_rush_yds','rushing yards'],['KXNFLRECYDS','receiving','player_reception_yds','receiving yards'],['KXNFLRECEPTIONS','receiving','player_receptions','receptions']],hit=propMap.find(x=>tick.startsWith(x[0]));
+    if(hit){const p=playerName(t),th=parseThreshold(t);if(p&&th!=null&&yp!=null)add(g,{type:hit[1],marketKey:hit[2],player:p,team:'Player',name:`${p} ${th}+ ${hit[3]}`,side:'over',point:th},m,yp);return}
     if(tick.startsWith('KXNFLTD')){const p=playerName(t);if(p&&yp!=null)add(g,{type:'td',marketKey:'player_anytime_td',player:p,team:'Player',name:`${p} anytime TD`,side:'yes'},m,yp)}
-  }
-  async function fetchMarkets(){
-    try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c?.time&&Date.now()-c.time<TTL&&Array.isArray(c.markets)){diag({source:'Kalshi',url:'local://cache',status:200,ok:true,count:c.markets.length,ms:0,note:'cache hit'});return c.markets}}catch{}
-    const u=new URL(BASE);u.searchParams.set('status','open');u.searchParams.set('limit','1000');u.searchParams.set('mve_filter','exclude');
-    const st=performance.now(),r=await fetch(u);if(!r.ok)throw new Error('Kalshi HTTP '+r.status);const j=await r.json(),all=j.markets||[],markets=all.filter(m=>String(m.ticker||'').startsWith('KXNFL'));
-    diag({source:'Kalshi',url:String(u),status:r.status,ok:true,count:markets.length,ms:Math.round(performance.now()-st),note:`${all.length} open markets scanned`});
-    try{localStorage.setItem(CACHE_KEY,JSON.stringify({time:Date.now(),markets}))}catch{}
-    return markets;
-  }
-  async function load(){
-    const status=document.getElementById('kalshiStatus');if(status)status.textContent='Checking…';
-    try{
-      const markets=await fetchMarkets();if(!markets.length)throw new Error('No open Kalshi NFL markets');
-      const map=new Map();
-      for(const m of markets){const teams=matchup(m);if(!teams)continue;const k=gameKey(teams);if(!map.has(k))map.set(k,{id:'kalshi-'+k.replace(/[^a-z0-9]/gi,'-').toLowerCase(),away:teams[0],home:teams[1],teams,commence_time:m.expected_expiration_time||m.close_time||new Date().toISOString(),markets:[],dataSource:'Kalshi'});parseMarket(m,map.get(k));}
-      const games=[...map.values()].filter(g=>g.markets.length).map(({teams,...g})=>g);
-      if(!games.length)throw new Error('Kalshi NFL markets found but none normalized');
-      state.games=games;state.propsLoaded?.clear?.();hydrateGames();
-      const props=games.reduce((n,g)=>n+g.markets.filter(m=>m.player).length,0),total=games.reduce((n,g)=>n+g.markets.length,0);
-      if(status)status.textContent=`Active • ${total} markets`;
-      setStatus(`Kalshi live fallback • ${games.length} NFL games • ${props} player props • ${total} markets`);
-      const btn=document.getElementById('generateBtn');if(btn){btn.disabled=false;btn.textContent='Generate Parlays'}
-      await generate();window.NFL_PRODUCT_V2?.refresh?.();return true;
-    }catch(e){diag({source:'Kalshi',url:'local://load',status:'ERR',ok:false,error:String(e.message||e)});if(status)status.textContent='Unavailable';return false}
-  }
+  async function getSeries(host,series){const u=new URL(host+'/markets');u.searchParams.set('status','open');u.searchParams.set('limit','1000');u.searchParams.set('series_ticker',series);const st=performance.now(),r=await fetch(u);if(!r.ok)throw new Error(`${series} HTTP ${r.status}`);const j=await r.json(),m=j.markets||[];diag({source:'Kalshi',url:String(u),status:r.status,ok:true,count:m.length,ms:Math.round(performance.now()-st),note:series});return m}
+  async function fetchMarkets(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY));if(c?.time&&Date.now()-c.time<TTL&&c.markets?.length){diag({source:'Kalshi',url:'local://cache',status:200,ok:true,count:c.markets.length,ms:0,note:'cache hit'});return c.markets}}catch{}
+    let lastErr;for(const host of HOSTS){try{const settled=await Promise.allSettled(SERIES.map(s=>getSeries(host,s))),markets=settled.flatMap(x=>x.status==='fulfilled'?x.value:[]);if(markets.length){try{localStorage.setItem(CACHE_KEY,JSON.stringify({time:Date.now(),markets}))}catch{}return markets}lastErr=new Error('No NFL series markets returned')}catch(e){lastErr=e}}
+    throw lastErr||new Error('Kalshi unavailable')}
+  async function load(){const status=document.getElementById('kalshiStatus');if(status)status.textContent='Checking…';try{const markets=await fetchMarkets();if(!markets.length)throw new Error('No open Kalshi NFL markets');const map=new Map();for(const m of markets){const teams=matchup(m);if(!teams)continue;const k=gameKey(teams);if(!map.has(k))map.set(k,{id:'kalshi-'+k.replace(/[^a-z0-9]/gi,'-').toLowerCase(),away:teams[0],home:teams[1],teams,commence_time:m.expected_expiration_time||m.close_time||new Date().toISOString(),markets:[],dataSource:'Kalshi'});parseMarket(m,map.get(k))}const games=[...map.values()].filter(g=>g.markets.length).map(({teams,...g})=>g);if(!games.length)throw new Error('Kalshi NFL markets found but none normalized');state.games=games;state.propsLoaded?.clear?.();hydrateGames();const props=games.reduce((n,g)=>n+g.markets.filter(m=>m.player).length,0),total=games.reduce((n,g)=>n+g.markets.length,0);if(status)status.textContent=`Active • ${total} markets`;setStatus(`Kalshi live fallback • ${games.length} NFL games • ${props} player props • ${total} markets`);const btn=document.getElementById('generateBtn');if(btn){btn.disabled=false;btn.textContent='Generate Parlays'}await generate();window.NFL_PRODUCT_V2?.refresh?.();return true}catch(e){diag({source:'Kalshi',url:'local://load',status:'ERR',ok:false,error:String(e.message||e)});if(status)status.textContent='Unavailable';return false}}
   window.NFL_KALSHI={load,clearCache:()=>localStorage.removeItem(CACHE_KEY)};
 })();
