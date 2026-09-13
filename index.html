@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260913-0824" />
+  <link rel="stylesheet" href="styles.css?v=20260913-0848" />
 </head>
 <body>
   <div class="shell">
@@ -23,9 +23,9 @@
     <section class="hero">
       <div>
         <span class="live-dot"></span>
-        <span id="dataStatus">Demo market data</span>
+        <span id="dataStatus">Loading market data…</span>
       </div>
-      <p>Build logical NFL parlays from team lines and player props. Caesars markets are the sportsbook reference source when connected.</p>
+      <p>Caesars is the primary sportsbook source. When Caesars data is unavailable, the app falls back to free Polymarket NFL markets and converts prediction prices into implied American-odds equivalents.</p>
     </section>
 
     <section class="api-usage-card" id="apiUsageCard">
@@ -57,12 +57,15 @@
         <span>Caesars <b>Primary odds</b></span>
       </div>
       <div>
+        <span>Polymarket <b id="polymarketStatus">Standby</b></span>
+      </div>
+      <div>
         <span>ESPN <b id="espnStatus">Idle</b></span>
       </div>
       <div>
         <span>nflverse <b id="nflverseStatus">Idle</b></span>
       </div>
-      <div class="source-note">Caesars = lines & props • ESPN = current roster context • nflverse = open roster/analytics fallback</div>
+      <div class="source-note">Caesars = primary lines & props • Polymarket = free fallback implied prices • ESPN/nflverse = context</div>
     </section>
 
     <section class="daily-picks-section">
@@ -83,7 +86,7 @@
             </div>
             <div class="daily-pick-odds">—</div>
           </div>
-          <div class="daily-pick-game">Loading Caesars player props</div>
+          <div class="daily-pick-game">Loading available player props</div>
           <p class="daily-pick-reason">Evaluating the strongest standalone player-prop fit.</p>
           <span class="daily-pick-grade">SCANNING</span>
         </article>
@@ -96,7 +99,7 @@
             </div>
             <div class="daily-pick-odds">—</div>
           </div>
-          <div class="daily-pick-game">Loading Caesars team lines</div>
+          <div class="daily-pick-game">Loading available team markets</div>
           <p class="daily-pick-reason">Evaluating the strongest standalone moneyline or spread fit.</p>
           <span class="daily-pick-grade">SCANNING</span>
         </article>
@@ -172,13 +175,13 @@
         </div>
         <button class="icon-btn" value="cancel">✕</button>
       </div>
-      <p class="muted">Caesars is requested through The Odds API using bookmaker key williamhill_us. The Odds API currently lists Caesars as a paid-plan bookmaker. GitHub Pages is static, so your API key is stored only in this browser and is never committed to GitHub.</p>
+      <p class="muted">Caesars is requested through The Odds API using bookmaker key williamhill_us. If no API key is configured or Caesars is unavailable, the app automatically uses public Polymarket NFL markets as a free fallback. Polymarket prices are probability-derived equivalents, not Caesars sportsbook lines.</p>
       <div class="field">
         <label for="apiKeyInput">The Odds API key</label>
         <input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" />
       </div>
       <div class="dialog-actions">
-        <button id="clearKeyBtn" type="button" class="secondary-btn">Use demo mode</button>
+        <button id="clearKeyBtn" type="button" class="secondary-btn">Use free fallback</button>
         <button id="saveKeyBtn" type="button" class="primary-btn">Save & refresh</button>
       </div>
     </form>
@@ -203,9 +206,10 @@
     </article>
   </template>
 
-  <script src="sportsbook-caesars.js?v=20260913-0824"></script>
-  <script src="api-saver.js?v=20260913-0824"></script>
-  <script src="app.js?v=20260913-0824"></script>
-  <script src="daily-picks.js?v=20260913-0824"></script>
+  <script src="sportsbook-caesars.js?v=20260913-0848"></script>
+  <script src="api-saver.js?v=20260913-0848"></script>
+  <script src="app.js?v=20260913-0848"></script>
+  <script src="polymarket-fallback.js?v=20260913-0848"></script>
+  <script src="daily-picks.js?v=20260913-0848"></script>
 </body>
 </html>
