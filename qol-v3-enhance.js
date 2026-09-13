@@ -4,7 +4,7 @@
   const writePrefs=p=>localStorage.setItem(PREF,JSON.stringify(p));
   const marketKey=(m,g)=>[g?.id||m.gameId||'',m.marketKey||m.type,m.player||m.team||'',m.side||'',m.point??'',m.name||''].join('|');
   const allMarkets=()=>{try{return (state.games||[]).flatMap(g=>(g.markets||[]).map(m=>({m,g,k:marketKey(m,g)})))}catch{return[]}};
-  const prefLocked=()=>new Set(readPrefs().locked||[]);
+  const prefLocked=()=>new Set((window.NFL_QOL?.prefs?.()||readPrefs()).locked||[]);
   const lockedForGame=g=>allMarkets().filter(x=>x.g===g&&prefLocked().has(x.k)).map(x=>x.m);
   function fillLocked(game,count,risk,variant,base){
     const locks=lockedForGame(game); if(!locks.length)return base;
@@ -30,7 +30,10 @@
       const k=btn.closest('[data-k]')?.dataset.k,m=k&&findMarket(k);if(m){e.preventDefault();e.stopImmediatePropagation();showWhy(m)}
     }
     if(btn.id==='qBuild'){
-      const p=readPrefs();p.favorites=p.favorites||[];document.querySelectorAll('#qolV3 .qgrid [data-k]').forEach(el=>{if(!p.favorites.includes(el.dataset.k))p.favorites.push(el.dataset.k)});document.querySelectorAll('#qolV3 .qgrid [data-parlay]').forEach(el=>{try{for(const k of JSON.parse(el.dataset.parlay))if(!p.favorites.includes(k))p.favorites.push(k)}catch{}});writePrefs(p);setTimeout(()=>window.NFL_QOL?.refresh?.(),0)
+      const p=window.NFL_QOL?.prefs?.()||readPrefs();p.favorites=p.favorites||[];
+      document.querySelectorAll('#qolV3 .qgrid [data-k]').forEach(el=>{if(!p.favorites.includes(el.dataset.k))p.favorites.push(el.dataset.k)});
+      document.querySelectorAll('#qolV3 .qgrid [data-parlay]').forEach(el=>{try{for(const k of JSON.parse(el.dataset.parlay))if(!p.favorites.includes(k))p.favorites.push(k)}catch{}});
+      writePrefs(p);setTimeout(()=>window.NFL_QOL?.refresh?.(),0)
     }
     if(btn.hasAttribute('data-close'))document.getElementById('qWhyDrawer')?.classList.remove('open');
   },true);
