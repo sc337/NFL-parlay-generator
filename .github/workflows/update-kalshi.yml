@@ -2,6 +2,11 @@ name: Update Kalshi NFL snapshot
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_kalshi.py'
+      - '.github/workflows/update-kalshi.yml'
   schedule:
     - cron: '*/5 * * * *'
 
