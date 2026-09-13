@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 BASES=['https://api.elections.kalshi.com/trade-api/v2/markets','https://external-api.kalshi.com/trade-api/v2/markets']
+ESPN_SCOREBOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
 SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLTD','KXNFLRECYDS','KXNFLRUSHYDS','KXNFLPASSYDS','KXNFLRECEPTIONS']
 TEAM_CODES={'ARI':'Arizona Cardinals','ATL':'Atlanta Falcons','BAL':'Baltimore Ravens','BUF':'Buffalo Bills','CAR':'Carolina Panthers','CHI':'Chicago Bears','CIN':'Cincinnati Bengals','CLE':'Cleveland Browns','DAL':'Dallas Cowboys','DEN':'Denver Broncos','DET':'Detroit Lions','GB':'Green Bay Packers','HOU':'Houston Texans','IND':'Indianapolis Colts','JAX':'Jacksonville Jaguars','KC':'Kansas City Chiefs','LV':'Las Vegas Raiders','LAC':'Los Angeles Chargers','LAR':'Los Angeles Rams','MIA':'Miami Dolphins','MIN':'Minnesota Vikings','NE':'New England Patriots','NO':'New Orleans Saints','NYG':'New York Giants','NYJ':'New York Jets','PHI':'Philadelphia Eagles','PIT':'Pittsburgh Steelers','SEA':'Seattle Seahawks','SF':'San Francisco 49ers','TB':'Tampa Bay Buccaneers','TEN':'Tennessee Titans','WAS':'Washington Commanders'}
 ALIASES={'JAC':'JAX','WSH':'WAS','LA':'LAR'}
@@ -71,18 +72,49 @@ def matchup(m):
     a,b,an,bn=pairs[0]
     return {'codes':(a,b),'teams':(an,bn),'key':'|'.join(sorted((an,bn)))}
 
-def kickoff_from_ticker(m):
-    # Kalshi NFL event tickers encode the scheduled game date, e.g. KXNFLGAME-26SEP13BUFHOU.
-    # Use noon UTC only as a date fallback; the browser applies the exact commence_time when available.
+def event_date_from_ticker(m):
     e=str(m.get('event_ticker') or '').upper()
     mm=re.search(r'-(\d{2})([A-Z]{3})(\d{2})[A-Z]+$',e)
     if not mm:return None
-    try:return datetime.strptime('20'+mm.group(1)+mm.group(2)+mm.group(3),'%Y%b%d').replace(tzinfo=timezone.utc)
+    try:return datetime.strptime('20'+mm.group(1)+mm.group(2)+mm.group(3),'%Y%b%d').date()
     except:return None
 
-def game_obj(info,m,now):
-    kickoff=m.get('expected_expiration_time') or m.get('close_time')
-    return {'id':'kalshi-'+re.sub(r'[^a-z0-9]+','-',info['key'].lower()).strip('-'),'away':info['teams'][0],'home':info['teams'][1],'commence_time':kickoff or now.isoformat(),'markets':[],'dataSource':'Kalshi','_candidates':{'totals':[],'spreads':[],'props':{}}}
+def canonical_code(code):
+    c=str(code or '').upper()
+    return ALIASES.get(c,c)
+
+def espn_schedule(day):
+    try:
+        url=ESPN_SCOREBOARD+'?'+urlencode({'dates':day.strftime('%Y%m%d'),'limit':100})
+        raw=fetch_json(url)
+    except Exception as e:
+        print('WARN ESPN',day,e,file=sys.stderr);return {}
+    out={}
+    for ev in raw.get('events',[]) if isinstance(raw,dict) else []:
+        try:
+            comp=(ev.get('competitions') or [])[0]
+            competitors=comp.get('competitors') or []
+            teams=[]
+            for c in competitors:
+                code=canonical_code((c.get('team') or {}).get('abbreviation'))
+                name=TEAM_CODES.get(code)
+                if name:teams.append(name)
+            if len(set(teams))!=2:continue
+            key='|'.join(sorted(set(teams)))
+            status=(ev.get('status') or {}).get('type') or {}
+            kickoff=ev.get('date') or comp.get('date')
+            dt=datetime.fromisoformat(str(kickoff).replace('Z','+00:00')) if kickoff else None
+            out[key]={
+                'kickoff':dt,
+                'state':str(status.get('state') or '').lower(),
+                'completed':bool(status.get('completed')),
+                'detail':status.get('detail') or status.get('shortDetail') or ''
+            }
+        except Exception:continue
+    return out
+
+def game_obj(info,m,day):
+    return {'id':'kalshi-'+re.sub(r'[^a-z0-9]+','-',info['key'].lower()).strip('-'),'away':info['teams'][0],'home':info['teams'][1],'commence_time':None,'event_date':day.isoformat() if day else None,'markets':[],'dataSource':'Kalshi','_candidates':{'totals':[],'spreads':[],'props':{}}}
 
 def add_leg(g,leg):g['markets'].append(leg)
 def base_leg(m,p):return {'price':american(p),'prob':p,'source':'Kalshi','sourceQuality':quality(m,p)}
@@ -145,30 +177,45 @@ def main():
     for series in SERIES:
         ms=fetch_series(series);series_counts[series]=len(ms);print(series,len(ms))
         for m in ms:
-            info=matchup(m)
-            if not info:continue
-            # Never ingest a market whose actual Kalshi close/expiration time has passed.
-            raw_time=m.get('expected_expiration_time') or m.get('close_time')
-            try:
-                dt=datetime.fromisoformat(str(raw_time).replace('Z','+00:00')) if raw_time else kickoff_from_ticker(m)
-                if dt and (dt<=now or dt>limit):continue
-            except:continue
-            g=games.setdefault(info['key'],game_obj(info,m,now))
+            info=matchup(m);day=event_date_from_ticker(m)
+            if not info or not day:continue
+            # Ticker date is only used to bound discovery. Exact kickoff/state comes from ESPN below.
+            day_start=datetime(day.year,day.month,day.day,tzinfo=timezone.utc)
+            if day_start>limit or day_start<now-timedelta(days=1):continue
+            g=games.setdefault(info['key'],game_obj(info,m,day))
             if series=='KXNFLGAME':parse_moneyline(m,g,info)
             elif series=='KXNFLTOTAL':parse_total(m,g)
             elif series=='KXNFLSPREAD':parse_spread(m,g,info)
             else:parse_prop(m,g,series)
-    out=[]
+
+    schedules={}
     for g in games.values():
-        g=finalize(g)
-        # Final server-side guard: never publish a game at/after its commence time.
-        try:
-            if datetime.fromisoformat(str(g['commence_time']).replace('Z','+00:00'))<=now:continue
+        try:day=datetime.fromisoformat(g['event_date']).date()
         except:continue
+        if day not in schedules:schedules[day]=espn_schedule(day)
+
+    out=[];dropped_started=0;dropped_unmatched=0
+    for g in games.values():
+        try:day=datetime.fromisoformat(g['event_date']).date()
+        except:
+            dropped_unmatched+=1;continue
+        event=schedules.get(day,{}).get('|'.join(sorted((g['away'],g['home']))))
+        # Conservative rule: if ESPN cannot verify the matchup/kickoff, do not publish it.
+        if not event or not event.get('kickoff'):
+            dropped_unmatched+=1;continue
+        kickoff=event['kickoff'];state=str(event.get('state') or '').lower()
+        if event.get('completed') or state!='pre' or kickoff<=now:
+            dropped_started+=1;continue
+        if kickoff>limit:continue
+        g['commence_time']=kickoff.isoformat().replace('+00:00','Z')
+        g['game_status']='pre'
+        g['status_detail']=event.get('detail') or ''
+        g=finalize(g)
         if g['markets']:out.append(g)
+
     out.sort(key=lambda g:g.get('commence_time') or '')
-    payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(series_counts.values()),'series_counts':series_counts}
+    payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(series_counts.values()),'series_counts':series_counts,'filters':{'started_or_live_removed':dropped_started,'espn_unmatched_removed':dropped_unmatched}}
     Path('data').mkdir(exist_ok=True);Path('data/kalshi-nfl.json').write_text(json.dumps(payload,separators=(',',':')))
-    print('wrote',len(out),'future games',sum(len(g['markets']) for g in out),'markets')
+    print('wrote',len(out),'pregame games',sum(len(g['markets']) for g in out),'markets','dropped_started',dropped_started,'dropped_unmatched',dropped_unmatched)
 
 if __name__=='__main__':main()
