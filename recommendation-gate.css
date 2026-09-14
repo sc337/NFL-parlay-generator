@@ -1,0 +1,16 @@
+html:not(.recommendations-ready) #qolV3 .qgrid{
+  visibility:hidden;
+  min-height:180px;
+}
+html:not(.recommendations-ready) #qolV3 .qhero::after{
+  content:'Verifying live player markets…';
+  display:block;
+  margin:16px 24px 24px;
+  padding:18px;
+  border:1px dashed rgba(148,163,184,.22);
+  border-radius:16px;
+  text-align:center;
+  color:#94a3b8;
+  font-weight:600;
+}
+html.recommendations-ready #qolV3 .qhero::after{display:none;}
