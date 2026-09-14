@@ -25,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -38,11 +40,36 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Keep the freshly generated snapshot outside the worktree while we
+          # synchronize with main. This avoids rebasing two generated versions
+          # of the same JSON file when another scheduled run pushed first.
+          cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
+          git restore data/kalshi-nfl.json
+          git pull --rebase origin main
+          cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
+
           git add data/kalshi-nfl.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
           fi
+
           git commit -m "Update Kalshi NFL market snapshot"
-          git pull --rebase origin main
-          git push
+
+          # A different run can still land between pull and push. Retry once by
+          # rebuilding the commit on the newest main without merging JSON.
+          if ! git push; then
+            echo "Main advanced during push; retrying snapshot commit"
+            cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
+            git reset --hard HEAD~1
+            git pull --rebase origin main
+            cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
+            git add data/kalshi-nfl.json
+            if git diff --cached --quiet; then
+              echo "Newer snapshot already landed"
+              exit 0
+            fi
+            git commit -m "Update Kalshi NFL market snapshot"
+            git push
+          fi
