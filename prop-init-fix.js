@@ -2,14 +2,25 @@
   let running=false;
   let initialized=false;
 
+  function setReady(ready){
+    document.documentElement.classList.toggle('recommendations-ready',!!ready);
+    document.documentElement.classList.toggle('recommendations-verifying',!ready);
+  }
+
   async function verifyProps(){
     if(running) return;
     const sel=window.NFL_SELECTIVITY;
     if(!sel?.verifyGameRoster || typeof state==='undefined') return;
     const games=(state.games||[]).filter(g=>(g.markets||[]).some(m=>m.player));
-    if(!games.length) return;
+    if(!games.length){
+      initialized=true;
+      setReady(true);
+      sel.refresh?.();
+      return;
+    }
 
     running=true;
+    setReady(false);
     try{
       const selectedId=document.getElementById('gameSelect')?.value;
       const selected=games.find(g=>g.id===selectedId);
@@ -22,24 +33,31 @@
       initialized=true;
       sel.refresh?.();
       if(typeof generate==='function') await generate();
-      window.NFL_QOL?.refresh?.();
-      window.NFL_QOL_V3?.refresh?.();
+      // Do not call the legacy QoL refresh here. It renders raw props first and
+      // causes the visible prop -> PASS flicker before the strict engine redraws.
+      sel.refresh?.();
+      setReady(true);
     }catch(err){
       console.warn('Player prop initialization failed',err);
+      // Show the strict engine state even if browser-side context is unavailable.
+      sel.refresh?.();
+      setReady(true);
     }finally{
       running=false;
     }
   }
 
   function boot(){
+    setReady(false);
     let tries=0;
     const timer=setInterval(()=>{
       tries++;
       if(window.NFL_SELECTIVITY?.verifyGameRoster && typeof state!=='undefined' && (state.games||[]).length){
         clearInterval(timer);
         verifyProps();
-      }else if(tries>=80){
+      }else if(tries>=100){
         clearInterval(timer);
+        setReady(true);
       }
     },100);
   }
