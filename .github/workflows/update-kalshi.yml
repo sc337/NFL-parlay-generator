@@ -8,14 +8,15 @@ on:
       - 'scripts/update_kalshi.py'
       - '.github/workflows/update-kalshi.yml'
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '3,13,23,33,43,53 * * * *'
+    - cron: '8,18,28,38,48,58 * * * *'
 
 permissions:
   contents: write
 
 concurrency:
   group: kalshi-snapshot
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -37,4 +38,5 @@ jobs:
             exit 0
           fi
           git commit -m "Update Kalshi NFL market snapshot"
+          git pull --rebase origin main
           git push
