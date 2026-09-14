@@ -73,14 +73,19 @@
   function stakePctFromConfidence(conf,isParlay=false){
     conf=Number(conf)||0;
     let pct=0.0025;
-    if(conf>=80)pct=0.02;else if(conf>=75)pct=0.015;else if(conf>=70)pct=0.0125;else if(conf>=65)pct=0.01;else if(conf>=60)pct=0.0075;else if(conf>=55)pct=0.005;
-    if(isParlay)pct=Math.min(pct,0.01)*0.75;
+    if(conf>=92)pct=0.02;
+    else if(conf>=88)pct=0.0175;
+    else if(conf>=84)pct=0.015;
+    else if(conf>=80)pct=0.0125;
+    else if(conf>=75)pct=0.01;
+    else if(conf>=70)pct=0.0075;
+    else if(conf>=65)pct=0.005;
+    if(isParlay)pct=Math.min(pct*0.4,0.0075);
     return pct;
   }
   function normalizeStake(amount){
     const n=Math.max(0,Number(amount)||0);
-    if(n<=5) return 5;
-    return Math.max(5,Math.round(n/5)*5);
+    return Math.round(n*100)/100;
   }
   function bankroll(){const input=document.getElementById('currentBankroll');return Math.max(0,Number(input?.value)||loadBankroll().current||0);}
 
@@ -95,10 +100,12 @@
   }
 
   function confidenceFromDaily(card){
+    const explicit=Number(card?.dataset?.confidence);
+    if(Number.isFinite(explicit)&&explicit>0)return explicit;
     const grade=card?.querySelector('.daily-pick-grade')?.textContent||'';
     const fit=Number((grade.match(/([0-9.]+)\/10/)||[])[1]);
     if(!Number.isFinite(fit))return 0;
-    return Math.max(50,Math.min(80,50+fit*3));
+    return Math.max(50,Math.min(95,50+fit*4));
   }
 
   function ensureSuggestion(container,conf,isParlay=false){
@@ -107,7 +114,7 @@
     const raw=bankroll()*pct;
     const amount=normalizeStake(raw);
     const actualPct=bankroll()>0?(amount/bankroll())*100:0;
-    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${actualPct.toFixed(actualPct<1?2:1)}% of bankroll • $5 increments</small>`;
+    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${actualPct.toFixed(actualPct<1?2:1)}% of bankroll</small>`;
     let el=container.querySelector('.stake-suggestion');
     if(!el){el=document.createElement('div');el.className='stake-suggestion';container.appendChild(el);}
     if(el.dataset.sig!==html){el.innerHTML=html;el.dataset.sig=html;}
