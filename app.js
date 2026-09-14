@@ -252,7 +252,6 @@ async function enrichGameContext(game){
   for(const p of nflverse){
     if(p.team===game.away || p.team===game.home) lookup.set(normalizePlayerName(p.name),p);
   }
-  // ESPN wins when both sources have a match because it is our current-roster layer.
   for(const p of [...awayRoster,...homeRoster]) lookup.set(normalizePlayerName(p.name),p);
 
   let matched=0;
@@ -268,7 +267,6 @@ async function enrichGameContext(game){
   game.contextMatched=matched;
   game.contextReady=true;
 }
-
 
 const PROP_MARKETS = [
   'player_pass_yds','player_pass_yds_alternate','player_pass_tds','player_pass_attempts','player_pass_completions',
@@ -332,7 +330,15 @@ async function discoverFanDuelMarkets(game){
 }
 
 async function ensurePropsForGame(game){
-  if(!state.apiKey || !game || String(game.id).startsWith('demo-') || state.propsLoaded.has(game.id)) return;
+  if(!game) return;
+  if(game.dataSource==='Kalshi' || String(game.id||'').startsWith('kalshi-')){
+    const count=(game.markets||[]).filter(m=>m.player).length;
+    game.propStatus=count?'loaded':'none';
+    game.availablePropMarkets=[...new Set((game.markets||[]).filter(m=>m.player).map(m=>m.marketKey).filter(Boolean))];
+    state.propsLoaded.add(game.id);
+    return;
+  }
+  if(!state.apiKey || String(game.id).startsWith('demo-') || state.propsLoaded.has(game.id)) return;
   if(state.propsLoading.has(game.id)) return state.propsLoading.get(game.id);
 
   const task=(async()=>{
@@ -501,22 +507,18 @@ function correlation(a,b){
 function isTeamSide(m){ return m.type==='h2h' || m.type==='spreads'; }
 
 function incompatible(a,b){
-  // Never mix opposite game totals in one SGP.
   if(a.type==='totals' && b.type==='totals'){
     if(a.side!==b.side) return true;
-    return true; // only one game-total leg per SGP
+    return true;
   }
 
-  // Keep one coherent team-side opinion. No ML/spread stacking and no opposite teams.
   if(isTeamSide(a) && isTeamSide(b)){
     return true;
   }
 
-  // Do not pair a team-side leg with an explicitly opposite team-side player/team assignment.
   if(isTeamSide(a) && b.team && !['Game','Player',a.team].includes(b.team)) return true;
   if(isTeamSide(b) && a.team && !['Game','Player',b.team].includes(a.team)) return true;
 
-  // Never mix two prices/thresholds from the same underlying player market.
   if(a.marketKey && b.marketKey && a.player && b.player &&
      a.player===b.player && a.marketKey===b.marketKey) return true;
 
@@ -555,20 +557,17 @@ function marketQuality(m,variant){
   if(typeof m.price!=='number') return -999;
   if(m.price<cfg.minPrice || m.price>cfg.maxPrice) return -999;
 
-  // Avoid buying fake certainty through extreme alternate-line juice.
   if(/_alternate$/.test(m.marketKey||'') && m.price<-350) return -999;
 
   const implied=impliedProbability(m.price)*100;
   let q=60;
 
-  // Reward prices near each profile's intended band.
   if(m.price>=cfg.targetMin && m.price<=cfg.targetMax) q+=18;
   else{
     const distance=m.price<cfg.targetMin ? cfg.targetMin-m.price : m.price-cfg.targetMax;
     q-=Math.min(24,distance/18);
   }
 
-  // Standard main lines are more informative than deeply shaded alternates.
   if(m.marketKey && !/_alternate$/.test(m.marketKey)) q+=6;
   if(/_alternate$/.test(m.marketKey||'')) q-=4;
 
@@ -594,7 +593,6 @@ function candidateScore(m,risk,variant='balanced'){
   const implied=impliedProbability(m.price)*100;
   let score=q + implied*.22;
 
-  // User risk slider nudges the profile but does not override its market discipline.
   if(risk<25 && m.price>0) score-=8;
   if(risk>65 && m.price>0) score+=7;
   return score;
@@ -663,21 +661,21 @@ const GAME_SCRIPTS = {
   },
   comeback:{
     name:'Underdog forced to throw',
-    thesis:(game)=>(underdogTeam(game)||'The underdog')+' is expected to trail or play from behind, creating extra dropbacks and receiving volume while the favorite protects the lead.',
+    thesis:(game)=>(underdogTeam(game)||'The underdog')+' is expected to trail, creating extra dropbacks and target volume while the favorite protects the lead.',
     legFit:(m,game)=>{
       let s=0;
       const dog=underdogTeam(game);
       if(m.type==='spreads' && m.team===dog) s+=8;
-      if(m.type==='passing' && m.side==='over' && (!m.team || m.team===dog)) s+=14;
-      if(m.type==='receiving' && m.side==='over' && (!m.team || m.team===dog)) s+=14;
+      if(m.team===dog && m.type==='passing' && m.side==='over') s+=14;
+      if(m.team===dog && m.type==='receiving' && m.side==='over') s+=14;
       if(m.type==='totals' && m.side==='over') s+=6;
       if(m.type==='rushing' && m.side==='under') s+=4;
       return s;
     }
   },
   grind:{
-    name:'Low-scoring grind',
-    thesis:()=> 'The game is expected to stay compressed, with fewer explosive plays and a heavier reliance on rushing and conservative offensive volume.',
+    name:'Lower-scoring control game',
+    thesis:()=> 'Possessions are expected to be limited, favoring rushing volume and unders over explosive passing outcomes.',
     legFit:(m)=>{
       let s=0;
       if(m.type==='totals' && m.side==='under') s+=16;
@@ -786,7 +784,6 @@ function buildSgp(game,count,risk,variant,previous=[]){
   const p=pickDistinctAlternative(game,count,risk,variant,previous);
   if(!p) return null;
 
-  // Live 3+ leg SGPs must have meaningful prop participation.
   if(live && count>=3 && p.legs.filter(l=>l.player).length<2) return null;
   return p;
 }
