@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/update_kalshi.py'
+      - 'scripts/verify_snapshot_rosters.py'
       - '.github/workflows/update-kalshi.yml'
   schedule:
     - cron: '3,13,23,33,43,53 * * * *'
@@ -28,6 +29,8 @@ jobs:
           python-version: '3.12'
       - name: Fetch and normalize Kalshi NFL markets
         run: python scripts/update_kalshi.py
+      - name: Verify player props against ESPN rosters
+        run: python scripts/verify_snapshot_rosters.py
       - name: Commit snapshot if changed
         run: |
           git config user.name "github-actions[bot]"
