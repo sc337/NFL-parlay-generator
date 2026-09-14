@@ -17,6 +17,21 @@
     return details.querySelector('.dashboard-advanced-body');
   }
 
+  function cleanupOldDynamicCopies(){
+    const root=document.getElementById('qolV3');
+    const newTracker=root?.querySelector('.qpanel .qhead span') ? [...root.querySelectorAll(':scope > .qpanel')].find(p=>p.querySelector('.qhead span')?.textContent.trim()==='BET TRACKER') : null;
+    const oldTrackers=[...document.querySelectorAll('.tracker-primary')].filter(x=>x!==newTracker);
+    for(const old of oldTrackers){
+      const bankroll=old.querySelector('.bankroll-card');
+      if(bankroll && newTracker)newTracker.appendChild(bankroll);
+      old.remove();
+    }
+    const advanced=document.querySelector('.dashboard-advanced-body');
+    if(advanced){
+      [...advanced.querySelectorAll('.qdetails')].forEach(el=>el.remove());
+    }
+  }
+
   function makeHeaderStatus(){
     const top=document.querySelector('.topbar');
     const hero=document.querySelector('.hero');
@@ -39,9 +54,7 @@
       if(el && el.parentElement!==target)target.appendChild(el);
     }
     const qdetails=[...document.querySelectorAll('#qolV3 .qdetails')];
-    for(const el of qdetails){
-      if(el.parentElement!==target)target.appendChild(el);
-    }
+    for(const el of qdetails)target.appendChild(el);
   }
 
   function findPanelByKicker(text){
@@ -51,21 +64,19 @@
   function compactMyCard(){
     const panel=findPanelByKicker('MY CARD');
     if(!panel)return;
-    const hasLegs=!!panel.querySelector('.qmy');
-    panel.hidden=!hasLegs;
+    panel.hidden=!panel.querySelector('.qmy');
     panel.classList.add('my-card-compact');
   }
 
   function mergeBankrollIntoTracker(){
-    const tracker=findPanelByKicker('BET TRACKER') || [...document.querySelectorAll('.qpanel')].find(p=>p.textContent.includes('BET TRACKER'));
-    const bankroll=document.querySelector('.bankroll-card');
+    const tracker=findPanelByKicker('BET TRACKER');
     const main=document.querySelector('main');
     if(!tracker||!main)return;
+    let bankroll=document.querySelector('.bankroll-card');
 
     if(bankroll && !tracker.contains(bankroll)){
       const head=tracker.querySelector('.qhead');
-      if(head)head.insertAdjacentElement('afterend',bankroll);
-      else tracker.prepend(bankroll);
+      if(head)head.insertAdjacentElement('afterend',bankroll); else tracker.prepend(bankroll);
       bankroll.classList.add('bankroll-inline');
     }
 
@@ -90,7 +101,6 @@
     const control=document.querySelector('.control-card');
     if(!control)return;
     control.classList.add('compact-parlay-builder');
-
     const riskHelp=document.getElementById('riskBehavior');
     if(riskHelp)riskHelp.hidden=true;
 
@@ -105,13 +115,13 @@
       details.appendChild(market);
     }
 
-    const sectionHead=control.querySelector('.section-head');
-    const label=sectionHead?.querySelector('.label');
+    const label=control.querySelector('.section-head .label');
     if(label)label.hidden=true;
   }
 
   function slimRecommendationCards(){
     document.querySelectorAll('#qolV3 .qcard > p').forEach(p=>{
+      if(p.querySelector('.source-badge'))return;
       const parts=p.textContent.split(' • ');
       if(parts.length>1){
         p.textContent=parts[0];
@@ -135,6 +145,7 @@
     applying=true;
     if(observer)observer.disconnect();
     try{
+      cleanupOldDynamicCopies();
       makeHeaderStatus();
       positionQuickCard();
       compactMyCard();
@@ -145,10 +156,7 @@
       document.body.classList.add('dashboard-simplified');
     }finally{
       applying=false;
-      if(observer){
-        const root=document.getElementById('qolV3');
-        if(root)observer.observe(root,{childList:true,subtree:false});
-      }
+      if(observer){const root=document.getElementById('qolV3');if(root)observer.observe(root,{childList:true,subtree:false});}
     }
   }
 
