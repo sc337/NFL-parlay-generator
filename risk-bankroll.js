@@ -30,7 +30,6 @@
       if(m.price>450) bias-=25;
     }
 
-    // Polymarket fallback quality is separate from implied probability. Reward cleaner/liquid markets.
     if(m.source==='Polymarket' && Number.isFinite(Number(m.sourceQuality))){
       bias += (Number(m.sourceQuality)-60)*0.45;
       if(Number(m.sourceQuality)<50) bias-=10;
@@ -78,6 +77,11 @@
     if(isParlay)pct=Math.min(pct,0.01)*0.75;
     return pct;
   }
+  function normalizeStake(amount){
+    const n=Math.max(0,Number(amount)||0);
+    if(n<=5) return 5;
+    return Math.max(5,Math.round(n/5)*5);
+  }
   function bankroll(){const input=document.getElementById('currentBankroll');return Math.max(0,Number(input?.value)||loadBankroll().current||0);}
 
   function renderBankroll(){
@@ -99,8 +103,11 @@
 
   function ensureSuggestion(container,conf,isParlay=false){
     if(!container||!conf)return;
-    const pct=stakePctFromConfidence(conf,isParlay),amount=bankroll()*pct;
-    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${(pct*100).toFixed(pct<0.01?2:1)}% of bankroll</small>`;
+    const pct=stakePctFromConfidence(conf,isParlay);
+    const raw=bankroll()*pct;
+    const amount=normalizeStake(raw);
+    const actualPct=bankroll()>0?(amount/bankroll())*100:0;
+    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${actualPct.toFixed(actualPct<1?2:1)}% of bankroll • $5 increments</small>`;
     let el=container.querySelector('.stake-suggestion');
     if(!el){el=document.createElement('div');el.className='stake-suggestion';container.appendChild(el);}
     if(el.dataset.sig!==html){el.innerHTML=html;el.dataset.sig=html;}
@@ -130,5 +137,5 @@
     if(daily)observer.observe(daily,{childList:true,subtree:true,characterData:true});
   });
 
-  window.NFL_BANKROLL={current:bankroll,stakePctFromConfidence,refresh:applyStakeSuggestions};
+  window.NFL_BANKROLL={current:bankroll,stakePctFromConfidence,normalizeStake,refresh:applyStakeSuggestions};
 })();
