@@ -1,7 +1,8 @@
 (() => {
   const SNAPSHOT='data/kalshi-nfl.json';
   const WARN_AGE_MS=30*60*1000;
-  const MAX_AGE_MS=2*60*60*1000;
+  const QUALITY_PENALTY_AGE_MS=2*60*60*1000;
+  const MAX_AGE_MS=12*60*60*1000;
   const diag=d=>window.NFL_DIAGNOSTICS?.add?.(d);
   const isPregame=g=>{
     const kickoff=Date.parse(g?.commence_time||'');
@@ -33,7 +34,20 @@
         throw new Error(`Kalshi snapshot is ${Math.round(ageMs/60000)} minutes old`);
       }
       const delayed=ageMs>WARN_AGE_MS;
-      diag({source:'Kalshi snapshot',url:SNAPSHOT,status:res.status,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:`${data.updated_at||'snapshot'}${removed?` • ${removed} started games removed`:''}${delayed?' • delayed snapshot accepted for future games':''}`});
+      const heavilyDelayed=ageMs>QUALITY_PENALTY_AGE_MS;
+
+      // Keep ESPN-verified pregame games visible during GitHub Actions delays,
+      // but make older proxy prices harder to qualify as recommendations.
+      if(heavilyDelayed){
+        for(const g of games){
+          for(const m of g.markets||[]){
+            m.staleSnapshot=true;
+            if(Number.isFinite(Number(m.sourceQuality))) m.sourceQuality=Math.max(0,Number(m.sourceQuality)-10);
+          }
+        }
+      }
+
+      diag({source:'Kalshi snapshot',url:SNAPSHOT,status:res.status,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:`${data.updated_at||'snapshot'}${removed?` • ${removed} started games removed`:''}${delayed?' • delayed snapshot accepted for future games':''}${heavilyDelayed?' • stale-price quality penalty applied':''}`});
       if(!games.length) throw new Error('Kalshi snapshot has no upcoming NFL markets');
       state.games=games;
       state.propsLoaded?.clear?.();
