@@ -42,4 +42,13 @@
   window.addEventListener('nfl-diagnostics-updated',()=>setTimeout(populateTechnical,60));
   document.addEventListener('DOMContentLoaded',()=>setTimeout(collapseTech,250));
   const oldRefresh=window.NFL_QOL?.refresh;if(oldRefresh)window.NFL_QOL.refresh=function(){oldRefresh();setTimeout(()=>{collapseTech();populateTechnical()},40)};
+
+  // Load the stricter recommendation engine after the base UI/lock layer is established.
+  document.addEventListener('DOMContentLoaded',()=>{
+    if(document.querySelector('script[data-selectivity-engine]')) return;
+    const s=document.createElement('script');
+    s.src='recommendation-engine-v2.js?v=20260913-2315';
+    s.dataset.selectivityEngine='1';
+    document.body.appendChild(s);
+  });
 })();
