@@ -18,6 +18,6 @@
   function collapseTech(){document.querySelector('.api-usage-card')?.classList.add('qhidden-tech');document.querySelector('.source-status-card')?.classList.add('qhidden-tech');populateTechnical()}
   window.addEventListener('nfl-diagnostics-updated',()=>setTimeout(populateTechnical,60));document.addEventListener('DOMContentLoaded',()=>setTimeout(collapseTech,250));
   const oldRefresh=window.NFL_QOL?.refresh;if(oldRefresh)window.NFL_QOL.refresh=function(){oldRefresh();setTimeout(()=>{collapseTech();populateTechnical()},40)};
-  const loadEngine=()=>{if(document.querySelector('script[data-selectivity-engine]'))return;const loadRec=()=>{const s=document.createElement('script');s.src='recommendation-engine-v2.js?v=20260914-0945';s.dataset.selectivityEngine='1';document.body.appendChild(s)};if(window.NFL_CONFIDENCE)return loadRec();const c=document.createElement('script');c.src='confidence-engine.js?v=20260914-0945';c.onload=loadRec;document.body.appendChild(c);};
+  const loadEngine=()=>{if(document.querySelector('script[data-selectivity-engine]'))return;const loadRec=()=>{const s=document.createElement('script');s.src='recommendation-engine-v2.js?v=20260914-1030';s.dataset.selectivityEngine='1';document.body.appendChild(s)};if(window.NFL_CONFIDENCE)return loadRec();const c=document.createElement('script');c.src='confidence-engine.js?v=20260914-1030';c.onload=loadRec;document.body.appendChild(c);};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadEngine,{once:true});else loadEngine();
 })();
