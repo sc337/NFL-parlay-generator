@@ -16,7 +16,25 @@
   const originalMarketQuality=window.marketQuality;if(typeof originalMarketQuality==='function')window.marketQuality=function(m,v){const x=valueScore(m,v);if(x<0||conf(m)<(v==='long'?74:80))return-999;const old=originalMarketQuality(m,v);return old<=-900?-999:(old*.4+x*.6)};
   const originalCoherent=window.coherentWithLegs;if(typeof originalCoherent==='function')window.coherentWithLegs=function(c,l,v){if(!verifiedPlayer(c)||conf(c)<(v==='long'?74:80)||l.some(x=>strictIncompatible(x,c)))return false;return originalCoherent(c,l,v)};
   const originalBuildSgp=window.buildSgp;if(typeof originalBuildSgp==='function')window.buildSgp=function(game,count,risk,variant,previous=[]){const p=originalBuildSgp(game,count,risk,variant,previous);if(!p)return null;const q=buildQuality(p.legs,variant,true);if(!q.pass)return null;p.corr=q.corr;p.score=Math.min(p.score,Math.round(q.cavg));return p};
-  const originalBuildMulti=window.buildMulti;if(typeof originalBuildMulti==='function')window.buildMulti=function(count,risk,variant){const p=originalBuildMulti(count,risk,variant);if(!p?.legs?.length)return null;const q=buildQuality(p.legs,variant,false);if(!q.pass)return null;if(new Set(p.legs.map(l=>l.gameLabel||l.gameId||'')).size<p.legs.length)return null;p.score=Math.min(p.score,Math.round(q.cavg));return p};
+  // Multi-game is intentionally independent-leg selection: one qualified leg per game.
+  // It must not inherit SGP correlation constraints or the base round-robin's weak candidates.
+  window.buildMulti=function(count,risk,variant){
+    const floor=variant==='safe'?82:variant==='balanced'?80:74;
+    const perGame=[];
+    for(const g of state.games||[]){
+      const candidates=(g.markets||[])
+        .filter(m=>state.selectedMarkets?.has?.(m.type))
+        .map(m=>({...m,gameId:g.id,gameLabel:`${g.away} @ ${g.home}`,source:m.source||g.dataSource||'Live'}))
+        .filter(m=>valueScore(m,variant)>=0&&conf(m)>=floor)
+        .sort((a,b)=>(conf(b)*.7+valueScore(b,variant)*.3)-(conf(a)*.7+valueScore(a,variant)*.3));
+      if(candidates.length)perGame.push(candidates[0]);
+    }
+    perGame.sort((a,b)=>(conf(b)*.7+valueScore(b,variant)*.3)-(conf(a)*.7+valueScore(a,variant)*.3));
+    const legs=perGame.slice(0,count);
+    if(legs.length<count)return null;
+    const q=buildQuality(legs,variant,false);if(!q.pass)return null;
+    const p=packageParlay(legs,variant,false);if(!p)return null;p.score=Math.round(q.cavg);return p;
+  };
   function strictPool(kind='balanced'){const out=[];for(const g of state.games||[])for(const m of g.markets||[]){const x={...m,gameId:g.id,game:`${g.away} @ ${g.home}`,source:m.source||g.dataSource||'Live'};x.confidenceScore=conf(x);x.confidence=x.confidenceScore;if(valueScore(x,kind)>=0)out.push(x)}return out}
   function rankMarket(m,v='balanced'){return conf(m)*.7+valueScore(m,v)*.3}
   function fmt(o){return Number(o)>0?'+'+Math.round(o):String(Math.round(o))}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function key(m){return[m.gameId||'',m.marketKey||m.type,m.player||m.team||'',m.side||'',m.point??'',m.name||''].join('|')}
@@ -26,7 +44,9 @@
   function chooseTwo(){const pool=strictPool('balanced').filter(m=>conf(m)>=82).sort((a,b)=>rankMarket(b)-rankMarket(a));for(let i=0;i<pool.length;i++)for(let j=i+1;j<pool.length;j++){if(pool[i].gameId===pool[j].gameId)continue;const legs=[pool[i],pool[j]];if(buildQuality(legs,'balanced',false).pass)return legs}return[]}
   function chooseSgp(){let best=null;for(const g of state.games||[]){const pool=(g.markets||[]).map(m=>({...m,gameId:g.id,game:`${g.away} @ ${g.home}`,source:m.source||g.dataSource||'Live'})).filter(m=>valueScore(m,'balanced')>=0&&conf(m)>=80).sort((a,b)=>rankMarket(b)-rankMarket(a)).slice(0,18);for(let i=0;i<pool.length;i++)for(let j=i+1;j<pool.length;j++)for(let k=j+1;k<pool.length;k++){const legs=[pool[i],pool[j],pool[k]],q=buildQuality(legs,'balanced',true);if(!q.pass)continue;const score=q.cavg+q.corr;if(!best||score>best.score)best={legs,score}}}return best?.legs||[]}
   function refreshTopCards(){window.NFL_CONFIDENCE?.refresh?.();const grid=document.querySelector('#qolV3 .qgrid');if(!grid)return;const pool=strictPool('balanced').sort((a,b)=>rankMarket(b)-rankMarket(a));const straight=pool.find(m=>!m.player&&conf(m)>=82)||null;const prop=pool.find(m=>m.player&&m.type!=='td'&&conf(m)>=82)||null;grid.innerHTML=topCard('BEST BET',straight,'green','●')+topCard('BEST PLAYER PROP',prop,'blue','◆')+mini('BEST 2-LEG',chooseTwo(),'purple','⛓','balanced')+mini('BEST SGP',chooseSgp(),'gold','★','balanced');window.NFL_BANKROLL?.refresh?.()}
-  async function verifyPriorityGames(){const games=state.games||[];if(!games.length)return;const selected=games.find(g=>g.id===document.getElementById('gameSelect')?.value),candidates=games.filter(g=>(g.markets||[]).some(m=>m.player)),targets=[selected,...candidates].filter(Boolean).filter((g,i,a)=>a.findIndex(x=>x.id===g.id)===i).slice(0,6);await Promise.all(targets.map(verifyGameRoster));refreshTopCards()}
-  const oldGenerate=window.generate;if(typeof oldGenerate==='function')window.generate=async function(...args){const game=(state.games||[]).find(g=>g.id===document.getElementById('gameSelect')?.value)||state.games?.[0];if(game)await verifyGameRoster(game);const result=await oldGenerate.apply(this,args);setTimeout(refreshTopCards,0);return result};
-  const init=()=>setTimeout(verifyPriorityGames,50);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();window.addEventListener('nfl-qol-rendered',()=>setTimeout(verifyPriorityGames,20));document.getElementById('gameSelect')?.addEventListener('change',()=>setTimeout(verifyPriorityGames,0));window.NFL_SELECTIVITY={verifyGameRoster,valueScore,strictCorrelation,buildQuality,refresh:refreshTopCards,verify:verifyPriorityGames};
+  async function verifyPriorityGames(){const games=state.games||[];if(!games.length)return;const candidates=games.filter(g=>(g.markets||[]).some(m=>m.player)).slice(0,4);await Promise.all(candidates.map(verifyGameRoster));refreshTopCards()}
+  const oldGenerate=window.generate;if(typeof oldGenerate==='function')window.generate=async function(...args){const result=await oldGenerate.apply(this,args);setTimeout(refreshTopCards,0);return result};
+  // Initial verification only. Game changes are owned exclusively by prop-init-fix.js.
+  const init=()=>setTimeout(verifyPriorityGames,50);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+  window.NFL_SELECTIVITY={verifyGameRoster,valueScore,strictCorrelation,buildQuality,refresh:refreshTopCards,verify:verifyPriorityGames};
 })();
