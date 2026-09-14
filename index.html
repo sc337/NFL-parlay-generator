@@ -8,9 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260913-2230" />
-<link rel="stylesheet" href="qol-v3.css?v=20260913-2230" />
-<link rel="stylesheet" href="qol-v3-enhance.css?v=20260913-2230" />
+<link rel="stylesheet" href="styles.css?v=20260913-2235" />
+<link rel="stylesheet" href="qol-v3.css?v=20260913-2235" />
+<link rel="stylesheet" href="qol-v3-enhance.css?v=20260913-2235" />
+<link rel="stylesheet" href="mockup-polish.css?v=20260913-2235" />
 </head>
 <body>
 <div class="shell">
@@ -19,32 +20,27 @@
   <div class="header-status"><span class="live-dot"></span><span id="dataStatus">Loading live market data…</span></div>
   <button id="settingsBtn" class="icon-btn" aria-label="Open settings">⚙ <span class="settings-label">Settings</span></button>
 </header>
-
 <section class="api-usage-card" id="apiUsageCard"><div><p class="label">API USAGE</p><strong id="apiRemaining">—</strong><span class="api-caption">credits remaining</span></div><div class="api-usage-stats"><span><b id="apiUsed">—</b> used</span><span><b id="apiLast">—</b> last call</span></div><div class="api-meter"><span id="apiMeterFill"></span></div><div class="api-saver-row"><label for="apiSaverMode">API Saver</label><select id="apiSaverMode"><option value="full">Full</option><option value="saver" selected>Saver</option><option value="ultra">Ultra Saver</option></select><span id="apiCacheStats">0 cache hits • 0 live fetches</span><button id="clearApiCacheBtn" type="button" class="cache-btn">Clear cache</button></div></section>
 <section class="source-status-card"><div><p class="label">DATA SOURCES</p><span>Caesars <b>Primary odds</b></span></div><div><span>Kalshi <b id="kalshiStatus">Checking…</b></span></div><div><span>ESPN <b id="espnStatus">Idle</b></span></div><div><span>nflverse <b id="nflverseStatus">Idle</b></span></div><div class="source-note">Caesars = sportsbook lines & props • Kalshi = server-refreshed implied prices • ESPN/nflverse = context</div></section>
 <section class="bankroll-card"><div class="bankroll-head"><div><p class="label">BANKROLL</p><h2>Bankroll Manager</h2></div><button id="resetBankrollBtn" type="button" class="cache-btn">Reset current</button></div><div class="bankroll-grid"><div class="bankroll-field"><label for="startingBankroll">Starting bankroll</label><div class="money-input"><span>$</span><input id="startingBankroll" type="number" min="0" step="1" inputmode="decimal" /></div></div><div class="bankroll-field"><label for="currentBankroll">Current bankroll</label><div class="money-input"><span>$</span><input id="currentBankroll" type="number" min="0" step="1" inputmode="decimal" /></div></div><div class="bankroll-stat"><span>P/L</span><strong id="bankrollPnl">$0.00</strong></div><div class="bankroll-stat"><span>1 unit (1%)</span><strong id="bankrollUnit">$1.00</strong></div></div><p class="bankroll-note">Use the Bet Tracker for settled results and bankroll changes.</p></section>
-
 <nav class="mode-tabs" aria-label="Parlay type"><button class="tab active" data-mode="sgp">Same Game Parlay</button><button class="tab" data-mode="multi">Multi-Game</button></nav>
 <main>
 <section class="control-card"><div class="section-head"><div><p class="label">PARLAY BUILDER</p><h2 id="modeTitle">Same Game Parlay</h2></div><span class="pill" id="slateLabel">This week</span></div><div id="gameChooserWrap" class="field"><label for="gameSelect">Game</label><select id="gameSelect"><option disabled selected>No live games loaded</option></select></div><div class="settings-grid"><div class="field"><label for="legsSelect">Legs</label><select id="legsSelect"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div><div class="field"><label for="riskRange">Risk <span id="riskText">Balanced</span> <b id="riskValue">45/100</b></label><input id="riskRange" type="range" min="0" max="100" value="45" /><small id="riskBehavior" class="risk-behavior">Balances hit rate, price discipline, and market quality.</small></div></div><details class="market-filter-details"><summary>Markets</summary><div class="market-box"><div class="chips" id="marketChips"><button class="chip active" data-market="h2h">Moneyline</button><button class="chip active" data-market="spreads">Spread</button><button class="chip active" data-market="totals">Total</button><button class="chip active" data-market="passing">Passing</button><button class="chip active" data-market="rushing">Rushing</button><button class="chip active" data-market="receiving">Receiving</button><button class="chip active" data-market="td">Anytime TD</button></div></div></details><button id="generateBtn" class="primary-btn" disabled>Live data required</button></section>
 <section class="results-head"><div><h2 id="resultsTitle">No live betting recommendations</h2></div></section>
 <section id="results" class="results-grid"><div class="empty">Live Caesars or Kalshi data is required. No demo or placeholder markets are used.</div></section>
 </main>
-
 <footer class="dashboard-footer"><p>“Discipline turns data into profit.”</p><div><span>NFL Betting Tool</span><span>Play smart. Bet responsibly.</span></div></footer>
 </div>
-
 <dialog id="settingsDialog"><form method="dialog" class="dialog-card"><div class="section-head"><div><p class="label">DATA SETTINGS</p><h2>Settings</h2></div><button class="icon-btn" value="cancel">✕</button></div><p class="muted">Caesars is requested through The Odds API. If Caesars is unavailable or no key is saved, the app uses the server-refreshed Kalshi NFL snapshot.</p><div class="field"><label for="apiKeyInput">The Odds API key</label><input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" /></div><div class="dialog-actions"><button id="clearKeyBtn" type="button" class="secondary-btn">Use Kalshi only</button><button id="saveKeyBtn" type="button" class="primary-btn">Save & refresh</button></div></form></dialog>
 <template id="parlayTemplate"><article class="parlay-card"><div class="parlay-top"><div><span class="grade"></span><h3 class="parlay-name"></h3><span class="script-badge"></span></div><div class="odds-wrap"><span class="odds-label">Standalone est.</span><div class="odds"></div></div></div><p class="summary"></p><div class="legs"></div><div class="card-footer"><span class="score"></span><span class="correlation"></span></div></article></template>
-
-<script src="sportsbook-caesars.js?v=20260913-2230"></script>
-<script src="api-saver.js?v=20260913-2230"></script>
-<script src="app.js?v=20260913-2230"></script>
-<script src="kalshi-provider.js?v=20260913-2230"></script>
-<script src="no-demo-mode.js?v=20260913-2230"></script>
-<script src="risk-bankroll.js?v=20260913-2230"></script>
-<script src="diagnostics-v2.js?v=20260913-2230"></script>
-<script src="qol-v3.js?v=20260913-2230"></script>
-<script src="qol-v3-enhance.js?v=20260913-2230"></script>
+<script src="sportsbook-caesars.js?v=20260913-2235"></script>
+<script src="api-saver.js?v=20260913-2235"></script>
+<script src="app.js?v=20260913-2235"></script>
+<script src="kalshi-provider.js?v=20260913-2235"></script>
+<script src="no-demo-mode.js?v=20260913-2235"></script>
+<script src="risk-bankroll.js?v=20260913-2235"></script>
+<script src="diagnostics-v2.js?v=20260913-2235"></script>
+<script src="qol-v3.js?v=20260913-2235"></script>
+<script src="qol-v3-enhance.js?v=20260913-2235"></script>
 </body>
 </html>
