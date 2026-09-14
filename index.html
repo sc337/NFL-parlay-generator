@@ -8,9 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20260913-1520" />
-<link rel="stylesheet" href="qol-v3.css?v=20260913-1520" />
-<link rel="stylesheet" href="qol-v3-enhance.css?v=20260913-1520" />
+<link rel="stylesheet" href="styles.css?v=20260913-2204" />
+<link rel="stylesheet" href="qol-v3.css?v=20260913-2204" />
+<link rel="stylesheet" href="qol-v3-enhance.css?v=20260913-2204" />
+<link rel="stylesheet" href="dashboard-simplify.css?v=20260913-2204" />
 </head>
 <body>
 <div class="shell">
@@ -26,17 +27,17 @@
 <section id="results" class="results-grid"><div class="empty">Waiting for live Caesars or Kalshi markets.</div></section>
 </main>
 </div>
-<dialog id="settingsDialog"><form method="dialog" class="dialog-card"><div class="section-head"><div><p class="label">DATA SETTINGS</p><h2>Caesars odds source</h2></div><button class="icon-btn" value="cancel">✕</button></div><p class="muted">Caesars is requested through The Odds API using bookmaker key williamhill_us. If Caesars is unavailable or no key is saved, the app uses the server-refreshed Kalshi NFL snapshot. No demo data is used.</p><div class="field"><label for="apiKeyInput">The Odds API key</label><input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" /></div><div class="dialog-actions"><button id="clearKeyBtn" type="button" class="secondary-btn">Use Kalshi only</button><button id="saveKeyBtn" type="button" class="primary-btn">Save & refresh</button></div></form></dialog>
+<dialog id="settingsDialog"><form method="dialog" class="dialog-card"><div class="section-head"><div><p class="label">DATA SETTINGS</p><h2>Settings</h2></div><button class="icon-btn" value="cancel">✕</button></div><p class="muted">Caesars is requested through The Odds API. If Caesars is unavailable or no key is saved, the app uses the server-refreshed Kalshi NFL snapshot.</p><div class="field"><label for="apiKeyInput">The Odds API key</label><input id="apiKeyInput" type="password" autocomplete="off" placeholder="Paste key here" /></div><div class="dialog-actions"><button id="clearKeyBtn" type="button" class="secondary-btn">Use Kalshi only</button><button id="saveKeyBtn" type="button" class="primary-btn">Save & refresh</button></div></form></dialog>
 <template id="parlayTemplate"><article class="parlay-card"><div class="parlay-top"><div><span class="grade"></span><h3 class="parlay-name"></h3><span class="script-badge"></span></div><div class="odds-wrap"><span class="odds-label">Standalone est.</span><div class="odds"></div></div></div><p class="summary"></p><div class="legs"></div><div class="card-footer"><span class="score"></span><span class="correlation"></span></div></article></template>
-<script src="sportsbook-caesars.js?v=20260913-1520"></script>
-<script src="api-saver.js?v=20260913-1520"></script>
-<script src="app.js?v=20260913-1520"></script>
-<script src="kalshi-provider.js?v=20260913-1520"></script>
-<script src="no-demo-mode.js?v=20260913-1520"></script>
-<script src="risk-bankroll.js?v=20260913-1520"></script>
-<script src="diagnostics-v2.js?v=20260913-1520"></script>
-<script src="qol-v3.js?v=20260913-1520"></script>
-<script src="qol-v3-enhance.js?v=20260913-1520"></script>
-<script src="qol-v3-position.js?v=20260913-1520"></script>
+<script src="sportsbook-caesars.js?v=20260913-2204"></script>
+<script src="api-saver.js?v=20260913-2204"></script>
+<script src="app.js?v=20260913-2204"></script>
+<script src="kalshi-provider.js?v=20260913-2204"></script>
+<script src="no-demo-mode.js?v=20260913-2204"></script>
+<script src="risk-bankroll.js?v=20260913-2204"></script>
+<script src="diagnostics-v2.js?v=20260913-2204"></script>
+<script src="qol-v3.js?v=20260913-2204"></script>
+<script src="qol-v3-enhance.js?v=20260913-2204"></script>
+<script src="dashboard-simplify.js?v=20260913-2204"></script>
 </body>
 </html>
