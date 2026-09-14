@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/update_kalshi.py'
       - 'scripts/verify_snapshot_rosters.py'
+      - 'scripts/enrich_snapshot_context.py'
       - '.github/workflows/update-kalshi.yml'
   schedule:
     - cron: '3,13,23,33,43,53 * * * *'
@@ -31,6 +32,8 @@ jobs:
         run: python scripts/update_kalshi.py
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
+      - name: Enrich games with ESPN matchup context
+        run: python scripts/enrich_snapshot_context.py
       - name: Commit snapshot if changed
         run: |
           git config user.name "github-actions[bot]"
