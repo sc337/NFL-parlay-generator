@@ -1,5 +1,9 @@
 (() => {
+  let scheduled=false;
+
   function clean(){
+    scheduled=false;
+
     document.querySelectorAll('#qolV3 .qhead p').forEach(el=>el.remove());
 
     document.querySelectorAll('#qolV3 .qmetrics span').forEach(el=>{
@@ -7,33 +11,39 @@
     });
 
     document.querySelectorAll('#qolV3 .qcard.pass p').forEach(el=>{
-      el.textContent='No qualifying pick.';
+      if(el.textContent!=='No qualifying pick.') el.textContent='No qualifying pick.';
     });
 
     const slate=document.getElementById('slateLabel');
-    if(slate) slate.hidden=true;
+    if(slate && !slate.hidden) slate.hidden=true;
 
     const title=document.getElementById('resultsTitle');
     if(title){
       const txt=title.textContent||'';
-      if(/SGP|props|recommend/i.test(txt)) title.textContent='Recommendations';
+      if((/SGP|props|recommend/i.test(txt)) && txt!=='Recommendations') title.textContent='Recommendations';
     }
 
     document.querySelectorAll('.qdetails summary small').forEach(el=>{
-      el.textContent='Settings & diagnostics';
+      if(el.textContent!=='Settings & diagnostics') el.textContent='Settings & diagnostics';
     });
 
     const footer=document.querySelector('.dashboard-footer');
-    if(footer){
+    if(footer && !footer.querySelector('.footer-minimal')){
       footer.innerHTML='<div class="footer-minimal">Bet responsibly.</div>';
     }
   }
 
+  function schedule(){
+    if(scheduled) return;
+    scheduled=true;
+    requestAnimationFrame(clean);
+  }
+
   document.addEventListener('DOMContentLoaded',()=>{
     clean();
-    const root=document.body;
-    const obs=new MutationObserver(()=>clean());
-    obs.observe(root,{childList:true,subtree:true});
+    const obs=new MutationObserver(schedule);
+    obs.observe(document.body,{childList:true,subtree:true});
   });
-  window.addEventListener('nfl-qol-rendered',()=>setTimeout(clean,0));
+
+  window.addEventListener('nfl-qol-rendered',schedule);
 })();
