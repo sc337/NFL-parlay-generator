@@ -4,14 +4,15 @@ from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request,urlopen
 BASES=['https://api.elections.kalshi.com/trade-api/v2/markets','https://external-api.kalshi.com/trade-api/v2/markets'];ESPN_SCOREBOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
-SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLTD','KXNFLRECYDS','KXNFLRUSHYDS','KXNFLPASSYDS','KXNFLRECEPTIONS','KXNFLRUSHATTEMPTS','KXNFLRUSHATT','KXNFLPASSATTEMPTS','KXNFLPASSATT','KXNFLCOMPLETIONS','KXNFLPASSCOMPLETIONS']
+# Kalshi's actual live NFL series tickers. Keep these explicit: guessed aliases silently return empty sets.
+SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLTD','KXNFLRECYDS','KXNFLRSHYDS','KXNFLPASSYDS','KXNFLREC','KXNFLRSHATT','KXNFLPASSATT','KXNFLPASSCOMP','KXNFLPASSTDS','KXNFLPASSINT']
 TEAM_CODES={'ARI':'Arizona Cardinals','ATL':'Atlanta Falcons','BAL':'Baltimore Ravens','BUF':'Buffalo Bills','CAR':'Carolina Panthers','CHI':'Chicago Bears','CIN':'Cincinnati Bengals','CLE':'Cleveland Browns','DAL':'Dallas Cowboys','DEN':'Denver Broncos','DET':'Detroit Lions','GB':'Green Bay Packers','HOU':'Houston Texans','IND':'Indianapolis Colts','JAX':'Jacksonville Jaguars','KC':'Kansas City Chiefs','LV':'Las Vegas Raiders','LAC':'Los Angeles Chargers','LAR':'Los Angeles Rams','MIA':'Miami Dolphins','MIN':'Minnesota Vikings','NE':'New England Patriots','NO':'New Orleans Saints','NYG':'New York Giants','NYJ':'New York Jets','PHI':'Philadelphia Eagles','PIT':'Pittsburgh Steelers','SEA':'Seattle Seahawks','SF':'San Francisco 49ers','TB':'Tampa Bay Buccaneers','TEN':'Tennessee Titans','WAS':'Washington Commanders'};ALIASES={'JAC':'JAX','WSH':'WAS','LA':'LAR'};ALL_CODES={**TEAM_CODES,**{a:TEAM_CODES[b] for a,b in ALIASES.items()}}
-PROP_SERIES={'KXNFLRECYDS':('receiving','player_reception_yds','receiving yards'),'KXNFLRUSHYDS':('rushing','player_rush_yds','rushing yards'),'KXNFLPASSYDS':('passing','player_pass_yds','passing yards'),'KXNFLRECEPTIONS':('receiving','player_receptions','receptions'),'KXNFLRUSHATTEMPTS':('rushing','player_rush_attempts','rushing attempts'),'KXNFLRUSHATT':('rushing','player_rush_attempts','rushing attempts'),'KXNFLPASSATTEMPTS':('passing','player_pass_attempts','passing attempts'),'KXNFLPASSATT':('passing','player_pass_attempts','passing attempts'),'KXNFLCOMPLETIONS':('passing','player_pass_completions','completions'),'KXNFLPASSCOMPLETIONS':('passing','player_pass_completions','completions')}
+PROP_SERIES={'KXNFLRECYDS':('receiving','player_reception_yds','receiving yards'),'KXNFLRSHYDS':('rushing','player_rush_yds','rushing yards'),'KXNFLPASSYDS':('passing','player_pass_yds','passing yards'),'KXNFLREC':('receiving','player_receptions','receptions'),'KXNFLRSHATT':('rushing','player_rush_attempts','rushing attempts'),'KXNFLPASSATT':('passing','player_pass_attempts','passing attempts'),'KXNFLPASSCOMP':('passing','player_pass_completions','passing completions'),'KXNFLPASSTDS':('passing','player_pass_tds','passing touchdowns'),'KXNFLPASSINT':('passing','player_pass_interceptions','passing interceptions')}
 def fetch_json(url,timeout=20):
- req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.0','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
+ req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.1','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
 def fetch_series(s):
  for base in BASES:
-  try:return fetch_json(base+'?'+urlencode({'status':'open','limit':1000,'series_ticker':s})).get('markets',[])
+  try:return fetch_json(base+'?'+urlencode({'status':'open','limit':1000,'series_ticker':s,'mve_filter':'exclude'})).get('markets',[])
   except Exception as e:last=e
  print('WARN',s,last,file=sys.stderr);return []
 def prob(m):
@@ -66,7 +67,12 @@ def parse_prop(m,g,s):
   if mm and int(mm.group(2))==1:g['markets'].append({'type':'td','marketKey':'player_anytime_td','player':mm.group(1).strip(),'team':'Player','side':'yes','name':mm.group(1).strip()+' anytime TD',**base_leg(m,p)})
   return
  if s not in PROP_SERIES:return
- typ,key,label=PROP_SERIES[s];patterns=[rf'^(.+?):\s*(\d+(?:\.\d+)?)\+\s+{re.escape(label)}$',rf'^(.+?):\s*(\d+(?:\.\d+)?)\+\s+{re.escape(label.replace("rushing ","rush ").replace("passing ","pass "))}$'];mm=next((x for pat in patterns if (x:=re.match(pat,title,re.I))),None)
+ typ,key,label=PROP_SERIES[s];aliases={
+ 'rushing yards':['rushing yards','rush yards'],'receiving yards':['receiving yards'],'passing yards':['passing yards','pass yards'],'receptions':['receptions'],'rushing attempts':['rushing attempts','rush attempts'],'passing attempts':['passing attempts','pass attempts'],'passing completions':['passing completions','completions'],'passing touchdowns':['passing touchdowns','pass touchdowns','touchdowns'],'passing interceptions':['passing interceptions','interceptions']}
+ mm=None
+ for wording in aliases.get(label,[label]):
+  mm=re.match(r'^(.+?):\s*(\d+(?:\.\d+)?)\+\s+'+re.escape(wording)+r'$',title,re.I)
+  if mm:break
  if not mm:return
  player=mm.group(1).strip();threshold=float(mm.group(2));line=max(.5,threshold-.5);g['_candidates']['props'].setdefault((player,key),[]).append((abs(p-.5),line,m,p,typ,label))
 def finalize(g):
