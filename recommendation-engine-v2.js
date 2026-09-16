@@ -1,4 +1,4 @@
-(() => {
+(()=>{
   const TEAM_MARKETS=new Set(['h2h','spreads']);
   const PROP_TYPES=new Set(['passing','rushing','receiving','td']);
   const verifiedGames=new Set(),verifyingGames=new Map();
@@ -12,29 +12,10 @@
   function strictCorrelation(a,b){if(!a||!b)return 0;let s=0;const st=sameTeam(a,b),sp=samePlayer(a,b),ao=isOver(a),bo=isOver(b),au=isUnder(a),bu=isUnder(b);const qbRec=st&&((a.position==='QB'&&['WR','TE'].includes(b.position))||(b.position==='QB'&&['WR','TE'].includes(a.position)));if(qbRec&&ao&&bo)s+=9;if(qbRec&&au&&bu)s+=6;if(sp&&((a.type==='td'&&bo)||(b.type==='td'&&ao)))s+=5;if(sp&&((a.type==='td'&&bu)||(b.type==='td'&&au)))s-=8;if(a.type==='totals'&&a.side==='over'&&bo&&['passing','receiving','td'].includes(b.type))s+=4;if(b.type==='totals'&&b.side==='over'&&ao&&['passing','receiving','td'].includes(a.type))s+=4;if(st&&isTeamSide(a)&&b.type==='rushing'&&bo)s+=4;if(st&&isTeamSide(b)&&a.type==='rushing'&&ao)s+=4;if(st&&ao&&bo&&['passing','receiving'].includes(a.type)&&['passing','receiving'].includes(b.type))s+=2;if(!st&&!sp&&au&&bu&&PROP_TYPES.has(a.type)&&PROP_TYPES.has(b.type))s-=2;if(st&&((ao&&bu)||(au&&bo))&&['passing','receiving'].includes(a.type)&&['passing','receiving'].includes(b.type))s-=5;return s}
   function strictIncompatible(a,b){if(!a||!b)return false;if(a.type==='totals'&&b.type==='totals')return true;if(isTeamSide(a)&&isTeamSide(b))return true;if(a.marketKey&&b.marketKey&&samePlayer(a,b)&&a.marketKey===b.marketKey)return true;if(samePlayer(a,b)&&a.type==='td'&&isUnder(b))return true;if(samePlayer(a,b)&&b.type==='td'&&isUnder(a))return true;if(a.player&&!verifiedPlayer(a)||b.player&&!verifiedPlayer(b))return true;return false}
   function buildQuality(legs,variant='balanced',isSgp=true){if(!legs?.length)return{pass:false,reason:'No legs'};const qs=legs.map(l=>valueScore(l,variant)),cs=legs.map(conf);if(qs.some(q=>q<0))return{pass:false,reason:'A leg failed the market-value gate'};const confFloor=variant==='safe'?82:variant==='balanced'?80:74;if(cs.some(c=>c<confFloor))return{pass:false,reason:'A leg failed the confidence gate'};const avg=qs.reduce((a,b)=>a+b,0)/qs.length,cavg=cs.reduce((a,b)=>a+b,0)/cs.length;if(avg<(variant==='long'?71:77))return{pass:false,reason:'Average market quality is too low'};if(!isSgp)return{pass:true,avg,cavg,corr:0,links:0};let corr=0,links=0;const degree=new Array(legs.length).fill(0);for(let i=0;i<legs.length;i++)for(let j=i+1;j<legs.length;j++){if(strictIncompatible(legs[i],legs[j]))return{pass:false,reason:'Conflicting legs'};const c=strictCorrelation(legs[i],legs[j]);if(c<0)return{pass:false,reason:'Contains a negative relationship'};corr+=c;if(c>=3){links++;degree[i]++;degree[j]++}}if(degree.some(d=>d===0))return{pass:false,reason:'Every SGP leg must be logically connected'};if(links<Math.max(1,legs.length-1)||corr<(variant==='safe'?5:variant==='balanced'?7:6))return{pass:false,reason:'Correlation is not strong enough'};return{pass:true,avg,cavg,corr,links}}
-  window.correlation=strictCorrelation;window.incompatible=strictIncompatible;
-  const originalMarketQuality=window.marketQuality;if(typeof originalMarketQuality==='function')window.marketQuality=function(m,v){const x=valueScore(m,v);if(x<0||conf(m)<(v==='long'?74:80))return-999;const old=originalMarketQuality(m,v);return old<=-900?-999:(old*.4+x*.6)};
-  const originalCoherent=window.coherentWithLegs;if(typeof originalCoherent==='function')window.coherentWithLegs=function(c,l,v){if(!verifiedPlayer(c)||conf(c)<(v==='long'?74:80)||l.some(x=>strictIncompatible(x,c)))return false;return originalCoherent(c,l,v)};
-  const originalBuildSgp=window.buildSgp;if(typeof originalBuildSgp==='function')window.buildSgp=function(game,count,risk,variant,previous=[]){const p=originalBuildSgp(game,count,risk,variant,previous);if(!p)return null;const q=buildQuality(p.legs,variant,true);if(!q.pass)return null;p.corr=q.corr;p.score=Math.min(p.score,Math.round(q.cavg));return p};
-  // Multi-game is intentionally independent-leg selection: one qualified leg per game.
-  // It must not inherit SGP correlation constraints or the base round-robin's weak candidates.
-  window.buildMulti=function(count,risk,variant){
-    const floor=variant==='safe'?82:variant==='balanced'?80:74;
-    const perGame=[];
-    for(const g of state.games||[]){
-      const candidates=(g.markets||[])
-        .filter(m=>state.selectedMarkets?.has?.(m.type))
-        .map(m=>({...m,gameId:g.id,gameLabel:`${g.away} @ ${g.home}`,source:m.source||g.dataSource||'Live'}))
-        .filter(m=>valueScore(m,variant)>=0&&conf(m)>=floor)
-        .sort((a,b)=>(conf(b)*.7+valueScore(b,variant)*.3)-(conf(a)*.7+valueScore(a,variant)*.3));
-      if(candidates.length)perGame.push(candidates[0]);
-    }
-    perGame.sort((a,b)=>(conf(b)*.7+valueScore(b,variant)*.3)-(conf(a)*.7+valueScore(a,variant)*.3));
-    const legs=perGame.slice(0,count);
-    if(legs.length<count)return null;
-    const q=buildQuality(legs,variant,false);if(!q.pass)return null;
-    const p=packageParlay(legs,variant,false);if(!p)return null;p.score=Math.round(q.cavg);return p;
-  };
+  // IMPORTANT: strictCorrelation/buildQuality power the curated top cards only.
+  // They intentionally do NOT override app.js buildSgp/buildMulti. The interactive
+  // builder must remain predictable: changing 2/3/4/5/6 legs should regenerate
+  // from the same game-script engine instead of being blanked by a second gate.
   function strictPool(kind='balanced'){const out=[];for(const g of state.games||[])for(const m of g.markets||[]){const x={...m,gameId:g.id,game:`${g.away} @ ${g.home}`,source:m.source||g.dataSource||'Live'};x.confidenceScore=conf(x);x.confidence=x.confidenceScore;if(valueScore(x,kind)>=0)out.push(x)}return out}
   function rankMarket(m,v='balanced'){return conf(m)*.7+valueScore(m,v)*.3}
   function fmt(o){return Number(o)>0?'+'+Math.round(o):String(Math.round(o))}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function key(m){return[m.gameId||'',m.marketKey||m.type,m.player||m.team||'',m.side||'',m.point??'',m.name||''].join('|')}
@@ -46,7 +27,6 @@
   function refreshTopCards(){window.NFL_CONFIDENCE?.refresh?.();const grid=document.querySelector('#qolV3 .qgrid');if(!grid)return;const pool=strictPool('balanced').sort((a,b)=>rankMarket(b)-rankMarket(a));const straight=pool.find(m=>!m.player&&conf(m)>=82)||null;const prop=pool.find(m=>m.player&&m.type!=='td'&&conf(m)>=82)||null;grid.innerHTML=topCard('BEST BET',straight,'green','●')+topCard('BEST PLAYER PROP',prop,'blue','◆')+mini('BEST 2-LEG',chooseTwo(),'purple','⛓','balanced')+mini('BEST SGP',chooseSgp(),'gold','★','balanced');window.NFL_BANKROLL?.refresh?.()}
   async function verifyPriorityGames(){const games=state.games||[];if(!games.length)return;const candidates=games.filter(g=>(g.markets||[]).some(m=>m.player)).slice(0,4);await Promise.all(candidates.map(verifyGameRoster));refreshTopCards()}
   const oldGenerate=window.generate;if(typeof oldGenerate==='function')window.generate=async function(...args){const result=await oldGenerate.apply(this,args);setTimeout(refreshTopCards,0);return result};
-  // Initial verification only. Game changes are owned exclusively by prop-init-fix.js.
   const init=()=>setTimeout(verifyPriorityGames,50);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
   window.NFL_SELECTIVITY={verifyGameRoster,valueScore,strictCorrelation,buildQuality,refresh:refreshTopCards,verify:verifyPriorityGames};
 })();
