@@ -1,4 +1,4 @@
-name: Update Kalshi NFL snapshot
+name: Update Kalshi sports snapshots
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/update_kalshi.py'
+      - 'scripts/update_kalshi_ufc.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
       - '.github/workflows/update-kalshi.yml'
@@ -32,6 +33,8 @@ jobs:
           python-version: '3.12'
       - name: Fetch and normalize Kalshi NFL markets
         run: python scripts/update_kalshi.py
+      - name: Fetch and normalize Kalshi UFC markets
+        run: python scripts/update_kalshi_ufc.py
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context
@@ -45,17 +48,20 @@ jobs:
           # synchronize with main. This avoids rebasing two generated versions
           # of the same JSON file when another scheduled run pushed first.
           cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
+          cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
           git restore data/kalshi-nfl.json
+          git restore data/kalshi-ufc.json 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
+          cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
 
-          git add data/kalshi-nfl.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
           fi
 
-          git commit -m "Update Kalshi NFL market snapshot"
+          git commit -m "Update Kalshi sports market snapshots"
 
           # A different run can still land between pull and push. Retry once by
           # rebuilding the commit on the newest main without merging JSON.
@@ -70,6 +76,6 @@ jobs:
               echo "Newer snapshot already landed"
               exit 0
             fi
-            git commit -m "Update Kalshi NFL market snapshot"
+            git commit -m "Update Kalshi sports market snapshots"
             git push
           fi
