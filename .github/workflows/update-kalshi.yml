@@ -68,10 +68,12 @@ jobs:
           if ! git push; then
             echo "Main advanced during push; retrying snapshot commit"
             cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
+            cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
             git reset --hard HEAD~1
             git pull --rebase origin main
             cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
-            git add data/kalshi-nfl.json
+            cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0
