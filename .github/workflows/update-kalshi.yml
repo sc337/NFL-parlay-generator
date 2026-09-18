@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/update_kalshi.py'
       - 'scripts/update_kalshi_ufc.py'
+      - 'scripts/update_kalshi_ncaaf.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
       - '.github/workflows/update-kalshi.yml'
@@ -33,6 +34,8 @@ jobs:
           python-version: '3.12'
       - name: Fetch and normalize Kalshi NFL markets
         run: python scripts/update_kalshi.py
+      - name: Fetch and normalize Kalshi NCAAF markets
+        run: python scripts/update_kalshi_ncaaf.py
       - name: Fetch and normalize Kalshi UFC markets
         run: python scripts/update_kalshi_ufc.py
       - name: Verify player props against ESPN rosters
@@ -49,13 +52,16 @@ jobs:
           # of the same JSON file when another scheduled run pushed first.
           cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
           cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
+          cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
           git restore data/kalshi-nfl.json
           git restore data/kalshi-ufc.json 2>/dev/null || true
+          git restore data/kalshi-ncaaf.json 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
+          cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -69,11 +75,13 @@ jobs:
             echo "Main advanced during push; retrying snapshot commit"
             cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
             cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
+          cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
             git reset --hard HEAD~1
             git pull --rebase origin main
             cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
             cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json
+          cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0
