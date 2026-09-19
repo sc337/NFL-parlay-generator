@@ -1,7 +1,7 @@
 const state = {
   mode:'sgp',
   risk:45,
-  selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','td']),
+  selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),
@@ -286,7 +286,7 @@ const PROP_MARKET_META = {
   player_rush_attempts:{type:'rushing',label:'rush attempts'},
   player_reception_yds:{type:'receiving',label:'receiving yards'},
   player_reception_yds_alternate:{type:'receiving',label:'receiving yards'},
-  player_receptions:{type:'receiving',label:'receptions'},
+  player_receptions:{type:'receptions',label:'receptions'},
   player_anytime_td:{type:'td',label:'anytime TD'}
 };
 
@@ -867,7 +867,8 @@ function reasonFor(leg,isSgp){
   if(leg.type==='spreads') return 'Team line chosen as a cleaner alternative to a higher-variance prop.';
   if(leg.type==='totals') return isSgp ? 'Sets the expected scoring environment for the rest of the SGP.' : 'Game total selected from the stronger available team-market candidates.';
   if(leg.type==='passing') return 'Volume-based passing outcome that can pair naturally with receiving production.';
-  if(leg.type==='receiving') return 'Usage-driven receiving leg; strongest when paired with corresponding passing volume.';
+  if(leg.type==='receiving') return 'Receiving-yard outcome driven by target volume and efficiency.';
+  if(leg.type==='receptions') return 'Reception-volume outcome driven by route participation and target share.';
   if(leg.type==='rushing') return 'Rushing-volume leg suited to favorable or neutral game scripts.';
   if(leg.type==='td') return 'Higher-variance scoring leg included only when the selected risk profile permits it.';
   return 'Selected by the current confidence and risk model.';
