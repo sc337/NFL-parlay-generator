@@ -788,20 +788,53 @@ function buildSgp(game,count,risk,variant,previous=[]){
   return p;
 }
 
+function propFamily(m){
+  const k=m?.marketKey||'';
+  if(k==='player_pass_yds'||k==='player_pass_yds_alternate') return 'pass_yds';
+  if(k==='player_rush_yds'||k==='player_rush_yds_alternate') return 'rush_yds';
+  if(k==='player_reception_yds'||k==='player_reception_yds_alternate') return 'rec_yds';
+  if(k==='player_receptions') return 'receptions';
+  if(k==='player_rush_attempts') return 'rush_attempts';
+  if(k==='player_pass_attempts') return 'pass_attempts';
+  if(k==='player_pass_completions') return 'completions';
+  return m?.type||'other';
+}
+
 function buildMulti(count,risk,variant){
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
-  const byGame=state.games.map(g=>({
-    game:g,
-    candidates:g.markets.filter(m=>state.selectedMarkets.has(m.type)).sort((a,b)=>candidateScore(b,targetRisk,variant)-candidateScore(a,targetRisk,variant))
-  })).filter(x=>x.candidates.length);
-  let legs=[];
-  let idx=0;
-  while(legs.length<count && byGame.length){
-    const slot=byGame[idx%byGame.length];
-    const cand=slot.candidates.shift();
-    if(cand) legs.push({...cand,gameLabel:`${slot.game.away} @ ${slot.game.home}`});
-    idx++;
-    if(idx>50) break;
+  const all=[];
+  for(const g of state.games){
+    for(const m of g.markets){
+      if(!state.selectedMarkets.has(m.type)) continue;
+      const score=candidateScore(m,targetRisk,variant);
+      if(score<=-900) continue;
+      all.push({m,g,score});
+    }
+  }
+  all.sort((a,b)=>b.score-a.score);
+
+  const legs=[],usedGames=new Set(),familyCounts=new Map();
+  const maxFamily=count>=3?Math.max(1,Math.ceil(count/2)):1;
+
+  // First pass: favor the strongest candidate while preventing one prop family
+  // (especially receptions) from monopolizing a multi-game build.
+  for(const x of all){
+    if(legs.length>=count) break;
+    if(usedGames.has(x.g.id)) continue;
+    const fam=propFamily(x.m),n=familyCounts.get(fam)||0;
+    if(n>=maxFamily) continue;
+    legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`});
+    usedGames.add(x.g.id);familyCounts.set(fam,n+1);
+  }
+
+  // Fill only if diversity constraints left the build short.
+  if(legs.length<count){
+    for(const x of all){
+      if(legs.length>=count) break;
+      if(usedGames.has(x.g.id)) continue;
+      legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`});
+      usedGames.add(x.g.id);
+    }
   }
   return packageParlay(legs,variant,false);
 }
