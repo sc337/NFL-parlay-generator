@@ -591,10 +591,27 @@ function candidateScore(m,risk,variant='balanced'){
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
+  const r=Math.max(0,Math.min(100,Number(risk)||0));
   let score=q + implied*.22;
 
-  if(risk<25 && m.price>0) score-=8;
-  if(risk>65 && m.price>0) score+=7;
+  // Risk is a true selection input, not just a UI label.
+  // Low risk rewards higher implied hit rate / shorter prices.
+  // High risk progressively rewards plus-money payout upside.
+  const conservative=(50-r)/50;
+  const aggressive=(r-50)/50;
+  if(conservative>0){
+    score+=(implied-50)*1.05*conservative;
+    if(m.price>0) score-=(10+Math.min(28,m.price/12))*conservative;
+    if(m.price<=-140&&m.price>=-400) score+=12*conservative;
+    if(m.type==='td') score-=14*conservative;
+  }
+  if(aggressive>0){
+    score+=(50-implied)*.95*aggressive;
+    if(m.price>0) score+=(12+Math.min(30,m.price/12))*aggressive;
+    if(m.price>=100&&m.price<=400) score+=14*aggressive;
+    if(m.price<-180) score-=20*aggressive;
+    if(m.type==='td') score+=12*aggressive;
+  }
   return score;
 }
 
@@ -942,7 +959,7 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   generate();
 }));
 
-$('#riskRange').addEventListener('input',e=>{state.risk=Number(e.target.value);$('#riskText').textContent=riskLabel(state.risk);generate();});
+let riskTimer=null;$('#riskRange').addEventListener('input',e=>{state.risk=Number(e.target.value);$('#riskText').textContent=riskLabel(state.risk);const rv=$('#riskValue');if(rv)rv.textContent=state.risk+'/100';clearTimeout(riskTimer);riskTimer=setTimeout(()=>generate(),90);});
 $('#legsSelect').addEventListener('change',generate);
 $('#gameSelect').addEventListener('change',()=>generate());
 $('#generateBtn').addEventListener('click',()=>generate());
