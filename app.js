@@ -591,8 +591,9 @@ function candidateScore(m,risk,variant='balanced'){
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
+  const projectionAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
   const r=Math.max(0,Math.min(100,Number(risk)||0));
-  let score=q + implied*.22;
+  let score=q + implied*.22 + projectionAdj;
   const projAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
   score+=projAdj;
 
