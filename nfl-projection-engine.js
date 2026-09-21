@@ -86,7 +86,9 @@
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
     return {marketP,modelP,edge,coverage:clamp(coverage,0,1),team:tp,projectionLine:upFinal?.line??null,lineEdge};
   }
-  function enrich(){
+  let enrichedRef=null;
+  function enrich(force=false){
+    if(!force&&enrichedRef===state.games)return;
     for(const g of state.games||[])for(const m of g.markets||[]){
       const p=marketProjection(g,m);if(!p)continue;
       m.modelProbability=p.modelP;
@@ -96,6 +98,7 @@
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;
     }
+    enrichedRef=state.games;
   }
   function adjustment(m){
     const edge=num(m?.modelEdge),cov=num(m?.projectionCoverage)||0;
@@ -114,8 +117,8 @@
       actionable:(cov||0)>=.20&&Math.abs(e)>=.025
     };
   }
-  function refresh(){enrich();setTimeout(()=>window.NFL_SELECTIVITY?.refresh?.(),0)}
+  function refresh(){enrich(true);setTimeout(()=>window.NFL_SELECTIVITY?.refresh?.(),0)}
   window.NFL_PROJECTIONS={enrich,marketProjection,adjustment,describe,refresh};
-  const init=()=>{refresh();setTimeout(refresh,250)};
+  const init=()=>setTimeout(refresh,0);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
