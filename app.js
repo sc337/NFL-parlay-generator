@@ -588,7 +588,6 @@ function marketQuality(m,variant){
 }
 
 function candidateScore(m,risk,variant='balanced'){
-  window.NFL_PROJECTIONS?.enrich?.();
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
