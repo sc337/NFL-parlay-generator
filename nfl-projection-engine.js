@@ -98,10 +98,21 @@
   function adjustment(m){
     const edge=num(m?.modelEdge),cov=num(m?.projectionCoverage)||0;
     if(edge==null||cov<.08)return 0;
-    // Reward model-v-market disagreement only when contextual coverage exists.
-    return clamp(edge*100, -12, 12)*(0.55+cov*.45);
+    // Coverage-gated model-v-market edge. Thin projections cannot overpower
+    // the market; richer context can move a candidate more materially.
+    const gate=clamp((cov-.08)/.42,0,1);
+    return clamp(edge*100,-12,12)*(.30+.70*gate);
   }
-  window.NFL_PROJECTIONS={enrich,marketProjection,adjustment};
+  function describe(m){
+    const mp=num(m?.marketProbability),p=num(m?.modelProbability),e=num(m?.modelEdge),cov=num(m?.projectionCoverage);
+    if(mp==null||p==null||e==null)return null;
+    return {
+      marketProbability:mp,modelProbability:p,edge:e,coverage:cov||0,
+      fairPrice:m.fairPrice??null,projectedLine:m.projectedLine??null,
+      actionable:(cov||0)>=.20&&Math.abs(e)>=.025
+    };
+  }
+  window.NFL_PROJECTIONS={enrich,marketProjection,adjustment,describe};
   const init=()=>{enrich();setTimeout(enrich,250)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
