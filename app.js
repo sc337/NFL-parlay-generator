@@ -594,8 +594,6 @@ function candidateScore(m,risk,variant='balanced'){
   const projectionAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
   const r=Math.max(0,Math.min(100,Number(risk)||0));
   let score=q + implied*.22 + projectionAdj;
-  const projAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
-  score+=projAdj;
 
   // Risk is a true selection input, not just a UI label.
   // Low risk rewards higher implied hit rate / shorter prices.
