@@ -34,5 +34,7 @@
   generate=async function(...args){if(!hasLiveGames()){clearLiveState(state.apiKey?'Waiting for Caesars/Kalshi data…':'Waiting for Kalshi data…');return}return originalGenerate.apply(this,args)};
   window.NFL_NO_DEMO={clear:clearLiveState,hasLiveGames,load:caesarsLoad,fallback:kalshiFallback};
   clearLiveState(state.apiKey?'Loading Caesars markets…':'Loading Kalshi NFL snapshot…');
-  setTimeout(()=>caesarsLoad(),60);
+  let loadAttempts=0;
+  async function bootLoad(){loadAttempts++;const ok=await caesarsLoad();if(!ok&&loadAttempts<3)setTimeout(bootLoad,1200*loadAttempts)}
+  setTimeout(bootLoad,60);
 })();
