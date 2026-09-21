@@ -82,7 +82,9 @@
     const marketLogit=Math.log(clamp(marketP,.03,.97)/(1-clamp(marketP,.03,.97)));
     const modelP=clamp(sigmoid(marketLogit+z),.04,.96);
     const edge=modelP-marketP;
-    return {marketP,modelP,edge,coverage:clamp(coverage,0,1),team:tp,projectionLine:usageProjection(game,m)?.line??null};
+    const upFinal=usageProjection(game,m);
+    const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
+    return {marketP,modelP,edge,coverage:clamp(coverage,0,1),team:tp,projectionLine:upFinal?.line??null,lineEdge};
   }
   function enrich(){
     for(const g of state.games||[])for(const m of g.markets||[]){
