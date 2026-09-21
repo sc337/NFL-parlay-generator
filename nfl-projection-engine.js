@@ -35,6 +35,18 @@
     if(temp!=null&&temp<=25&&['passing','receiving','totals'].includes(m.type))z-=.05;
     return z;
   }
+  function usageProjection(game,m){
+    if(!m?.player)return null;
+    const same=(game.markets||[]).filter(x=>x.player===m.player);
+    const get=k=>same.find(x=>x.marketKey===k&&x.side==='over'&&num(x.point)!=null);
+    const attempts=get('player_pass_attempts'),comps=get('player_pass_completions'),rush=get('player_rush_attempts'),rec=get('player_receptions');
+    let line=null,coverage=0;
+    if(m.marketKey==='player_pass_yds'&&attempts){line=num(attempts.point)*7.05;coverage=.32;}
+    if(m.marketKey==='player_rush_yds'&&rush){line=num(rush.point)*4.15;coverage=.32;}
+    if(m.marketKey==='player_reception_yds'&&rec){line=num(rec.point)*11.3;coverage=.32;}
+    if(m.marketKey==='player_receptions'&&comps){line=num(comps.point)*.24;coverage=.18;}
+    return line==null?null:{line,coverage};
+  }
   function marketProjection(game,m){
     const marketP=typeof impliedProbability==='function'?impliedProbability(m.price):num(m.prob);
     if(!Number.isFinite(marketP))return null;
@@ -52,6 +64,12 @@
       }
     }
     if(m.player){
+      const up=usageProjection(game,m);
+      if(up&&num(m.point)!=null){
+        const scale=m.type==='passing'?38:m.type==='rushing'?14:m.type==='receiving'?18:m.type==='receptions'?1.7:20;
+        const d=(up.line-num(m.point))/scale;
+        z+=clamp(d,-.38,.38)*(m.side==='under'?-1:1);coverage+=up.coverage;
+      }
       const breadth=num(m?.contextSignals?.market_breadth)||1;
       z+=clamp((breadth-2)*.025,0,.12);coverage+=.08;
       const ip=injuryPenalty(m);z+=ip;coverage+=ip? .22:0;
@@ -64,7 +82,7 @@
     const marketLogit=Math.log(clamp(marketP,.03,.97)/(1-clamp(marketP,.03,.97)));
     const modelP=clamp(sigmoid(marketLogit+z),.04,.96);
     const edge=modelP-marketP;
-    return {marketP,modelP,edge,coverage:clamp(coverage,0,1),team:tp};
+    return {marketP,modelP,edge,coverage:clamp(coverage,0,1),team:tp,projectionLine:usageProjection(game,m)?.line??null};
   }
   function enrich(){
     for(const g of state.games||[])for(const m of g.markets||[]){
@@ -74,6 +92,7 @@
       m.modelEdge=p.edge;
       m.projectionCoverage=p.coverage;
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
+      m.projectedLine=p.projectionLine;
     }
   }
   function adjustment(m){
