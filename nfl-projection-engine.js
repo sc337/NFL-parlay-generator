@@ -114,7 +114,8 @@
       actionable:(cov||0)>=.20&&Math.abs(e)>=.025
     };
   }
-  window.NFL_PROJECTIONS={enrich,marketProjection,adjustment,describe};
-  const init=()=>{enrich();setTimeout(enrich,250)};
+  function refresh(){enrich();setTimeout(()=>window.NFL_SELECTIVITY?.refresh?.(),0)}
+  window.NFL_PROJECTIONS={enrich,marketProjection,adjustment,describe,refresh};
+  const init=()=>{refresh();setTimeout(refresh,250)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
