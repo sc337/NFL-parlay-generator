@@ -593,6 +593,8 @@ function candidateScore(m,risk,variant='balanced'){
   const implied=impliedProbability(m.price)*100;
   const r=Math.max(0,Math.min(100,Number(risk)||0));
   let score=q + implied*.22;
+  const projAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
+  score+=projAdj;
 
   // Risk is a true selection input, not just a UI label.
   // Low risk rewards higher implied hit rate / shorter prices.
@@ -919,6 +921,7 @@ function render(parlays){
 function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
 
 async function generate(){
+  window.NFL_PROJECTIONS?.enrich?.();
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
   let parlays;
