@@ -1,5 +1,8 @@
 (() => {
   const SNAPSHOT='data/kalshi-nfl.json';
+  const CACHE_KEY='nflKalshiSnapshotV1';
+  function cached(){try{const x=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');return x&&Array.isArray(x.games)?x:null}catch{return null}}
+  function saveCache(x){try{localStorage.setItem(CACHE_KEY,JSON.stringify(x))}catch{}}
   const WARN_AGE_MS=30*60*1000;
   const QUALITY_PENALTY_AGE_MS=2*60*60*1000;
   const MAX_AGE_MS=12*60*60*1000;
@@ -10,6 +13,8 @@
   };
   async function load(){
     const status=document.getElementById('kalshiStatus');
+    const warm=cached();
+    if(warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{window.NFL_PROJECTIONS?.refresh?.();generate()},0)}}
     if(status)status.textContent='Checking…';
     const started=performance.now();
     try{
@@ -17,6 +22,7 @@
       const res=await fetch(url,{cache:'no-store'});
       if(!res.ok) throw new Error('Snapshot HTTP '+res.status);
       const data=await res.json();
+      saveCache(data);
       const rawGames=Array.isArray(data.games)?data.games:[];
       const games=rawGames.filter(isPregame);
       const removed=rawGames.length-games.length;
@@ -59,8 +65,8 @@
       setStatus(`Kalshi ${delayed?'delayed ':''}snapshot • ${games.length} upcoming NFL games • ${props} player props • ${total} markets • updated ${age}m ago`);
       const btn=document.getElementById('generateBtn');
       if(btn){btn.disabled=false;btn.textContent='Generate Parlays';}
+      window.NFL_PROJECTIONS?.refresh?.();
       await generate();
-      window.NFL_QOL_V3?.refresh?.();
       return true;
     }catch(e){
       diag({source:'Kalshi snapshot',url:SNAPSHOT,status:'ERR',ok:false,error:String(e.message||e),ms:Math.round(performance.now()-started)});
