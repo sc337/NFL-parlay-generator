@@ -13,7 +13,9 @@ def main():
  for s in SERIES:
   try:
    d=get(f'{API}/markets?series_ticker={s}&limit=1000')
-  except Exception: continue
+  except Exception as e:
+   print('MLB series fetch failed',s,repr(e)); continue
+  print('MLB series',s,'raw',len(d.get('markets',[])))
   for m in d.get('markets',[]):
    if m.get('status') in ('settled','closed','finalized'): continue
    p=prob(m)
