@@ -12,9 +12,10 @@ def main():
  out=[]; now=datetime.now(timezone.utc)
  for s in SERIES:
   try:
-   d=get(f'{API}/markets?series_ticker={s}&status=open&limit=1000')
+   d=get(f'{API}/markets?series_ticker={s}&limit=1000')
   except Exception: continue
   for m in d.get('markets',[]):
+   if m.get('status') in ('settled','closed','finalized'): continue
    p=prob(m)
    if not(.02<p<.98):continue
    title=m.get('title') or ''; sub=m.get('subtitle') or ''; label=sub or title
