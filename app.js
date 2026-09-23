@@ -896,7 +896,15 @@ function render(parlays){
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
       const d=document.createElement('div'); d.className='leg';
-      d.innerHTML=`<div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${reasonFor(l,state.mode==='sgp')}</div>`;
+      const px=window.NFL_PROJECTIONS?.describe?.(l)||{};
+      const mp=Number(px.modelP),mk=Number(px.marketP),ed=Number(px.edge),ev=Number(px.ev??l.modelEV),pl=Number(px.projectionLine??l.projectedLine),ln=Number(l.point);
+      const metrics=[];
+      if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
+      if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
+      if(Number.isFinite(mk))metrics.push('Market '+Math.round(mk*100)+'%');
+      if(Number.isFinite(ed))metrics.push('Edge '+(ed>=0?'+':'')+Math.round(ed*100)+'%');
+      if(Number.isFinite(ev))metrics.push('EV '+(ev>=0?'+':'')+Math.round(ev*100)+'%');
+      d.innerHTML=`<div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp')}</div>`;
       legs.appendChild(d);
     });
     wrap.appendChild(node);
