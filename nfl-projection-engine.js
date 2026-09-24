@@ -115,11 +115,11 @@
     if(mp==null||p==null||e==null)return null;
     return {
       marketProbability:mp,modelProbability:p,edge:e,coverage:cov||0,
-      fairPrice:m.fairPrice??null,projectedLine:m.projectedLine??null,
-      actionable:(cov||0)>=.20&&Math.abs(e)>=.025
+      fairPrice:m.fairPrice??null,projectedLine:m.projectedLine??null,ev:num(m.modelEV),confidence:num(m.modelConfidence),uncertainty:num(m.modelUncertainty),roleStability:num(m.roleStability),simWins:num(m.simWins),simN:num(m.simN),
+      actionable:m.nflV3Actionable===true
     };
   }
-  function refresh(){enrich(true);setTimeout(()=>window.NFL_SELECTIVITY?.refresh?.(),0)}
+  function refresh(){enrich(true);window.NFL_MODEL_V3?.enrich?.();window.NFL_MODEL_TRACKER?.refresh?.();setTimeout(()=>window.NFL_SELECTIVITY?.refresh?.(),0)}
   window.NFL_PROJECTIONS={enrich,marketProjection,adjustment,describe,refresh};
   const init=()=>setTimeout(refresh,0);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
