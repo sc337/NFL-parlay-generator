@@ -833,9 +833,13 @@ function buildMulti(count,risk,variant){
     usedGames.add(x.g.id);familyCounts.set(fam,n+1);
   }
 
-  // Never fill a requested parlay with unqualified legs just to reach a leg count.
-  if(legs.length<count) return null;
-  return packageParlay(legs,variant,false);
+  // Never fill with unqualified legs. If the requested size is unavailable,
+  // return the strongest qualified build rather than pretending there are zero picks.
+  const minLegs=Math.min(2,count);
+  if(legs.length<minLegs) return null;
+  const p=packageParlay(legs,variant,false);
+  if(p&&legs.length<count){p.requestedLegs=count;p.summary=`Only ${legs.length} of ${count} requested legs cleared NFLV3. Showing the strongest qualified build instead of forcing weaker legs.`}
+  return p;
 }
 
 function packageParlay(legs,variant,isSgp,meta={}){
@@ -878,7 +882,7 @@ function render(parlays){
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
-  if(!valid.length){wrap.innerHTML='<div class="empty">No eligible legs for the current settings.</div>';return;}
+  if(!valid.length){const qualified=(state.games||[]).flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&m.nflV3Actionable===true));wrap.innerHTML=`<div class="empty">${qualified.length?`${qualified.length} qualified leg${qualified.length===1?'':'s'} available, but not enough distinct games for this parlay.`:'No markets currently clear the NFLV3 edge, EV, confidence, and data-coverage gates.'}</div>`;return;}
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;
