@@ -900,10 +900,15 @@ function render(parlays){
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
       if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
-      if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
-      if(Number.isFinite(mk))metrics.push('Market '+Math.round(mk*100)+'%');
-      if(Number.isFinite(ed))metrics.push('Edge '+(ed>=0?'+':'')+Math.round(ed*100)+'%');
-      if(Number.isFinite(ev))metrics.push('EV '+(ev>=0?'+':'')+Math.round(ev*100)+'%');
+      if(l.nflV3Tier==='model'){
+        if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
+        if(Number.isFinite(mk))metrics.push('Market '+Math.round(mk*100)+'%');
+        if(Number.isFinite(ed))metrics.push('Edge '+(ed>=0?'+':'')+Math.round(ed*100)+'%');
+        if(Number.isFinite(ev))metrics.push('EV '+(ev>=0?'+':'')+Math.round(ev*100)+'%');
+      }else if(l.nflV3Tier==='market'){
+        metrics.push('Market-qualified');
+        metrics.push('Confidence '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
+      }
       d.innerHTML=`<div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp')}</div>`;
       legs.appendChild(d);
     });
