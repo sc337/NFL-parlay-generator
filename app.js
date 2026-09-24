@@ -847,7 +847,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   if(window.NFL_MODEL_V3 && legs.some(l=>l.nflV3Actionable!==true)) return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
-  let avg=legs.reduce((s,l)=>s+(l.confidence||impliedProbability(l.price)*100),0)/legs.length;
+  let avg=legs.reduce((s,l)=>s+(Number(l.selectionConfidence)||Number(l.confidence)||impliedProbability(l.price)*100),0)/legs.length;
   let corr=0;
   if(isSgp){
     for(let i=0;i<legs.length;i++) for(let j=i+1;j<legs.length;j++) corr+=correlation(legs[i],legs[j]);
