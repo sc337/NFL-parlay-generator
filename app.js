@@ -589,6 +589,7 @@ function marketQuality(m,variant){
 
 function candidateScore(m,risk,variant='balanced'){
   const q=marketQuality(m,variant);
+  if(window.NFL_MODEL_V3 && m.nflV3Actionable!==true) return -999;
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
   const projectionAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
@@ -805,6 +806,7 @@ function propFamily(m){
 }
 
 function buildMulti(count,risk,variant){
+  window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
   const all=[];
   for(const g of state.games){
@@ -831,20 +833,14 @@ function buildMulti(count,risk,variant){
     usedGames.add(x.g.id);familyCounts.set(fam,n+1);
   }
 
-  // Fill only if diversity constraints left the build short.
-  if(legs.length<count){
-    for(const x of all){
-      if(legs.length>=count) break;
-      if(usedGames.has(x.g.id)) continue;
-      legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`});
-      usedGames.add(x.g.id);
-    }
-  }
+  // Never fill a requested parlay with unqualified legs just to reach a leg count.
+  if(legs.length<count) return null;
   return packageParlay(legs,variant,false);
 }
 
 function packageParlay(legs,variant,isSgp,meta={}){
   if(!legs?.length) return null;
+  if(window.NFL_MODEL_V3 && legs.some(l=>l.nflV3Actionable!==true)) return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
   let avg=legs.reduce((s,l)=>s+(l.confidence||impliedProbability(l.price)*100),0)/legs.length;
@@ -897,7 +893,7 @@ function render(parlays){
     p.legs.forEach((l,i)=>{
       const d=document.createElement('div'); d.className='leg';
       const px=window.NFL_PROJECTIONS?.describe?.(l)||{};
-      const mp=Number(px.modelP),mk=Number(px.marketP),ed=Number(px.edge),ev=Number(px.ev??l.modelEV),pl=Number(px.projectionLine??l.projectedLine),ln=Number(l.point);
+      const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
       if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
       if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
