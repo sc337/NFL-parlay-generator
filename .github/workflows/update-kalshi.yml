@@ -9,6 +9,7 @@ on:
       - 'scripts/update_kalshi_ufc.py'
       - 'scripts/update_kalshi_ncaaf.py'
       - 'scripts/update_kalshi_mlb.py'
+      - 'scripts/update_mlb_context.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
       - '.github/workflows/update-kalshi.yml'
@@ -41,6 +42,8 @@ jobs:
         run: python scripts/update_kalshi_ufc.py
       - name: Fetch and normalize Kalshi MLB markets
         run: python scripts/update_kalshi_mlb.py
+      - name: Fetch free MLB probable-pitcher context
+        run: python scripts/update_mlb_context.py
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context
@@ -57,17 +60,20 @@ jobs:
           cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
           cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
           cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
+          cp data/mlb-context.json /tmp/mlb-context.json
           git restore data/kalshi-nfl.json
           git restore data/kalshi-ufc.json 2>/dev/null || true
           git restore data/kalshi-ncaaf.json 2>/dev/null || true
           git restore data/kalshi-mlb.json 2>/dev/null || true
+          git restore data/mlb-context.json 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
           cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
           cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
+          cp /tmp/mlb-context.json data/mlb-context.json
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
