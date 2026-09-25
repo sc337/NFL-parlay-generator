@@ -114,3 +114,13 @@ body[data-sport="nfl"] #results .predictions-list{display:none!important}
 body[data-sport="nfl"] #qolV3 .qgrid>.qcard:nth-child(n+2){display:none!important}
 body[data-sport="nfl"] #qolV3 .qgrid{grid-template-columns:1fr!important}
 body[data-sport="nfl"] #nflSgpSection{display:none!important}
+
+/* ATOMIC SPORT SWITCHING */
+html.sport-switching #qolV3,
+html.sport-switching #cardSummary,
+html.sport-switching #nflSgpSection,
+html.sport-switching #results{visibility:hidden!important}
+body:not([data-sport="nfl"]) #qolV3,
+body:not([data-sport="nfl"]) #cardSummary,
+body:not([data-sport="nfl"]) #nflSgpSection{display:none!important}
+body[data-sport="nfl"] #qolV3{display:block}
