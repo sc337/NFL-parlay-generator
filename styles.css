@@ -30,3 +30,69 @@ dialog{background:transparent;border:0;width:min(460px,calc(100% - 24px))}dialog
 #predictionPanel .predictions-list{grid-column:1/-1}
 
 .nfl-sgp-section{margin:0 0 32px}.nfl-sgp-section .minimal-head{margin-bottom:12px}.nfl-sgp-section .sgp-feature{border-color:#3a3421}.nfl-sgp-section .sgp-feature .grade{background:var(--amber-bg);color:var(--amber)}.nfl-sgp-section .sgp-feature .odds{color:var(--amber)}.nfl-sgp-section .qactions{margin-top:12px}.nfl-sgp-section .qactions button{border:1px solid var(--border2);border-radius:6px;background:transparent;color:#c7ced6;padding:7px 10px;font-size:9px;font-weight:750}
+
+/* COMPACT DECISION DASHBOARD */
+.shell{width:min(920px,100%);padding-top:18px}
+.sport-switch{margin:12px 0 14px!important}
+.card-summary{margin:-6px 0 14px;min-height:34px}
+.minimal-recs{margin:0 0 14px}
+.minimal-head{margin-bottom:8px}
+.minimal-head span{display:none!important}
+.minimal-head h2{font-size:16px!important}
+.minimal-recs .qgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.minimal-recs .qcard{grid-column:auto;min-height:0;padding:12px!important}
+.minimal-recs .qgrid.compact-single{grid-template-columns:1fr}
+.minimal-recs .qgrid.compact-single .qcard{grid-column:1/-1}
+#nflSgpSection{display:none!important}
+.mode-tabs{margin:0 0 7px}
+.control-card{padding:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 10px}
+.control-card>.section-head{grid-column:1/-1;margin:0}
+.control-card>.section-head h2{font-size:14px}
+.control-card>#nflWeekWrap,.control-card>#gameChooserWrap{margin:0}
+.control-card>.settings-grid,.control-card>.market-filter-details,.control-card>.primary-btn{grid-column:1/-1}
+.control-card>.settings-grid{margin-top:0}
+#nflWeekNote{display:none}
+.field{margin-bottom:0}
+select,input[type=password],input[type=number]{height:36px}
+.quality-note{min-height:36px}
+.market-filter-details{margin-top:0}
+.market-filter-details summary{padding:3px 0}
+.primary-btn{height:38px;margin-top:0}
+.results-head{margin:14px 2px 7px;padding:0}
+.results-head h2{font-size:13px}
+.results-grid{gap:8px}
+.parlay-card{padding:12px}
+.parlay-name{font-size:14px;margin-top:5px}
+.summary{margin:6px 0 8px}
+.leg{padding:7px 8px}
+.card-footer{margin-top:8px;padding-top:7px}
+.variant-tabs{margin-bottom:7px}
+.more-analysis{margin-top:12px;border:1px solid var(--border);border-radius:8px;background:var(--surface3);overflow:hidden}
+.more-analysis>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 12px;cursor:pointer;color:#aeb8c2;font-size:10px;font-weight:800;list-style:none}
+.more-analysis>summary::-webkit-details-marker{display:none}
+.more-analysis>summary small{color:var(--subtle);font-size:8px;font-weight:600}
+.more-analysis[open]>summary{border-bottom:1px solid var(--border)}
+.analysis-secondary,#analysisConsensus{padding:8px}
+.analysis-secondary:empty{display:none}
+.analysis-secondary .qcard,.analysis-secondary .parlay-card{margin-bottom:8px}
+#analysisConsensus #predictionPanel{display:grid!important;margin:0!important}
+#analysisConsensus .predictions-list .legs .leg:nth-child(n+4){display:none}
+#analysisConsensus .predictions-list{margin:0}
+.reject-list{display:none}
+.market-filter-details[open] .reject-list{display:block}
+@media(max-width:760px){
+ .minimal-recs .qgrid{grid-template-columns:1fr 1fr}
+ .control-card{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+ .shell{padding:12px 10px 28px}
+ .sport-switch{margin:10px 0 11px!important}
+ .card-summary{margin:0 0 10px}
+ .minimal-recs{margin-bottom:10px}
+ .minimal-recs .qgrid{grid-template-columns:1fr}
+ .control-card{grid-template-columns:1fr 1fr;padding:10px!important}
+ .control-card>.section-head,.control-card>.settings-grid,.control-card>.market-filter-details,.control-card>.primary-btn{grid-column:1/-1}
+ .quality-settings{grid-template-columns:90px minmax(0,1fr)}
+ .mode-tabs .tab{height:34px}
+ .more-analysis>summary small{display:none}
+}
