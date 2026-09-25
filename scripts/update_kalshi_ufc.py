@@ -1,4 +1,5 @@
-import json,re,urllib.parse,urllib.request
+import json,re,urllib.parse,urllib.request,unicodedata
+from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime,timezone
 from pathlib import Path
 BASE="https://external-api.kalshi.com/trade-api/v2"
@@ -86,6 +87,26 @@ def fighter_stats(name):
     except Exception as exc:
         print('UFCStats profile failed',name,exc);return None
 
+def official_profile(name):
+    slug=unicodedata.normalize('NFKD',name).encode('ascii','ignore').decode().lower()
+    slug=re.sub(r'[^a-z0-9]+','-',slug).strip('-')
+    url='https://www.ufc.com/athlete/'+slug
+    try:
+        html=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=12).read().decode('utf-8','ignore')
+        if 'hero-profile__division-body' not in html:return None
+        record=re.search(r'hero-profile__division-body[^>]*>\s*(\d+)-(\d+)-(\d+)\s*\(W-L-D\)',html,re.I)
+        metric=dict((label.strip().lower(),float(value.strip())) for value,label in re.findall(
+            r'c-stat-compare__number[^>]*>\s*([0-9.]+)\s*</div>\s*<div class="c-stat-compare__label">\s*([^<]+)</div>',html,re.I))
+        accuracy=re.search(r'<title>Striking accuracy\s+(\d+)%</title>',html,re.I)
+        if not record or 'sig. str. landed' not in metric:return None
+        return {'name':name,'url':url,'source':'UFC.com','fetched_at':now.isoformat(),
+                'wins':int(record[1]),'losses':int(record[2]),'draws':int(record[3]),
+                'slpm':metric.get('sig. str. landed'),'sapm':metric.get('sig. str. absorbed'),
+                'str_acc':float(accuracy[1]) if accuracy else None,
+                'td_avg':metric.get('takedown avg'),'sub_avg':metric.get('submission avg')}
+    except Exception as exc:
+        print('UFC athlete page unavailable',name,exc);return None
+
 now=datetime.now(timezone.utc);rows=[];counts={};names=set()
 for series,kind in SERIES.items():
     try:ms=markets(series)
@@ -120,6 +141,8 @@ for group in by_bout.values():
     for row in group:row['fighter1']=a;row['fighter2']=b;row['fight']=a+' vs '+b
     names.update((a,b))
 # Verify bout identity and bell time against the actual fight schedule.
+if not rows and not any(counts.values()):
+    raise RuntimeError('All Kalshi UFC series returned no markets; keeping the prior snapshot')
 for code,group in by_bout.items():
     names_in_group={r.get('fighter1') for r in group if r.get('fighter1')}|{r.get('fighter2') for r in group if r.get('fighter2')}
     if len(names_in_group)!=2:continue
@@ -142,11 +165,22 @@ for code,group in by_bout.items():
     for row in group:
         row['game_id']=str(competition.get('id') or code);row['game_time']=start
         row['game_status']=(competition.get('status') or event.get('status') or {}).get('type',{}).get('state')
+try:previous=json.loads(Path('data/kalshi-ufc.json').read_text()).get('fighter_stats') or {}
+except (OSError,ValueError):previous={}
 stats={}
+pending=[]
 for n in sorted(names):
-    s=fighter_stats(n)
-    if s:stats[n]=s
+    old=previous.get(n) or {}
+    try:recent=(now-datetime.fromisoformat(old.get('fetched_at','').replace('Z','+00:00'))).total_seconds()<24*3600
+    except ValueError:recent=False
+    if recent:stats[n]=old
+    else:pending.append(n)
+with ThreadPoolExecutor(max_workers=6) as pool:
+    futures={pool.submit(official_profile,n):n for n in pending}
+    for future in as_completed(futures):
+        profile=future.result()
+        if profile:stats[futures[future]]=profile
 rows.sort(key=lambda x:(x.get("close_time") or "9999",x["fight"],x["kind"]))
 Path("data").mkdir(exist_ok=True)
-Path("data/kalshi-ufc.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"fighter_stats_source":"UFCStats","fighter_stats":stats,"markets":rows},indent=2))
+Path("data/kalshi-ufc.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"fighter_stats_source":"UFC.com","fighter_stats":stats,"markets":rows},indent=2))
 print("UFC markets",len(rows),"fighters",len(stats),counts)

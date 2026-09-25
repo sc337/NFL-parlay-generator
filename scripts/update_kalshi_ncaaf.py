@@ -48,6 +48,8 @@ for s,kind in SERIES.items():
    "probability":round(p,4),"yes_bid":b,"yes_ask":a,"spread":round(a-b,4) if b is not None and a is not None else None,
    "volume":n(m,"volume_fp","volume") or 0,"open_interest":n(m,"open_interest_fp","open_interest") or 0,"close_time":close,"source":"Kalshi"})
 rows.sort(key=lambda x:(x.get("close_time") or "9999",x["event_ticker"] or "",x["kind"]))
+if not rows and not any(counts.values()):
+ raise RuntimeError('All Kalshi NCAAF series returned no markets; keeping the prior snapshot')
 Path("data").mkdir(exist_ok=True)
 payload={"updated_at":now.isoformat(),"series_counts":counts,"markets":rows}
 encoded=json.dumps(payload,indent=2)

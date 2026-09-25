@@ -1,4 +1,4 @@
-import json, re, urllib.request
+import json, re, urllib.request, urllib.parse
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import csv, io
@@ -81,7 +81,25 @@ def main():
  except Exception as e:print('player lookup',e)
  for pitcher in pitchers.values():
   if pitcher.get('name') in names:players[pitcher['name']]=pitcher['id']
+ # One bulk request per 40 players gives each hitter prop a season sample.
+ hitters={}
+ hitter_ids=sorted({pid for name,pid in players.items() if name in names})
+ for offset in range(0,len(hitter_ids),40):
+  batch=hitter_ids[offset:offset+40]
+  try:
+   query=urllib.parse.urlencode({'personIds':','.join(map(str,batch)),
+       'hydrate':f'stats(group=[hitting],type=[season],season={now.year})'})
+   for person in get(f'{BASE}/people?{query}').get('people',[]):
+    splits=[split for group in person.get('stats',[]) if (group.get('group') or {}).get('displayName')=='hitting'
+            for split in group.get('splits',[]) if str((split.get('season') or now.year))==str(now.year)]
+    if not splits:continue
+    stat=splits[0].get('stat') or {};games=int(stat.get('gamesPlayed') or 0)
+    if games<1:continue
+    hitters[str(person['id'])]={'games':games,'hits':int(stat.get('hits') or 0),
+      'homeRuns':int(stat.get('homeRuns') or 0),'rbi':int(stat.get('rbi') or 0),
+      'totalBases':int(stat.get('totalBases') or 0)}
+  except Exception as e:print('hitter season stats unavailable',e)
  Path('data').mkdir(exist_ok=True)
- Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players},indent=2))
- print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props')
+ Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters},indent=2))
+ print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props',len(hitters),'hitter samples')
 if __name__=='__main__':main()
