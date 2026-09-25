@@ -122,3 +122,9 @@ body:not([data-sport="nfl"]) #cardSummary,
 body:not([data-sport="nfl"]) #nflSgpSection{display:none!important}
 body[data-sport="nfl"] #qolV3{display:block}
 .supporting-note{margin-top:12px;padding:10px 12px;border-top:1px solid var(--border2);font-size:12px;line-height:1.6;color:var(--muted)}
+
+/* Keep the selected sport clear while data is loading. Content enters without showing the previous sport. */
+.sport-switch button{transition:background-color .16s ease,color .16s ease,box-shadow .16s ease}
+#results>.parlay-card,#results>.empty{animation:sport-result-enter .18s ease-out both}
+@keyframes sport-result-enter{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sport-switch button{transition:none}#results>.parlay-card,#results>.empty{animation:none}}

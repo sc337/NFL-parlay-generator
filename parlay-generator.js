@@ -30,7 +30,6 @@ function init(){
  const sel=document.querySelector('#legsSelect'),btn=document.querySelector('#generateBtn');
  if(sel){sel.onchange=null;sel.addEventListener('change',()=>{syncLabel();run()})}
  if(btn){btn.onclick=null;btn.addEventListener('click',e=>{e.preventDefault();run()})}
- document.addEventListener('click',e=>{if(e.target.closest?.('.sport-switch [data-sport]'))setTimeout(syncLabel,0)});
  syncLabel();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();

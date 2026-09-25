@@ -66,7 +66,6 @@ function tidy(){
     compactSportResults();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
     const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
-    const title=$('#resultsTitle');if(title&&/Recommendations$/i.test(title.textContent))title.textContent='Recommended Parlay';
   }finally{busy=false}
 }
 let timer;
