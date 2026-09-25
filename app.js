@@ -177,6 +177,7 @@ async function loadEspnRoster(teamName){
         out.push({
           name:athlete.displayName||athlete.fullName,
           team:team.displayName,
+          id:athlete.id,
           position:athlete.position?.abbreviation||group.position||'',
           source:'ESPN'
         });
@@ -262,6 +263,7 @@ async function enrichGameContext(game){
     m.team=hit.team;
     m.position=hit.position;
     m.contextSource=hit.source;
+    if(hit.id) m.playerId=Number(hit.id);
     matched++;
   }
   game.contextMatched=matched;
@@ -895,7 +897,7 @@ function render(parlays){
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? `Correlation +${Math.max(0,p.corr)}` : `${p.legs.length} games/legs`;
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
-      const d=document.createElement('div'); d.className='leg';
+      const d=document.createElement('div'); d.className='leg sport-visual-leg';
       const px=window.NFL_PROJECTIONS?.describe?.(l)||{};
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
@@ -909,7 +911,7 @@ function render(parlays){
         metrics.push('Market-qualified');
         metrics.push('Confidence '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
       }
-      d.innerHTML=`<div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp')}</div>`;
+      d.innerHTML=`${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}<div class="sport-visual-copy"><div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp')}</div></div>`;
       legs.appendChild(d);
     });
     wrap.appendChild(node);
