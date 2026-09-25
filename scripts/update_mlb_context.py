@@ -37,11 +37,11 @@ def statcast_recent(pid,days=30):
 
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
- d=get(f'{BASE}/schedule?sportId=1&startDate={start}&endDate={end}&hydrate=probablePitcher,team')
+ d=get(f'{BASE}/schedule?sportId=1&startDate={start}&endDate={end}&hydrate=probablePitcher(note),team')
  games=[]; ids=set()
  for day in d.get('dates',[]):
   for g in day.get('games',[]):
-   teams=g.get('teams',{}); pp=g.get('probablePitchers',{})
+   teams=g.get('teams',{}); pp=g.get('probablePitchers',{});\n   if not pp:\n    pp={'away':(teams.get('away',{}) or {}).get('probablePitcher'),'home':(teams.get('home',{}) or {}).get('probablePitcher')}
    row={'gamePk':g.get('gamePk'),'gameDate':g.get('gameDate'),'venue':(g.get('venue') or {}).get('name'),
         'away':(teams.get('away',{}).get('team') or {}).get('name'),'home':(teams.get('home',{}).get('team') or {}).get('name'),
         'awayProbable':pp.get('away'),'homeProbable':pp.get('home')}
