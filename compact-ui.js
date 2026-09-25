@@ -63,7 +63,6 @@ function tidy(){
   try{
     ensureAnalysis();
     moveConsensus();
-    compactNFLCards();
     compactSportResults();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
     const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
@@ -71,7 +70,7 @@ function tidy(){
   }finally{busy=false}
 }
 let timer;
-const obs=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(tidy,60)});
+const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
 function init(){obs.observe(document.body,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('[data-sport]'))setTimeout(tidy,120)});tidy()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
