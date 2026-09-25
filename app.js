@@ -954,7 +954,8 @@ async function generate(){
   render(parlays);
 }
 
-$$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+window.generate=generate;
+$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   $$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;
   $('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
