@@ -50,11 +50,13 @@ function updateOverview(){
     const card=$('#results > .parlay-card');
     pick=card?.querySelector('.leg-title')?.textContent?.replace(/^\d+\.\s*/,'').trim()||'';
     detail=card?.querySelector('.parlay-name')?.textContent?.trim()||'';
+    const context=card?.querySelector('.leg-sub')?.textContent?.split(' · ')[0]?.trim()||'';
+    if(context&&!/^(moneyline|run line|team\/game total|pitcher strikeouts|hits|home runs|rbi|total bases)$/i.test(context)&&!pick.includes(context))detail+=(detail?' · ':'')+context;
     if(!pick&&$('#results > .empty')&&!/loading/i.test($('#results > .empty').textContent))pick='No qualifying pick right now';
   }
-  panel.querySelector('#overviewSport').textContent=sport;
-  panel.querySelector('#overviewPick').textContent=pick||`Loading ${sport} picks…`;
-  panel.querySelector('#overviewDetail').textContent=detail;
+  for(const [selector,value] of [['#overviewSport',sport],['#overviewPick',pick||`Loading ${sport} picks…`],['#overviewDetail',detail]]){
+    const node=panel.querySelector(selector);if(node.textContent!==value)node.textContent=value;
+  }
 }
 
 function moveNflCard(){
