@@ -1,15 +1,25 @@
-import json,urllib.parse,urllib.request
+import json,urllib.parse,urllib.request,time
 from datetime import datetime,timezone
 from pathlib import Path
 BASE="https://external-api.kalshi.com/trade-api/v2"
 SERIES={"KXNCAAFGAME":"moneyline","KXNCAAFSPREAD":"spread","KXNCAAFTOTAL":"total"}
+def request_json(url,attempts=3):
+ last=None
+ for i in range(attempts):
+  try:
+   with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"sports-dashboard/1.0","Accept":"application/json"}),timeout=30) as r:
+    return json.load(r)
+  except Exception as e:
+   last=e
+   if i+1<attempts: time.sleep(2**i)
+ raise last
 def get(series):
  out=[];cur=""
  while True:
   p={"series_ticker":series,"status":"open","limit":200,"mve_filter":"exclude"}
   if cur:p["cursor"]=cur
   u=BASE+"/markets?"+urllib.parse.urlencode(p)
-  with urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"sports-dashboard/1.0"}),timeout=30) as r:d=json.load(r)
+  d=request_json(u)
   out+=d.get("markets",[]);cur=d.get("cursor") or ""
   if not cur:return out
 def n(m,*ks):
@@ -39,5 +49,11 @@ for s,kind in SERIES.items():
    "volume":n(m,"volume_fp","volume") or 0,"open_interest":n(m,"open_interest_fp","open_interest") or 0,"close_time":close,"source":"Kalshi"})
 rows.sort(key=lambda x:(x.get("close_time") or "9999",x["event_ticker"] or "",x["kind"]))
 Path("data").mkdir(exist_ok=True)
-Path("data/kalshi-ncaaf.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"markets":rows},indent=2))
+payload={"updated_at":now.isoformat(),"series_counts":counts,"markets":rows}
+encoded=json.dumps(payload,indent=2)
+if len(encoded)<2: raise RuntimeError("Refusing to publish empty NCAAF snapshot")
+target=Path("data/kalshi-ncaaf.json");tmp=target.with_suffix(".json.tmp")
+tmp.write_text(encoded)
+json.loads(tmp.read_text())
+tmp.replace(target)
 print("NCAAF markets",len(rows),counts)
