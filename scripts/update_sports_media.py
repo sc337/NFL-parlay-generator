@@ -57,6 +57,9 @@ def ufc_photos():
                         name = key(athlete.get('displayName') or athlete.get('fullName'))
                         headshot = athlete.get('headshot') or {}
                         photo = allowed_image(headshot.get('href') if isinstance(headshot, dict) else headshot)
+                        espn_id = competitor.get('id') or athlete.get('id')
+                        if not photo and str(espn_id or '').isdigit():
+                            photo = f'https://a.espncdn.com/i/headshots/mma/players/full/{espn_id}.png'
                         if name in names and photo: found[names[name]] = photo
         except Exception as exc:
             print('UFC media', date, exc)
