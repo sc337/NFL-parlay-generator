@@ -955,13 +955,13 @@ async function generate(){
 window.generate=generate;
 window.NFL_PARLAY_STATE=state;
 $$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
-$$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   $('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;
   $('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
   $('#modeTitle').textContent=state.mode==='sgp'?'Same Game Parlay':'Multi-Game Parlay';
   $('#resultsTitle').textContent=state.mode==='sgp'?'Logical correlated SGPs':'Best legs across the slate';
-  generate();
+  await generate();
 }));
 
 $('#gameSelect').addEventListener('change',()=>generate());
