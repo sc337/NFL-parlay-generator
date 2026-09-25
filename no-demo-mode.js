@@ -7,7 +7,7 @@
       const results=document.getElementById('results');if(results)results.innerHTML='<div class="empty">Live Caesars or Kalshi data is required. No demo or placeholder markets are used.</div>';
       const title=document.getElementById('resultsTitle');if(title)title.textContent='No live betting recommendations';
       const btn=document.getElementById('generateBtn');if(btn){btn.disabled=true;btn.textContent='Live data required'}
-      const status=document.getElementById('dataStatus');if(status)status.textContent=message;
+      const status=document.getElementById('dataStatus');if(status)status.textContent=message;window.__NFL_STATUS=message;
     }catch{}
     window.NFL_PRODUCT_V2?.refresh?.();
   }

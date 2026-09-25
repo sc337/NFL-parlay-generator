@@ -71,7 +71,7 @@ function riskLabel(v){
   return 'Aggressive';
 }
 
-function setStatus(msg){ if((window.__ACTIVE_SPORT||'nfl')==='nfl')$('#dataStatus').textContent=msg; }
+function setStatus(msg){ window.__NFL_STATUS=msg;if((window.__ACTIVE_SPORT||'nfl')==='nfl')$('#dataStatus').textContent=msg; }
 
 function trackApiUsage(res){
   if(!res?.headers) return;
