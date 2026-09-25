@@ -591,7 +591,6 @@ function marketQuality(m,variant){
 
 function candidateScore(m,risk,variant='balanced'){
   const q=marketQuality(m,variant);
-  if(window.NFL_MODEL_V3 && m.nflV3Actionable!==true) return -999;
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
   const projectionAdj=window.NFL_PROJECTIONS?.adjustment?.(m)||0;
@@ -954,6 +953,8 @@ async function generate(){
 }
 
 window.generate=generate;
+window.NFL_PARLAY_STATE=state;
+$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
 $('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   $$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;
@@ -964,10 +965,14 @@ $('.tab').forEach(btn=>btn.addEventListener('click',()=>{
 }));
 
 $('#gameSelect').addEventListener('change',()=>generate());
-$$('.chip').forEach(c=>c.addEventListener('click',()=>{
+$('.chip').forEach(c=>c.addEventListener('click',()=>{
+  if((window.__ACTIVE_SPORT||'nfl')!=='nfl') return;
   c.classList.toggle('active');
+  c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false');
   c.classList.contains('active')?state.selectedMarkets.add(c.dataset.market):state.selectedMarkets.delete(c.dataset.market);
-  generate();
+  const title=$('#resultsTitle');
+  if(title) title.textContent=state.selectedMarkets.size?'Generating selected NFL markets…':'Select at least one NFL market';
+  if(state.selectedMarkets.size) generate(); else $('#results').innerHTML='<div class="empty">Select one or more markets to build an NFL parlay.</div>';
 }));
 
 const dialog=$('#settingsDialog');
