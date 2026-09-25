@@ -956,7 +956,7 @@ window.generate=generate;
 window.NFL_PARLAY_STATE=state;
 $$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
 $$('.tab').forEach(btn=>btn.addEventListener('click',()=>{
-  $$$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
+  $('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;
   $('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
   $('#modeTitle').textContent=state.mode==='sgp'?'Same Game Parlay':'Multi-Game Parlay';
