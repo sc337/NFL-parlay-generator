@@ -57,7 +57,11 @@ def fighter_stats(name):
         def grab(p):
             m=re.search(p,h,re.I|re.S);return float(m.group(1)) if m else None
         rec=re.search(r"Record:\s*([0-9]+)-([0-9]+)-([0-9]+)",h,re.I)
+        dob=re.search(r"DOB:</i>\s*([^<]+)",h,re.I);height=re.search(r"HEIGHT:</i>\s*([^<]+)",h,re.I);reach=re.search(r"REACH:</i>\s*([^<]+)",h,re.I);stance=re.search(r"STANCE:</i>\s*([^<]+)",h,re.I)
+        fight_links=re.findall(r'data-link="(http://ufcstats\\.com/fight-details/[^"]+)"',h,re.I)
         return {"name":name,"url":url,"wins":int(rec.group(1)) if rec else None,"losses":int(rec.group(2)) if rec else None,
+          "dob":dob.group(1).strip() if dob else None,"height":height.group(1).strip() if height else None,"reach":reach.group(1).strip() if reach else None,"stance":stance.group(1).strip() if stance else None,
+          "fight_count":len(fight_links),"recent_fight_urls":fight_links[:5],
           "slpm":grab(r"SLpM:</i>\s*([0-9.]+)"),"sapm":grab(r"SApM:</i>\s*([0-9.]+)"),
           "str_acc":grab(r"Str\. Acc\.:</i>\s*([0-9.]+)%"),"str_def":grab(r"Str\. Def:</i>\s*([0-9.]+)%"),
           "td_avg":grab(r"TD Avg\.:</i>\s*([0-9.]+)"),"td_acc":grab(r"TD Acc\.:</i>\s*([0-9.]+)%"),
