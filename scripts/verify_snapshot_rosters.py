@@ -50,7 +50,7 @@ def flatten_roster(raw, team_name):
             pos = athlete.get('position') or group_position or ''
             if isinstance(pos, dict):
                 pos = pos.get('abbreviation') or pos.get('name') or ''
-            players.append({'name': name, 'team': team_name, 'position': str(pos).upper()})
+            players.append({'name': name, 'team': team_name, 'position': str(pos).upper(), 'id': athlete.get('id')})
     return players
 
 
@@ -102,6 +102,8 @@ def main():
                 continue
             market['team'] = hit['team']
             market['position'] = hit.get('position') or ''
+            if str(hit.get('id') or '').isdigit():
+                market['playerId'] = int(hit['id'])
             market['_rosterVerified'] = True
             market['_serverRosterVerified'] = True
             market['_invalidRoster'] = False
