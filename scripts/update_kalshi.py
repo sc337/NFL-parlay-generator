@@ -58,7 +58,11 @@ def espn_schedule(day):
   except:pass
  return out
 def game_obj(info,day):return {'id':'kalshi-'+re.sub(r'[^a-z0-9]+','-',info['key'].lower()).strip('-'),'away':info['teams'][0],'home':info['teams'][1],'commence_time':None,'event_date':day.isoformat(),'markets':[],'dataSource':'Kalshi','_candidates':{'totals':[],'spreads':[],'props':{}}}
-def base_leg(m,p):return {'price':american(p),'prob':p,'source':'Kalshi','sourceQuality':quality(m,p)}
+def base_leg(m,p,side='yes'):
+ try:
+  ask=float(m.get('yes_ask_dollars')) if side=='yes' else 1-float(m.get('yes_bid_dollars'))
+ except (ValueError,TypeError):ask=None
+ return {'price':american(ask) if ask is not None and 0<ask<1 else None,'prob':p,'marketProbability':p,'source':'Kalshi','quoteSide':side,'quoteProbability':ask,'sourceQuality':quality(m,p)}
 def parse_prop(m,g,s):
  p=prob(m);title=str(m.get('title') or '')
  if p is None:return
@@ -77,15 +81,15 @@ def parse_prop(m,g,s):
  player=mm.group(1).strip();threshold=float(mm.group(2));line=max(.5,threshold-.5);g['_candidates']['props'].setdefault((player,key),[]).append((abs(p-.5),line,m,p,typ,label))
 def finalize(g):
  if g['_candidates']['totals']:
-  _,pt,m,p=min(g['_candidates']['totals'],key=lambda x:x[0]);g['markets'] += [{'type':'totals','marketKey':'totals','name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)},{'type':'totals','marketKey':'totals','name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,1-p)}]
+  _,pt,m,p=min(g['_candidates']['totals'],key=lambda x:x[0]);g['markets'] += [{'type':'totals','marketKey':'totals','name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)},{'type':'totals','marketKey':'totals','name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,1-p,'no')}]
  if g['_candidates']['spreads']:
-  _,line,team,other,m,p=min(g['_candidates']['spreads'],key=lambda x:x[0]);g['markets'] += [{'type':'spreads','marketKey':'spreads','name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)},{'type':'spreads','marketKey':'spreads','name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,1-p)}]
+  _,line,team,other,m,p=min(g['_candidates']['spreads'],key=lambda x:x[0]);g['markets'] += [{'type':'spreads','marketKey':'spreads','name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)},{'type':'spreads','marketKey':'spreads','name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,1-p,'no')}]
  for (player,key),rows in g['_candidates']['props'].items():
-  _,line,m,p,typ,label=min(rows,key=lambda x:x[0]);g['markets'] += [{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)},{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,1-p)}]
+  _,line,m,p,typ,label=min(rows,key=lambda x:x[0]);g['markets'] += [{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)},{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,1-p,'no')}]
  g.pop('_candidates',None);seen=set();out=[]
  for x in g['markets']:
   k=(x.get('marketKey'),x.get('player') or x.get('team'),x.get('side'),x.get('point'))
-  if k not in seen:seen.add(k);out.append(x)
+  if k not in seen and x.get('price') is not None:seen.add(k);out.append(x)
  g['markets']=out;return g
 def main():
  now=datetime.now(timezone.utc);limit=now+timedelta(days=14);games={};counts={}

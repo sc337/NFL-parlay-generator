@@ -10,6 +10,7 @@ on:
       - 'scripts/update_kalshi_ncaaf.py'
       - 'scripts/update_kalshi_mlb.py'
       - 'scripts/update_mlb_context.py'
+      - 'scripts/attach_game_context.py'
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
@@ -45,6 +46,10 @@ jobs:
         run: python scripts/update_kalshi_mlb.py
       - name: Fetch free MLB probable-pitcher context
         run: python scripts/update_mlb_context.py
+      - name: Match MLB games to schedule
+        run: python scripts/attach_game_context.py
+      - name: Match college games to schedule
+        run: python scripts/attach_game_context.py --ncaaf
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context

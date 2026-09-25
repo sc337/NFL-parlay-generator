@@ -1,0 +1,10 @@
+(()=>{'use strict';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fresh=(data,maxHours=2)=>{const at=Date.parse(data?.updated_at||data?.generated_at||'');return Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=maxHours*3600000};
+const pregame=m=>{const t=Date.parse(m?.start_time||m?.game_time||'');return Number.isFinite(t)&&t>Date.now()&&(!m.close_time||Date.parse(m.close_time)>Date.now())};
+const quote=m=>{const ask=Number(m?.yes_ask);return Number.isFinite(ask)&&ask>0&&ask<1?ask:null};
+const ev=(p,ask)=>Number.isFinite(p)&&Number.isFinite(ask)&&ask>0&&ask<1?p/ask-1:null;
+const gameKey=m=>m.game_id||String(m.event_ticker||'').replace(/^[^-]+-/,'');
+const unique=(rows,n)=>{const out=[],seen=new Set();for(const m of rows){const k=gameKey(m);if(!k||seen.has(k))continue;seen.add(k);out.push(m);if(out.length===n)break}return out};
+const estOdds=rows=>{let d=1;for(const m of rows){const ask=quote(m);if(ask===null)return null;d/=ask}return d>=2?Math.round((d-1)*100):Math.round(-100/(d-1))};
+window.MARKET_GUARDS={esc,fresh,pregame,quote,ev,gameKey,unique,estOdds};})();

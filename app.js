@@ -891,7 +891,7 @@ function render(parlays){
     node.querySelector('.parlay-name').textContent=p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
-    node.querySelector('.odds').textContent=fmtOdds(p.odds);
+    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Individual quotes, indicative';
     node.querySelector('.summary').textContent=p.summary;
     node.querySelector('.score').textContent=`Confidence ${p.score}/100`;
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? `Correlation +${Math.max(0,p.corr)}` : `${p.legs.length} games/legs`;
@@ -911,7 +911,7 @@ function render(parlays){
         metrics.push('Market-qualified');
         metrics.push('Confidence '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
       }
-      d.innerHTML=`${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}<div class="sport-visual-copy"><div class="leg-title">${i+1}. ${l.name}</div><div class="leg-sub">${l.gameLabel||''} ${fmtOdds(l.price)}</div><div class="leg-reason">${metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp')}</div></div>`;
+      d.innerHTML=`${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}<div class="sport-visual-copy"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div><div class="leg-sub">${window.MARKET_GUARDS.esc(l.gameLabel||'')} ${fmtOdds(l.price)}</div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
       legs.appendChild(d);
     });
     wrap.appendChild(node);

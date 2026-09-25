@@ -44,10 +44,11 @@ def fighters(text):
 def ufcstats_search(name):
     q=urllib.parse.quote(name)
     try:
-        raw=urllib.request.urlopen(urllib.request.Request("http://ufcstats.com/statistics/fighters/search?query="+q,headers=UA),timeout=20).read().decode("utf-8","ignore")
-        links=re.findall(r'href="(http://ufcstats\.com/fighter-details/[^"]+)"',raw)
+        raw=urllib.request.urlopen(urllib.request.Request("https://ufcstats.com/statistics/fighters/search?query="+q,headers=UA),timeout=20).read().decode("utf-8","ignore")
+        links=re.findall(r'href=[\"\'](https?://ufcstats\.com/fighter-details/[^\"\']+)',raw,re.I)
         return links[0] if links else None
-    except:return None
+    except Exception as exc:
+        print('UFCStats search failed',name,exc);return None
 
 def recent_fights(urls):
     out=[]
@@ -67,6 +68,7 @@ def recent_fights(urls):
 def fighter_stats(name):
     url=ufcstats_search(name)
     if not url:return None
+    url=url.replace('http://','https://')
     try:
         h=urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=20).read().decode("utf-8","ignore")
         def grab(p):
@@ -81,7 +83,8 @@ def fighter_stats(name):
           "str_acc":grab(r"Str\. Acc\.:</i>\s*([0-9.]+)%"),"str_def":grab(r"Str\. Def:</i>\s*([0-9.]+)%"),
           "td_avg":grab(r"TD Avg\.:</i>\s*([0-9.]+)"),"td_acc":grab(r"TD Acc\.:</i>\s*([0-9.]+)%"),
           "td_def":grab(r"TD Def\.:</i>\s*([0-9.]+)%"),"sub_avg":grab(r"Sub\. Avg\.:</i>\s*([0-9.]+)")}
-    except:return None
+    except Exception as exc:
+        print('UFCStats profile failed',name,exc);return None
 
 now=datetime.now(timezone.utc);rows=[];counts={};names=set()
 for series,kind in SERIES.items():
@@ -103,6 +106,42 @@ for series,kind in SERIES.items():
           "fighter1":f1,"fighter2":f2,"label":label(m),"probability":round(p,4),"yes_bid":b,"yes_ask":a,
           "spread":round(a-b,4) if b is not None and a is not None else None,"volume":vol,"open_interest":oi,
           "close_time":close,"source":"Kalshi"})
+# Fight series use separate event tickers for the same bout. Group by date and
+# the common bout code, then resolve opponents from both winner selections.
+by_bout={}
+for row in rows:
+    match=re.search(r'-(\d{2}[A-Z]{3}\d{2}[A-Z]+)',row.get('event_ticker') or '')
+    if not match:continue
+    by_bout.setdefault(match.group(1),[]).append(row)
+for group in by_bout.values():
+    selections={(r.get('label') or r.get('title') or '').removesuffix(' wins').strip() for r in group if r['kind']=='moneyline' and (r.get('label') or r.get('title'))}
+    if len(selections)!=2:continue
+    a,b=sorted(selections)
+    for row in group:row['fighter1']=a;row['fighter2']=b;row['fight']=a+' vs '+b
+    names.update((a,b))
+# Verify bout identity and bell time against the actual fight schedule.
+for code,group in by_bout.items():
+    names_in_group={r.get('fighter1') for r in group if r.get('fighter1')}|{r.get('fighter2') for r in group if r.get('fighter2')}
+    if len(names_in_group)!=2:continue
+    try:day=datetime.strptime(code[:7],'%y%b%d').strftime('%Y%m%d')
+    except ValueError:continue
+    try:
+        schedule=get('https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard',{'dates':day})
+    except Exception as exc:
+        print('UFC schedule unavailable',day,exc);continue
+    matches=[]
+    def key(s):return re.sub(r'[^a-z0-9]','',str(s or '').lower())
+    for event in schedule.get('events',[]):
+        for competition in event.get('competitions',[]):
+            competitors=competition.get('competitors',[])
+            fighters={key((c.get('athlete') or c).get('displayName') or (c.get('athlete') or c).get('fullName')) for c in competitors}
+            if fighters=={key(n) for n in names_in_group}:matches.append((event,competition))
+    if len(matches)!=1:continue
+    event,competition=matches[0];start=competition.get('date') or event.get('date')
+    if not start:continue
+    for row in group:
+        row['game_id']=str(competition.get('id') or code);row['game_time']=start
+        row['game_status']=(competition.get('status') or event.get('status') or {}).get('type',{}).get('state')
 stats={}
 for n in sorted(names):
     s=fighter_stats(n)

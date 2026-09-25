@@ -48,7 +48,7 @@ def main():
    teams=g.get('teams',{}); pp=g.get('probablePitchers',{})
    if not pp:
     pp={'away':(teams.get('away',{}) or {}).get('probablePitcher'),'home':(teams.get('home',{}) or {}).get('probablePitcher')}
-   row={'gamePk':g.get('gamePk'),'gameDate':g.get('gameDate'),'venue':(g.get('venue') or {}).get('name'),
+   row={'gamePk':g.get('gamePk'),'gameDate':g.get('gameDate'),'status':(g.get('status') or {}).get('abstractGameState'),'venue':(g.get('venue') or {}).get('name'),
         'away':(teams.get('away',{}).get('team') or {}).get('name'),'home':(teams.get('home',{}).get('team') or {}).get('name'),
         'awayProbable':pp.get('away'),'homeProbable':pp.get('home')}
    for side in ('awayProbable','homeProbable'):
