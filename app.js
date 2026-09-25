@@ -884,7 +884,7 @@ function render(parlays){
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
-  if(!valid.length){const qualified=(state.games||[]).flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&m.nflV3Actionable===true));wrap.innerHTML=`<div class="empty">${qualified.length?`${qualified.length} qualified leg${qualified.length===1?'':'s'} available, but not enough distinct games for this parlay.`:'No markets currently clear the NFLV3 edge, EV, confidence, and data-coverage gates.'}</div>`;return;}
+  if(!valid.length){const qualified=(state.games||[]).flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&m.nflV3Actionable===true));const watch=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;
