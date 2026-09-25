@@ -136,6 +136,19 @@ body[data-sport="nfl"] #moreAnalysis #qolV3{display:block!important;margin:0 0 8
 #moreAnalysis #qolV3 .minimal-head h2{font-size:14px!important}
 @media(max-width:520px){.sport-overview{gap:10px;min-height:62px;padding:10px 12px}.overview-label{min-width:78px}.overview-content strong{font-size:12px}}
 
+/* A compact source badge keeps the full feed detail available on hover and to screen readers. */
+.topbar{gap:14px}.brand-block{min-width:0}.brand-block h1{font-size:25px;margin-top:3px}.eyebrow{font-size:8px;letter-spacing:.13em}
+.header-status{display:inline-flex;align-items:center;justify-self:end;gap:8px;max-width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:999px;background:var(--surface);color:var(--text);font-size:11px;line-height:1.2}
+.header-status:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.header-status #statusLabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.header-status #dataStatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.header-status .live-dot{width:7px;height:7px;margin:0;flex:none}
+.header-status.is-delayed .live-dot{background:var(--amber)}
+.header-status.is-unavailable .live-dot{background:var(--red)}
+.header-status.is-loading .live-dot{background:var(--blue)}
+.overview-label{min-width:94px}
+@media(max-width:560px){.topbar{grid-template-columns:minmax(0,1fr) auto;gap:10px}.topbar>.icon-btn{grid-column:2;grid-row:1}.header-status{grid-column:1/-1;grid-row:2;justify-self:start}.brand-block h1{font-size:22px}}
+
 /* Keep the selected sport clear while data is loading. Content enters without showing the previous sport. */
 .sport-switch button{transition:background-color .16s ease,color .16s ease,box-shadow .16s ease}
 #results>.parlay-card,#results>.empty{animation:sport-result-enter .18s ease-out both}

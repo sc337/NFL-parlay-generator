@@ -28,7 +28,7 @@ function ensureOverview(){
   panel.id='sportOverview';
   panel.className='sport-overview';
   panel.setAttribute('aria-live','polite');
-  panel.innerHTML='<div class="overview-label"><span id="overviewSport">NFL</span><small>FEATURED PICK</small></div><div class="overview-content"><strong id="overviewPick">Loading NFL picks…</strong><span id="overviewDetail"></span></div>';
+  panel.innerHTML='<div class="overview-label"><span>FEATURED</span><small>PICK</small></div><div class="overview-content"><strong id="overviewPick">Loading NFL picks…</strong><span id="overviewDetail"></span></div>';
   switcher.insertAdjacentElement('afterend',panel);
   return panel;
 }
@@ -54,9 +54,29 @@ function updateOverview(){
     if(context&&!/^(moneyline|run line|team\/game total|pitcher strikeouts|hits|home runs|rbi|total bases)$/i.test(context)&&!pick.includes(context))detail+=(detail?' · ':'')+context;
     if(!pick&&$('#results > .empty')&&!/loading/i.test($('#results > .empty').textContent))pick='No qualifying pick right now';
   }
-  for(const [selector,value] of [['#overviewSport',sport],['#overviewPick',pick||`Loading ${sport} picks…`],['#overviewDetail',detail]]){
+  for(const [selector,value] of [['#overviewPick',pick||`Loading ${sport} picks…`],['#overviewDetail',detail]]){
     const node=panel.querySelector(selector);if(node.textContent!==value)node.textContent=value;
   }
+}
+
+function updateHeader(){
+  const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
+  const heading=$('.brand-block h1');if(heading&&heading.textContent!==sport)heading.textContent=sport;
+  const source=$('#dataStatus'),label=$('#statusLabel'),wrap=$('.header-status');
+  if(!source||!label||!wrap)return;
+  const raw=source.textContent.trim();
+  const count=raw.match(/(\d+)\s+upcoming\s+NFL games/i)||raw.match(/(\d+)\s+(?:pregame|future)\s+markets/i);
+  const age=raw.match(/updated\s+(\d+)m(?:\s+ago)?/i);
+  const time=raw.match(/updated\s+(\d{1,2}:\d{2})(?::\d{2})?\s*(AM|PM)/i);
+  const delayed=/\bdelayed\b|\bstale\b/i.test(raw);
+  const unavailable=/unavailable|no live|error|failed/i.test(raw);
+  let short=unavailable?(/no live/i.test(raw)?'No live markets':'Data unavailable'):/loading|refreshing|initializing|waiting|checking/i.test(raw)?'Loading data…':raw||'Loading data…';
+  if(count){short=Number(count[1]).toLocaleString()+(sport==='NFL'?' games':' markets');if(age)short+=' · '+age[1]+'m old';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase();if(delayed)short='Delayed · '+short}
+  if(label.textContent!==short)label.textContent=short;
+  wrap.title=raw;
+  wrap.classList.toggle('is-delayed',delayed);
+  wrap.classList.toggle('is-unavailable',unavailable);
+  wrap.classList.toggle('is-loading',/loading|refreshing|initializing|waiting|checking/i.test(raw));
 }
 
 function moveNflCard(){
@@ -111,12 +131,13 @@ function tidy(){
     moveNflCard();
     compactSportResults();
     updateOverview();
+    updateHeader();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
     const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
   }finally{busy=false}
 }
 let timer;
-const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel,#qolV3 .qgrid'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
+const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel,#qolV3 .qgrid,#dataStatus'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
 function init(){obs.observe(document.body,{subtree:true,childList:true});tidy()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
