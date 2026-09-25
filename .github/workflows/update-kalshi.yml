@@ -56,6 +56,24 @@ jobs:
         run: python scripts/enrich_snapshot_context.py
       - name: Match team and fighter media
         run: python scripts/update_sports_media.py
+      - name: Validate generated snapshots
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          files = [
+            'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
+            'data/kalshi-mlb.json','data/mlb-context.json','data/sports-media.json'
+          ]
+          for name in files:
+              p=pathlib.Path(name)
+              if not p.exists() or p.stat().st_size < 2:
+                  raise SystemExit(f'INVALID SNAPSHOT: {name} is missing/empty')
+              try: data=json.loads(p.read_text())
+              except Exception as e: raise SystemExit(f'INVALID SNAPSHOT: {name}: {e}')
+              if name.startswith('data/kalshi-') and not isinstance(data.get('markets'), list):
+                  raise SystemExit(f'INVALID SNAPSHOT: {name} has no markets array')
+          print('All generated snapshots are valid JSON')
+          PY
       - name: Commit snapshot if changed
         run: |
           git config user.name "github-actions[bot]"
@@ -99,6 +117,9 @@ jobs:
             cp data/kalshi-nfl.json /tmp/kalshi-nfl.json
             cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
             cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
+            cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
+            cp data/mlb-context.json /tmp/mlb-context.json
+            cp data/sports-media.json /tmp/sports-media.json
             git reset --hard HEAD~1
             git pull --rebase origin main
             cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
