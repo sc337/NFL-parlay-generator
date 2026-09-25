@@ -4,7 +4,7 @@ function sport(){return window.__ACTIVE_SPORT||'nfl'}
 function count(){return clamp(document.querySelector('#legsSelect')?.value)}
 function syncLabel(){const b=document.querySelector('#generateBtn');if(!b)return;const s=sport();b.disabled=false;b.textContent='Generate '+s.toUpperCase()+' '+count()+'-Leg Parlay'}
 async function run(){
- const s=sport(),n=count(),b=document.querySelector('#generateBtn');
+ const s=sport(),token=window.__SPORT_TOKEN,n=count(),b=document.querySelector('#generateBtn');
  if(b){b.disabled=true;b.textContent='Generating…'}
  try{
    if(s==='nfl'){
@@ -21,6 +21,7 @@ async function run(){
      window.UFC_DASHBOARD.setLegs(n);
    }
  }catch(e){
+   if(s!==sport()||token!==window.__SPORT_TOKEN)return;
    console.error('Parlay generation failed',e);
    const r=document.querySelector('#results');if(r)r.innerHTML='<div class="empty">Parlay generator error: '+String(e.message||e)+'</div>';
  }finally{syncLabel()}

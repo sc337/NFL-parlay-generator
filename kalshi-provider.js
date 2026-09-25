@@ -14,7 +14,7 @@
   async function load(){
     const status=document.getElementById('kalshiStatus');
     const warm=cached();
-    if(warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{window.NFL_PROJECTIONS?.refresh?.();generate()},0)}}
+    if(warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{window.NFL_PROJECTIONS?.refresh?.();generate()},0)}}
     if(status)status.textContent='Checking…';
     const started=performance.now();
     try{

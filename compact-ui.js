@@ -71,7 +71,7 @@ function tidy(){
 }
 let timer;
 const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
-function init(){obs.observe(document.body,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('[data-sport]'))setTimeout(tidy,120)});tidy()}
+function init(){obs.observe(document.body,{subtree:true,childList:true});tidy()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
 })();

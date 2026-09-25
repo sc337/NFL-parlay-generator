@@ -71,7 +71,7 @@ function riskLabel(v){
   return 'Aggressive';
 }
 
-function setStatus(msg){ $('#dataStatus').textContent=msg; }
+function setStatus(msg){ if((window.__ACTIVE_SPORT||'nfl')==='nfl')$('#dataStatus').textContent=msg; }
 
 function trackApiUsage(res){
   if(!res?.headers) return;
@@ -903,6 +903,7 @@ function reasonFor(leg,isSgp){
 }
 
 function render(parlays){
+  if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
   if(document.body.classList.contains('prediction-only')){const rows=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
@@ -944,6 +945,9 @@ function render(parlays){
 function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
 
 async function generate(){
+  if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
+  const token=window.__SPORT_TOKEN;
+  const current=()=>((window.__ACTIVE_SPORT||'nfl')==='nfl'&&window.__SPORT_TOKEN===token);
   window.NFL_PROJECTIONS?.enrich?.();
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
@@ -953,6 +957,7 @@ async function generate(){
     const game=slate.find(g=>g.id===$('#gameSelect').value) || slate[0];
     if(!game){$('#results').innerHTML='<div class="empty">No markets are loaded for NFL Week '+state.nflWeek+'.</div>';return;}
     await ensurePropsForGame(game);
+    if(!current())return;
     const propCount=countPlayerProps(game);
     if(state.apiKey && propCount===0 && game?.propStatus==='none'){
       $('#resultsTitle').textContent='No FanDuel player props posted yet';
@@ -973,9 +978,10 @@ async function generate(){
     }
   }else{
     await ensurePropsForMultiGame(6);
+    if(!current())return;
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
   }
-  render(parlays);
+  if(current())render(parlays);
 }
 
 window.generate=generate;
