@@ -94,7 +94,8 @@ jobs:
             cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
           cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
             cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json
+            cp /tmp/mlb-context.json data/mlb-context.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0
