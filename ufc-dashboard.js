@@ -15,7 +15,7 @@ function matchup(m){
  add((a.td_avg-b.td_avg),4,1.0,'takedown output');
  add((a.td_def-b.td_def),35,1.4,'takedown defense');
  add((a.sub_avg-b.sub_avg),2,0.6,'submission activity');
- if(a.wins!=null&&a.losses!=null&&b.wins!=null&&b.losses!=null){const ar=a.wins/Math.max(1,a.wins+a.losses),br=b.wins/Math.max(1,b.wins+b.losses);add(ar-br,.35,.7,'career win rate')}
+ if(a.wins!=null&&a.losses!=null&&b.wins!=null&&b.losses!=null){const ar=a.wins/Math.max(1,a.wins+a.losses),br=b.wins/Math.max(1,b.wins+b.losses);add(ar-br,.35,.7,'career win rate')} const ar5=Number(a.recent5?.winRate),br5=Number(b.recent5?.winRate);if(Number.isFinite(ar5)&&Number.isFinite(br5))add(ar5-br5,.6,1.35,'recent 5 form');
  const edge=w?z/w:0,score=clamp(Math.round(50+edge*28),20,80);return {score,edge,coverage:w/8,why:why.slice(0,3)}
 }
 function model(m){const mq=marketQ(m),mu=matchup(m),p=+m.probability,v=+m.volume||0,sp=m.spread==null?.16:+m.spread;const signal=m.kind==='moneyline'?(mu.score-50)/18:(mq-65)/35;const x=window.MODEL_CORE?.evaluate({marketP:p,signal,coverage:clamp(mu.coverage*.65+Math.log10(v+1)*.06,.15,.78),quality:mq,uncertainty:clamp(.46+sp-(mu.coverage*.16),.28,.78),sample:v})||{modelP:p,edge:0,ev:0,confidence:mq};let score=mq*.48+(m.kind==='moneyline'?mu.score:50)*.24+x.confidence*.14+clamp(50+x.edge*500,20,80)*.14;if(mu.coverage<.45&&m.kind==='moneyline')score-=5;return {...x,score:clamp(Math.round(score),0,99),match:mu}}
