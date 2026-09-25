@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fresh=(data,maxHours=2)=>{const at=Date.parse(data?.updated_at||data?.generated_at||'');return Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=maxHours*3600000};
+const fresh=(data,maxHours=24)=>{const at=Date.parse(data?.updated_at||data?.generated_at||'');return Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=maxHours*3600000};
 const pregame=m=>{const t=Date.parse(m?.start_time||m?.game_time||'');return Number.isFinite(t)&&t>Date.now()&&(!m.close_time||Date.parse(m.close_time)>Date.now())};
 const futureDated=m=>{const match=String(m?.event_ticker||'').match(/-(\d{2})([A-Z]{3})(\d{2})/);if(!match)return false;const t=Date.parse('20'+match[1]+'-'+({JAN:'01',FEB:'02',MAR:'03',APR:'04',MAY:'05',JUN:'06',JUL:'07',AUG:'08',SEP:'09',OCT:'10',NOV:'11',DEC:'12'}[match[2]]||'00')+'-'+match[3]+'T00:00:00Z');return Number.isFinite(t)&&t>Date.now()};
 const quote=m=>{const ask=Number(m?.yes_ask);return Number.isFinite(ask)&&ask>0&&ask<1?ask:null};
