@@ -96,3 +96,16 @@ select,input[type=password],input[type=number]{height:36px}
  .mode-tabs .tab{height:34px}
  .more-analysis>summary small{display:none}
 }
+
+/* COMPACT REVIEW 2 */
+.more-analysis:not([open])>#analysisSecondary,
+.more-analysis:not([open])>#analysisConsensus{display:none!important}
+.more-analysis:not([open]){min-height:0}
+.more-analysis:not([open])>summary{border-bottom:0!important}
+body[data-sport="nfl"] #results .predictions-list{display:none!important}
+@media(max-width:520px){
+ .minimal-recs .qcard{padding:10px!important}
+ .control-card{gap:6px 8px}
+ .results-head{margin-top:10px}
+ .parlay-card{padding:10px}
+}
