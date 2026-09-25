@@ -2,9 +2,13 @@ import json, re, urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import csv, io
+import unicodedata
 
 UA={'User-Agent':'Mozilla/5.0 sports-dashboard'}
 BASE='https://statsapi.mlb.com/api/v1'
+
+def name_key(name):
+ return ''.join(c for c in unicodedata.normalize('NFKD',str(name or '')).casefold() if c.isalnum() and not unicodedata.combining(c))
 
 def get(url):
  req=urllib.request.Request(url,headers=UA)
@@ -41,7 +45,9 @@ def main():
  games=[]; ids=set()
  for day in d.get('dates',[]):
   for g in day.get('games',[]):
-   teams=g.get('teams',{}); pp=g.get('probablePitchers',{});\n   if not pp:\n    pp={'away':(teams.get('away',{}) or {}).get('probablePitcher'),'home':(teams.get('home',{}) or {}).get('probablePitcher')}
+   teams=g.get('teams',{}); pp=g.get('probablePitchers',{})
+   if not pp:
+    pp={'away':(teams.get('away',{}) or {}).get('probablePitcher'),'home':(teams.get('home',{}) or {}).get('probablePitcher')}
    row={'gamePk':g.get('gamePk'),'gameDate':g.get('gameDate'),'venue':(g.get('venue') or {}).get('name'),
         'away':(teams.get('away',{}).get('team') or {}).get('name'),'home':(teams.get('home',{}).get('team') or {}).get('name'),
         'awayProbable':pp.get('away'),'homeProbable':pp.get('home')}
@@ -57,7 +63,25 @@ def main():
     'whip':st.get('whip'),'innings':ip,'strikeouts':so,'walks':bb,'battersFaced':bf,
     'kRate':round(so/bf,4) if bf else None,'bbRate':round(bb/bf,4) if bf else None,'kPer9':st.get('strikeoutsPer9Inn'),'bbPer9':st.get('walksPer9Inn'),'recent30':statcast_recent(pid)}
   except Exception as e: print('pitcher',pid,e)
+ # Only store IDs for exact, unambiguous player-name matches in the markets.
+ market_data=json.loads(Path('data/kalshi-mlb.json').read_text())
+ names={m['label'].split(':',1)[0].strip() for m in market_data.get('markets',[])
+        if m.get('kind') not in ('moneyline','spread','total') and ':' in m.get('label','')}
+ players={}
+ try:
+  roster=get(f'{BASE}/sports/1/players?season={now.year}').get('people',[])
+  by_name={}
+  for person in roster:
+   for field in ('fullName','nameFirstLast','firstLastName'):
+    key=name_key(person.get(field))
+    if key:by_name.setdefault(key,set()).add(person['id'])
+  for name in names:
+   matches=by_name.get(name_key(name),set())
+   if len(matches)==1:players[name]=matches.pop()
+ except Exception as e:print('player lookup',e)
+ for pitcher in pitchers.values():
+  if pitcher.get('name') in names:players[pitcher['name']]=pitcher['id']
  Path('data').mkdir(exist_ok=True)
- Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers},indent=2))
- print('MLB context',len(games),'games',len(pitchers),'probable pitchers')
+ Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players},indent=2))
+ print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props')
 if __name__=='__main__':main()
