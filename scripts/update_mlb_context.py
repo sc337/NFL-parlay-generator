@@ -93,9 +93,9 @@ def main():
     splits=[split for group in person.get('stats',[]) if (group.get('group') or {}).get('displayName')=='hitting'
             for split in group.get('splits',[]) if str((split.get('season') or now.year))==str(now.year)]
     if not splits:continue
-    stat=splits[0].get('stat') or {};games=int(stat.get('gamesPlayed') or 0)
-    if games<1:continue
-    hitters[str(person['id'])]={'games':games,'hits':int(stat.get('hits') or 0),
+    stat=splits[0].get('stat') or {};games_played=int(stat.get('gamesPlayed') or 0)
+    if games_played<1:continue
+    hitters[str(person['id'])]={'games':games_played,'hits':int(stat.get('hits') or 0),
       'homeRuns':int(stat.get('homeRuns') or 0),'rbi':int(stat.get('rbi') or 0),
       'totalBases':int(stat.get('totalBases') or 0)}
   except Exception as e:print('hitter season stats unavailable',e)
