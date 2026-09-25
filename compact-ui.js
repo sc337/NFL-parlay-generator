@@ -66,14 +66,13 @@ function tidy(){
     compactNFLCards();
     compactSportResults();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
-    const more=$('#moreAnalysis');if(more)more.open=false;
     const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
     const title=$('#resultsTitle');if(title&&/Recommendations$/i.test(title.textContent))title.textContent='Recommended Parlay';
   }finally{busy=false}
 }
 let timer;
 const obs=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(tidy,60)});
-function init(){obs.observe(document.body,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('[data-sport],.tab,#generateBtn'))setTimeout(tidy,120)});tidy()}
+function init(){obs.observe(document.body,{subtree:true,childList:true});document.addEventListener('click',e=>{if(e.target.closest('[data-sport]'))setTimeout(tidy,120)});tidy()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
 })();
