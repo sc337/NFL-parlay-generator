@@ -49,6 +49,21 @@ def ufcstats_search(name):
         return links[0] if links else None
     except:return None
 
+def recent_fights(urls):
+    out=[]
+    for url in urls[:5]:
+        try:
+            h=urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=20).read().decode("utf-8","ignore")
+            result=re.search(r'<i[^>]*class="[^"]*b-fight-details__person-status[^"]*"[^>]*>\s*([WLNC]+)',h,re.I)
+            method=re.search(r'METHOD:</i>\s*</i>?\s*<i[^>]*>\s*([^<]+)',h,re.I|re.S)
+            rnd=re.search(r'ROUND:</i>\s*</i>?\s*<i[^>]*>\s*([0-9]+)',h,re.I|re.S)
+            sig=re.findall(r'<p[^>]*class="[^"]*b-fight-details__table-text[^"]*"[^>]*>\s*([0-9]+)\s+of\s+([0-9]+)',h,re.I)
+            out.append({"url":url,"result":result.group(1).upper() if result else None,"method":method.group(1).strip() if method else None,
+              "round":int(rnd.group(1)) if rnd else None,"sig_strikes":int(sig[0][0]) if sig else None,"sig_attempts":int(sig[0][1]) if sig else None})
+        except Exception as e: print("recent fight",url,e)
+    wins=sum(1 for x in out if x.get("result")=="W"); losses=sum(1 for x in out if x.get("result")=="L")
+    return {"fights":out,"count":len(out),"wins":wins,"losses":losses,"winRate":round(wins/max(1,wins+losses),3) if out else None}
+
 def fighter_stats(name):
     url=ufcstats_search(name)
     if not url:return None
@@ -61,7 +76,7 @@ def fighter_stats(name):
         fight_links=re.findall(r'data-link="(http://ufcstats\\.com/fight-details/[^"]+)"',h,re.I)
         return {"name":name,"url":url,"wins":int(rec.group(1)) if rec else None,"losses":int(rec.group(2)) if rec else None,
           "dob":dob.group(1).strip() if dob else None,"height":height.group(1).strip() if height else None,"reach":reach.group(1).strip() if reach else None,"stance":stance.group(1).strip() if stance else None,
-          "fight_count":len(fight_links),"recent_fight_urls":fight_links[:5],
+          "fight_count":len(fight_links),"recent_fight_urls":fight_links[:5],"recent5":recent_fights(fight_links),
           "slpm":grab(r"SLpM:</i>\s*([0-9.]+)"),"sapm":grab(r"SApM:</i>\s*([0-9.]+)"),
           "str_acc":grab(r"Str\. Acc\.:</i>\s*([0-9.]+)%"),"str_def":grab(r"Str\. Def:</i>\s*([0-9.]+)%"),
           "td_avg":grab(r"TD Avg\.:</i>\s*([0-9.]+)"),"td_acc":grab(r"TD Acc\.:</i>\s*([0-9.]+)%"),
