@@ -123,6 +123,19 @@ body:not([data-sport="nfl"]) #nflSgpSection{display:none!important}
 body[data-sport="nfl"] #qolV3{display:block}
 .supporting-note{margin-top:12px;padding:10px 12px;border-top:1px solid var(--border2);font-size:12px;line-height:1.6;color:var(--muted)}
 
+/* One consistent highlight below the sport switch. NFL's detailed card lives in More Analysis. */
+.sport-overview{display:flex;align-items:center;gap:16px;min-height:70px;margin:-3px 0 14px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface)}
+.overview-label{display:flex;flex-direction:column;gap:3px;flex:none;min-width:112px}
+.overview-label span{font-size:11px;font-weight:850;letter-spacing:.09em;color:var(--green)}
+.overview-label small{font-size:8px;font-weight:800;letter-spacing:.11em;color:var(--subtle)}
+.overview-content{display:flex;flex-direction:column;min-width:0;gap:3px}
+.overview-content strong{font-size:14px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.overview-content span{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cardSummary,#qolV3{display:none!important}
+body[data-sport="nfl"] #moreAnalysis #qolV3{display:block!important;margin:0 0 8px}
+#moreAnalysis #qolV3 .minimal-head h2{font-size:14px!important}
+@media(max-width:520px){.sport-overview{gap:10px;min-height:62px;padding:10px 12px}.overview-label{min-width:78px}.overview-content strong{font-size:12px}}
+
 /* Keep the selected sport clear while data is loading. Content enters without showing the previous sport. */
 .sport-switch button{transition:background-color .16s ease,color .16s ease,box-shadow .16s ease}
 #results>.parlay-card,#results>.empty{animation:sport-result-enter .18s ease-out both}

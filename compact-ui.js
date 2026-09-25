@@ -19,6 +19,49 @@ function moveConsensus(){
   if(p&&p.parentElement!==host)host.appendChild(p);
 }
 
+function ensureOverview(){
+  let panel=$('#sportOverview');
+  if(panel)return panel;
+  const switcher=$('#sportSwitch');
+  if(!switcher)return null;
+  panel=document.createElement('section');
+  panel.id='sportOverview';
+  panel.className='sport-overview';
+  panel.setAttribute('aria-live','polite');
+  panel.innerHTML='<div class="overview-label"><span id="overviewSport">NFL</span><small>FEATURED PICK</small></div><div class="overview-content"><strong id="overviewPick">Loading NFL picks…</strong><span id="overviewDetail"></span></div>';
+  switcher.insertAdjacentElement('afterend',panel);
+  return panel;
+}
+
+function updateOverview(){
+  const panel=ensureOverview();if(!panel)return;
+  const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
+  let pick='',detail='';
+  if(sport==='NFL'){
+    const card=$('#qolV3 .qgrid .qcard');
+    if(card?.classList.contains('pass')){
+      pick=/loading/i.test(card.textContent)?'Loading NFL picks…':'No bet qualifies';
+      detail=/loading/i.test(card.textContent)?'':'No high-confidence edge right now';
+    }else if(card){
+      pick=card.querySelector('.ticket-main h3,.qtitle h3')?.textContent?.trim()||'No bet qualifies';
+      detail=card.querySelector('.ticket-main p,.qcard>p')?.textContent?.trim()||'';
+    }
+  }else{
+    const card=$('#results > .parlay-card');
+    pick=card?.querySelector('.leg-title')?.textContent?.replace(/^\d+\.\s*/,'').trim()||'';
+    detail=card?.querySelector('.parlay-name')?.textContent?.trim()||'';
+    if(!pick&&$('#results > .empty')&&!/loading/i.test($('#results > .empty').textContent))pick='No qualifying pick right now';
+  }
+  panel.querySelector('#overviewSport').textContent=sport;
+  panel.querySelector('#overviewPick').textContent=pick||`Loading ${sport} picks…`;
+  panel.querySelector('#overviewDetail').textContent=detail;
+}
+
+function moveNflCard(){
+  const card=$('#qolV3'),secondary=ensureAnalysis().querySelector('#analysisSecondary');
+  if(card&&card.parentElement!==secondary)secondary.prepend(card);
+}
+
 function compactNFLCards(){
   const grid=$('#qolV3 .qgrid'),secondary=ensureAnalysis().querySelector('#analysisSecondary');
   if(!grid)return;
@@ -63,13 +106,15 @@ function tidy(){
   try{
     ensureAnalysis();
     moveConsensus();
+    moveNflCard();
     compactSportResults();
+    updateOverview();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
     const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
   }finally{busy=false}
 }
 let timer;
-const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
+const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel,#qolV3 .qgrid'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
 function init(){obs.observe(document.body,{subtree:true,childList:true});tidy()}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
