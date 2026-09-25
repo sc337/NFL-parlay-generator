@@ -24,7 +24,7 @@
       const data=await res.json();
       saveCache(data);
       const rawGames=Array.isArray(data.games)?data.games:[];
-      const games=rawGames.filter(isPregame);
+      let games=rawGames.filter(isPregame);
       const removed=rawGames.length-games.length;
       if(!rawGames.length && !data.updated_at){
         diag({source:'Kalshi snapshot',url:SNAPSHOT,status:202,ok:true,count:0,ms:Math.round(performance.now()-started),note:'awaiting first GitHub Actions refresh'});
