@@ -41,7 +41,8 @@ def scoreboard(sport,days):
 
 def attach_ncaaf():
  path=Path('data/kalshi-ncaaf.json');d=json.loads(path.read_text());rows=d['markets'];days={day for m in rows if (day:=date_code(m.get('event_ticker'))[0])}
- events=scoreboard('football/college-football',days)
+ events=scoreboard('football/college-football',[day for day in days if datetime.now(timezone.utc).date()<=day<=datetime.now(timezone.utc).date()+__import__('datetime').timedelta(days=14)])
+ events=list({event.get('id'):event for event in events if event.get('id')}.values())
  for m in rows:
   day,_=date_code(m.get('event_ticker'))
   if not day:continue
