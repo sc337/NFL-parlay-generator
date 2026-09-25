@@ -846,7 +846,6 @@ function buildMulti(count,risk,variant){
 
 function packageParlay(legs,variant,isSgp,meta={}){
   if(!legs?.length) return null;
-  if(window.NFL_MODEL_V3 && legs.some(l=>l.nflV3Actionable!==true)) return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
   let avg=legs.reduce((s,l)=>s+(Number(l.selectionConfidence)||Number(l.confidence)||impliedProbability(l.price)*100),0)/legs.length;
@@ -964,9 +963,7 @@ $('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   generate();
 }));
 
-$('#legsSelect').addEventListener('change',generate);
 $('#gameSelect').addEventListener('change',()=>generate());
-$('#generateBtn').addEventListener('click',()=>generate());
 $$('.chip').forEach(c=>c.addEventListener('click',()=>{
   c.classList.toggle('active');
   c.classList.contains('active')?state.selectedMarkets.add(c.dataset.market):state.selectedMarkets.delete(c.dataset.market);
