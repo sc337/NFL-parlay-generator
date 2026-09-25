@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const window={};let urls=[];
-const document={addEventListener(){},querySelector(){return null},body:{classList:{add(){}}}};
+const document={addEventListener(){},querySelector(){return null},body:{classList:{add(){},remove(){}}}};
 const snapshot={updated_at:new Date().toISOString(),markets:[
  {kind:'moneyline',event_ticker:'KXNCAAFGAME-26SEP26ARMYTEM',ticker:'KXNCAAFGAME-26SEP26ARMYTEM-ARMY',title:'Army wins',label:'Army',probability:.62,yes_bid:.60,yes_ask:.64,volume:500},
  {kind:'moneyline',event_ticker:'KXNCAAFGAME-26SEP26ARMYTEM',ticker:'KXNCAAFGAME-26SEP26ARMYTEM-TEM',title:'Temple wins',label:'Temple',probability:.38,yes_bid:.36,yes_ask:.40,volume:500}

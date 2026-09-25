@@ -70,7 +70,12 @@ jobs:
                   raise SystemExit(f'INVALID SNAPSHOT: {name} is missing/empty')
               try: data=json.loads(p.read_text())
               except Exception as e: raise SystemExit(f'INVALID SNAPSHOT: {name}: {e}')
-              if name.startswith('data/kalshi-') and not isinstance(data.get('markets'), list):
+              if name == 'data/kalshi-nfl.json':
+                  if not isinstance(data.get('games'), list) or any(
+                      not isinstance(game.get('markets'), list) for game in data['games']
+                  ):
+                      raise SystemExit(f'INVALID SNAPSHOT: {name} has invalid games/markets')
+              elif name.startswith('data/kalshi-') and not isinstance(data.get('markets'), list):
                   raise SystemExit(f'INVALID SNAPSHOT: {name} has no markets array')
           print('All generated snapshots are valid JSON')
           PY
