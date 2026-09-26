@@ -2,6 +2,7 @@
 import json,re
 from pathlib import Path
 from datetime import datetime,timezone,date,timedelta
+from zoneinfo import ZoneInfo
 
 MLB={'AZ':'Diamondbacks','ATL':'Braves','BAL':'Orioles','BOS':'Red Sox','CHC':'Cubs','CHW':'White Sox','CWS':'White Sox','CIN':'Reds','CLE':'Guardians','COL':'Rockies','DET':'Tigers','HOU':'Astros','KC':'Royals','LAA':'Angels','LAD':'Dodgers','MIA':'Marlins','MIL':'Brewers','MIN':'Twins','NYM':'Mets','NYY':'Yankees','OAK':'Athletics','ATH':'Athletics','PHI':'Phillies','PIT':'Pirates','SD':'Padres','SEA':'Mariners','SF':'Giants','STL':'Cardinals','TB':'Rays','TEX':'Rangers','TOR':'Blue Jays','WSH':'Nationals'}
 def key(s):return re.sub('[^a-z0-9]','',str(s or '').lower())
@@ -21,8 +22,11 @@ def attach_mlb():
    if b in MLB and a!=b:matches.append((MLB[a],MLB[b]))
   if len(matches)!=1:continue
   away,home=matches[0]
-  # Match the scheduled local game date or following UTC date.
-  games=[g for g in ctx['games'] if all(key(team) in key(g.get(side)) for team,side in ((away,'away'),(home,'home'))) and abs((datetime.fromisoformat(g['gameDate'].replace('Z','+00:00')).date()-day).days)<=1]
+  # Kalshi's MLB ticker uses the Eastern game date. A UTC +/- one-day window
+  # includes the previous final and the next day's game for the same teams.
+  games=[g for g in ctx['games'] if g.get('status')=='Preview'
+         and datetime.fromisoformat(g['gameDate'].replace('Z','+00:00')).astimezone(ZoneInfo('America/New_York')).date()==day
+         and all(key(team) in key(g.get(side)) for team,side in ((away,'away'),(home,'home')))]
   if len(games)!=1:continue
   g=games[0];m['game_id']=str(g['gamePk']);m['game_time']=g['gameDate'];m['game_label']=g['away']+' at '+g['home'];m['game_status']=g.get('status')
  path.write_text(json.dumps(d,indent=2));print('MLB matched',sum(bool(m.get('game_time')) for m in d['markets']),'of',len(d['markets']))
