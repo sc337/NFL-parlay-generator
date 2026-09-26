@@ -154,3 +154,19 @@ body[data-sport="nfl"] #moreAnalysis #qolV3{display:block!important;margin:0 0 8
 #results>.parlay-card,#results>.empty{animation:sport-result-enter .18s ease-out both}
 @keyframes sport-result-enter{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.sport-switch button{transition:none}#results>.parlay-card,#results>.empty{animation:none}}
+
+/* Saved pregame forecasts and outcome calibration. */
+.calibration-panel{padding:12px;margin:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface)}
+.calibration-head span{font-size:9px;letter-spacing:.1em;font-weight:800;color:var(--green)}
+.calibration-head h3{font-size:15px;margin:4px 0 10px}
+.calibration-body{font-size:11px;color:var(--muted);line-height:1.5}
+.calibration-body p{margin:0 0 9px}
+.calibration-empty{padding:9px 10px;border:1px solid var(--border2);border-radius:6px;color:var(--subtle)}
+.calibration-metrics,.calibration-bins{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.calibration-metrics span,.calibration-bins span{padding:5px 8px;background:var(--surface3);border-radius:5px;color:var(--text)}
+.history-table{margin:10px 0;border-top:1px solid var(--border2)}
+.history-row{display:grid;grid-template-columns:minmax(0,1fr) auto 60px;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2)}
+.history-row strong,.history-row small{display:block;overflow-wrap:anywhere}
+.history-row strong{color:var(--text);font-size:12px}.history-row small{color:var(--subtle)}
+.history-row b{text-align:right;text-transform:capitalize}.history-win{color:var(--green)}.history-loss{color:var(--red)}
+@media(max-width:520px){.history-row{grid-template-columns:minmax(0,1fr) 60px}.history-row>span{grid-row:2;grid-column:1}.history-row>b{grid-column:2;grid-row:1}}

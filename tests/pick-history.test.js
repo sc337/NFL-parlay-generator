@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const {record,candidates}=require('../scripts/update_pick_history');
+const now=Date.parse('2026-09-25T20:00:00Z');
+const market={ticker:'KXTEST-26SEP26ABC',event_ticker:'KXTEST-26SEP26ABC',kind:'moneyline',label:'Team A wins',probability:.48,yes_ask:.50,close_time:'2026-10-01T00:00:00Z',game_time:'2026-09-26T20:00:00Z'};
+const entry={market,forecast:{modelP:.58,confidence:70,context:{coverage:.5},betEV:.16}};
+const chosen=record('mlb',entry,now);
+assert.equal(chosen.forecastType,'model');
+assert.equal(chosen.modelP,.58);
+assert.equal(chosen.eventTime,market.game_time);
+assert.equal(record('mlb',entry,Date.parse('2026-09-27T00:00:00Z')),null,'never record a postgame forecast while the market remains open');
+assert.equal(record('mlb',{...entry,forecast:{modelP:.58,context:{coverage:0},betEV:null}},now).forecastType,'market_only');
+assert.equal(record('ncaaf',{market:{...market,game_time:undefined}},now).eventTime,'2026-09-27T00:00:00.000Z');
+assert.equal(record('ncaaf',{market:{...market,ticker:''}},now),null);
+(async()=>{for(const sport of ['nfl','mlb','ncaaf','ufc']){const {rows}=await candidates(sport);assert.ok(Array.isArray(rows),sport+' candidates');}console.log('Pick history selection and pregame timing passed')})().catch(e=>{console.error(e);process.exitCode=1});

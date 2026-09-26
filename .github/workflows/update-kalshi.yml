@@ -14,6 +14,8 @@ on:
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
+      - 'scripts/update_pick_history.js'
+      - 'scripts/settle_pick_history.py'
       - '.github/workflows/update-kalshi.yml'
   schedule:
     - cron: '3,13,23,33,43,53 * * * *'
@@ -56,13 +58,18 @@ jobs:
         run: python scripts/enrich_snapshot_context.py
       - name: Match team and fighter media
         run: python scripts/update_sports_media.py
+      - name: Track and settle pregame model picks
+        run: |
+          node scripts/update_pick_history.js
+          python scripts/settle_pick_history.py
       - name: Validate generated snapshots
         run: |
           python - <<'PY'
           import json, pathlib, sys
           files = [
             'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
-            'data/kalshi-mlb.json','data/mlb-context.json','data/sports-media.json'
+            'data/kalshi-mlb.json','data/mlb-context.json','data/sports-media.json',
+            'data/pick-history.json'
           ]
           for name in files:
               p=pathlib.Path(name)
@@ -77,6 +84,8 @@ jobs:
                       raise SystemExit(f'INVALID SNAPSHOT: {name} has invalid games/markets')
               elif name.startswith('data/kalshi-') and not isinstance(data.get('markets'), list):
                   raise SystemExit(f'INVALID SNAPSHOT: {name} has no markets array')
+              elif name == 'data/pick-history.json' and not isinstance(data.get('records'), list):
+                  raise SystemExit(f'INVALID HISTORY: {name} has no records array')
           print('All generated snapshots are valid JSON')
           PY
       - name: Commit snapshot if changed
@@ -93,12 +102,14 @@ jobs:
           cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
           cp data/mlb-context.json /tmp/mlb-context.json
           cp data/sports-media.json /tmp/sports-media.json
+          cp data/pick-history.json /tmp/pick-history.json
           git restore data/kalshi-nfl.json
           git restore data/kalshi-ufc.json 2>/dev/null || true
           git restore data/kalshi-ncaaf.json 2>/dev/null || true
           git restore data/kalshi-mlb.json 2>/dev/null || true
           git restore data/mlb-context.json 2>/dev/null || true
           git restore data/sports-media.json 2>/dev/null || true
+          git restore data/pick-history.json 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
@@ -106,8 +117,9 @@ jobs:
           cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
           cp /tmp/mlb-context.json data/mlb-context.json
           cp /tmp/sports-media.json data/sports-media.json
+          cp /tmp/pick-history.json data/pick-history.json
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -125,6 +137,7 @@ jobs:
             cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
             cp data/mlb-context.json /tmp/mlb-context.json
             cp data/sports-media.json /tmp/sports-media.json
+            cp data/pick-history.json /tmp/pick-history.json
             git reset --hard HEAD~1
             git pull --rebase origin main
             cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
@@ -133,7 +146,8 @@ jobs:
             cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
             cp /tmp/mlb-context.json data/mlb-context.json
             cp /tmp/sports-media.json data/sports-media.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json
+            cp /tmp/pick-history.json data/pick-history.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0

@@ -39,5 +39,6 @@
   async function verifyPriorityGames(){const games=state.games||[];if(!games.length)return;const candidates=games.filter(g=>(g.markets||[]).some(m=>m.player)).slice(0,4);await Promise.all(candidates.map(verifyGameRoster));refreshTopCards()}
   const oldGenerate=window.generate;if(typeof oldGenerate==='function')window.generate=async function(...args){return await oldGenerate.apply(this,args)};
   const init=()=>setTimeout(verifyPriorityGames,50);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-  window.NFL_SELECTIVITY={verifyGameRoster,valueScore,strictCorrelation,buildQuality,refresh:refreshTopCards,verify:verifyPriorityGames};
+  function historyPicks(){const pool=strictPool('balanced').sort((a,b)=>rankMarket(b)-rankMarket(a));const straight=pool.find(m=>!m.player&&['h2h','spreads','totals'].includes(m.type)&&conf(m)>=85)||null;const yardKeys=new Set(['player_pass_yds','player_rush_yds','player_reception_yds']);const prop=pool.find(m=>m.player&&yardKeys.has(m.marketKey)&&conf(m)>=82)||pool.find(m=>m.player&&m.type!=='td'&&conf(m)>=82)||null;return [straight,prop].filter(Boolean)}
+  window.NFL_SELECTIVITY={verifyGameRoster,valueScore,strictCorrelation,buildQuality,refresh:refreshTopCards,verify:verifyPriorityGames,historyPicks};
 })();

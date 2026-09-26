@@ -59,3 +59,9 @@ The parlay engine now enriches live player-prop outcomes with roster/team/positi
 This improves same-team QB/WR/TE correlation, favorite-control rushing scripts, and underdog pass-volume scripts.
 
 ESPN's Site API endpoints are not a formally supported public developer API, so the integration is defensive and gracefully falls back to nflverse if ESPN changes or is unavailable.
+
+## Pick history and calibration
+
+The scheduled snapshot workflow records the featured pregame straight picks for NFL, MLB, NCAAF, and UFC in `data/pick-history.json`. It saves the first observed probability per Kalshi ticker and side, without overwriting it as prices change. A settlement pass uses the matching Kalshi contract's final yes/no result. Pending and void contracts do not count as wins or losses.
+
+Open **More Analysis → Forecast check** on the dashboard to see tracked picks for the selected sport. Forecast type distinguishes an independent model projection from a market-only baseline. Performance metrics appear only after at least 30 settled picks of one type for that sport. The displayed Brier score is the average squared probability error; lower is better. This is a prospective record beginning when the history job is deployed, not a backtest or a claim that the available market signal has positive expected value.

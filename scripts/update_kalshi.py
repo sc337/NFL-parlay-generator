@@ -62,7 +62,7 @@ def base_leg(m,p,side='yes'):
  try:
   ask=float(m.get('yes_ask_dollars')) if side=='yes' else 1-float(m.get('yes_bid_dollars'))
  except (ValueError,TypeError):ask=None
- return {'price':american(ask) if ask is not None and 0<ask<1 else None,'prob':p,'marketProbability':p,'source':'Kalshi','quoteSide':side,'quoteProbability':ask,'sourceQuality':quality(m,p)}
+ return {'ticker':m.get('ticker'),'price':american(ask) if ask is not None and 0<ask<1 else None,'prob':p,'marketProbability':p,'source':'Kalshi','quoteSide':side,'quoteProbability':ask,'sourceQuality':quality(m,p)}
 def parse_prop(m,g,s):
  p=prob(m);title=str(m.get('title') or '')
  if p is None:return
