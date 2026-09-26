@@ -1,69 +1,42 @@
-# NFL Parlay Generator
+# Sports Betting Dashboard
 
-A lightweight, mobile-first NFL parlay generator designed for GitHub Pages.
+A static dashboard for NFL, MLB, NCAAF, and UFC picks and parlay ideas. [Open the live dashboard](https://sc337.github.io/NFL-parlay-generator/).
 
-## Modes
+## What it shows
 
-### Same Game Parlay
-Builds 2-6 leg SGPs and explicitly rewards logical positive correlation, including:
-- QB passing + WR receiving
-- Favorite ML/spread + favorite-team player production
-- Game over + offensive overs
-- Passing volume + scoring legs
+- A featured pick, sport-specific recommendations, and a parlay builder for the selected sport. NFL also has same-game and multi-game modes.
+- Moneyline, spread, total, and supported player-prop markets when those markets are available. Picks show their game or fight, and team or player imagery where available.
+- **More Analysis** for secondary picks, market consensus, and the pick-history report.
 
-The generator penalizes redundant team-line combinations such as stacking a moneyline and spread for the same team.
+The dashboard uses current market snapshots. If a sport has no qualifying pregame pick or its data is unavailable, it says so instead of showing demo bets. Suggested parlays are ideas; check the exact line and price at your sportsbook before deciding whether to place one.
 
-### Multi-Game Parlay
-Selects strong legs across different games to diversify game-specific exposure.
+## Data and probabilities
 
-## Risk profiles
-The risk slider changes which legs can make it into a build. Results are shown as:
-- Safer
-- Best Balance
-- Longshot
+A scheduled GitHub Actions workflow refreshes Kalshi snapshots and free sports context for all four sports. Market consensus can also compare Kalshi with public Polymarket data. The Odds API is optional: requests are made only after you enter your own key in Settings. The key is stored in your browser, not in the repository. GitHub Pages cannot keep a browser-entered key secret from the browser's network requests.
 
-## Data
-The app can use FanDuel team markets through The Odds API. Because GitHub Pages is static, API keys cannot be securely hidden in front-end code. The key is entered in Settings and stored only in browser localStorage.
-
-Without a key, the app uses demo market data so the UI and generation logic remain testable.
-
-## GitHub Pages
-Repository settings:
-1. Settings → Pages
-2. Source: Deploy from a branch
-3. Branch: main / root
-
-
-## Live player props
-
-When an API key is connected, the app now lazily requests FanDuel event-level NFL player props only when they are needed. Supported live categories include passing yards/TDs/attempts/completions, rushing yards/attempts, receiving yards/receptions, and anytime TD.
-
-SGP correlation currently rewards:
-- Same-player volume combinations
-- Same-player yardage + touchdown combinations
-- Passing + receiving game scripts
-- Game Over + offensive Over props
-
-Player-team correlation is intentionally not inferred from names alone because the odds response does not provide a normalized team field for player outcomes. A roster-mapping layer can be added separately.
-
-
-## Context enrichment: ESPN + nflverse
-
-The parlay engine now enriches live player-prop outcomes with roster/team/position context.
-
-- ESPN Site API is used as the current-roster layer for the two teams in a selected matchup.
-- nflverse season roster data is loaded from the official nflverse-data GitHub release as an open fallback.
-- ESPN matches take priority when both sources identify the same player.
-- Enriched player props receive team, position, and context-source metadata before SGP construction.
-
-This improves same-team QB/WR/TE correlation, favorite-control rushing scripts, and underdog pass-volume scripts.
-
-ESPN's Site API endpoints are not a formally supported public developer API, so the integration is defensive and gracefully falls back to nflverse if ESPN changes or is unavailable.
+**Market probability** comes from quoted prices. **Model probability** is an independent estimate only where enough sport-specific context exists; otherwise the pick is a market-quality signal. NCAAF currently has no independent projection, and some MLB and UFC markets also lack one. **Edge** is the model probability minus the market-implied probability. **EV** uses both the model probability and the offered payout; the dashboard should not treat a market-only signal as proven positive EV. A positive estimate is not a guarantee of profit.
 
 ## Pick history and calibration
 
-The scheduled snapshot workflow records the featured pregame straight picks for NFL, MLB, NCAAF, and UFC in `data/pick-history.json`. It saves the first observed probability per Kalshi ticker and side, without overwriting it as prices change. A settlement pass uses the matching Kalshi contract's final yes/no result. Pending and void contracts do not count as wins or losses.
+The scheduled job saves selected featured **pregame straight picks** to `data/pick-history.json` and later settles them against the original Kalshi contract. It records the first observed probability for a contract and side. Pending and void picks do not count as wins or losses. It does not track every displayed parlay or a bet you personally place.
 
-Open **More Analysis → Forecast check** on the dashboard to see tracked picks for the selected sport. Forecast type distinguishes an independent model projection from a market-only baseline. Performance metrics appear only after at least 30 settled picks of one type for that sport. The displayed Brier score is the average squared probability error; lower is better. This is a prospective record beginning when the history job is deployed, not a backtest or a claim that the available market signal has positive expected value.
+**More Analysis → Forecast check** shows the selected sport's history. Accuracy metrics appear after 30 settled picks of the same forecast type. A separate calibration job may adjust future independent model probabilities for a sport and market group after at least 30 earlier settled events and 20 later validation events, and only if the later probability error improves. It stays off when there is too little data or validation fails. Market-only picks do not train that adjustment. This is prospective tracking, not a backtest or a guarantee of better future results.
 
-The scheduled calibration job tests modest probability adjustments from independent model picks only, separately for each sport and market group. It uses one pick per event, fits on at least 30 earlier settled events, and checks the proposed adjustment on 20 later events. It activates only when the later Brier score improves by at least 0.002 and is no worse than the market baseline; otherwise the original model remains in use. It waits for 20 newly settled events before retesting. Market-only picks and parlays do not train this adjustment. The raw probability is preserved in history so subsequent calibration never trains on its own adjusted output. The report shows whether a sport's adjustment is active. This validation reduces overfitting risk but cannot guarantee future profitability.
+## Run and deploy
+
+No build step is required. To view the site locally from the repository root:
+
+```bash
+python -m http.server 8000
+```
+
+Open `http://localhost:8000`. The local view uses the committed snapshots. GitHub Pages serves `main` from the repository root; `.github/workflows/update-kalshi.yml` refreshes the generated data on a schedule or through a manual workflow run.
+
+For the focused checks used by this project:
+
+```bash
+node tests/prediction-model.test.js
+node tests/pick-history.test.js
+node tests/model-calibration.test.js
+python -m unittest discover -s tests -p 'test_settle_history.py'
+```
