@@ -8,7 +8,7 @@ const ev=(p,ask)=>Number.isFinite(p)&&Number.isFinite(ask)&&ask>0&&ask<1?p/ask-1
 const gameKey=m=>m.game_id||String(m.event_ticker||'').replace(/^[^-]+-/,'');
 const unique=(rows,n)=>{const out=[],seen=new Set();for(const m of rows){const k=gameKey(m);if(!k||seen.has(k))continue;seen.add(k);out.push(m);if(out.length===n)break}return out};
 // Only change market family when the candidate raises confidence and the
-// caller confirms the full build still clears its evidence and value gates.
+// caller confirms win probability, evidence, and value are not reduced.
 function improveTypes(selected,pool,{key=gameKey,family=m=>m.kind,confidence,valid=()=>true}){
  const result=selected.slice();
  for(let i=0;i<result.length;i++){
