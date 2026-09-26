@@ -11,6 +11,25 @@ const snapshot={updated_at:new Date().toISOString(),fighter_stats:{},markets:[ma
 const context={window,document,Option:class{constructor(label,value){this.label=label;this.value=value}},fetch:async()=>({ok:true,json:async()=>snapshot}),Date};
 vm.runInNewContext(fs.readFileSync('market-guards.js','utf8'),context);
 vm.runInNewContext(fs.readFileSync('ufc-dashboard.js','utf8'),context);
+
+// The official Sep 26 card must survive the UTC date rollover, then stop producing bets at first bell.
+let clock=Date.parse('2026-09-26T05:00:00Z');
+class ClockDate extends Date{static now(){return clock}}
+const scheduledWindow={__ACTIVE_SPORT:'ufc',__SPORT_TOKEN:1};
+const scheduleContext={window:scheduledWindow,document:{readyState:'loading',addEventListener(){},querySelector(){return null}},Date:ClockDate};
+vm.runInNewContext(fs.readFileSync('market-guards.js','utf8'),scheduleContext);
+vm.runInNewContext(fs.readFileSync('ufc-dashboard.js','utf8'),scheduleContext);
+const rosas={event_ticker:'KXUFCFIGHT-26SEP26ROS BAR',close_time:'2026-10-10T21:00:00Z'};
+assert(scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
+assert(scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
+clock=Date.parse('2026-09-26T22:00:00Z');
+assert(!scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
+assert(scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
+clock=Date.parse('2026-09-27T05:00:00Z');
+assert(!scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
+clock=Date.parse('2026-10-03T02:00:00Z');
+assert(scheduledWindow.UFC_DASHBOARD.isVisible({event_ticker:'KXUFCFIGHT-26OCT03OTHER',close_time:'2026-10-04T10:00:00Z'}),'An undated-start card remains browseable on its event day');
+
 (async()=>{
  await window.UFC_DASHBOARD.load();
  const select=element('#ufcCardSelect'),note=element('#ufcCardNote');
