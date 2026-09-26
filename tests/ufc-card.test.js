@@ -12,7 +12,8 @@ const context={window,document,Option:class{constructor(label,value){this.label=
 vm.runInNewContext(fs.readFileSync('market-guards.js','utf8'),context);
 vm.runInNewContext(fs.readFileSync('ufc-dashboard.js','utf8'),context);
 
-// The official Sep 26 card must survive the UTC date rollover, then stop producing bets at first bell.
+// The card remains browseable after the prelims start. Only live-verified
+// upcoming fights can still produce picks, and a stale status cannot do so.
 let clock=Date.parse('2026-09-26T05:00:00Z');
 class ClockDate extends Date{static now(){return clock}}
 const scheduledWindow={__ACTIVE_SPORT:'ufc',__SPORT_TOKEN:1};
@@ -25,6 +26,13 @@ assert(scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
 clock=Date.parse('2026-09-26T22:00:00Z');
 assert(!scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
 assert(scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
+rosas.game_status='pre';rosas.live_status_at=clock;
+assert(scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
+rosas.game_status='in';
+assert(!scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
+assert(!scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
+rosas.game_status='pre';clock+=121000;
+assert(!scheduledWindow.UFC_DASHBOARD.isPregame(rosas));
 clock=Date.parse('2026-09-27T05:00:00Z');
 assert(!scheduledWindow.UFC_DASHBOARD.isVisible(rosas));
 clock=Date.parse('2026-10-03T02:00:00Z');

@@ -166,22 +166,30 @@ for group in by_bout.values():
 # Verify bout identity and bell time against the actual fight schedule.
 if not rows and not any(counts.values()):
     raise RuntimeError('All Kalshi UFC series returned no markets; keeping the prior snapshot')
+schedule_by_day={}
+def same_fighter(a,b):
+    x=re.sub(r'[^a-z0-9]','',str(a or '').lower())
+    y=re.sub(r'[^a-z0-9]','',str(b or '').lower())
+    return len(x)>=5 and len(y)>=5 and (x==y or x.startswith(y) or y.startswith(x))
 for code,group in by_bout.items():
     names_in_group={r.get('fighter1') for r in group if r.get('fighter1')}|{r.get('fighter2') for r in group if r.get('fighter2')}
     if len(names_in_group)!=2:continue
     try:day=datetime.strptime(code[:7],'%y%b%d').strftime('%Y%m%d')
     except ValueError:continue
-    try:
-        schedule=get('https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard',{'dates':day})
-    except Exception as exc:
-        print('UFC schedule unavailable',day,exc);continue
+    if day not in schedule_by_day:
+        try:schedule_by_day[day]=get('https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard',{'dates':day})
+        except Exception as exc:
+            print('UFC schedule unavailable',day,exc);schedule_by_day[day]={}
+    schedule=schedule_by_day[day]
     matches=[]
-    def key(s):return re.sub(r'[^a-z0-9]','',str(s or '').lower())
     for event in schedule.get('events',[]):
         for competition in event.get('competitions',[]):
             competitors=competition.get('competitors',[])
-            fighters={key((c.get('athlete') or c).get('displayName') or (c.get('athlete') or c).get('fullName')) for c in competitors}
-            if fighters=={key(n) for n in names_in_group}:matches.append((event,competition))
+            if len(competitors)!=2:continue
+            fighters=[(c.get('athlete') or c).get('displayName') or (c.get('athlete') or c).get('fullName') for c in competitors]
+            a,b=sorted(names_in_group)
+            if (same_fighter(a,fighters[0]) and same_fighter(b,fighters[1]) or
+                same_fighter(a,fighters[1]) and same_fighter(b,fighters[0])):matches.append((event,competition))
     if len(matches)!=1:continue
     event,competition=matches[0];start=competition.get('date') or event.get('date')
     if not start:continue
