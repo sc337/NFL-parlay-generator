@@ -7,8 +7,27 @@ const quote=m=>{const ask=Number(m?.yes_ask);return Number.isFinite(ask)&&ask>0&
 const ev=(p,ask)=>Number.isFinite(p)&&Number.isFinite(ask)&&ask>0&&ask<1?p/ask-1:null;
 const gameKey=m=>m.game_id||String(m.event_ticker||'').replace(/^[^-]+-/,'');
 const unique=(rows,n)=>{const out=[],seen=new Set();for(const m of rows){const k=gameKey(m);if(!k||seen.has(k))continue;seen.add(k);out.push(m);if(out.length===n)break}return out};
+// Only change market family when the candidate raises confidence and the
+// caller confirms the full build still clears its evidence and value gates.
+function improveTypes(selected,pool,{key=gameKey,family=m=>m.kind,confidence,valid=()=>true}){
+ const result=selected.slice();
+ for(let i=0;i<result.length;i++){
+  const original=result[i],event=key(original),base=Number(confidence(original));
+  if(!event||!Number.isFinite(base))continue;
+  let best=original,bestConfidence=base;
+  for(const candidate of pool){
+   if(candidate===original||key(candidate)!==event||family(candidate)===family(original)||result.some((m,j)=>j!==i&&m===candidate))continue;
+   const next=Number(confidence(candidate));
+   if(!Number.isFinite(next)||next<=bestConfidence)continue;
+   const trial=result.slice();trial[i]=candidate;
+   if(valid(trial,i,original,candidate)){best=candidate;bestConfidence=next}
+  }
+  result[i]=best;
+ }
+ return result;
+}
 const estOdds=rows=>{let d=1;for(const m of rows){const ask=quote(m);if(ask===null)return null;d/=ask}return d>=2?Math.round((d-1)*100):Math.round(-100/(d-1))};
 function watchlist(rows,sport){const selected=unique(rows.filter(m=>m&&(m.label||m.title)&&quote(m)!==null).sort((a,b)=>(+b.volume||0)-(+a.volume||0)),8);
  if(!selected.length)return '<div class="empty">No current '+esc(sport)+' markets with available ask prices.</div>';
  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">WATCHLIST</span><h3 class="parlay-name">'+esc(sport)+' markets to review</h3></div></div><p class="summary">Market prices only. No independent positive EV has been established. Check your book’s odds before betting.</p><div class="legs">'+selected.map((m,i)=>'<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.label||m.title)+'</div><div class="leg-sub">'+esc(m.game_label||m.fight||'Upcoming event')+' · Kalshi ask '+Math.round(quote(m)*100)+'¢ · Volume '+Math.round(+m.volume||0)+'</div></div>').join('')+'</div></article>'}
-window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,unique,estOdds,watchlist};})();
+window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,unique,improveTypes,estOdds,watchlist};})();
