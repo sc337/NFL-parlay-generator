@@ -3,9 +3,10 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const window={};let urls=[];
 const document={addEventListener(){},querySelector(){return null},body:{classList:{add(){},remove(){}}}};
+const futureDate=new Date(Date.now()+7*86400000),eventDate=String(futureDate.getUTCFullYear()).slice(-2)+futureDate.toLocaleString('en-US',{month:'short',timeZone:'UTC'}).toUpperCase()+String(futureDate.getUTCDate()).padStart(2,'0');
 const snapshot={updated_at:new Date().toISOString(),markets:[
- {kind:'moneyline',event_ticker:'KXNCAAFGAME-26SEP26ARMYTEM',ticker:'KXNCAAFGAME-26SEP26ARMYTEM-ARMY',title:'Army wins',label:'Army',probability:.62,yes_bid:.60,yes_ask:.64,volume:500},
- {kind:'moneyline',event_ticker:'KXNCAAFGAME-26SEP26ARMYTEM',ticker:'KXNCAAFGAME-26SEP26ARMYTEM-TEM',title:'Temple wins',label:'Temple',probability:.38,yes_bid:.36,yes_ask:.40,volume:500}
+ {kind:'moneyline',event_ticker:'KXNCAAFGAME-'+eventDate+'ARMYTEM',ticker:'KXNCAAFGAME-'+eventDate+'ARMYTEM-ARMY',title:'Army wins',label:'Army',probability:.62,yes_bid:.60,yes_ask:.64,volume:500},
+ {kind:'moneyline',event_ticker:'KXNCAAFGAME-'+eventDate+'ARMYTEM',ticker:'KXNCAAFGAME-'+eventDate+'ARMYTEM-TEM',title:'Temple wins',label:'Temple',probability:.38,yes_bid:.36,yes_ask:.40,volume:500}
 ]};
 const context={window,document,localStorage:{getItem:()=>''},Date,Math,URL,setTimeout(){},fetch:async url=>{urls.push(String(url));if(String(url).includes('kalshi-ncaaf'))return{ok:true,json:async()=>snapshot};return{ok:false,status:403}}};
 vm.runInNewContext(fs.readFileSync('market-guards.js','utf8'),context);

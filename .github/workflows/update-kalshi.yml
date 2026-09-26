@@ -16,6 +16,7 @@ on:
       - 'scripts/enrich_snapshot_context.py'
       - 'scripts/update_pick_history.js'
       - 'scripts/settle_pick_history.py'
+      - 'scripts/build_model_calibration.js'
       - '.github/workflows/update-kalshi.yml'
   schedule:
     - cron: '3,13,23,33,43,53 * * * *'
@@ -60,8 +61,9 @@ jobs:
         run: python scripts/update_sports_media.py
       - name: Track and settle pregame model picks
         run: |
-          node scripts/update_pick_history.js
           python scripts/settle_pick_history.py
+          node scripts/build_model_calibration.js
+          node scripts/update_pick_history.js
       - name: Validate generated snapshots
         run: |
           python - <<'PY'
@@ -69,13 +71,18 @@ jobs:
           files = [
             'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
             'data/kalshi-mlb.json','data/mlb-context.json','data/sports-media.json',
-            'data/pick-history.json'
+            'data/pick-history.json','data/model-calibration.js'
           ]
           for name in files:
               p=pathlib.Path(name)
               if not p.exists() or p.stat().st_size < 2:
                   raise SystemExit(f'INVALID SNAPSHOT: {name} is missing/empty')
-              try: data=json.loads(p.read_text())
+              raw=p.read_text()
+              if name == 'data/model-calibration.js':
+                  if not raw.startswith('window.MODEL_CALIBRATION_DATA=') or not raw.rstrip().endswith(';'):
+                      raise SystemExit('INVALID CALIBRATION: bad script wrapper')
+                  raw=raw[len('window.MODEL_CALIBRATION_DATA='):].rstrip()[:-1]
+              try: data=json.loads(raw)
               except Exception as e: raise SystemExit(f'INVALID SNAPSHOT: {name}: {e}')
               if name == 'data/kalshi-nfl.json':
                   if not isinstance(data.get('games'), list) or any(
@@ -86,6 +93,8 @@ jobs:
                   raise SystemExit(f'INVALID SNAPSHOT: {name} has no markets array')
               elif name == 'data/pick-history.json' and not isinstance(data.get('records'), list):
                   raise SystemExit(f'INVALID HISTORY: {name} has no records array')
+              elif name == 'data/model-calibration.js' and not isinstance(data.get('sports'), dict):
+                  raise SystemExit(f'INVALID CALIBRATION: {name} has no sports object')
           print('All generated snapshots are valid JSON')
           PY
       - name: Commit snapshot if changed
@@ -103,6 +112,7 @@ jobs:
           cp data/mlb-context.json /tmp/mlb-context.json
           cp data/sports-media.json /tmp/sports-media.json
           cp data/pick-history.json /tmp/pick-history.json
+          cp data/model-calibration.js /tmp/model-calibration.js
           git restore data/kalshi-nfl.json
           git restore data/kalshi-ufc.json 2>/dev/null || true
           git restore data/kalshi-ncaaf.json 2>/dev/null || true
@@ -110,6 +120,7 @@ jobs:
           git restore data/mlb-context.json 2>/dev/null || true
           git restore data/sports-media.json 2>/dev/null || true
           git restore data/pick-history.json 2>/dev/null || true
+          git restore data/model-calibration.js 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
@@ -118,8 +129,9 @@ jobs:
           cp /tmp/mlb-context.json data/mlb-context.json
           cp /tmp/sports-media.json data/sports-media.json
           cp /tmp/pick-history.json data/pick-history.json
+          cp /tmp/model-calibration.js data/model-calibration.js
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json data/model-calibration.js
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -138,6 +150,7 @@ jobs:
             cp data/mlb-context.json /tmp/mlb-context.json
             cp data/sports-media.json /tmp/sports-media.json
             cp data/pick-history.json /tmp/pick-history.json
+            cp data/model-calibration.js /tmp/model-calibration.js
             git reset --hard HEAD~1
             git pull --rebase origin main
             cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
@@ -147,7 +160,8 @@ jobs:
             cp /tmp/mlb-context.json data/mlb-context.json
             cp /tmp/sports-media.json data/sports-media.json
             cp /tmp/pick-history.json data/pick-history.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json
+            cp /tmp/model-calibration.js data/model-calibration.js
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json data/model-calibration.js
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0

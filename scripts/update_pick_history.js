@@ -15,7 +15,7 @@ function runtime(sport){
   const fetch=async url=>{const name=String(url).split('?')[0];if(!/^data\/[a-z0-9-]+\.json$/.test(name))throw Error('Unexpected fetch '+url);const data=read(name.slice(5));return{ok:true,json:async()=>data,text:async()=>JSON.stringify(data)}};
   const ctx=vm.createContext({window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('model-core.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');
   return{window,ctx,run};
 }
 
@@ -25,13 +25,14 @@ async function candidates(sport){
     const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];
     for(const file of ['nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
     w.NFL_PROJECTIONS.enrich(true);w.NFL_MODEL_V3.enrich();
-    return{snapshot,rows:w.NFL_SELECTIVITY.historyPicks().map(m=>({market:m,forecast:{modelP:m.modelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV},game:(snapshot.games||[]).find(g=>g.id===m.gameId)}))};
+    return{snapshot,rows:w.NFL_SELECTIVITY.historyPicks().map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV},game:(snapshot.games||[]).find(g=>g.id===m.gameId)}))};
   }
   r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   return{snapshot:read('kalshi-'+sport+'.json'),rows:api.historyPicks()};
 }
 
+function readCalibrationVersion(){try{return JSON.parse(fs.readFileSync(path.join(root,'data/model-calibration.js'),'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,'')).updated_at}catch{return null}}
 function record(sport,entry,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
   const ticker=String(m.ticker||'');const side=sport==='nfl'&&m.quoteSide==='no'?'no':'yes';
@@ -41,13 +42,13 @@ function record(sport,entry,now){
   const inferred=eventDate&&month[eventDate[2]]!=null?new Date(Date.UTC(2000+Number(eventDate[1]),month[eventDate[2]],Number(eventDate[3])+1)).toISOString():null;
   const eventTime=g.commence_time||m.game_time||m.start_time||inferred;
   const marketP=Number(m.probability??m.marketProbability);
-  const modelP=Number(f.modelP);
+  const modelP=Number(f.modelP),rawModelP=Number(f.rawModelP??f.modelP);
   if(!ticker||!Number.isFinite(Date.parse(close))||Date.parse(close)<=now||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!(marketP>0&&marketP<1))return null;
   const independent=sport==='nfl'?(Number(f.coverage)>=.2&&Number.isFinite(modelP)):sport==='mlb'?m.kind==='moneyline'&&Number(f.context?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:sport==='ufc'?Number(f.match?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:false;
   const p=independent?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
-    selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
-    closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,
+    marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+    closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
     forecastType:independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
     ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent?Number(f.betEV):null,result:null};
 }

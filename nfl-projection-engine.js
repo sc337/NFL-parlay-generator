@@ -80,19 +80,19 @@
     // Keep the first projection layer conservative until it is backtested:
     // market probability remains the anchor, context can move it only modestly.
     const marketLogit=Math.log(clamp(marketP,.03,.97)/(1-clamp(marketP,.03,.97)));
-    const core=window.MODEL_CORE?.evaluate({marketP,signal:z,coverage:clamp(coverage,0,1),quality:Number(m.sourceQuality)||65,odds:m.price,uncertainty:clamp(.58-coverage*.28,.25,.62),sample:Number(m.volume)||0});
+    const core=window.MODEL_CORE?.evaluate({marketP,signal:z,coverage:clamp(coverage,0,1),quality:Number(m.sourceQuality)||65,odds:m.price,uncertainty:clamp(.58-coverage*.28,.25,.62),sample:Number(m.volume)||0,sport:'nfl',marketGroup:m.player?'player_prop':m.type==='h2h'?'moneyline':m.type,calibrate:coverage>=.2});
     const modelP=core?.modelP??clamp(sigmoid(marketLogit+z),.04,.96);
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {marketP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:upFinal?.line??null,lineEdge};
+    return {marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:upFinal?.line??null,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
     if(!force&&enrichedRef===state.games)return;
     for(const g of state.games||[])for(const m of g.markets||[]){
       const p=marketProjection(g,m);if(!p)continue;
-      m.modelProbability=p.modelP;
+      m.modelProbability=p.modelP;m.rawModelProbability=p.rawModelP;
       m.marketProbability=p.marketP;
       m.modelEdge=p.edge;
       m.projectionCoverage=p.coverage;
