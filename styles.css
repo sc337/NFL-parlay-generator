@@ -204,3 +204,7 @@ body[data-sport="ufc"]{--league:#fa858a;--league-bg:#3c2027}
 .sport-ufc .grade{background:var(--blue-bg);color:var(--blue)}
 @media(max-width:560px){.brand-identity{gap:9px}.league-mark{width:42px;height:42px;border-radius:10px}.league-mark img{max-width:34px;max-height:34px}.league-mark[data-league="MLB"] img,.league-mark[data-league="UFC"] img{max-width:35px}.league-mark[data-league="NCAAF"] img{max-width:32px;max-height:32px}.league-fallback{font-size:10px}.brand-block h1{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.brand-block h1,.league-mark img{transition:none}}
+
+#ufcCardWrap{display:none;grid-column:1/-1;margin:0}
+body[data-sport="ufc"] #ufcCardWrap{display:flex}
+#ufcCardNote{color:var(--muted);font-size:10px}
