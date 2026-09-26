@@ -62,6 +62,8 @@ function updateOverview(){
 function updateHeader(){
   const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
   const heading=$('.brand-block h1');if(heading&&heading.textContent!==sport)heading.textContent=sport;
+  const marks={NFL:'https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png',MLB:'https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png',NCAAF:'https://upload.wikimedia.org/wikipedia/commons/d/dd/NCAA_logo.svg',UFC:'https://upload.wikimedia.org/wikipedia/commons/0/0d/UFC_logo.svg'};
+  const logo=$('#leagueLogo'),mark=$('#leagueMark');if(logo&&mark){const src=marks[sport]||marks.NFL;if(logo.getAttribute('src')!==src){mark.classList.remove('logo-loaded');logo.src=src}mark.dataset.league=sport;const fallback=mark.querySelector('.league-fallback');if(fallback)fallback.textContent=sport;logo.onload=()=>mark.classList.add('logo-loaded');logo.onerror=()=>mark.classList.remove('logo-loaded');if(logo.complete&&logo.naturalWidth)mark.classList.add('logo-loaded');}
   const source=$('#dataStatus'),label=$('#statusLabel'),wrap=$('.header-status');
   if(!source||!label||!wrap)return;
   const raw=source.textContent.trim();

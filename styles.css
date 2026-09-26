@@ -170,3 +170,37 @@ body[data-sport="nfl"] #moreAnalysis #qolV3{display:block!important;margin:0 0 8
 .history-row strong{color:var(--text);font-size:12px}.history-row small{color:var(--subtle)}
 .history-row b{text-align:right;text-transform:capitalize}.history-win{color:var(--green)}.history-loss{color:var(--red)}
 @media(max-width:520px){.history-row{grid-template-columns:minmax(0,1fr) 60px}.history-row>span{grid-row:2;grid-column:1}.history-row>b{grid-column:2;grid-row:1}}
+
+/* Purposeful color: league identity in navigation, blue for actions and data,
+   green for favorable value, amber for caution, red for losses, violet for builds and learning. */
+:root{--bg:#0a1019;--surface:#111b27;--surface2:#182536;--surface3:#0e1723;--border:#28394b;--border2:#354a60;--text:#edf5fc;--muted:#a2b2c2;--subtle:#788da0;--green:#49d69c;--green-bg:#123528;--blue:#73b9ff;--blue-bg:#122c45;--amber:#f5c577;--amber-bg:#3a2916;--red:#fa858a;--purple:#bc9bff;--purple-bg:#261d3d}
+body{--league:#7faaf1;--league-bg:#172940;background:radial-gradient(ellipse 95% 420px at 50% -210px,#182b42 0%,transparent 80%),var(--bg)}
+body[data-sport="mlb"]{--league:#6cc9e2;--league-bg:#143543}
+body[data-sport="ncaaf"]{--league:#f5c577;--league-bg:#392b18}
+body[data-sport="ufc"]{--league:#fa858a;--league-bg:#3c2027}
+.topbar{border-bottom-color:var(--border2)}
+.brand-identity{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-block{min-width:0}.brand-block h1{margin-top:2px;transition:color .16s ease}.brand-block .eyebrow{color:var(--league)}
+.league-mark{width:52px;height:52px;flex:none;display:grid;place-items:center;position:relative;overflow:hidden;border:1px solid color-mix(in srgb,var(--league) 44%,var(--border));border-radius:13px;background:var(--league-bg);box-shadow:inset 0 0 20px color-mix(in srgb,var(--league) 8%,transparent)}
+.league-mark img{max-width:42px;max-height:42px;width:auto;height:auto;object-fit:contain;opacity:0;transition:opacity .15s ease}
+.league-mark.logo-loaded img{opacity:1}.league-fallback{position:absolute;color:var(--league);font-weight:900;font-size:12px;letter-spacing:-.04em}.league-mark.logo-loaded .league-fallback{display:none}
+.league-mark[data-league="MLB"] img{max-width:44px}.league-mark[data-league="NCAAF"] img{max-width:40px;max-height:40px}.league-mark[data-league="UFC"] img{max-width:44px;filter:invert(1)}
+.sport-switch{background:#101d2d!important;border-color:var(--border2)!important}
+.sport-switch button{color:#a1b2c4!important}.sport-switch button.active{background:var(--league-bg)!important;color:var(--text)!important;box-shadow:inset 0 -2px var(--league)!important}
+.sport-overview{border-color:color-mix(in srgb,var(--league) 28%,var(--border));background:linear-gradient(110deg,var(--league-bg),var(--surface) 44%)}
+.overview-label span{color:var(--league)}.overview-label small{color:var(--muted)}
+.header-status{border-color:var(--border2);background:var(--surface2)}
+.primary-btn{background:var(--blue);border-color:#9acfff;color:#091729;box-shadow:0 3px 14px #388ed523}
+.primary-btn:hover:not(:disabled){background:#9acfff}
+.tab.active,.variant-tabs button.active{background:var(--blue-bg);color:var(--text)}
+.variant-tabs button.active b,.quality-note strong{color:var(--blue)}
+.chip.active,.leg-buttons button.active{border-color:#438fc4;background:var(--blue-bg);color:#a8d9ff}
+.grade{background:var(--blue-bg);color:var(--blue)}
+.odds{color:var(--text)}.odds-label{color:var(--blue)}
+.minimal-recs .pass:before{background:var(--border2)}.minimal-recs .pass .qtitle strong{color:var(--muted)}
+.more-analysis>summary{color:var(--purple)}.calibration-head span{color:var(--purple)}
+.calibration-metrics span,.calibration-bins span{border:1px solid #493866;background:var(--purple-bg)}
+.history-pending{color:var(--blue)}.history-void{color:var(--amber)}
+.sport-ufc .grade{background:var(--blue-bg);color:var(--blue)}
+@media(max-width:560px){.brand-identity{gap:9px}.league-mark{width:42px;height:42px;border-radius:10px}.league-mark img{max-width:34px;max-height:34px}.league-mark[data-league="MLB"] img,.league-mark[data-league="UFC"] img{max-width:35px}.league-mark[data-league="NCAAF"] img{max-width:32px;max-height:32px}.league-fallback{font-size:10px}.brand-block h1{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.brand-block h1,.league-mark img{transition:none}}
