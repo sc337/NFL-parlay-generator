@@ -2,7 +2,7 @@
 const clamp=n=>Math.max(2,Math.min(6,Number(n)||2));
 function sport(){return window.__ACTIVE_SPORT||'nfl'}
 function count(){return clamp(document.querySelector('#legsSelect')?.value)}
-function syncLabel(){const b=document.querySelector('#generateBtn');if(!b)return;const s=sport();b.disabled=false;b.textContent='Generate '+s.toUpperCase()+' '+count()+'-Leg Parlay'}
+function syncLabel(){const b=document.querySelector('#generateBtn');if(!b)return;const s=sport();const available=s==='ufc'?window.UFC_DASHBOARD?.availableCount?.():null;b.disabled=available!==null&&available!==undefined&&available<count();b.textContent=b.disabled?'No positive-EV UFC '+count()+'-Leg Available':'Generate '+s.toUpperCase()+' '+count()+'-Leg Parlay'}
 async function run(){
  const s=sport(),token=window.__SPORT_TOKEN,n=count(),b=document.querySelector('#generateBtn');
  if(b){b.disabled=true;b.textContent='Generating…'}

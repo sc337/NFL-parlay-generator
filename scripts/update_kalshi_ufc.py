@@ -1,7 +1,8 @@
-import json,re,urllib.parse,urllib.request,unicodedata
+import json,re,urllib.parse,urllib.request,unicodedata,html
 from concurrent.futures import ThreadPoolExecutor,as_completed
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 BASE="https://external-api.kalshi.com/trade-api/v2"
 SERIES={"KXUFCFIGHT":"moneyline","KXUFCMOV":"method_victory","KXUFCMOF":"method_finish","KXUFCROUNDS":"round_finish","KXUFCDISTANCE":"distance"}
 UA={"User-Agent":"sports-dashboard/1.0"}
@@ -9,6 +10,28 @@ UA={"User-Agent":"sports-dashboard/1.0"}
 def get(url,params=None):
     if params:url+="?"+urllib.parse.urlencode(params)
     with urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=30) as r:return json.load(r)
+
+def official_cards():
+    """Read event names and card start times from UFC's public events schedule."""
+    url='https://www.ufc.com/events'
+    page=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=15).read().decode('utf-8','ignore')
+    cards={}
+    pattern=r'<h3 class="c-card-event--result__headline">\s*<a href="([^"]+)">([^<]+)</a></h3>'
+    for match in re.finditer(pattern,page,re.I):
+        path,head=match.groups();fragment=page[match.end():match.end()+1200]
+        main=re.search(r'data-main-card-timestamp="(\d+)"',fragment)
+        if not main:continue
+        start=datetime.fromtimestamp(int(main.group(1)),timezone.utc)
+        prelim=re.search(r'data-prelims-card-timestamp="(\d+)"',fragment)
+        first=datetime.fromtimestamp(int(prelim.group(1)),timezone.utc) if prelim else start
+        day=start.astimezone(ZoneInfo('America/New_York')).date().isoformat()
+        prefix='UFC Fight Night' if '/ufc-fight-night-' in path else 'UFC '+path.rstrip('/').rsplit('ufc-',1)[-1] if '/ufc-' in path else ''
+        if not prefix:continue
+        cards[day]={'title':prefix+': '+html.unescape(head).strip(),'firstBell':first.isoformat().replace('+00:00','Z'),
+                    'displayUntil':(start+timedelta(hours=6)).isoformat().replace('+00:00','Z'),
+                    'source':'https://www.ufc.com'+path}
+    if not cards:raise ValueError('No named UFC events found')
+    return cards
 
 def markets(series):
     out=[];cursor=""
@@ -180,7 +203,15 @@ with ThreadPoolExecutor(max_workers=6) as pool:
     for future in as_completed(futures):
         profile=future.result()
         if profile:stats[futures[future]]=profile
+try:previous_cards=json.loads(Path('data/kalshi-ufc.json').read_text()).get('cards') or {}
+except (OSError,ValueError):previous_cards={}
+try:cards=official_cards()
+except Exception as exc:
+    print('Official UFC schedule unavailable',exc);cards=previous_cards
+# The Contender Series is listed separately from the UFC Fight Night schedule.
+cards.setdefault('2026-09-29',{'title':"Dana White’s Contender Series: Season 10, Episode 8",
+    'source':'https://www.ufc.com/news/dwcs-season-10-episode-8-preview-athletes-bouts-start-time-streaming'})
 rows.sort(key=lambda x:(x.get("close_time") or "9999",x["fight"],x["kind"]))
 Path("data").mkdir(exist_ok=True)
-Path("data/kalshi-ufc.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"fighter_stats_source":"UFC.com","fighter_stats":stats,"markets":rows},indent=2))
+Path("data/kalshi-ufc.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"fighter_stats_source":"UFC.com","fighter_stats":stats,"cards":cards,"markets":rows},indent=2))
 print("UFC markets",len(rows),"fighters",len(stats),counts)
