@@ -412,7 +412,7 @@ async function ensurePropsForGame(game){
 }
 
 async function ensurePropsForMultiGame(limit=6){
-  const targets=weekGames().filter(g=>!state.propsLoaded.has(g.id)).slice(0,limit);
+  const targets=(state.games||[]).filter(g=>!state.propsLoaded.has(g.id)).slice(0,limit);
   for(const g of targets) await ensurePropsForGame(g);
 }
 
@@ -469,34 +469,10 @@ function normalizeGame(g){
   return {id:g.id,away:g.away_team,home:g.home_team,commence_time:g.commence_time,markets};
 }
 
-const NFL_2026_WEEKS=[
-['2026-09-09T00:00:00Z','2026-09-17T00:00:00Z'],['2026-09-17T00:00:00Z','2026-09-24T00:00:00Z'],
-['2026-09-24T00:00:00Z','2026-10-01T00:00:00Z'],['2026-10-01T00:00:00Z','2026-10-08T00:00:00Z'],
-['2026-10-08T00:00:00Z','2026-10-15T00:00:00Z'],['2026-10-15T00:00:00Z','2026-10-22T00:00:00Z'],
-['2026-10-22T00:00:00Z','2026-10-29T00:00:00Z'],['2026-10-29T00:00:00Z','2026-11-05T00:00:00Z'],
-['2026-11-05T00:00:00Z','2026-11-12T00:00:00Z'],['2026-11-12T00:00:00Z','2026-11-19T00:00:00Z'],
-['2026-11-19T00:00:00Z','2026-11-26T00:00:00Z'],['2026-11-26T00:00:00Z','2026-12-03T00:00:00Z'],
-['2026-12-03T00:00:00Z','2026-12-10T00:00:00Z'],['2026-12-10T00:00:00Z','2026-12-17T00:00:00Z'],
-['2026-12-17T00:00:00Z','2026-12-24T00:00:00Z'],['2026-12-24T00:00:00Z','2026-12-31T00:00:00Z'],
-['2026-12-31T00:00:00Z','2027-01-07T00:00:00Z'],['2027-01-07T00:00:00Z','2027-01-14T00:00:00Z']];
-state.nflWeek=Number(localStorage.getItem('nflSelectedWeek'))||3;
-function weekGames(){
- const w=NFL_2026_WEEKS[state.nflWeek-1];if(!w)return state.games||[];
- const lo=Date.parse(w[0]),hi=Date.parse(w[1]);
- return (state.games||[]).filter(g=>{const t=Date.parse(g.commence_time||'');return Number.isFinite(t)&&t>=lo&&t<hi});
-}
-function initWeekSelector(){
- const s=$('#nflWeekSelect');if(!s)return;s.innerHTML='';
- NFL_2026_WEEKS.forEach((_,i)=>{const o=document.createElement('option');o.value=String(i+1);o.textContent='Week '+(i+1);s.appendChild(o)});
- const now=Date.now();const auto=NFL_2026_WEEKS.findIndex(w=>now>=Date.parse(w[0])&&now<Date.parse(w[1]))+1;
- if(!localStorage.getItem('nflSelectedWeek')&&auto)state.nflWeek=auto;
- s.value=String(state.nflWeek);
- s.addEventListener('change',async()=>{state.nflWeek=Number(s.value)||3;localStorage.setItem('nflSelectedWeek',String(state.nflWeek));hydrateGames();await generate()});
-}
 function hydrateGames(){
   const sel=$('#gameSelect');
   sel.innerHTML='';
-  weekGames().forEach(g=>{
+  (state.games||[]).forEach(g=>{
     const o=document.createElement('option');
     o.value=g.id;
     o.textContent=`${g.away} @ ${g.home}`;
@@ -834,7 +810,7 @@ function buildMulti(count,risk,variant){
   window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
   const all=[];
-  for(const g of weekGames()){
+  for(const g of state.games||[]){
     for(const m of g.markets){
       if(!state.selectedMarkets.has(m.type)) continue;
       const score=candidateScore(m,targetRisk,variant);
@@ -953,9 +929,9 @@ async function generate(){
   const variants=['safe','balanced','long'];
   let parlays;
   if(state.mode==='sgp'){
-    const slate=weekGames();
+    const slate=state.games||[];
     const game=slate.find(g=>g.id===$('#gameSelect').value) || slate[0];
-    if(!game){$('#results').innerHTML='<div class="empty">No markets are loaded for NFL Week '+state.nflWeek+'.</div>';return;}
+    if(!game){$('#results').innerHTML='<div class="empty">No NFL games are loaded.</div>';return;}
     await ensurePropsForGame(game);
     if(!current())return;
     const propCount=countPlayerProps(game);
@@ -1013,7 +989,6 @@ $('#saveKeyBtn').addEventListener('click',()=>{
   state.apiKey=$('#apiKeyInput').value.trim();
   if(state.apiKey)localStorage.setItem('nflParlayOddsApiKey',state.apiKey); else localStorage.removeItem('nflParlayOddsApiKey');
   dialog.close(); renderApiUsage();
-initWeekSelector();
 loadData();
 });
 $('#clearKeyBtn').addEventListener('click',()=>{

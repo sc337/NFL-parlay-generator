@@ -135,7 +135,6 @@ function tidy(){
     updateOverview();
     updateHeader();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
-    const week=$('#nflWeekWrap');if(week)week.style.display=(window.__ACTIVE_SPORT||'nfl')==='nfl'?'':'none';
   }finally{busy=false}
 }
 let timer;
