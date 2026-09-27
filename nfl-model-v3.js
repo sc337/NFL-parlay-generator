@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),num=x=>Number.isFinite(+x)?+x:null;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),num=x=>x==null||x===''?null:Number.isFinite(+x)?+x:null;
 const family=m=>m.marketKey||m.type||'other';
 function role(m){const b=num(m?.contextSignals?.market_breadth)||1,inj=String(m?.contextSignals?.injury_status||'none').toLowerCase();let s=clamp(.48+b*.06,.48,.82);if(/questionable/.test(inj))s-=.16;if(/doubtful|out|ir/.test(inj))s-=.4;return clamp(s,.05,.9)}
 function opp(game,m){const f=game?.context?.recent_form||{},me=m.team,fo=Object.entries(f).filter(([t])=>t!==me).map(([,v])=>v).find(v=>v?.available);if(!fo)return 0;const pa=num(fo.avg_points_against);return pa==null?0:clamp((pa-22)/18,-.3,.3)}

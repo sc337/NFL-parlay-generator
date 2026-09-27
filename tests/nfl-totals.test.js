@@ -7,6 +7,7 @@ const context={window,state,document:{readyState:'loading',addEventListener(){}}
   impliedProbability:()=>.5,Number,Math};
 vm.runInNewContext(fs.readFileSync('model-core.js','utf8'),context);
 vm.runInNewContext(fs.readFileSync('nfl-projection-engine.js','utf8'),context);
+vm.runInNewContext(fs.readFileSync('nfl-model-v3.js','utf8'),context);
 const game={away:'Away',home:'Home',context:{recent_form:{
   Away:{available:true,games:2,avg_points_for:30,avg_points_against:24},
   Home:{available:true,games:2,avg_points_for:28,avg_points_against:26}},
@@ -23,4 +24,7 @@ game.context.weather={indoor:true,wind_mph:21,temperature_f:20};
 assert.equal(window.NFL_PROJECTIONS.marketProjection(game,over).projectionLine,projection.projectionLine);
 game.context.recent_form.Home={available:false};
 assert.equal(window.NFL_PROJECTIONS.marketProjection(game,over).projectionLine,null);
+const prop={type:'receptions',marketKey:'player_receptions',player:'Receiver',side:'over',point:5.5,price:100,prob:.5};
+assert.equal(window.NFL_PROJECTIONS.marketProjection(game,prop).projectionLine,null);
+assert.equal(window.NFL_MODEL_V3.evaluate(game,prop).projectionLine,null,'Missing player projection must not become zero');
 console.log('NFL totals projection fixtures passed');
