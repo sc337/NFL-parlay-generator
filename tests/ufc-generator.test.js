@@ -5,6 +5,16 @@ const snapshot=JSON.parse(fs.readFileSync('data/kalshi-ufc.json','utf8'));
 const now=Date.parse('2026-09-26T05:30:00Z');
 class ClockDate extends Date{static now(){return now}}
 snapshot.updated_at=new Date(now).toISOString();
+// Fixed pre-card fixtures keep this test valid after live snapshots roll forward.
+const strong={slpm:6,sapm:1,str_acc:65,str_def:70,td_avg:4,td_def:85,sub_avg:2,wins:18,losses:2,recent5:{winRate:1}};
+const weak={slpm:2,sapm:5,str_acc:35,str_def:35,td_avg:0,td_def:35,sub_avg:0,wins:5,losses:10,recent5:{winRate:.2}};
+snapshot.fighter_stats={};
+snapshot.markets=['Alpha','Bravo','Charlie'].map((name,i)=>{
+ const opponent='Opponent '+name;snapshot.fighter_stats[name]=strong;snapshot.fighter_stats[opponent]=weak;
+ return {ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase()+'-A',event_ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase(),kind:'moneyline',fight:name+' vs '+opponent,fighter1:name,fighter2:opponent,label:name+' wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,open_interest:500,close_time:'2026-09-27T06:00:00Z'};
+});
+snapshot.markets.push({ticker:'KXUFCFIGHT-26SEP29TEST-A',event_ticker:'KXUFCFIGHT-26SEP29TEST',kind:'moneyline',fight:'Prospect A vs Prospect B',fighter1:'Prospect A',fighter2:'Prospect B',label:'Prospect A wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,close_time:'2026-09-30T06:00:00Z'});
+snapshot.markets.push({ticker:'KXUFCFIGHT-26OCT03TEST-A',event_ticker:'KXUFCFIGHT-26OCT03TEST',kind:'moneyline',fight:'Prospect C vs Prospect D',fighter1:'Prospect C',fighter2:'Prospect D',label:'Prospect C wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,close_time:'2026-10-04T06:00:00Z'});
 const elements=new Map();
 function element(key){if(!elements.has(key))elements.set(key,{innerHTML:'',textContent:'',value:'2',style:{},options:[],add(o){this.options.push(o)},replaceChildren(){this.options=[]},classList:{contains:()=>false}});return elements.get(key)}
 const document={readyState:'loading',addEventListener(){},querySelector:element,body:{classList:{contains:()=>false}}};

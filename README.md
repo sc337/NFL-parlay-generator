@@ -22,6 +22,8 @@ The scheduled job saves selected featured **pregame straight picks** to `data/pi
 
 **More Analysis → Forecast check** shows the selected sport's history. Accuracy metrics appear after 30 settled picks of the same forecast type. A separate calibration job may adjust future independent model probabilities for a sport and market group after at least 30 earlier settled events and 20 later validation events, and only if the later probability error improves. It stays off when there is too little data or validation fails. Market-only picks do not train that adjustment. This is prospective tracking, not a backtest or a guarantee of better future results.
 
+The scheduled job also records the first pregame quote and forecast for every liquid market with a verifiable start time in `data/forecast-audit.json`. It settles contracts and publishes `data/forecast-report.json` with pregame timing checks, model-versus-market Brier and log-loss scores, calibration bins, and gross return for positive-EV forecasts by sport and market. NFL totals also compare the model and market with final scores and retain no-weather/no-form forecasts for feature tests. The dashboard waits for 30 distinct settled model events before displaying an accuracy comparison. This audit does not change recommendations or train calibration. Markets without a reliable start time or quote are excluded; earlier events are never reconstructed from later data. The return check excludes fees and is not a ledger of placed bets.
+
 ## Run and deploy
 
 No build step is required. To view the site locally from the repository root:
@@ -38,5 +40,6 @@ For the focused checks used by this project:
 node tests/prediction-model.test.js
 node tests/pick-history.test.js
 node tests/model-calibration.test.js
+node tests/forecast-audit.test.js
 python -m unittest discover -s tests -p 'test_settle_history.py'
 ```

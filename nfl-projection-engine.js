@@ -60,7 +60,9 @@
     return line==null?null:{line,coverage};
   }
   function marketProjection(game,m){
-    const marketP=typeof impliedProbability==='function'?impliedProbability(m.price):num(m.prob);
+    // Use the quoted midpoint as the forecast baseline; the offered ask/price
+    // remains the separate payout input for expected value.
+    const marketP=num(m.prob)??num(m.marketProbability)??(typeof impliedProbability==='function'?impliedProbability(m.price):null);
     if(!Number.isFinite(marketP))return null;
     let z=0,coverage=0;
     const tp=teamProjection(game);

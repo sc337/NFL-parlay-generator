@@ -19,17 +19,27 @@ function runtime(sport){
   return{window,ctx,run};
 }
 
-async function candidates(sport){
+async function candidates(sport,{all=false}={}){
   const r=runtime(sport),w=r.window;
   if(sport==='nfl'){
     const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];
     for(const file of ['nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
     w.NFL_PROJECTIONS.enrich(true);w.NFL_MODEL_V3.enrich();
-    return{snapshot,rows:w.NFL_SELECTIVITY.historyPicks().map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV},game:(snapshot.games||[]).find(g=>g.id===m.gameId)}))};
+    const picks=all?(snapshot.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,gameId:g.id}))):w.NFL_SELECTIVITY.historyPicks();
+    return{snapshot,rows:picks.map(m=>{
+      const game=(snapshot.games||[]).find(g=>g.id===m.gameId);
+      const ablations=all&&m.type==='totals'&&game?{
+        noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
+        noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
+      }:null;
+      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,ablations},game};
+    })};
   }
   r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
-  return{snapshot:read('kalshi-'+sport+'.json'),rows:api.historyPicks()};
+  const snapshot=read('kalshi-'+sport+'.json');
+  const model=sport==='ncaaf'?api.projection:api.model;
+  return{snapshot,rows:all?(snapshot.markets||[]).map(m=>({market:m,forecast:model(m)})):api.historyPicks()};
 }
 
 function readCalibrationVersion(){try{return JSON.parse(fs.readFileSync(path.join(root,'data/model-calibration.js'),'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,'')).updated_at}catch{return null}}

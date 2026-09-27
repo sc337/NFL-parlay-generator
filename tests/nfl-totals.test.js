@@ -17,6 +17,7 @@ const projection=window.NFL_PROJECTIONS.marketProjection(game,over);
 assert.equal(projection.team.total,54);
 assert(Math.abs(projection.projectionLine-46.4)<.01,'Two games should be regressed strongly toward market');
 assert(projection.modelP>.5);
+assert.equal(window.NFL_PROJECTIONS.marketProjection(game,{...over,prob:.46}).marketP,.46,'Use midpoint instead of offered price as baseline');
 assert.equal(window.NFL_PROJECTIONS.marketProjection(game,{...over,side:'under'}).projectionLine,projection.projectionLine);
 game.context.weather.wind_mph=21;
 assert.equal(window.NFL_PROJECTIONS.marketProjection(game,over).projectionLine,projection.projectionLine-2);

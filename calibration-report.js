@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),esc=s=>window.MARKET_GUARDS?.esc?.(s)??String(s||'');
-let records=[],updated='',loaded=false;
+let records=[],updated='',loaded=false,audit=null;
 const sports=['nfl','mlb','ncaaf','ufc'];
 function mount(){
   const host=$('#moreAnalysis');if(!host||$('#calibrationPanel'))return;
@@ -28,9 +28,11 @@ function render(){
   const learning=active.length?'<div class="calibration-empty">Model adjustment active for '+active.map(([group,r])=>esc(group)+' ('+r.trainingCount+' training, '+r.validationCount+' later events; Brier '+r.rawBrier+' → '+r.adjustedBrier+')').join(', ')+'. Rechecked after 20 new settled events in that market group.</div>':
     '<div class="calibration-empty">Model adjustment off · '+Math.max(0,...Object.values(rules).map(r=>r.distinctEvents||0))+' distinct settled model events in the largest market group. Each group needs 30 training and 20 later validation events, plus a measurable improvement.</div>';
   const table=rows.length?'<div class="history-table">'+rows.map(r=>'<div class="history-row"><div><strong>'+esc(r.selection)+'</strong><small>'+esc(r.event)+' · '+esc(r.market)+'</small></div><span>'+Math.round(Number(r.modelP)*100)+'% '+(r.forecastType==='model'?'model':'market')+'</span><b class="history-'+esc(r.result||'pending')+'">'+esc(r.result||'pending')+'</b></div>').join('')+'</div>':'<div class="calibration-empty">No pregame picks have been recorded for '+sport.toUpperCase()+' yet.</div>';
-  host.innerHTML='<p>Saved pregame forecasts, settled from the original Kalshi contract. Market-only forecasts are kept separate from independent model picks.</p>'+learning+summary(sport)+table+'<small>Updated '+(updated?esc(new Date(updated).toLocaleString()):'pending')+' · Historical results describe past forecasts, not future certainty.</small>';
+  const a=audit?.sports?.[sport],comparison=a?.independentComparison;
+  const tested=a?'<div class="calibration-empty"><strong>All-market audit:</strong> '+a.recorded+' pregame markets · '+a.settled+' settled · '+a.independentSettled+' model forecasts across '+a.independentEvents+' events. '+(a.independentEvents>=30?'Model Brier '+comparison.brierModel.toFixed(3)+' vs market '+comparison.brierMarket.toFixed(3)+' · log loss '+comparison.logLossModel.toFixed(3)+' vs '+comparison.logLossMarket.toFixed(3)+'.':'Collecting at least 30 settled model events before comparing accuracy.')+(sport==='nfl'&&audit.nflTotals?.games>=10?' NFL total error '+audit.nflTotals.modelMAE.toFixed(1)+' points vs market '+audit.nflTotals.marketMAE.toFixed(1)+' ('+audit.nflTotals.games+' games).':'')+'</div>':'';
+  host.innerHTML='<p>Saved pregame forecasts, settled from the original Kalshi contract. Market-only forecasts are kept separate from independent model picks.</p>'+tested+learning+summary(sport)+table+'<small>Updated '+(updated?esc(new Date(updated).toLocaleString()):'pending')+' · Historical results describe past forecasts, not future certainty.</small>';
 }
-async function load(){try{const response=await fetch('data/pick-history.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error(response.status);const data=await response.json();records=Array.isArray(data.records)?data.records:[];updated=data.updated_at||'';loaded=true;render()}catch(e){loaded=true;mount();const host=$('#calibrationBody');if(host)host.textContent='Pick history is temporarily unavailable.'}}
+async function load(){try{const [response,auditResponse]=await Promise.all([fetch('data/pick-history.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/forecast-report.json?ts='+Date.now(),{cache:'no-store'}).catch(()=>null)]);if(!response.ok)throw Error(response.status);const data=await response.json();records=Array.isArray(data.records)?data.records:[];updated=data.updated_at||'';audit=auditResponse?.ok?await auditResponse.json():null;loaded=true;render()}catch(e){loaded=true;mount();const host=$('#calibrationBody');if(host)host.textContent='Pick history is temporarily unavailable.'}}
 function init(){mount();render();load();setInterval(load,10*60*1000)}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.PICK_HISTORY_REPORT={refresh:render,load};
