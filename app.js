@@ -488,8 +488,10 @@ function correlation(a,b){
     (a.position==='QB' && ['WR','TE'].includes(b.position)) ||
     (b.position==='QB' && ['WR','TE'].includes(a.position))
   );
-  const aOver=a.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(a.name);
-  const bOver=b.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(b.name);
+  // An interception over is not an offensive-volume over and must not earn
+  // quarterback/receiver or same-team scoring bonuses.
+  const aOver=(a.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(a.name)) && a.marketKey!=='player_pass_interceptions';
+  const bOver=(b.side==='over' || /Over|\+ passing|\+ receiving|\+ rushing/.test(b.name)) && b.marketKey!=='player_pass_interceptions';
 
   if(qbReceiverPair && aOver && bOver) score+=6;
   if(samePlayer && aOver && bOver) score+=5;
@@ -497,8 +499,9 @@ function correlation(a,b){
   if(sameTeam && aOver && bOver) score+=3;
   if(sameTeam && (a.type==='h2h'||a.type==='spreads') && ['passing','rushing','receiving','td'].includes(b.type)) score+=2;
   if(sameTeam && (b.type==='h2h'||b.type==='spreads') && ['passing','rushing','receiving','td'].includes(a.type)) score+=2;
-  if((a.type==='passing'&&b.type==='receiving')||(b.type==='passing'&&a.type==='receiving')) score+=2;
-  if((a.type==='passing'&&b.type==='td')||(b.type==='passing'&&a.type==='td')) score+=2;
+  if(sameTeam && ((a.type==='passing'&&aOver&&['receiving','receptions'].includes(b.type)&&bOver) ||
+      (b.type==='passing'&&bOver&&['receiving','receptions'].includes(a.type)&&aOver))) score+=2;
+  if(sameTeam && ((a.type==='passing'&&aOver&&b.type==='td')||(b.type==='passing'&&bOver&&a.type==='td'))) score+=2;
   if(a.type==='totals' && /Over/.test(a.name) && bOver) score+=2;
   if(b.type==='totals' && /Over/.test(b.name) && aOver) score+=2;
   if(a.type==='h2h'&&b.type==='spreads'&&sameTeam) score-=6;
@@ -517,9 +520,6 @@ function incompatible(a,b){
   if(isTeamSide(a) && isTeamSide(b)){
     return true;
   }
-
-  if(isTeamSide(a) && b.team && !['Game','Player',a.team].includes(b.team)) return true;
-  if(isTeamSide(b) && a.team && !['Game','Player',b.team].includes(a.team)) return true;
 
   if(a.marketKey && b.marketKey && a.player && b.player &&
      a.player===b.player && a.marketKey===b.marketKey) return true;
@@ -657,7 +657,7 @@ const GAME_SCRIPTS = {
     legFit:(m)=>{
       let s=0;
       if(m.type==='totals' && m.side==='over') s+=16;
-      if(m.type==='passing' && m.side==='over') s+=13;
+      if(m.type==='passing' && m.side==='over' && m.marketKey!=='player_pass_interceptions') s+=13;
       if(m.type==='receiving' && m.side==='over') s+=13;
       if(m.type==='td') s+=9;
       if(m.type==='rushing' && m.side==='under') s+=2;
@@ -672,7 +672,7 @@ const GAME_SCRIPTS = {
       let s=0;
       const dog=underdogTeam(game);
       if(m.type==='spreads' && m.team===dog) s+=8;
-      if(m.team===dog && m.type==='passing' && m.side==='over') s+=14;
+      if(m.team===dog && m.type==='passing' && m.side==='over' && m.marketKey!=='player_pass_interceptions') s+=14;
       if(m.team===dog && m.type==='receiving' && m.side==='over') s+=14;
       if(m.type==='totals' && m.side==='over') s+=6;
       if(m.type==='rushing' && m.side==='under') s+=4;
@@ -708,6 +708,25 @@ function scriptMarketScore(m,game,variant,scriptKey,risk){
   return base + script.legFit(m,game);
 }
 
+function sgpTeam(m,game){
+  return [game.away,game.home].includes(m.team) ? m.team : null;
+}
+
+function mixedTeamTarget(pool,game,count,risk,variant){
+  if(count<3) return 0;
+  const qualified=pool.filter(m=>m.player && sgpTeam(m,game) && candidateScore(m,risk,variant)>-900);
+  const top=Math.max(...qualified.map(m=>candidateScore(m,risk,variant)),-Infinity);
+  const minimum=count>=5?2:1;
+  return [game.away,game.home].every(team=>{
+    const players=new Set(qualified.filter(m=>m.team===team && candidateScore(m,risk,variant)>=top-20).map(m=>m.player));
+    return players.size>=minimum;
+  }) ? minimum : 0;
+}
+
+function teamCounts(legs,game){
+  return [game.away,game.home].map(team=>legs.filter(m=>sgpTeam(m,game)===team).length);
+}
+
 function pickDistinctAlternative(game,count,risk,variant,previous){
   const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
   const scriptKeys=scriptCandidatesForVariant(variant);
@@ -718,10 +737,14 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     const props=pool.filter(m=>m.player);
     const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
 
-    const ranked=[...pool]
-      .sort((a,b)=>scriptMarketScore(b,game,variant,scriptKey,risk)-scriptMarketScore(a,game,variant,scriptKey,risk))
-      .slice(0,56);
+    const sorted=[...pool].sort((a,b)=>scriptMarketScore(b,game,variant,scriptKey,risk)-scriptMarketScore(a,game,variant,scriptKey,risk));
+    // Reserve candidates for each offense: a large alternate-prop slate from
+    // one team must not push every opposing player out of the search pool.
+    const ranked=[...new Set([...sorted.slice(0,48),
+      ...[game.away,game.home].flatMap(team=>sorted.filter(m=>sgpTeam(m,game)===team).slice(0,14))])];
+    const mixedTarget=mixedTeamTarget(pool,game,count,risk,variant);
 
+    function search(target){
     let beams=[{legs:[],score:0}];
 
     for(let depth=0;depth<count;depth++){
@@ -729,6 +752,11 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       for(const beam of beams){
         for(const m of ranked){
           if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
+          if(target){
+            const counts=teamCounts([...beam.legs,m],game);
+            if(counts.some(n=>n>count-target)) continue;
+            if(counts.some(n=>n+count-beam.legs.length-1<target)) continue;
+          }
 
           const propCount=beam.legs.filter(l=>l.player).length;
           const remainingSlots=count-beam.legs.length;
@@ -752,12 +780,23 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       }
 
       next.sort((a,b)=>b.score-a.score);
-      beams=next.slice(0,100);
+      // Preserve different team-exposure paths until the final leg; otherwise
+      // the highest-scoring one-team stack crowds out every mixed build.
+      const diverse=[],seen=new Map();
+      for(const beam of next){
+        const key=teamCounts(beam.legs,game).join(':');
+        const n=seen.get(key)||0;
+        if(n>=24) continue;
+        seen.set(key,n+1);diverse.push(beam);
+        if(diverse.length>=160) break;
+      }
+      beams=diverse;
       if(!beams.length) break;
     }
 
     const finals=beams
       .filter(b=>b.legs.length===count)
+      .filter(b=>!target || teamCounts(b.legs,game).every(n=>n>=target))
       .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
       .filter(b=>{
         const positiveFits=b.legs.filter(l=>GAME_SCRIPTS[scriptKey].legFit(l,game)>=8).length;
@@ -769,14 +808,21 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
           scriptName:GAME_SCRIPTS[scriptKey].name,
           thesis:GAME_SCRIPTS[scriptKey].thesis(game)
         });
+        if(p){p.gameLabel=`${game.away} @ ${game.home}`;p.teamMix=teamCounts(b.legs,game).every(n=>n>0)?'Both teams':'Concentrated';}
         return {raw:b,parlay:p};
       })
       .filter(x=>x.parlay);
 
-    if(!finals.length) continue;
-
+    if(!finals.length) return null;
     const distinct=finals.find(x=>previous.every(p=>overlapCount(p,x.parlay)<=1)) || finals[0];
-    if(!best || distinct.raw.score>best.raw.score) best=distinct;
+    return {...distinct,distinct:previous.every(p=>overlapCount(p,distinct.parlay)<=1)};
+    }
+
+    const selected=search(mixedTarget) || (mixedTarget ? search(0) : null);
+    if(!selected) continue;
+    if(!best || (selected.parlay.teamMix==='Both teams' && best.parlay.teamMix!=='Both teams') ||
+      (selected.parlay.teamMix===best.parlay.teamMix && selected.distinct && !best.distinct) ||
+      (selected.parlay.teamMix===best.parlay.teamMix && selected.distinct===best.distinct && selected.raw.score>best.raw.score)) best=selected;
   }
 
   return best?.parlay||null;
@@ -892,9 +938,10 @@ function render(parlays){
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
     node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Individual quotes, indicative';
-    node.querySelector('.summary').textContent=p.summary;
+    node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+
+      (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
     node.querySelector('.score').textContent=`Confidence ${p.score}/100`;
-    node.querySelector('.correlation').textContent=state.mode==='sgp' ? `Correlation +${Math.max(0,p.corr)}` : `${p.legs.length} games/legs`;
+    node.querySelector('.correlation').textContent=state.mode==='sgp' ? `Pairing score +${Math.max(0,p.corr)}` : `${p.legs.length} games/legs`;
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
       const d=document.createElement('div'); d.className='leg sport-visual-leg';

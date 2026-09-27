@@ -1,0 +1,49 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const test=require('node:test');
+
+const source=fs.readFileSync('app.js','utf8').split('window.generate=generate;')[0];
+const context={window:{},localStorage:{getItem:()=>null},console,Date,Set,Map};
+vm.runInNewContext(source,context);
+
+const game={id:'fixture',away:'Away',home:'Home',markets:[]};
+for(const team of [game.away,game.home]){
+  for(let i=0;i<7;i++){
+    game.markets.push({type:'receiving',marketKey:'player_reception_yds',name:`${team} WR ${i} Over 39.5 receiving yards`,player:`${team} WR ${i}`,team,position:'WR',side:'over',point:39.5,price:-120,confidence:70});
+    game.markets.push({type:'rushing',marketKey:'player_rush_yds',name:`${team} RB ${i} Over 24.5 rushing yards`,player:`${team} RB ${i}`,team,position:'RB',side:'over',point:24.5,price:-130,confidence:70});
+  }
+}
+game.markets.push({type:'h2h',name:'Home ML',team:'Home',price:-140,confidence:62});
+game.markets.push({type:'totals',name:'Over 45.5',team:'Game',side:'over',price:-110,confidence:52});
+
+test('all SGP variants draw qualified props from both offenses',()=>{
+  const previous=[];
+  for(const variant of ['safe','balanced','long']){
+    const p=context.buildSgp(game,6,50,variant,previous);
+    assert.ok(p,`${variant} should build`);
+    assert.equal(p.legs.length,6);
+    const teams=p.legs.filter(l=>l.team==='Away'||l.team==='Home');
+    assert.ok(teams.filter(l=>l.team==='Away').length>=2,`${variant} lacks away exposure`);
+    assert.ok(teams.filter(l=>l.team==='Home').length>=2,`${variant} lacks home exposure`);
+    previous.push(p);
+  }
+});
+
+test('an opposing-team prop can coexist with a moneyline',()=>{
+  assert.equal(context.incompatible(game.markets.at(-2),game.markets[0]),false);
+});
+
+test('interception overs do not get quarterback-receiver or shootout bonuses',()=>{
+  const interception={type:'passing',marketKey:'player_pass_interceptions',player:'Away QB',team:'Away',position:'QB',side:'over',name:'Away QB Over 0.5 passing interceptions'};
+  assert.equal(context.correlation(interception,game.markets[0]),0);
+  assert.equal(vm.runInNewContext('GAME_SCRIPTS.shootout.legFit',context)(interception,game),0);
+});
+
+test('thin one-team markets fall back without inventing an opponent pick',()=>{
+  const thin={...game,markets:game.markets.filter(m=>m.team!=='Away')};
+  const p=context.buildSgp(thin,3,50,'balanced');
+  assert.ok(p);
+  assert.equal(p.teamMix,'Concentrated');
+  assert.ok(p.legs.every(l=>l.team!=='Away'));
+});
