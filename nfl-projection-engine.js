@@ -1,6 +1,6 @@
 (() => {
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const num=v=>Number.isFinite(Number(v))?Number(v):null;
+  const num=v=>v==null||v===''?null:Number.isFinite(Number(v))?Number(v):null;
   const sigmoid=x=>1/(1+Math.exp(-x));
 
   function teamForm(game,team){
@@ -15,7 +15,19 @@
     const awayPts=(num(a.avg_points_for)+num(h.avg_points_against))/2;
     const homePts=(num(h.avg_points_for)+num(a.avg_points_against))/2;
     if(!Number.isFinite(awayPts)||!Number.isFinite(homePts))return null;
-    return {awayPts,homePts,total:awayPts+homePts,homeMargin:homePts-awayPts,coverage:.45};
+    const games=Math.min(num(a.games)||0,num(h.games)||0);
+    if(games<1)return null;
+    return {awayPts,homePts,total:awayPts+homePts,homeMargin:homePts-awayPts,games,coverage:clamp(.12+.22*games/5,.12,.34)};
+  }
+  function totalForecast(game,tp,line){
+    if(!tp||line==null)return null;
+    // The offered total is the prior. Two recent games cannot justify a large
+    // departure from it; the team-form component grows only with sample size.
+    const weight=tp.games/(tp.games+8);
+    const w=game?.context?.weather||{};
+    const wind=num(w.wind_mph),temp=num(w.temperature_f);
+    const weather=w.indoor===true?0:(wind!=null&&wind>=20?-2:wind!=null&&wind>=15?-1:0)+(temp!=null&&temp<=25?-.5:0);
+    return clamp(line+(tp.total-line)*weight+weather,line-6,line+6);
   }
   function injuryPenalty(m){
     const s=String(m?.contextSignals?.injury_status||'').toLowerCase();
@@ -52,15 +64,17 @@
     if(!Number.isFinite(marketP))return null;
     let z=0,coverage=0;
     const tp=teamProjection(game);
+    let totalLine=null;
     if(tp){
       if(m.type==='totals'&&num(m.point)!=null){
-        const d=tp.total-num(m.point);z+=clamp(d/13,-.45,.45)*(m.side==='under'?-1:1);coverage+=.25;
+        totalLine=totalForecast(game,tp,num(m.point));
+        const d=totalLine-num(m.point);z+=clamp(d/13,-.45,.45)*(m.side==='under'?-1:1);coverage+=tp.coverage;
       }else if(m.type==='spreads'&&num(m.point)!=null&&m.team){
         const teamMargin=m.team===game.home?tp.homeMargin:-tp.homeMargin;
-        z+=clamp((teamMargin+num(m.point))/9,-.45,.45);coverage+=.25;
+        z+=clamp((teamMargin+num(m.point))/9,-.45,.45)*tp.games/(tp.games+8);coverage+=tp.coverage;
       }else if(m.type==='h2h'&&m.team){
         const teamMargin=m.team===game.home?tp.homeMargin:-tp.homeMargin;
-        z+=clamp(teamMargin/16,-.32,.32);coverage+=.2;
+        z+=clamp(teamMargin/16,-.32,.32)*tp.games/(tp.games+8);coverage+=tp.coverage;
       }
     }
     if(m.player){
@@ -75,7 +89,8 @@
       const ip=injuryPenalty(m);z+=ip;coverage+=ip? .22:0;
       const wf=weatherFactor(game,m);z+=wf;coverage+=wf? .12:0;
     } else {
-      const wf=weatherFactor(game,m);z+=wf;coverage+=wf? .1:0;
+      // Weather is already included in the point forecast for totals.
+      const wf=m.type==='totals'?0:weatherFactor(game,m);z+=wf;coverage+=wf? .1:0;
     }
     // Keep the first projection layer conservative until it is backtested:
     // market probability remains the anchor, context can move it only modestly.
@@ -85,7 +100,7 @@
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:upFinal?.line??null,lineEdge};
+    return {marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){

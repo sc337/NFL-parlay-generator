@@ -41,13 +41,17 @@ def completed_form(team_id,season):
     for ev in raw.get('events') or []:
         try:
             comp=(ev.get('competitions') or [])[0]
-            st=(ev.get('status') or {}).get('type') or {}
+            st=(comp.get('status') or ev.get('status') or {}).get('type') or {}
             if not st.get('completed'):continue
             cs=comp.get('competitors') or []
             mine=next((c for c in cs if str((c.get('team') or {}).get('id'))==str(team_id)),None)
             opp=next((c for c in cs if c is not mine),None)
             if not mine or not opp:continue
-            pf=float(mine.get('score') or 0);pa=float(opp.get('score') or 0)
+            def points(c):
+                score=c.get('score')
+                if isinstance(score,dict):score=score.get('value')
+                return float(score)
+            pf=points(mine);pa=points(opp)
             rows.append({'date':ev.get('date'),'pf':pf,'pa':pa,'margin':pf-pa,'win':pf>pa})
         except Exception:continue
     rows=sorted(rows,key=lambda x:x.get('date') or '')[-5:]
