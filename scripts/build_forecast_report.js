@@ -25,7 +25,8 @@ function metrics(rows){
       removedBrier:paired.length?round(paired.reduce((s,r)=>s+(r.ablations[key]-(r.result==='win'?1:0))**2,0)/paired.length):null};
   }
   const modelScore=(key,fn)=>model.length?round(model.reduce((sum,r)=>sum+fn(r[key],r.result==='win'?1:0),0)/model.length):null;
-  return {recorded:rows.length,settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
+  return {recorded:rows.length,independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+    settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
     independentSettled:model.length,independentEvents:new Set(model.map(eventKey)).size,
     brier:{model:score('modelP',brier),market:score('marketP',brier)},
     logLoss:{model:score('modelP',logLoss),market:score('marketP',logLoss)},
