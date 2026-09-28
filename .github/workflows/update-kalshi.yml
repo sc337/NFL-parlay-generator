@@ -11,7 +11,7 @@ on:
       - 'scripts/update_kalshi_mlb.py'
       - 'scripts/update_mlb_context.py'
       - 'scripts/attach_game_context.py'
-      - 'scripts/attach_game_context.py'
+      - 'scripts/update_ncaaf_context.py'
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
@@ -57,6 +57,8 @@ jobs:
         run: python scripts/attach_game_context.py
       - name: Match college games to schedule
         run: python scripts/attach_game_context.py --ncaaf
+      - name: Refresh free NCAAF pregame context
+        run: python scripts/update_ncaaf_context.py
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context
@@ -79,7 +81,7 @@ jobs:
           import json, pathlib, sys
           files = [
             'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
-            'data/kalshi-mlb.json','data/mlb-context.json','data/sports-media.json',
+            'data/kalshi-mlb.json','data/mlb-context.json','data/ncaaf-context.json','data/sports-media.json',
             'data/pick-history.json','data/model-calibration.js',
             'data/forecast-audit.json','data/forecast-report.json'
           ]
@@ -103,6 +105,8 @@ jobs:
                   raise SystemExit(f'INVALID SNAPSHOT: {name} has no markets array')
               elif name == 'data/pick-history.json' and not isinstance(data.get('records'), list):
                   raise SystemExit(f'INVALID HISTORY: {name} has no records array')
+              elif name == 'data/ncaaf-context.json' and not isinstance(data.get('games'), dict):
+                  raise SystemExit(f'INVALID NCAAF CONTEXT: {name} has no games object')
               elif name == 'data/forecast-audit.json' and not isinstance(data.get('records'), list):
                   raise SystemExit(f'INVALID AUDIT: {name} has no records array')
               elif name == 'data/forecast-report.json' and not isinstance(data.get('sports'), dict):
@@ -124,6 +128,7 @@ jobs:
           cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
           cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
           cp data/mlb-context.json /tmp/mlb-context.json
+          cp data/ncaaf-context.json /tmp/ncaaf-context.json
           cp data/sports-media.json /tmp/sports-media.json
           cp data/pick-history.json /tmp/pick-history.json
           cp data/model-calibration.js /tmp/model-calibration.js
@@ -134,6 +139,7 @@ jobs:
           git restore data/kalshi-ncaaf.json 2>/dev/null || true
           git restore data/kalshi-mlb.json 2>/dev/null || true
           git restore data/mlb-context.json 2>/dev/null || true
+          git restore data/ncaaf-context.json 2>/dev/null || true
           git restore data/sports-media.json 2>/dev/null || true
           git restore data/pick-history.json 2>/dev/null || true
           git restore data/model-calibration.js 2>/dev/null || true
@@ -145,13 +151,14 @@ jobs:
           cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
           cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
           cp /tmp/mlb-context.json data/mlb-context.json
+          cp /tmp/ncaaf-context.json data/ncaaf-context.json
           cp /tmp/sports-media.json data/sports-media.json
           cp /tmp/pick-history.json data/pick-history.json
           cp /tmp/model-calibration.js data/model-calibration.js
           cp /tmp/forecast-audit.json data/forecast-audit.json
           cp /tmp/forecast-report.json data/forecast-report.json
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -168,6 +175,7 @@ jobs:
             cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
             cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
             cp data/mlb-context.json /tmp/mlb-context.json
+            cp data/ncaaf-context.json /tmp/ncaaf-context.json
             cp data/sports-media.json /tmp/sports-media.json
             cp data/pick-history.json /tmp/pick-history.json
             cp data/model-calibration.js /tmp/model-calibration.js
@@ -180,12 +188,13 @@ jobs:
             cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
             cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
             cp /tmp/mlb-context.json data/mlb-context.json
+            cp /tmp/ncaaf-context.json data/ncaaf-context.json
             cp /tmp/sports-media.json data/sports-media.json
             cp /tmp/pick-history.json data/pick-history.json
             cp /tmp/model-calibration.js data/model-calibration.js
             cp /tmp/forecast-audit.json data/forecast-audit.json
             cp /tmp/forecast-report.json data/forecast-report.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0

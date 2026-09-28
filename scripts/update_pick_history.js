@@ -35,6 +35,7 @@ async function candidates(sport,{all=false}={}){
       return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,ablations},game};
     })};
   }
+  if(sport==='ncaaf')r.run('ncaaf-model.js');
   r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');

@@ -10,6 +10,7 @@ function metrics(rows){
   const score=(key,fn)=>settled.length?round(settled.reduce((sum,r)=>sum+fn(r[key],r.result==='win'?1:0),0)/settled.length):null;
   const brier=(p,y)=>(p-y)**2,logLoss=(p,y)=>-(y*Math.log(p)+(1-y)*Math.log(1-p));
   const model=settled.filter(r=>r.forecastType==='model');
+  const experimental=settled.filter(r=>r.forecastType==='experimental');
   const eventKey=r=>r.eventId||r.event+'|'+r.eventTime;
   const bins=[[0,.4],[.4,.6],[.6,.8],[.8,1]].map(([lo,hi])=>{
     const part=model.filter(r=>r.modelP>=lo&&r.modelP<(hi===1?1.001:hi));
@@ -26,12 +27,17 @@ function metrics(rows){
   }
   const modelScore=(key,fn)=>model.length?round(model.reduce((sum,r)=>sum+fn(r[key],r.result==='win'?1:0),0)/model.length):null;
   return {recorded:rows.length,independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+    experimentalRecorded:rows.filter(r=>r.forecastType==='experimental').length,
     settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
     independentSettled:model.length,independentEvents:new Set(model.map(eventKey)).size,
     brier:{model:score('modelP',brier),market:score('marketP',brier)},
     logLoss:{model:score('modelP',logLoss),market:score('marketP',logLoss)},
     independentComparison:{brierModel:modelScore('modelP',brier),brierMarket:modelScore('marketP',brier),
       logLossModel:modelScore('modelP',logLoss),logLossMarket:modelScore('marketP',logLoss)},
+    experimentalComparison:{settled:experimental.length,
+      distinctEvents:new Set(experimental.map(eventKey)).size,
+      brierEstimate:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.modelP,r.result==='win'?1:0),0)/experimental.length):null,
+      brierMarket:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.marketP,r.result==='win'?1:0),0)/experimental.length):null},
     calibrationBins:bins,ablations,
     positiveEV:{settled:value.length,distinctEvents:new Set(value.map(eventKey)).size,
       grossReturnPerUnit:value.length?round(value.reduce((s,r)=>s+(r.result==='win'?1/r.ask-1:-1),0)/value.length):null}};
