@@ -277,6 +277,18 @@ const PROP_MARKETS = [
   'player_anytime_td'
 ];
 
+// Caesars Sportsbook does not allow these NFL player-prop markets in parlays.
+// Keep them loaded for straight-bet surfaces, but exclude them from every parlay path.
+const STRAIGHT_ONLY_MARKETS = new Set([
+  'player_rush_attempts',
+  'player_pass_attempts',
+  'player_pass_completions'
+]);
+
+function isParlayEligible(m){
+  return !STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
+}
+
 const PROP_MARKET_META = {
   player_pass_yds:{type:'passing',label:'passing yards'},
   player_pass_yds_alternate:{type:'passing',label:'passing yards'},
@@ -733,7 +745,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
   let best=null;
 
   for(const scriptKey of scriptKeys){
-    const pool=game.markets.filter(m=>state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
+    const pool=game.markets.filter(m=>isParlayEligible(m) && state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
     const props=pool.filter(m=>m.player);
     const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
 
@@ -858,7 +870,7 @@ function buildMulti(count,risk,variant){
   const all=[];
   for(const g of state.games||[]){
     for(const m of g.markets){
-      if(!state.selectedMarkets.has(m.type)) continue;
+      if(!state.selectedMarkets.has(m.type) || !isParlayEligible(m)) continue;
       const score=candidateScore(m,targetRisk,variant);
       if(score<=-900) continue;
       all.push({m,g,score});
@@ -890,7 +902,7 @@ function buildMulti(count,risk,variant){
 }
 
 function packageParlay(legs,variant,isSgp,meta={}){
-  if(!legs?.length) return null;
+  if(!legs?.length || legs.some(m=>!isParlayEligible(m))) return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
   let avg=legs.reduce((s,l)=>s+(Number(l.selectionConfidence)||Number(l.confidence)||impliedProbability(l.price)*100),0)/legs.length;
@@ -1009,6 +1021,7 @@ async function generate(){
 
 window.generate=generate;
 window.NFL_PARLAY_STATE=state;
+window.NFL_PARLAY_ELIGIBILITY={isParlayEligible,straightOnlyMarkets:[...STRAIGHT_ONLY_MARKETS]};
 $$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
 $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   $$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
