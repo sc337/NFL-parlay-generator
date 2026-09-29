@@ -5,7 +5,7 @@ const test=require('node:test');
 const window={};
 vm.runInNewContext(fs.readFileSync('bankroll-builder-core.js','utf8'),{window,Date});
 const C=window.BANKROLL_CORE;
-const start='2026-09-28T12:00:00Z',now=new Date(start),eventTime='2026-09-28T20:00:00Z';
+const start='2026-09-28T12:00:00Z',now=new Date(start),eventTime='2026-09-28T13:00:00Z';
 const fresh=()=>({version:1,initialized:true,opening:100,bets:[],adjustments:[]});
 
 test('does not stake without a verified price, positive EV, fresh event or bankroll',()=>{

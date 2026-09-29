@@ -36,6 +36,7 @@ async function candidates(sport,{all=false}={}){
     })};
   }
   if(sport==='ncaaf')r.run('ncaaf-model.js');
+  if(sport==='mlb')r.run('mlb-totals-model.js');
   r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');
@@ -56,11 +57,12 @@ function record(sport,entry,now){
   const modelP=Number(f.modelP),rawModelP=Number(f.rawModelP??f.modelP);
   if(!ticker||!Number.isFinite(Date.parse(close))||Date.parse(close)<=now||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!(marketP>0&&marketP<1))return null;
   const independent=sport==='nfl'?(Number(f.coverage)>=.2&&Number.isFinite(modelP)):sport==='mlb'?m.kind==='moneyline'&&Number(f.context?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:sport==='ufc'?Number(f.match?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:false;
-  const p=independent?modelP:marketP;
+  const experimental=sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
+  const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
     marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
-    closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
-    forecastType:independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
+    closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
+    forecastType:experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
     ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent?Number(f.betEV):null,result:null};
 }
 

@@ -17,6 +17,10 @@ assert.equal(mlbStart('KXMLBTOTAL-26SEP261915CHCBOS'),'2026-09-26T23:15:00.000Z'
 assert.equal(mlbStart('KXMLBTOTAL-26NOV261915CHCBOS'),'2026-11-27T00:15:00.000Z');
 const m=record('mlb',{market:{ticker:'KXMLBGAME-26SEP261915CHCBOS-CHC',event_ticker:'KXMLBGAME-26SEP261915CHCBOS',kind:'moneyline',probability:.6,yes_ask:.62,spread:.02,volume:100},forecast:{modelP:.64,context:{coverage:.48}}},{},Date.parse('2026-09-26T18:00:00Z'));
 assert.equal(m.eventTime,'2026-09-26T23:15:00.000Z');
+const simulated=record('mlb',{market:{ticker:'KXMLBTOTAL-26SEP261915CHCBOS-9',event_ticker:'KXMLBTOTAL-26SEP261915CHCBOS',kind:'total',game_id:'99',game_time:'2026-09-26T23:15:00Z',probability:.5,yes_ask:.52,spread:.02,volume:100},forecast:{modelP:.57,rawModelP:.57,coverage:.51,experimental:true,projectedLine:8.7}},{},Date.parse('2026-09-26T18:00:00Z'));
+assert.equal(simulated.forecastType,'experimental');
+assert.equal(simulated.projectedLine,8.7);
+assert.equal(simulated.quotedEV,null,'unvalidated MLB totals must not enter the positive-EV audit');
 assert.equal(record('mlb',{market:{ticker:'X',probability:.6,yes_ask:.62,spread:.02,volume:100},forecast:{}},{},now),null,'unknown start time excluded');
 const college=record('ncaaf',{market:{ticker:'C',kind:'moneyline',game_id:'99',game_time:'2026-09-28T00:00:00Z',close_time:'2026-09-28T01:00:00Z',
   game_status:'pre',probability:.55,yes_ask:.57,spread:.03,volume:200},forecast:{modelP:.62,rawModelP:.62,coverage:.75,experimental:true}},

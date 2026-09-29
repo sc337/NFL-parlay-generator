@@ -39,6 +39,28 @@ def statcast_recent(pid,days=30):
  except Exception as e:
   print('statcast',pid,e);return {}
 
+def scoring_form(schedule, cutoff):
+ """Use only completed games before the refresh, never future or live scores."""
+ totals={};seen=set();league_runs=0;league_games=0
+ for day in schedule.get('dates',[]):
+  for game in day.get('games',[]):
+   game_id=game.get('gamePk')
+   if not game_id or game_id in seen:continue
+   seen.add(game_id)
+   if (game.get('status') or {}).get('abstractGameState')!='Final':continue
+   try:started=datetime.fromisoformat(game['gameDate'].replace('Z','+00:00'))
+   except (KeyError,ValueError):continue
+   if started>=cutoff:continue
+   sides=game.get('teams') or {};home=sides.get('home') or {};away=sides.get('away') or {}
+   home_id=(home.get('team') or {}).get('id');away_id=(away.get('team') or {}).get('id')
+   home_score=home.get('score');away_score=away.get('score')
+   if not home_id or not away_id or not isinstance(home_score,int) or not isinstance(away_score,int):continue
+   for team_id,scored,allowed in ((home_id,home_score,away_score),(away_id,away_score,home_score)):
+    row=totals.setdefault(str(team_id),{'games':0,'runs_for':0,'runs_against':0})
+    row['games']+=1;row['runs_for']+=scored;row['runs_against']+=allowed
+   league_runs+=home_score+away_score;league_games+=1
+ return {'teams':totals,'league':{'games':league_games,'runs_per_team':round(league_runs/(2*league_games),3) if league_games else None},'as_of':cutoff.isoformat()}
+
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
  d=get(f'{BASE}/schedule?sportId=1&startDate={start}&endDate={end}&hydrate=probablePitcher(note),team')
@@ -50,6 +72,7 @@ def main():
     pp={'away':(teams.get('away',{}) or {}).get('probablePitcher'),'home':(teams.get('home',{}) or {}).get('probablePitcher')}
    row={'gamePk':g.get('gamePk'),'gameDate':g.get('gameDate'),'status':(g.get('status') or {}).get('abstractGameState'),'venue':(g.get('venue') or {}).get('name'),
         'away':(teams.get('away',{}).get('team') or {}).get('name'),'home':(teams.get('home',{}).get('team') or {}).get('name'),
+        'awayId':(teams.get('away',{}).get('team') or {}).get('id'),'homeId':(teams.get('home',{}).get('team') or {}).get('id'),
         'awayProbable':pp.get('away'),'homeProbable':pp.get('home')}
    for side in ('awayProbable','homeProbable'):
     if row[side] and row[side].get('id'):ids.add(row[side]['id'])
@@ -99,7 +122,13 @@ def main():
       'homeRuns':int(stat.get('homeRuns') or 0),'rbi':int(stat.get('rbi') or 0),
       'totalBases':int(stat.get('totalBases') or 0)}
   except Exception as e:print('hitter season stats unavailable',e)
+ try:
+  begin=(now-timedelta(days=30)).date().isoformat()
+  completed=get(f'{BASE}/schedule?sportId=1&startDate={begin}&endDate={now.date().isoformat()}')
+  form=scoring_form(completed,now)
+ except Exception as e:
+  print('MLB scoring form unavailable',e);form={'teams':{},'league':{'games':0,'runs_per_team':None},'as_of':now.isoformat()}
  Path('data').mkdir(exist_ok=True)
- Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters},indent=2))
+ Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters,'scoring':form},indent=2))
  print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props',len(hitters),'hitter samples')
 if __name__=='__main__':main()
