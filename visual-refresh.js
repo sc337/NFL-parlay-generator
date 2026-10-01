@@ -106,7 +106,12 @@ function compactParlays(){
     if(score&&/quality|confidence|composite/i.test(score.textContent))score.title='Rating, not the chance this parlay wins';
   });
 }
-function syncCards(){compactSummaries();compactParlays()}
+function dockMatchups(){
+  const host=$('#analysisSecondary'),matchups=$('#results>.ufc-matchups');
+  if(host&&matchups)host.append(matchups);
+  if(document.body.dataset.sport!=='ufc')host?.querySelectorAll('.ufc-matchups').forEach(node=>node.remove());
+}
+function syncCards(){compactSummaries();compactParlays();dockMatchups()}
 function mount(){
   const main=$('main');
   if(!main||$('#explorePanelToggle'))return;
