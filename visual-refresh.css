@@ -224,3 +224,29 @@ body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
 }
 @media(prefers-reduced-transparency:reduce){.sport-switch,.pick-of-day,.control-card,#results>.parlay-card,.more-analysis,.explore-panel-toggle{background:#142230!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media(prefers-reduced-motion:reduce){.feed-refresh.refreshing{animation:none}.carousel-dot:before{transition:none}}
+/* Compact parlay slips: preserve the full analysis in one disclosure. */
+#results>.parlay-card .grade{display:none!important}
+#results>.parlay-card .parlay-name{margin-top:0;font-size:19px;line-height:1.25}
+#results>.parlay-card .odds-wrap{max-width:120px}
+#results>.parlay-card .odds-label{font-size:10px;letter-spacing:.06em}
+#results>.parlay-card .odds.quote-unavailable{margin-top:5px;font-size:12px;color:var(--sport-accent);white-space:nowrap}
+#results>.parlay-card>.card-thesis{margin:10px 0 6px;font-size:13px;line-height:1.35}
+#results>.parlay-card>.legs{margin-top:5px}
+#results>.parlay-card .leg{min-height:58px;padding:9px 0!important;align-items:center}
+#results>.parlay-card .leg-title{font-size:14px;line-height:1.35}
+#results>.parlay-card .leg-brief{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35}
+#results>.parlay-card .leg-quote{font-size:14px}
+#results>.parlay-card .card-footer{margin-top:4px;padding-top:8px;font-size:11px;color:var(--muted)}
+#results>.parlay-card .card-explanation{margin:8px 0 0;border-top:1px solid var(--border);padding-top:5px}
+#results>.parlay-card .card-explanation>summary{display:flex;min-height:44px;width:100%;align-items:center;color:var(--sport-accent);font-size:12px}
+#results>.parlay-card .card-detail-row{padding:10px 0;border-top:1px solid var(--border);color:var(--muted);font-size:12px;line-height:1.45}
+#results>.parlay-card .card-detail-row strong{display:block;margin-bottom:3px;color:var(--text);font-size:12px}
+#results>.parlay-card .card-detail-row .leg-sub,#results>.parlay-card .card-detail-row .leg-reason{margin:3px 0;color:var(--muted);font-size:12px;line-height:1.45}
+#results>.parlay-card .card-detail-row small{display:block;margin-top:3px;color:var(--muted)}
+@media(max-width:600px){
+ #results>.parlay-card .parlay-name{font-size:18px}
+ #results>.parlay-card .leg{min-height:58px;padding:9px 0!important}
+ #results>.parlay-card .leg-title{font-size:14px}
+ #results>.parlay-card .leg-brief{font-size:11px}
+ #results>.parlay-card .card-explanation>summary{font-size:13px}
+}
