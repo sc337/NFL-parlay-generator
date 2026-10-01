@@ -19,48 +19,6 @@ function moveConsensus(){
   if(p&&p.parentElement!==host)host.appendChild(p);
 }
 
-function ensureOverview(){
-  let panel=$('#sportOverview');
-  if(panel)return panel;
-  const switcher=$('#sportSwitch');
-  if(!switcher)return null;
-  panel=document.createElement('section');
-  panel.id='sportOverview';
-  panel.className='sport-overview';
-  panel.setAttribute('aria-live','polite');
-  panel.innerHTML='<div class="overview-label"><span>FEATURED</span><small>PICK</small></div><div class="overview-content"><strong id="overviewPick">Loading NFL picks…</strong><span id="overviewDetail"></span></div>';
-  switcher.insertAdjacentElement('afterend',panel);
-  return panel;
-}
-
-function updateOverview(){
-  const panel=ensureOverview();if(!panel)return;
-  const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
-  if(sport==='BANKROLL'){panel.style.display='none';return}
-  panel.style.display='';
-  let pick='',detail='';
-  if(sport==='NFL'){
-    const card=$('#qolV3 .qgrid .qcard');
-    if(card?.classList.contains('pass')){
-      pick=/loading/i.test(card.textContent)?'Loading NFL picks…':'No bet qualifies';
-      detail=/loading/i.test(card.textContent)?'':'No high-confidence edge right now';
-    }else if(card){
-      pick=card.querySelector('.ticket-main h3,.qtitle h3')?.textContent?.trim()||'No bet qualifies';
-      detail=card.querySelector('.ticket-main p,.qcard>p')?.textContent?.trim()||'';
-    }
-  }else{
-    const card=$('#results > .parlay-card');
-    pick=card?.querySelector('.leg-title')?.textContent?.replace(/^\d+\.\s*/,'').trim()||'';
-    detail=card?.querySelector('.parlay-name')?.textContent?.trim()||'';
-    const context=card?.querySelector('.leg-sub')?.textContent?.split(' · ')[0]?.trim()||'';
-    if(context&&!/^(moneyline|run line|team\/game total|pitcher strikeouts|hits|home runs|rbi|total bases)$/i.test(context)&&!pick.includes(context))detail+=(detail?' · ':'')+context;
-    if(!pick&&$('#results > .empty')&&!/loading/i.test($('#results > .empty').textContent))pick='No qualifying pick right now';
-  }
-  for(const [selector,value] of [['#overviewPick',pick||`Loading ${sport} picks…`],['#overviewDetail',detail]]){
-    const node=panel.querySelector(selector);if(node.textContent!==value)node.textContent=value;
-  }
-}
-
 function updateHeader(){
   const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
   const heading=$('.brand-block h1'),headingText=sport==='BANKROLL'?'TODAY':sport;if(heading&&heading.textContent!==headingText)heading.textContent=headingText;
@@ -69,13 +27,13 @@ function updateHeader(){
   const source=$('#dataStatus'),label=$('#statusLabel'),wrap=$('.header-status');
   if(!source||!label||!wrap)return;
   const raw=source.textContent.trim();
-  const count=raw.match(/(\d+)\s+upcoming\s+NFL games/i)||raw.match(/(\d+)\s+(?:pregame|future)\s+markets/i);
   const age=raw.match(/updated\s+(\d+)m(?:\s+ago)?/i);
   const time=raw.match(/updated\s+(\d{1,2}:\d{2})(?::\d{2})?\s*(AM|PM)/i);
   const delayed=/\bdelayed\b|\bstale\b/i.test(raw);
   const unavailable=/unavailable|no live|error|failed/i.test(raw);
-  let short=unavailable?(/no live/i.test(raw)?'No live markets':'Data unavailable'):/loading|refreshing|initializing|waiting|checking/i.test(raw)?'Loading data…':raw||'Loading data…';
-  if(count){short=Number(count[1]).toLocaleString()+(sport==='NFL'?' games':' markets');if(age)short+=' · '+age[1]+'m old';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase();if(delayed)short='Delayed · '+short}
+  const loading=/loading|refreshing|initializing|waiting|checking/i.test(raw);
+  let short=unavailable?'Feed unavailable':loading?'Loading…':delayed?'Delayed':/kalshi/i.test(raw)?'Kalshi':'Data';
+  if(!loading&&!unavailable){if(age)short+=' · '+age[1]+'m';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase()}
   if(label.textContent!==short)label.textContent=short;
   wrap.title=raw;
   wrap.classList.toggle('is-delayed',delayed);
@@ -134,7 +92,6 @@ function tidy(){
     moveConsensus();
     moveNflCard();
     compactSportResults();
-    updateOverview();
     updateHeader();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
   }finally{busy=false}

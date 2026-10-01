@@ -985,10 +985,12 @@ function tdWatch(){
     .flatMap(g=>(g.markets||[]).filter(m=>m.type==='td'&&m.tdExperimental&&m._rosterVerified&&Number.isFinite(m.modelProbability))
       .map(m=>({m,g}))).sort((a,b)=>b.m.modelProbability-a.m.modelProbability).slice(0,4);
   if(!rows.length)return '';
-  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">Touchdown scorer watch</h3></div></div><p class="summary">Opportunity estimates from completed plays, strongly anchored to the market. Tracked for accuracy; no validated edge or staking recommendation.</p><div class="legs">'+rows.map(({m,g},i)=>{
+  const leg=({m,g},i)=>{
     const x=m.tdOpportunity;
     return '<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Market '+Math.round(m.marketProbability*100)+'% · Experimental '+Math.round(m.modelProbability*100)+'% · Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></div>';
-  }).join('')+'</div></article>';
+  };
+  const more=rows.length>1?'<details class="td-more"><summary>Show '+(rows.length-1)+' more scorers</summary><div class="legs">'+rows.slice(1).map((row,i)=>leg(row,i+1)).join('')+'</div></details>':'';
+  return '<article class="parlay-card td-watch"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">Touchdown scorer watch</h3></div></div><p class="summary">Tracked for accuracy · no stake suggestion</p><div class="legs">'+leg(rows[0],0)+'</div>'+more+'</article>';
 }
 
 function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }

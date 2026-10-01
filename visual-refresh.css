@@ -43,3 +43,20 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
 .builder-pick-context{margin-top:9px}.builder-pick-context summary,.builder-history summary,.builder-method summary{cursor:pointer;color:var(--muted);font-size:12px;font-weight:700}.builder-pick-context small{display:block;margin-top:6px;color:var(--muted)}
 .builder-history{margin-top:18px;padding-top:14px;border-color:var(--border)}.builder-method{margin-top:13px}.builder-foot{margin:8px 0 0;color:var(--muted)}.builder-card #builderNotice{min-height:0;color:var(--amber)}.builder-card #builderNotice:empty{display:none}
 @media(max-width:600px){.shell{padding:14px 16px 32px}.topbar{grid-template-columns:minmax(0,1fr) auto}.topbar>.icon-btn{grid-column:2;grid-row:1}.header-status{grid-column:1/-1;grid-row:2;justify-self:start}.view-switch{margin-top:8px}.builder-card{padding:17px}.builder-head h2{font-size:16px}.builder-balance strong{font-size:19px}.builder-decision h3{font-size:21px}.sport-switch button{min-height:41px!important;font-size:11px!important}.sport-overview{display:block}.overview-label{margin-bottom:8px}}
+/* One result at a time, while retaining logos, photos and access to details. */
+.brand-block{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.builder-head .builder-kicker{display:none}
+#sportOverview,.quality-note,.results-head{display:none!important}
+.control-card .quality-settings{display:flex;align-items:end}
+.control-card .quality-settings>.field{width:min(180px,100%)}
+.variant-choices{margin:7px 0;border:1px solid var(--border);border-radius:9px;background:var(--surface3)}
+.variant-choices>summary{cursor:pointer;list-style:none;padding:10px 12px;color:var(--muted);font-size:11px;font-weight:750}
+.variant-choices>summary::-webkit-details-marker{display:none}
+.variant-choices>summary:after{content:'⌄';float:right;color:var(--blue)}
+.variant-choices[open]>summary:after{content:'⌃'}
+.variant-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:0 8px 8px}
+.variant-options button{min-height:38px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);color:var(--muted);font-size:10px;cursor:pointer}
+.variant-options button.active{border-color:var(--blue);color:var(--text)}.variant-options button b{display:none}
+.td-more{margin-top:9px}.td-more>summary{cursor:pointer;color:var(--blue);font-size:11px;font-weight:750;padding:5px 0}.td-more>.legs{margin-top:7px}
+.header-status{white-space:nowrap}
+@media(max-width:600px){.topbar{grid-template-columns:minmax(0,1fr) auto auto;align-items:center}.topbar>.icon-btn{grid-column:3;grid-row:1}.header-status{grid-column:2;grid-row:1;justify-self:end;font-size:10px}.variant-options{grid-template-columns:1fr}.variant-options button{text-align:left;padding:0 10px}}
