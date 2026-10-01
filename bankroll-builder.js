@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const KEY='sportsBankrollBuilder:v1',C=window.BANKROLL_CORE,$=s=>document.querySelector(s),esc=s=>window.MARKET_GUARDS.esc(s);
 const cash=n=>Number(n||0).toLocaleString(undefined,{style:'currency',currency:'USD'});
-let ledger={version:1,initialized:false,opening:0,bets:[],adjustments:[]},candidates=[],selected='',refreshed=0,notice='';
+let ledger={version:1,initialized:false,opening:0,bets:[],adjustments:[]},candidates=[],selected='',refreshed=0,notice='',sourceStatus={},refreshSequence=0;
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x?.version===1&&Array.isArray(x.bets)&&Array.isArray(x.adjustments)&&C.validMoney(x.opening))ledger=x}catch{}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(ledger));return true}catch{notice='Browser storage unavailable. Nothing was recorded.';return false}}
 function eventTime(row){return row.eventTime||row.market.game_time||row.market.start_time||row.market.close_time}
@@ -9,18 +9,22 @@ function id(row){return row.sport+'|'+(row.market.ticker||row.market.marketKey||
 function bestOf(rows){const now=new Date();return rows.filter(row=>C.today(eventTime(row),now)&&Date.parse(eventTime(row))>+now&&Number(row.forecast?.modelP)>.28&&Number(row.forecast?.modelP)<.85&&Number(row.forecast?.coverage)>=.2&&Number(row.forecast?.confidence)>=55)
   .filter(row=>!ledger.bets.some(b=>b.pickId===id(row)&&b.status!=='void'))
   .sort((a,b)=>{const score=x=>Math.max(0,C.ev(x.forecast.modelP,x.referenceOdds)||0)*20+Number(x.forecast.confidence)/100+Number(x.forecast.coverage)/4;return score(b)-score(a)}).slice(0,12)}
-async function refresh(){const requestAt=Date.now();try{
+async function refresh(){const requestAt=Date.now(),sequence=++refreshSequence;try{
  const [nfl,mlb,ufc,ncaaf]=await Promise.all([
   fetch('data/kalshi-nfl.json?ts='+requestAt,{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null),
-  window.MLB_DASHBOARD?.bankrollCandidates?.()||[],window.UFC_DASHBOARD?.bankrollCandidates?.()||[],window.NCAAF_DASHBOARD?.bankrollCandidates?.()||[]]);
+  window.MLB_DASHBOARD?.bankrollCandidates?.()||{rows:[],status:'unavailable'},window.UFC_DASHBOARD?.bankrollCandidates?.()||{rows:[],status:'unavailable'},window.NCAAF_DASHBOARD?.bankrollCandidates?.()||{rows:[],status:'unavailable'}]);
+ if(sequence!==refreshSequence)return;
+ sourceStatus={nfl:!nfl?'unavailable':window.MARKET_GUARDS.fresh(nfl,2)?'ready':'stale',mlb:mlb?.status||'unavailable',ufc:ufc?.status||'unavailable',ncaaf:ncaaf?.status||'unavailable'};
  const rows=[];
- if(nfl&&window.MARKET_GUARDS.fresh(nfl,2)){
-  window.NFL_MODEL_V3?.enrich?.();
-  for(const g of window.NFL_PARLAY_STATE?.games||[]){if(g.game_status&&g.game_status!=='pre')continue;
-   for(const m of g.markets||[]){if(!m.nflV3Actionable||Number(m.projectionCoverage)<.2||Number(m.modelConfidence)<55||m._invalidRoster||m.player&&!m._rosterVerified||!C.validOdds(m.price))continue;
-    rows.push({sport:'nfl',market:{...m,label:m.name,game_time:g.commence_time,game_id:g.id,game_label:g.away+' at '+g.home},forecast:{modelP:m.modelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage},referenceOdds:m.price})}}
+ if(sourceStatus.nfl==='ready'){
+  if(!window.NFL_MODEL_V3?.evaluate)sourceStatus.nfl='unavailable';
+  else for(const g of nfl.games||[]){if(g.game_status!=='pre'||Date.parse(g.commence_time)<=requestAt)continue;
+   for(const m of g.markets||[]){if(m._invalidRoster||m.player&&!m._rosterVerified||!C.validOdds(m.price))continue;
+    const forecast=window.NFL_MODEL_V3.evaluate(g,m);
+    if(!forecast?.actionable||Number(forecast.coverage)<.2||Number(forecast.confidence)<55)continue;
+    rows.push({sport:'nfl',market:{...m,label:m.name,game_time:g.commence_time,game_id:g.id,game_label:g.away+' at '+g.home},forecast:{modelP:forecast.modelP,confidence:forecast.confidence,coverage:forecast.coverage},referenceOdds:m.price})}}
  }
- for(const row of [...mlb,...ufc,...ncaaf]){
+ for(const row of [...(mlb?.rows||[]),...(ufc?.rows||[]),...(ncaaf?.rows||[])]){
   const ask=window.MARKET_GUARDS.quote(row.market);
   if(ask===null)continue;
   const odds=ask>=.5?Math.round(-100*ask/(1-ask)):Math.round(100*(1-ask)/ask);
@@ -29,10 +33,11 @@ async function refresh(){const requestAt=Date.now();try{
  candidates=bestOf(rows);refreshed=Date.now();
  if(!candidates.some(x=>id(x)===selected)){selected=candidates[0]?id(candidates[0]):'';const odds=$('#builderOdds');if(odds)odds.value=''}
  render();
- }catch{candidates=[];refreshed=0;notice='Markets could not be refreshed.';render()}}
+ }catch{if(sequence!==refreshSequence)return;candidates=[];refreshed=0;sourceStatus={nfl:'unavailable',mlb:'unavailable',ncaaf:'unavailable',ufc:'unavailable'};notice='Markets could not be refreshed.';render()}}
 function candidate(){return candidates.find(x=>id(x)===selected)}
 function quote(){return $('#builderOdds')?.value?.trim()||''}
-function calculate(){const row=candidate(),now=new Date();return row?C.suggestion({ledger,probability:Number(row.forecast.modelP),odds:quote(),eventTime:eventTime(row),now,ageMs:Date.now()-refreshed}):{stake:0,reason:'No qualifying pregame pick today. Pass.'}}
+function calculate(){const row=candidate(),now=new Date();return row?C.suggestion({ledger,probability:Number(row.forecast.modelP),odds:quote(),eventTime:eventTime(row),now,ageMs:Date.now()-refreshed}):{stake:0,reason:Object.values(sourceStatus).some(x=>x==='stale'||x==='unavailable')?'Some sport feeds are stale or unavailable. No verified pick; pass.':'No qualifying pregame pick today. Pass.'}}
+function statusText(){return ['nfl','mlb','ncaaf','ufc'].map(s=>s.toUpperCase()+' '+(sourceStatus[s]||'loading')).join(' · ')}
 function chart(){let value=Number(ledger.opening)||0;const points=[value];
  const events=[...(ledger.adjustments||[]).map(x=>({at:x.at,delta:x.amount})),...(ledger.bets||[]).flatMap(b=>[{at:b.createdAt,delta:-b.stake},...(b.settledAt?[{at:b.settledAt,delta:b.returned}]:[])])].sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));
  for(const e of events){value+=Number(e.delta)||0;points.push(C.cents(value))}
@@ -45,10 +50,10 @@ function render(){const root=$('#bankrollBuilder');if(!root)return;
  if(document.activeElement!==input)input.value=ledger.initialized?balance.toFixed(2):'';
  const prev=pick.value;pick.replaceChildren();
  if(candidates.length)for(const row of candidates){const opt=new Option(row.sport.toUpperCase()+' · '+(row.market.label||row.market.name),id(row));pick.add(opt)}
- else pick.add(new Option('No qualified straight today',''));
+ else pick.add(new Option(Object.values(sourceStatus).some(x=>x==='stale'||x==='unavailable')?'No verified pick; check feeds':'No qualified straight today',''));
  pick.value=candidates.some(x=>id(x)===selected)?selected:(prev&&candidates.some(x=>id(x)===prev)?prev:'');
  const row=candidate();
- $('#builderGame').textContent=row?(row.market.game_label||row.market.fight||'Upcoming event')+' · '+new Date(eventTime(row)).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}):'NFL · MLB · NCAAF · UFC checked. NCAAF is experimental and not stake eligible.';
+ $('#builderGame').textContent=(row?(row.market.game_label||row.market.fight||'Upcoming event')+' · '+new Date(eventTime(row)).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})+' · ':'')+statusText();
  $('#builderEstimate').textContent=row?'Model '+Math.round(Number(row.forecast.modelP)*100)+'% · Kalshi reference '+(row.referenceOdds>0?'+':'')+row.referenceOdds+' · unvalidated estimate':'No bet is required today.';
  const s=calculate();amount.textContent=cash(s.stake);
  $('#builderReason').textContent=s.reason;
@@ -86,5 +91,5 @@ function mount(){load();const root=$('#bankrollBuilder');if(!root)return;
  render();setTimeout(refresh,2500);setTimeout(refresh,12000);setInterval(refresh,120000);
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount):mount();
-window.BANKROLL_BUILDER={refresh,ledger:()=>ledger,candidates:()=>candidates};
+window.BANKROLL_BUILDER={refresh,ledger:()=>ledger,candidates:()=>candidates,status:()=>sourceStatus};
 })();

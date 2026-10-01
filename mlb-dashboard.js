@@ -23,12 +23,12 @@ function historyPicks(){const all=rank('best'),team=rank('team')[0]||all.find(x=
 async function bankrollCandidates(){
  try{
   const [r,c]=await Promise.all([fetch('data/kalshi-mlb.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/mlb-context.json?ts='+Date.now(),{cache:'no-store'})]);
-  if(!r.ok||!c.ok)return [];
+  if(!r.ok||!c.ok)return {rows:[],status:'unavailable'};
   const [snapshot,ctx]=await Promise.all([r.json(),c.json()]);
-  if(!window.MARKET_GUARDS.fresh(snapshot,2)||!window.MARKET_GUARDS.fresh(ctx,6))return [];
+  if(!window.MARKET_GUARDS.fresh(snapshot,2)||!window.MARKET_GUARDS.fresh(ctx,6))return {rows:[],status:'stale'};
   context=ctx;
-  return (snapshot.markets||[]).filter(m=>m.kind==='moneyline'&&window.MARKET_GUARDS.pregame(m)&&m.game_status!=='Live'&&m.game_status!=='Final'&&eligible(m,'team')).map(m=>({sport:'mlb',market:m,forecast:model(m)}));
- }catch{return []}
+  return {rows:(snapshot.markets||[]).filter(m=>m.kind==='moneyline'&&window.MARKET_GUARDS.pregame(m)&&m.game_status!=='Live'&&m.game_status!=='Final'&&eligible(m,'team')).map(m=>({sport:'mlb',market:m,forecast:model(m)})),status:'ready'};
+ }catch{return {rows:[],status:'unavailable'}}
 }
 function showCached(){if(!lastLoaded||Date.now()-lastLoaded>60000)return false;render();const status=$('#dataStatus');if(status)status.textContent=lastStatus;window.COMPACT_UI?.refresh?.();return true}
 async function load(){const token=window.__SPORT_TOKEN;$('#resultsTitle').textContent='MLB Recommendations';$('#dataStatus').textContent='Loading MLB markets…';$('#results').innerHTML='<div class="empty">Loading MLB recommendations…</div>';try{const [r,cr]=await Promise.all([fetch('data/kalshi-mlb.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/mlb-context.json?ts='+Date.now(),{cache:'no-store'}).catch(()=>null)]);if(!r.ok)throw Error(r.status);const d=await r.json();if(!window.MARKET_GUARDS.fresh(d))throw Error('MLB market snapshot stale');if(cr&&cr.ok){context=await cr.json();if(!window.MARKET_GUARDS.fresh(context))context={games:[],pitchers:{},players:{},hitters:{}};}if(window.__ACTIVE_SPORT!=='mlb'||token!==window.__SPORT_TOKEN)return;markets=(d.markets||[]).filter(x=>window.MARKET_GUARDS.pregame(x)&&x.game_status!=='Final'&&x.game_status!=='Live');lastLoaded=Date.now();render();window.COMPACT_UI?.refresh?.();lastStatus='Kalshi MLB · '+markets.length+' pregame markets · updated '+new Date(d.generated_at||d.updated_at).toLocaleTimeString();$('#dataStatus').textContent=lastStatus}catch(e){if(window.__ACTIVE_SPORT==='mlb'&&token===window.__SPORT_TOKEN){$('#resultsTitle').textContent='MLB Recommendations';lastLoaded=0;$('#dataStatus').textContent='MLB data unavailable';$('#results').innerHTML='<div class="empty">MLB snapshot is refreshing. Try again shortly.</div>'}}}

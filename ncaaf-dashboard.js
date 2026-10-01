@@ -13,15 +13,16 @@ function historyPicks(){return rank('bankroll').slice(0,1).map(m=>({market:m,for
 async function bankrollCandidates(){
  try{
   const [r,c,a]=await Promise.all([fetch('data/kalshi-ncaaf.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/ncaaf-context.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/forecast-report.json?ts='+Date.now(),{cache:'no-store'})]);
-  if(!r.ok||!c.ok||!a.ok)return [];
+  if(!r.ok||!c.ok||!a.ok)return {rows:[],status:'unavailable'};
   const [snapshot,ctx,audit]=await Promise.all([r.json(),c.json(),a.json()]);
-  const validation=audit.sports?.ncaaf,comparison=validation?.independentComparison;
-  // College estimates are experimental until prospective settled games beat the market.
-  if(validation?.independentEvents<30||!(comparison?.brierModel<comparison?.brierMarket)||audit.pregameViolations!==0)return [];
-  if(!window.MARKET_GUARDS.fresh(snapshot,2)||!window.MARKET_GUARDS.fresh(ctx,6))return [];
+  const validation=audit.sports?.ncaaf,comparison=validation?.experimentalComparison;
+  // This source records college estimates as experimental, so assess the
+  // prospective experimental cohort before allowing a stake.
+  if(!window.MARKET_GUARDS.fresh(snapshot,2)||!window.MARKET_GUARDS.fresh(ctx,6))return {rows:[],status:'stale'};
+  if(!Number.isFinite(comparison?.distinctEvents)||comparison.distinctEvents<30||!(comparison.brierEstimate<comparison.brierMarket)||audit.pregameViolations!==0)return {rows:[],status:'experimental'};
   context=ctx;
-  return (snapshot.markets||[]).filter(m=>eligible(m,'bankroll')).map(m=>({sport:'ncaaf',market:m,forecast:projection(m)})).filter(x=>x.forecast.experimental&&Number.isFinite(x.forecast.modelP));
- }catch{return []}
+  return {rows:(snapshot.markets||[]).filter(m=>eligible(m,'bankroll')).map(m=>({sport:'ncaaf',market:m,forecast:projection(m)})).filter(x=>x.forecast.experimental&&Number.isFinite(x.forecast.modelP)),status:'ready'};
+ }catch{return {rows:[],status:'unavailable'}}
 }
 function showCached(){if(!lastLoaded||Date.now()-lastLoaded>60000)return false;render();const status=$('#dataStatus');if(status)status.textContent=lastStatus;window.COMPACT_UI?.refresh?.();return true}
 async function load(){const token=window.__SPORT_TOKEN;$('#results').innerHTML='<div class="empty">Loading NCAAF recommendations…</div>';try{const [r,ctx]=await Promise.all([fetch('data/kalshi-ncaaf.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/ncaaf-context.json?ts='+Date.now(),{cache:'no-store'}).then(x=>x.ok?x.json():{}).catch(()=>({})),window.SPORT_MEDIA?.load?.()]);if(!r.ok)throw Error('HTTP '+r.status);const raw=await r.text();if(!raw.trim())throw Error('NCAAF snapshot file is empty');const d=JSON.parse(raw);if(!window.MARKET_GUARDS.fresh(d))throw Error('NCAAF market snapshot stale');if(window.__ACTIVE_SPORT!=='ncaaf'||token!==window.__SPORT_TOKEN)return;context=ctx||{};markets=(d.markets||[]).filter(x=>window.MARKET_GUARDS.pregame(x)||window.MARKET_GUARDS.futureDated(x));lastLoaded=Date.now();render();window.COMPACT_UI?.refresh?.();lastStatus='Kalshi NCAAF · '+markets.length+' future markets · updated '+new Date(d.updated_at).toLocaleTimeString();$('#dataStatus').textContent=lastStatus}catch(e){if(window.__ACTIVE_SPORT==='ncaaf'&&token===window.__SPORT_TOKEN){lastLoaded=0;$('#dataStatus').textContent='NCAAF data unavailable';$('#results').innerHTML='<div class="empty">NCAAF data unavailable: '+String(e.message||e)+'</div>'}}}
