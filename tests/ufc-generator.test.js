@@ -29,7 +29,7 @@ for(const file of ['market-guards.js','data/model-calibration.js','model-calibra
  assert(options.some(o=>o.label.includes('UFC 332: Silva vs Wang')));
  assert(window.UFC_DASHBOARD.availableCount()>=2);
  const first=element('#results').innerHTML;
- assert.match(first,/Bankroll 2-Leg/);
+ assert.match(first,/Safer 2-Leg/);
  assert.match(first,/Option 1 of/);
  assert.match(first,/<details class="ufc-matchups">/);
  window.UFC_DASHBOARD.setLegs(2);
@@ -38,6 +38,6 @@ for(const file of ['market-guards.js','data/model-calibration.js','model-calibra
  assert.notEqual(next,first,'Generate must produce another qualified combination');
  window.UFC_DASHBOARD.selectCard('2026-09-29');
  assert.equal(window.UFC_DASHBOARD.availableCount(),0);
- assert.doesNotMatch(element('#results').innerHTML,/Bankroll 2-Leg/);
+ assert.doesNotMatch(element('#results').innerHTML,/Safer 2-Leg/);
  console.log('UFC parlay rotation and official card labels passed');
 })().catch(e=>{console.error(e);process.exitCode=1});

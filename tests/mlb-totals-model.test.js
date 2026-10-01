@@ -36,12 +36,16 @@ test('team totals use only the chosen team; thin, future, and postgame context c
 test('MLB dashboard displays a projection only when simulation coverage exists',async()=>{
  const {context,market}=setup(),nodes=new Map(),querySelector=s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{}});return nodes.get(s)};
  const document={querySelector,body:{classList:{contains:()=>false}}},snapshot={updated_at:new Date().toISOString(),markets:[market('Over 8.5 runs scored')]};
- const window={__ACTIVE_SPORT:'mlb',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},COMPACT_UI:{refresh(){}}};
+ let daily;
+ const window={__ACTIVE_SPORT:'mlb',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},COMPACT_UI:{refresh(){}},PICK_OF_DAY:{today:()=>true,show:(_sport,pick)=>{daily=pick}}};
  const fetch=async url=>({ok:true,json:async()=>url.includes('context')?context:snapshot});
  const sandbox=vm.createContext({window,document,fetch,Date,Math,console});
  for(const file of ['market-guards.js','model-core.js','mlb-totals-model.js','mlb-dashboard.js'])vm.runInContext(fs.readFileSync(file,'utf8'),sandbox,{filename:file});
  await window.MLB_DASHBOARD.load();
- const html=querySelector('#results').innerHTML;
- assert.match(html,/20,000 simulations/);assert.match(html,/Projected game total/);assert.match(html,/Simulated \d+%/);
- assert.equal(window.MLB_DASHBOARD.model(snapshot.markets[0]).experimental,true);
+ assert.equal(daily.market,snapshot.markets[0]);
+ assert.match(daily.label,/Game Total Over 8.5/);
+ const estimate=window.MLB_DASHBOARD.model(snapshot.markets[0]);
+ assert.equal(estimate.trials,20000);
+ assert.ok(Number.isFinite(estimate.projectedTotal));
+ assert.equal(estimate.experimental,true);
 });
