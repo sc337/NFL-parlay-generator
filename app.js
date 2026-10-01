@@ -987,7 +987,7 @@ function tdWatch(){
   if(!rows.length)return '';
   const leg=({m,g},i)=>{
     const x=m.tdOpportunity;
-    return '<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Market '+Math.round(m.marketProbability*100)+'% · Experimental '+Math.round(m.modelProbability*100)+'% · Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></div>';
+    return '<div class="leg sport-visual-leg">'+(window.SPORT_MEDIA?.nfl(m)||'')+'<div class="sport-visual-copy"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Market '+Math.round(m.marketProbability*100)+'% · Experimental '+Math.round(m.modelProbability*100)+'%</div><details class="leg-details"><summary>Opportunity detail</summary><div class="leg-reason">Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></details></div></div>';
   };
   const more=rows.length>1?'<details class="td-more"><summary>Show '+(rows.length-1)+' more scorers</summary><div class="legs">'+rows.slice(1).map((row,i)=>leg(row,i+1)).join('')+'</div></details>':'';
   return '<article class="parlay-card td-watch"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">Touchdown scorer watch</h3></div></div><p class="summary">Tracked for accuracy · no stake suggestion</p><div class="legs">'+leg(rows[0],0)+'</div>'+more+'</article>';
