@@ -266,3 +266,56 @@ body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
  .market-tile-price{font-size:11px}
  .pick-market-tile{width:94px}
 }
+/* Player identity stays unobstructed; the team mark sits beside the portrait. */
+.nfl-leg-media{width:auto;min-width:64px;gap:5px;justify-content:flex-start}
+.nfl-leg-media>.sport-photo+.sport-logo{position:static;width:21px;height:21px;margin:0;border-radius:50%;background:transparent;box-shadow:none}
+.pick-media{width:auto;gap:5px}
+.pick-media>.sport-photo+.sport-logo{position:static;width:21px;height:21px;margin:0;border-radius:50%;background:transparent;box-shadow:none}
+@media(max-width:600px){.nfl-leg-media{min-width:59px}.nfl-leg-media>.sport-photo+.sport-logo{width:20px;height:20px}}
+
+/* Appearance preferences and a compact iPhone settings sheet. */
+#settingsDialog{width:min(460px,calc(100% - 28px));max-width:none;max-height:min(650px,calc(100dvh - 28px));padding:0;border:1px solid var(--border2);border-radius:22px;background:var(--surface);color:var(--text);box-shadow:0 25px 70px #0007;overflow:hidden}
+#settingsDialog::backdrop{background:#030910a8;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.settings-sheet{display:flex;flex-direction:column;max-height:inherit;background:var(--surface);color:var(--text)}
+.settings-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 22px 14px;border-bottom:1px solid var(--border)}
+.settings-eyebrow{display:block;color:var(--sport-accent);font-size:10px;font-weight:800;letter-spacing:.13em}
+.settings-head h2{margin-top:3px;font-size:23px;letter-spacing:-.025em;line-height:1.2;outline:0}
+.settings-close{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid var(--border);border-radius:50%;background:var(--surface2);color:var(--muted);font-size:17px;cursor:pointer}
+.settings-content{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:6px 22px 24px}
+.settings-section{padding:18px 0 20px}.settings-section+.settings-section{border-top:1px solid var(--border)}
+.settings-section-head h3{font-size:15px;letter-spacing:-.01em}.settings-section-head p{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.45}
+.theme-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:14px;padding:4px;border:1px solid var(--border);border-radius:14px;background:var(--surface3)}
+.theme-options button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);font-size:13px;font-weight:750;cursor:pointer;touch-action:manipulation}
+.theme-options button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--sport-accent) 35%,var(--border));background:var(--surface2);color:var(--text);box-shadow:0 2px 8px #0002}
+.theme-symbol{font-size:17px;line-height:1}
+.settings-label{display:block;margin:16px 0 7px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.settings-key-row{display:flex;gap:7px}.settings-key-row input{flex:1;min-width:0;height:48px;padding:0 13px;border:1px solid var(--border2);border-radius:11px;background:var(--surface3);color:var(--text);font-size:16px}
+.settings-key-row button{min-width:60px;border:1px solid var(--border2);border-radius:11px;background:var(--surface2);color:var(--text);font-weight:700;cursor:pointer}
+.settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.settings-actions button{min-height:46px;border:1px solid var(--border2);border-radius:11px;background:var(--surface2);color:var(--text);font-weight:750;cursor:pointer}
+.settings-actions #saveKeyBtn{border-color:var(--sport-accent);background:var(--sport-accent);color:#0c1722}
+#settingsDialog button:focus{outline:none}#settingsDialog button:focus-visible,#settingsDialog input:focus-visible{outline:2px solid var(--sport-accent);outline-offset:2px}
+@media(max-width:600px){
+ #settingsDialog{position:fixed;inset:auto 0 0;width:100%;max-height:calc(100dvh - env(safe-area-inset-top) - 18px);margin:0;border-radius:24px 24px 0 0;border-bottom:0}
+ .settings-sheet{max-height:inherit;padding-bottom:env(safe-area-inset-bottom)}
+ .settings-head{padding:23px 20px 15px}.settings-content{padding:4px 20px 21px}
+ .settings-head:before{content:'';position:absolute;top:8px;left:50%;width:36px;height:4px;transform:translateX(-50%);border-radius:99px;background:var(--border2)}
+}
+
+html[data-theme="light"] body{--bg:#f5f7fa;--surface:#fff;--surface2:#edf2f7;--surface3:#f3f6f9;--border:#dce4ec;--border2:#c7d4e0;--text:#172433;--muted:#596b7b;--subtle:#6b7e8e;--green:#166c4c;--green-bg:#e2f3ea;--blue:#1765b3;--blue-bg:#e3effc;--amber:#895908;--amber-bg:#fff2db;--purple:#6649a2;--purple-bg:#eee8fa;background:radial-gradient(ellipse 95% 400px at 45% -130px,var(--sport-glow),transparent 78%),var(--bg);color:var(--text)}
+html[data-theme="light"] body[data-sport="nfl"]{--sport-accent:#145daf;--sport-glow:#d8e7ff}
+html[data-theme="light"] body[data-sport="mlb"]{--sport-accent:#08788b;--sport-glow:#cff3f7}
+html[data-theme="light"] body[data-sport="ncaaf"]{--sport-accent:#946109;--sport-glow:#fff0ce}
+html[data-theme="light"] body[data-sport="ufc"]{--sport-accent:#bd334a;--sport-glow:#ffe0e6}
+html[data-theme="light"] .sport-switch,html[data-theme="light"] .pick-of-day,html[data-theme="light"] .control-card,html[data-theme="light"] #results>.parlay-card,html[data-theme="light"] .more-analysis,html[data-theme="light"] .explore-panel-toggle{background:var(--surface)!important;border-color:var(--border2)!important;box-shadow:0 9px 25px #17334a0d,inset 0 1px #fff}
+html[data-theme="light"] .sport-switch{background:#f7f9fbe8!important}
+html[data-theme="light"] .sport-switch button.active{background:#e2ecf8!important;color:var(--text)!important}
+html[data-theme="light"] .header-status,html[data-theme="light"] .feed-refresh,html[data-theme="light"] .topbar>.icon-btn{background:#ffffffcf;color:var(--text);border-color:var(--border2)}
+html[data-theme="light"] .header-status{color:var(--muted)}
+html[data-theme="light"] .market-tile{background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 9%,#fff),#f6fafb);border-color:color-mix(in srgb,var(--sport-accent) 30%,var(--border2));box-shadow:inset 0 1px #fff}
+html[data-theme="light"] .settings-sheet,html[data-theme="light"] #settingsDialog{background:#fff}
+html[data-theme="light"] .theme-options button[aria-pressed="true"]{background:#fff}
+html[data-theme="light"] .league-mark{background:#fff;border-color:var(--border2)}
+html[data-theme="light"] .chip.active{color:var(--sport-accent);background:color-mix(in srgb,var(--sport-accent) 10%,#fff)}
+html[data-theme="light"] .card-thesis,html[data-theme="light"] #results>.parlay-card .leg-title{color:var(--text)}
+@media(prefers-reduced-transparency:reduce){#settingsDialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}html[data-theme="light"] .sport-switch{background:var(--surface)!important}}
