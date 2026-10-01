@@ -18,7 +18,8 @@ test('a failed feed is shown as unavailable instead of checked',async()=>{
  const {builder,element}=dashboard({nfl:null,mlb:{rows:[],status:'stale'}});
  await builder.refresh();
  assert.match(element('#builderFeedStatus').textContent,/NFL unavailable · MLB stale · NCAAF experimental · UFC ready/);
- assert.match(element('#builderDecision').textContent,/No bet qualifies/);
+ assert.match(element('#builderDecision').textContent,/No verified pick/);
+ assert.match(element('#builderGame').textContent,/stale or unavailable/);
  assert.match(element('#builderReason').textContent,/stale or unavailable/);
 });
 
