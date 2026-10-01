@@ -209,6 +209,8 @@ body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
 .carousel-dot:before{content:'';width:8px;height:8px;border-radius:50%;background:#8094a6;transition:transform .18s ease,background .18s ease}
 .carousel-dot.active:before{background:var(--sport-accent);transform:scale(1.35)}
 .carousel-dot:focus-visible,.feed-refresh:focus-visible,.sport-switch button:focus-visible,.chip:focus-visible{outline:2px solid var(--sport-accent);outline-offset:2px}
+#results.nfl-carousel{scrollbar-width:none}
+#results.nfl-carousel::-webkit-scrollbar{display:none}
 @media(max-width:600px){
  .topbar{grid-template-columns:44px minmax(0,1fr) 44px 44px;gap:6px}
  .topbar>.icon-btn{grid-column:4;grid-row:1}
