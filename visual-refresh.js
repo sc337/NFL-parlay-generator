@@ -37,6 +37,20 @@ function compactBrief(sport,sub){
   else if(/Experimental/i.test(sub))parts.push('Experimental');
   return parts.join(' · ');
 }
+function selectionParts(value,sub=''){
+  const text=value.replace(/^\d+\.\s*/,'').trim();
+  let match=text.match(/^(.+?)\s*·\s*(?:Game\s+)?([OU])\s+([\d.]+)$/i);
+  if(match)return {subject:match[1],market:'Total',line:match[2].toUpperCase()+' '+match[3]};
+  match=text.match(/^(.+?)\s+([OU])\s+([\d.]+)\s+(.+)$/i);
+  if(match)return {subject:match[1],market:match[4],line:match[2].toUpperCase()+' '+match[3]};
+  match=text.match(/^([OU])\s+([\d.]+)\s+(?:points?|runs?)$/i);
+  if(match)return {subject:(sub.split(' · ')[0]||'Game').replace(/\s+at\s+/i,' @ '),market:'Total',line:match[1].toUpperCase()+' '+match[2]};
+  match=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Spread$/i);
+  if(match)return {subject:match[1],market:'Spread',line:match[2]};
+  match=text.match(/^(.+?)\s+ML$/i);
+  if(match)return {subject:match[1],market:'Moneyline',line:'ML'};
+  return {subject:text,market:'Pick',line:''};
+}
 function compactSummaries(){
   document.querySelectorAll('#results>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
     const card=full.closest('.parlay-card'),sport=document.body.dataset.sport||'nfl';
@@ -70,8 +84,18 @@ function compactParlays(){
       const title=leg.querySelector('.leg-title'),sub=leg.querySelector('.leg-sub'),reason=leg.querySelector('.leg-reason');
       if(!title)return;
       const original=title.textContent.trim(),subText=sub?.textContent.trim()||'',reasonText=reason?.textContent.trim()||'';
-      title.textContent=(i+1)+'. '+compactTitle(original,sport,subText);
-      if(sport!=='nfl'||subText){const brief=compactBrief(sport,subText);if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
+      const selection=selectionParts(compactTitle(original,sport,subText),subText),quote=leg.querySelector('.leg-quote');
+      title.textContent=(i+1)+'. '+selection.subject;
+      if(sport!=='nfl'||subText){const brief=compactBrief(sport,subText).replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
+      if(selection.line){
+        const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
+        tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';
+        heading.textContent=selection.market;line.textContent=selection.line;
+        const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
+        price.textContent=quote?.textContent.trim()|| (market?'Mkt '+market[1]+'%':'Line check');
+        tile.setAttribute('aria-label',selection.market+' '+selection.line+', '+price.textContent);
+        tile.append(heading,line,price);quote?.remove();leg.append(tile);leg.classList.add('has-market-tile');
+      }
       if(subText||reasonText){const row=document.createElement('div');row.className='card-detail-row';const heading=document.createElement('strong');heading.textContent=original;row.append(heading);if(sub)row.append(sub);if(reason)row.append(reason);details.append(row)}
     });
     const footer=card.querySelector('.card-footer'),pairing=footer?.querySelector('.correlation');
