@@ -79,8 +79,7 @@ function compactSportResults(){
   if(sport==='nfl'||sport==='bankroll')return;
   const cards=[...$$('#results > .parlay-card')];
   cards.forEach(c=>{c.style.display='';c.classList.remove('compact-secondary')});
-  if(cards.length<=2)return;
-  cards.slice(1,-1).forEach(c=>{
+  cards.slice(1).forEach(c=>{
     const clone=c.cloneNode(true);clone.dataset.compactOrigin='sport';clone.classList.add('compact-secondary');secondary.appendChild(clone);
     c.style.display='none';
   });
