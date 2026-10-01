@@ -20,7 +20,7 @@ function updateVariantNav(nav,cards){
   if(!nav)return;
   nav.querySelectorAll('button').forEach((btn,i)=>{btn.classList.toggle('active',i===variantSelected);btn.setAttribute('aria-selected',i===variantSelected?'true':'false')});
   const name=cards[variantSelected]?.querySelector('.parlay-name')?.textContent||'';
-  nav.querySelector('summary').textContent=variantSelected===variantDefault?'Other versions':'Other versions · '+name;
+  const label=nav.querySelector('.variant-heading');if(label)label.textContent=variantSelected===variantDefault?'Alternate parlays':'Selected: '+name;
 }
 function variants(){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl'){$('#variantTabs')?.remove();variantSig='';return}
@@ -31,17 +31,18 @@ function variants(){
   if(sig!==variantSig||!old){
     variantSig=sig;
     const preferred=cards.findIndex(c=>/best balance|balanced parlay/i.test(c.textContent));variantDefault=preferred>=0?preferred:0;variantSelected=variantDefault;
-    let nav=old;if(!nav){nav=document.createElement('details');nav.id='variantTabs';nav.className='variant-choices';grid.before(nav)}
-    nav.innerHTML='<summary>Other versions</summary><div class="variant-options">'+cards.map((card,i)=>{const name=card.querySelector('.parlay-name')?.textContent||`Pick ${i+1}`,odds=card.querySelector('.odds')?.textContent||'';return `<button type="button" data-rec-index="${i}"><span>${esc(name)}</span><b>${esc(odds)}</b></button>`}).join('')+'</div>';
+    let nav=old;if(!nav){nav=document.createElement('div');nav.id='variantTabs';nav.className='variant-choices'}
+    nav.innerHTML='<div class="variant-heading">Alternate parlays</div><div class="variant-options">'+cards.map((card,i)=>{const name=card.querySelector('.parlay-name')?.textContent||`Pick ${i+1}`,odds=card.querySelector('.odds')?.textContent||'';return `<button type="button" data-rec-index="${i}"><span>${esc(name)}</span><b>${esc(odds)}</b></button>`}).join('')+'</div>';
   }
-  const nav=$('#variantTabs');cards.forEach((card,i)=>{correlation(card);card.dataset.recIndex=i;card.classList.toggle('variant-hidden',i!==variantSelected)});
+  const nav=$('#variantTabs'),analysis=$('#moreAnalysis');if(analysis&&nav&&nav.parentElement!==analysis)analysis.insertBefore(nav,analysis.querySelector('#analysisSecondary'));
+  cards.forEach((card,i)=>{correlation(card);card.dataset.recIndex=i;card.classList.toggle('variant-hidden',i!==variantSelected)});
   updateVariantNav(nav,cards);
 }
 function selectVariant(i){
   const grid=$('#results'),nav=$('#variantTabs'),cards=grid?[...grid.children].filter(x=>x.classList.contains('parlay-card')).slice(0,3):[];
   if(!cards[i])return;
   variantSelected=i;cards.forEach((card,j)=>card.classList.toggle('variant-hidden',j!==i));
-  updateVariantNav(nav,cards);if(nav)nav.open=false;
+  updateVariantNav(nav,cards);if($('#moreAnalysis'))$('#moreAnalysis').open=false;grid.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function persist(){const save=()=>{const p={mode:state?.mode,game:$('#gameSelect')?.value,legs:$('#legsSelect')?.value,markets:[...state.selectedMarkets||[]],sport:$('.sport-switch button.active')?.dataset.sport};localStorage.setItem(STORE,JSON.stringify(p))};document.addEventListener('change',e=>{if(e.target.matches('#gameSelect,#legsSelect'))save()});document.addEventListener('click',e=>{const rec=e.target.closest('#variantTabs [data-rec-index]');if(rec){e.preventDefault();selectVariant(Number(rec.dataset.recIndex));return}const whyButton=e.target.closest('[data-act="why"]');if(whyButton){why(whyButton.closest('.qcard'));return}if(e.target.closest('.chip,.mode-tabs button,.sport-switch button'))setTimeout(save,30);const u=e.target.closest('[data-use-builder]');if(u)useBuilder(u.dataset.useBuilder)});setTimeout(()=>{let p;try{p=JSON.parse(localStorage.getItem(STORE)||'null')}catch{}if(!p)return;if(p.legs&&$('#legsSelect')){$('#legsSelect').value=p.legs;$('#legsSelect').dispatchEvent(new Event('change',{bubbles:true}))}if(p.game&&$('#gameSelect')?.querySelector(`option[value="${CSS.escape(p.game)}"]`)){$('#gameSelect').value=p.game;$('#gameSelect').dispatchEvent(new Event('change',{bubbles:true}))}if(p.sport){const b=$(`.sport-switch button[data-sport="${p.sport}"]`);if(b&&!b.classList.contains('active'))b.click()}},900)}
 function enhance(){const nfl=$('.sport-switch button.active')?.dataset.sport!=='mlb'&&$('.sport-switch button.active')?.dataset.sport!=='ncaaf'&&$('.sport-switch button.active')?.dataset.sport!=='ufc';const grid=$('#qolV3 .qgrid');if(nfl&&grid){[...grid.children].forEach(c=>c.classList.contains('pass')?pass(c):ticket(c));rejectPanel()}variants()}

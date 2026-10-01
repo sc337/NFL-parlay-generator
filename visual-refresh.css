@@ -104,3 +104,36 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
  .sport-logo,.mlb-team-logo{width:34px;height:34px}
  .variant-choices>summary:after,.explore-panel-toggle:after{margin-left:auto}
 }
+/* Pick hierarchy: one thesis, unboxed legs, and one secondary drawer. */
+#results .parlay-card>.card-thesis{margin:10px 0 2px;color:var(--text);font-size:13px;font-weight:700;line-height:1.4}
+#results .parlay-card .script-badge{display:none!important}
+.card-explanation{margin:0 0 9px}
+.card-explanation>summary{display:inline-flex;align-items:center;min-height:32px;cursor:pointer;color:var(--blue);font-size:12px;font-weight:700;list-style:none}
+.card-explanation>summary::-webkit-details-marker{display:none}
+.card-explanation>summary:after{content:'⌄';margin-left:6px}
+.card-explanation[open]>summary:after{content:'⌃'}
+.card-explanation>.summary{margin:3px 0 8px;color:var(--muted);font-size:12px;line-height:1.5}
+#results .parlay-card .legs{gap:0}
+#results .parlay-card .leg{padding:11px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+#results .parlay-card .leg:last-child{border-bottom:0}
+#results .parlay-card .sport-visual-copy,#results .parlay-card .mlb-leg-copy{flex:1;min-width:0}
+.leg-quote-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.leg-pick{min-width:0;flex:1}
+.leg-quote{flex:none;min-width:43px;text-align:right;color:var(--text);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.leg-quote small{display:block;font-size:10px;color:var(--muted);font-weight:600}
+#results .td-watch .grade{background:var(--amber-bg);color:var(--amber)}
+#results .td-watch .leg-quote{color:var(--amber)}
+.header-status.is-delayed{border-color:#745437;background:var(--amber-bg);color:var(--amber)}
+.header-status.is-unavailable{border-color:#78474a;background:#3d2025;color:#ffaaa6}
+.header-status.is-loading{border-color:var(--border2);background:var(--blue-bg);color:var(--blue)}
+.variant-choices{margin:10px 8px 0;padding:10px 0 0;border:0;border-top:1px solid var(--border);border-radius:0;background:transparent}
+.variant-heading{padding:0 8px 8px;color:var(--muted);font-size:12px;font-weight:750}
+.variant-options{padding:0 8px 8px}
+@media(max-width:600px){
+ .header-status{max-width:min(55vw,220px);font-size:11px}
+ #results .parlay-card .leg{padding:12px 0!important}
+ #results .parlay-card>.card-thesis{font-size:14px}
+ .card-explanation>summary{min-height:44px;font-size:13px}
+ .leg-quote{font-size:15px}
+ .variant-options button{min-height:44px}
+}

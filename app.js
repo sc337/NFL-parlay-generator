@@ -953,6 +953,9 @@ function render(parlays){
     node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Individual quotes, indicative';
     node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
+    const matchup=p.gameLabel?.split(/\s+@\s+/).map(team=>team.trim().split(/\s+/).at(-1)).join(' @ ');
+    node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(matchup||'Same game')+' · '+(p.scriptName||'Related legs'):'Multi-game · '+p.legs.length+' qualified legs')+
+      (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');
     node.querySelector('.score').textContent=`Confidence ${p.score}/100`;
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? `Pairing score +${Math.max(0,p.corr)}` : `${p.legs.length} games/legs`;
     const legs=node.querySelector('.legs');
@@ -971,7 +974,7 @@ function render(parlays){
         metrics.push('Market-qualified');
         metrics.push('Confidence '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
       }
-      d.innerHTML=`${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}<div class="sport-visual-copy"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div><div class="leg-sub">${window.MARKET_GUARDS.esc(l.gameLabel||'')} ${fmtOdds(l.price)}</div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
+      d.innerHTML=`${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}<div class="sport-visual-copy"><div class="leg-quote-row"><div class="leg-pick"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div>${state.mode==='multi'?`<div class="leg-sub">${window.MARKET_GUARDS.esc(l.gameLabel||'')}</div>`:''}</div><strong class="leg-quote" aria-label="American odds ${fmtOdds(l.price)}">${fmtOdds(l.price)}</strong></div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
       legs.appendChild(d);
     });
     wrap.appendChild(node);
@@ -987,7 +990,7 @@ function tdWatch(){
   if(!rows.length)return '';
   const leg=({m,g},i)=>{
     const x=m.tdOpportunity;
-    return '<div class="leg sport-visual-leg">'+(window.SPORT_MEDIA?.nfl(m)||'')+'<div class="sport-visual-copy"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Market '+Math.round(m.marketProbability*100)+'% · Experimental '+Math.round(m.modelProbability*100)+'%</div><details class="leg-details"><summary>Opportunity detail</summary><div class="leg-reason">Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></details></div></div>';
+    return '<div class="leg sport-visual-leg">'+(window.SPORT_MEDIA?.nfl(m)||'')+'<div class="sport-visual-copy"><div class="leg-quote-row"><div class="leg-pick"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Experimental '+Math.round(m.modelProbability*100)+'%</div></div><strong class="leg-quote" aria-label="Market probability '+Math.round(m.marketProbability*100)+' percent">'+Math.round(m.marketProbability*100)+'%<small>market</small></strong></div><details class="leg-details"><summary>Opportunity detail</summary><div class="leg-reason">Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></details></div></div>';
   };
   const more=rows.length>1?'<details class="td-more"><summary>Show '+(rows.length-1)+' more scorers</summary><div class="legs">'+rows.slice(1).map((row,i)=>leg(row,i+1)).join('')+'</div></details>':'';
   return '<article class="parlay-card td-watch"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">Touchdown scorer watch</h3></div></div><p class="summary">Tracked for accuracy · no stake suggestion</p><div class="legs">'+leg(rows[0],0)+'</div>'+more+'</article>';

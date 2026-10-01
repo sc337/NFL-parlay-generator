@@ -24,6 +24,17 @@ function foldLegReasons(){
     reason.before(details);details.append(summary,reason);
   });
 }
+function compactSummaries(){
+  document.querySelectorAll('#results>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
+    const text=full.textContent.trim(),short=full.dataset.shortText||
+      (text.length>90?text.slice(0,90).replace(/\s+\S*$/,'')+'…':text);
+    const thesis=document.createElement('p'),details=document.createElement('details'),label=document.createElement('summary');
+    thesis.className='card-thesis';thesis.textContent=short;
+    details.className='card-explanation';label.textContent='Why these legs?';
+    full.before(thesis,details);details.append(label,full);
+  });
+}
+function syncCards(){compactSummaries();foldLegReasons()}
 function mount(){
   const main=$('main');
   if(!main||$('#explorePanelToggle'))return;
@@ -45,9 +56,9 @@ function mount(){
   });
   new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-sport']});
   const results=$('#results');
-  if(results)new MutationObserver(foldLegReasons).observe(results,{childList:true,subtree:true});
+  if(results)new MutationObserver(syncCards).observe(results,{childList:true,subtree:true});
   window.addEventListener('resize',foldLegReasons);
-  foldLegReasons();
+  syncCards();
   sync();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();

@@ -8,7 +8,7 @@ function ensureAnalysis(){
   d=document.createElement('details');
   d.id='moreAnalysis';
   d.className='more-analysis';
-  d.innerHTML='<summary><span>More Analysis</span><small>Consensus · secondary picks · diagnostics</small></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus"></div>';
+  d.innerHTML='<summary><span>More picks &amp; analysis</span><small>Alternate parlays · context · diagnostics</small></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus"></div>';
   const results=$('#results');
   (results?.parentElement||$('.shell'))?.appendChild(d);
   return d;
@@ -32,8 +32,8 @@ function updateHeader(){
   const delayed=/\bdelayed\b|\bstale\b/i.test(raw);
   const unavailable=/unavailable|no live|error|failed/i.test(raw);
   const loading=/loading|refreshing|initializing|waiting|checking/i.test(raw);
-  let short=unavailable?'Feed unavailable':loading?'Loading…':delayed?'Delayed':/kalshi/i.test(raw)?'Kalshi':'Data';
-  if(!loading&&!unavailable){if(age)short+=' · '+age[1]+'m';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase()}
+  let short=unavailable?'Feed unavailable':loading?'Loading…':delayed?'Delayed':'Updated';
+  if(!loading&&!unavailable){if(age)short+=delayed?' · '+age[1]+'m ago':' '+age[1]+'m ago';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase()}
   if(label.textContent!==short)label.textContent=short;
   wrap.title=raw;
   wrap.classList.toggle('is-delayed',delayed);
