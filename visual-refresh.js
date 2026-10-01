@@ -7,6 +7,23 @@ function sync(){
   const heading=$('.brand-block h1');
   if(today&&heading)heading.textContent='TODAY';
 }
+function foldLegReasons(){
+  const mobile=window.matchMedia('(max-width:600px)').matches;
+  if(!mobile){
+    document.querySelectorAll('#results .leg-details[data-mobile-fold]').forEach(details=>{
+      const reason=details.querySelector('.leg-reason');
+      if(reason)details.replaceWith(reason);
+    });
+    return;
+  }
+  document.querySelectorAll('#results .leg-reason').forEach(reason=>{
+    if(reason.closest('.leg-details'))return;
+    const details=document.createElement('details'),summary=document.createElement('summary');
+    details.className='leg-details';details.dataset.mobileFold='';
+    summary.textContent='Projection & context';
+    reason.before(details);details.append(summary,reason);
+  });
+}
 function mount(){
   const main=$('main');
   if(!main||$('#explorePanelToggle'))return;
@@ -27,6 +44,10 @@ function mount(){
     if(document.body.dataset.sport==='bankroll')($('.sport-switch [data-sport="nfl"]')||$('.sport-switch [data-sport]:not([data-sport="bankroll"])'))?.click();
   });
   new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-sport']});
+  const results=$('#results');
+  if(results)new MutationObserver(foldLegReasons).observe(results,{childList:true,subtree:true});
+  window.addEventListener('resize',foldLegReasons);
+  foldLegReasons();
   sync();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();

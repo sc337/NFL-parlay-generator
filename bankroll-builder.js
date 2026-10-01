@@ -35,7 +35,7 @@ async function refresh(){const requestAt=Date.now(),sequence=++refreshSequence;t
  render();
  }catch{if(sequence!==refreshSequence)return;candidates=[];refreshed=0;sourceStatus={nfl:'unavailable',mlb:'unavailable',ncaaf:'unavailable',ufc:'unavailable'};notice='Markets could not be refreshed.';render()}}
 function candidate(){return candidates.find(x=>id(x)===selected)}
-function quote(){return $('#builderOdds')?.value?.trim()||''}
+function quote(){const value=$('#builderOdds')?.value?.trim()||'';if(!value)return '';if(!/^\d+$/.test(value))return value;return ($('#builderOddsSign')?.value==='+'?'+':'-')+value}
 function calculate(){const row=candidate(),now=new Date();return row?C.suggestion({ledger,probability:Number(row.forecast.modelP),odds:quote(),eventTime:eventTime(row),now,ageMs:Date.now()-refreshed}):{stake:0,reason:Object.values(sourceStatus).some(x=>x==='stale'||x==='unavailable')?'Some sport feeds are stale or unavailable. No verified pick; pass.':'No qualifying pregame pick today. Pass.'}}
 function statusText(){return ['nfl','mlb','ncaaf','ufc'].map(s=>s.toUpperCase()+' '+(sourceStatus[s]||'loading')).join(' · ')}
 function chart(){let value=Number(ledger.opening)||0;const points=[value];
@@ -93,7 +93,7 @@ function settle(id,status){if(!confirm('Mark this bet '+status+'?'))return;
 function download(){const file=new Blob([JSON.stringify(ledger,null,2)],{type:'application/json'}),url=URL.createObjectURL(file),link=document.createElement('a');link.href=url;link.download='bankroll-bets-'+C.localDay(new Date())+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function mount(){load();const root=$('#bankrollBuilder');if(!root)return;
  root.addEventListener('click',e=>{if(e.target.closest('#builderSave'))setBalance();else if(e.target.closest('#builderRecord'))record();else if(e.target.closest('#builderRefresh'))refresh();else if(e.target.closest('#builderExport'))download();else if(e.target.closest('[data-result]')){const btn=e.target.closest('[data-result]');settle(btn.dataset.id,btn.dataset.result)}});
- root.addEventListener('change',e=>{if(e.target.id==='builderPick'){selected=e.target.value;$('#builderOdds').value='';render()}else if(e.target.id==='builderOdds')render()});
+ root.addEventListener('change',e=>{if(e.target.id==='builderPick'){selected=e.target.value;$('#builderOdds').value='';render()}else if(e.target.id==='builderOdds'||e.target.id==='builderOddsSign')render()});
  root.addEventListener('input',e=>{if(e.target.id==='builderOdds'){const s=calculate();$('#builderAmount').textContent=cash(s.stake);$('#builderReason').textContent=s.reason;$('#builderRecord').disabled=s.stake<1}});
  root.addEventListener('keydown',e=>{if(e.target.id==='builderBankroll'&&e.key==='Enter'){e.preventDefault();setBalance()}});
  render();setTimeout(refresh,2500);setTimeout(refresh,12000);setInterval(refresh,120000);
