@@ -12,10 +12,9 @@ function label(s,{loading=false,unavailable=false,delayed=false}={}){
 }
 function update(){
   const s=sport(),raw=source(),age=minutes(s),unavailable=/unavailable|no live|error|failed/i.test(raw),loading=/loading|refreshing|initializing|waiting|checking/i.test(raw),delayed=/\bdelayed\b|\bstale\b/i.test(raw)||age!==null&&age>30;
-  const notice=document.querySelector('#feedNotice'),status=document.querySelector('.header-status');
+  const status=document.querySelector('.header-status');
   document.body.classList.toggle('feed-delayed',!!delayed&&!loading&&!unavailable);
   if(status){status.classList.toggle('is-delayed',!!delayed&&!loading&&!unavailable);status.classList.toggle('is-unavailable',unavailable);const badge=status.querySelector('#statusLabel');const short=label(s,{loading,unavailable,delayed});if(badge&&short)badge.textContent=short;status.title=raw}
-  if(notice){notice.hidden=!delayed||loading||unavailable;notice.textContent=notice.hidden?'':'Market snapshot is '+(age===null?'delayed':age+' minutes old')+'. Refresh before using these picks.'}
 }
 function set(s,stamp){const ms=Date.parse(stamp||'');if(Number.isFinite(ms)){snapshots[s]=ms;update()}}
 async function refresh(){
@@ -31,12 +30,11 @@ async function refresh(){
   }finally{button.disabled=false;button.classList.remove('refreshing');update()}
 }
 function mount(){
-  const status=document.querySelector('.header-status'),nav=document.querySelector('#sportSwitch');
+  const status=document.querySelector('.header-status');
   if(status&&!document.querySelector('#feedRefresh')){
     const button=document.createElement('button');button.id='feedRefresh';button.type='button';button.className='feed-refresh';button.setAttribute('aria-label','Refresh current sport markets');button.title='Refresh current sport markets';button.textContent='↻';
     status.after(button);button.addEventListener('click',refresh);
   }
-  if(nav&&!document.querySelector('#feedNotice')){const notice=document.createElement('p');notice.id='feedNotice';notice.className='feed-notice';notice.setAttribute('role','status');notice.hidden=true;nav.after(notice)}
   new MutationObserver(update).observe(document.querySelector('#dataStatus'),{childList:true,characterData:true,subtree:true});
   new MutationObserver(update).observe(document.body,{attributes:true,attributeFilter:['data-sport']});
   setInterval(update,60000);update();
