@@ -78,6 +78,7 @@ function compactParlays(){
     if(pairing){const note=document.createElement('div');note.className='card-detail-row';note.append(pairing);if(sport==='nfl'&&/Pairing score/i.test(note.textContent)){const small=document.createElement('small');small.textContent='Internal pairing heuristic, not a probability.';note.append(small)}details.append(note)}
     footer?.querySelector('.corr-map')?.remove();
     const score=footer?.firstElementChild;if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Quality');
+    if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating');
     if(score&&/quality|confidence|composite/i.test(score.textContent))score.title='Rating, not the chance this parlay wins';
   });
 }
