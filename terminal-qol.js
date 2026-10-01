@@ -33,6 +33,7 @@ function variants(){
     const preferred=cards.findIndex(c=>/best balance|balanced parlay/i.test(c.textContent));variantDefault=preferred>=0?preferred:0;variantSelected=variantDefault;
     let nav=old;if(!nav){nav=document.createElement('div');nav.id='variantTabs';nav.className='variant-choices'}
     nav.innerHTML='<div class="variant-heading">Alternate parlays</div><div class="variant-options">'+cards.map((card,i)=>{const name=card.querySelector('.parlay-name')?.textContent||`Pick ${i+1}`,odds=card.querySelector('.odds')?.textContent||'';return `<button type="button" data-rec-index="${i}"><span>${esc(name)}</span><b>${esc(odds)}</b></button>`}).join('')+'</div>';
+    const host=$('#moreAnalysis');if(host&&nav.parentElement!==host)host.insertBefore(nav,host.querySelector('#analysisSecondary'));
   }
   const nav=$('#variantTabs'),analysis=$('#moreAnalysis');if(analysis&&nav&&nav.parentElement!==analysis)analysis.insertBefore(nav,analysis.querySelector('#analysisSecondary'));
   cards.forEach((card,i)=>{correlation(card);card.dataset.recIndex=i;card.classList.toggle('variant-hidden',i!==variantSelected)});
