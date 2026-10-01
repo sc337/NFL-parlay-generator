@@ -242,10 +242,27 @@ body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
 #results>.parlay-card .card-detail-row .leg-sub,#results>.parlay-card .card-detail-row .leg-reason{margin:3px 0;color:var(--muted);font-size:12px;line-height:1.45}
 #results>.parlay-card .card-detail-row small{display:block;margin-top:3px;color:var(--muted)}
 #results:not(.nfl-carousel)>.parlay-card,#results:not(.nfl-carousel)>.ufc-matchups{grid-column:1/-1}
+/* Sportsbook-inspired selection rows: one participant and one clear market quote. */
+#results>.parlay-card .leg.has-market-tile{display:flex;align-items:center;gap:9px;min-width:0}
+#results>.parlay-card .has-market-tile>.sport-visual-copy,#results>.parlay-card .has-market-tile>.mlb-leg-copy{flex:1;min-width:0}
+#results>.parlay-card .has-market-tile .leg-title{overflow-wrap:anywhere}
+#results>.parlay-card .has-market-tile .leg-quote-row{display:block}
+.market-tile{display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;width:96px;min-height:66px;padding:7px 5px;border:1px solid color-mix(in srgb,var(--sport-accent) 34%,var(--border2));border-radius:9px;background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 13%,#19332f),#152c2de6);text-align:center;font-variant-numeric:tabular-nums;box-shadow:inset 0 1px #ffffff16}
+.market-tile-heading{color:var(--muted);font-size:10px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.market-tile-line{margin-top:3px;color:var(--text);font-size:15px;font-weight:850;line-height:1.1;white-space:nowrap}
+.market-tile-price{margin-top:4px;color:var(--sport-accent);font-size:12px;font-weight:850;line-height:1.1;white-space:nowrap}
+.pick-market-tile{width:108px;min-height:70px}
 @media(max-width:600px){
  #results>.parlay-card .parlay-name{font-size:18px}
  #results>.parlay-card .leg{min-height:58px;padding:9px 0!important}
  #results>.parlay-card .leg-title{font-size:14px}
  #results>.parlay-card .leg-brief{font-size:11px}
  #results>.parlay-card .card-explanation>summary{font-size:13px}
+ #results>.parlay-card .has-market-tile{gap:8px}
+ #results>.parlay-card .has-market-tile .sport-photo,#results>.parlay-card .has-market-tile .mlb-player-photo{width:34px;height:34px}
+ #results>.parlay-card .has-market-tile .sport-logo,#results>.parlay-card .has-market-tile .mlb-team-logo{width:30px;height:30px}
+ .market-tile{width:82px;min-height:62px;padding:6px 3px}
+ .market-tile-line{font-size:14px}
+ .market-tile-price{font-size:11px}
+ .pick-market-tile{width:94px}
 }
