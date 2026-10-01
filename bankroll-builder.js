@@ -53,13 +53,19 @@ function render(){const root=$('#bankrollBuilder');if(!root)return;
  else pick.add(new Option(Object.values(sourceStatus).some(x=>x==='stale'||x==='unavailable')?'No verified pick; check feeds':'No qualified straight today',''));
  pick.value=candidates.some(x=>id(x)===selected)?selected:(prev&&candidates.some(x=>id(x)===prev)?prev:'');
  const row=candidate();
- $('#builderGame').textContent=(row?(row.market.game_label||row.market.fight||'Upcoming event')+' · '+new Date(eventTime(row)).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})+' · ':'')+statusText();
+ $('#builderDecision').textContent=row?(row.market.label||row.market.name):'No bet qualifies today';
+ $('#builderGame').textContent=row?(row.sport.toUpperCase()+' · '+(row.market.game_label||row.market.fight||'Upcoming event')+' · '+new Date(eventTime(row)).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})):'No high-confidence pregame edge right now.';
+ $('#builderFeedStatus').textContent=statusText();
  $('#builderEstimate').textContent=row?'Model '+Math.round(Number(row.forecast.modelP)*100)+'% · Kalshi reference '+(row.referenceOdds>0?'+':'')+row.referenceOdds+' · unvalidated estimate':'No bet is required today.';
  const s=calculate();amount.textContent=cash(s.stake);
  $('#builderReason').textContent=s.reason;
  $('#builderRecord').disabled=s.stake<.01;
+ root.classList.toggle('has-pick',!!row);
+ root.classList.toggle('has-bankroll',!!ledger.initialized);
+ const setup=$('#builderSetup');
+ if(setup)setup.querySelector('summary').textContent=ledger.initialized?'Adjust bankroll':'Set bankroll';
  $('#builderBalance').textContent=ledger.initialized?cash(balance):'—';
- $('#builderMeta').textContent=ledger.initialized?`${cash(pending)} pending · ${cash(profit)} settled P/L · ${cash(Math.max(0,balance*.02-C.spentToday(ledger)))} daily budget left`:'Set your starting bankroll. Only recorded bets change it.';
+ $('#builderMeta').textContent=ledger.initialized?`${cash(pending)} pending · ${cash(profit)} settled P/L · ${cash(Math.max(0,balance*.02-C.spentToday(ledger)))} daily budget left`:'Only recorded bets change your bankroll.';
  $('#builderNotice').textContent=notice;
  $('#builderTrend').innerHTML=ledger.initialized?chart():'';
  const list=$('#builderLog');list.innerHTML=ledger.bets.length?ledger.bets.slice(-8).reverse().map(b=>`<div class="builder-log-row"><span>${esc(b.sport.toUpperCase()+' · '+b.selection)}<small>${esc(b.event)} · ${cash(b.stake)} at ${b.odds>0?'+':''}${b.odds} · ${esc(b.status)}</small></span>${b.status==='pending'?`<span class="builder-settle"><button data-id="${esc(b.id)}" data-result="won">Win</button><button data-id="${esc(b.id)}" data-result="lost">Loss</button><button data-id="${esc(b.id)}" data-result="void">Void</button></span>`:''}</div>`).join(''):'<p class="builder-muted">No bets recorded yet.</p>';
@@ -70,7 +76,7 @@ function setBalance(){const input=$('#builderBankroll'),n=Number(input.value);if
  if(!ledger.initialized){ledger.opening=C.cents(n);ledger.initialized=true}
  else {const delta=C.cents(n-current);if(!delta){render();return}ledger.adjustments.push({at:new Date().toISOString(),amount:delta})}
  if(!save()){ledger.initialized=previous.initialized;ledger.opening=previous.opening;ledger.adjustments.length=previous.adjustments;render();return}
- notice='Bankroll saved. Adjustments are kept in the history.';render();
+ notice='Bankroll saved. Adjustments are kept in the history.';$('#builderSetup').open=false;render();
 }
 function record(){const row=candidate(),s=calculate();if(!row||s.stake<.01){render();return}
  if(!confirm('Record a real '+cash(s.stake)+' bet at '+quote()+' on '+(row.market.label||row.market.name)+'?'))return;

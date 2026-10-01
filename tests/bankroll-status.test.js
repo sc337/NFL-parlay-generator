@@ -5,7 +5,7 @@ const test=require('node:test');
 
 function dashboard({nfl,mlb={rows:[],status:'ready'},ufc={rows:[],status:'ready'},ncaaf={rows:[],status:'experimental'}}){
  const elements=new Map(),element=id=>{
-  if(!elements.has(id))elements.set(id,{value:'',textContent:'',innerHTML:'',disabled:false,replaceChildren(){this.options=[]},add(option){this.options.push(option)},addEventListener(){}});
+  if(!elements.has(id))elements.set(id,{value:'',textContent:'',innerHTML:'',disabled:false,classList:{toggle(){}},querySelector:()=>({textContent:''}),replaceChildren(){this.options=[]},add(option){this.options.push(option)},addEventListener(){}});
   return elements.get(id);
  };
  const window={BANKROLL_CORE:{validMoney:()=>true,validOdds:()=>true,balances:()=>({cash:0,pending:0,profit:0}),spentToday:()=>0,today:(start,now)=>new Date(start).toDateString()===now.toDateString(),ev:()=>0,suggestion:()=>({stake:0,reason:'Pass'})},MARKET_GUARDS:{esc:x=>x,fresh:x=>x?.updated_at==='fresh',quote:()=>.55},MLB_DASHBOARD:{bankrollCandidates:async()=>mlb},UFC_DASHBOARD:{bankrollCandidates:async()=>ufc},NCAAF_DASHBOARD:{bankrollCandidates:async()=>ncaaf},NFL_MODEL_V3:{evaluate:()=>({actionable:true,coverage:.5,confidence:70,modelP:.65})}};
@@ -17,7 +17,8 @@ function dashboard({nfl,mlb={rows:[],status:'ready'},ufc={rows:[],status:'ready'
 test('a failed feed is shown as unavailable instead of checked',async()=>{
  const {builder,element}=dashboard({nfl:null,mlb:{rows:[],status:'stale'}});
  await builder.refresh();
- assert.match(element('#builderGame').textContent,/NFL unavailable · MLB stale · NCAAF experimental · UFC ready/);
+ assert.match(element('#builderFeedStatus').textContent,/NFL unavailable · MLB stale · NCAAF experimental · UFC ready/);
+ assert.match(element('#builderDecision').textContent,/No bet qualifies/);
  assert.match(element('#builderReason').textContent,/stale or unavailable/);
 });
 
