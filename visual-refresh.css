@@ -137,3 +137,43 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
  .leg-quote{font-size:15px}
  .variant-options button{min-height:44px}
 }
+/* Sport-first dashboard: one straight, swipeable NFL builds, no stake surface. */
+.view-switch,#bankrollBuilder,.bankroll-card,.stake-suggestion,.reject-list{display:none!important}
+.pick-of-day{margin:10px 0 14px;padding:16px;border:1px solid var(--border2);border-radius:15px;background:var(--surface)}
+.pick-kicker{color:var(--blue);font-size:10px;letter-spacing:.12em;font-weight:850}
+.pick-of-day h2{margin:4px 0 12px;font-size:20px;line-height:1.2;color:var(--text)}
+.pick-row{display:flex;align-items:center;gap:12px;min-width:0}
+.pick-media{display:inline-flex;align-items:center;flex:none;position:relative;min-width:40px;min-height:40px}
+.pick-media>.sport-photo{width:42px;height:42px}
+.pick-media>.sport-logo{width:34px;height:34px}
+.pick-media>.sport-photo+.sport-logo{position:absolute;right:-7px;bottom:-3px;width:18px;height:18px;border-radius:50%;background:var(--surface)}
+.pick-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.pick-name{font-size:15px;line-height:1.35;color:var(--text)}
+.pick-meta,.pick-foot{font-size:12px;line-height:1.45;color:var(--muted)}
+.pick-reference{flex:none;text-align:right;font-size:13px;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.pick-foot{display:block;margin-top:10px}
+.pick-pass{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.parlay-swipe-hint{margin:2px 2px 8px;color:var(--muted);font-size:12px;font-weight:700}
+#results.nfl-carousel{display:flex!important;gap:11px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding:0 2px 10px}
+#results.nfl-carousel>.parlay-card{grid-column:auto!important;flex:0 0 min(88%,430px);min-width:0;scroll-snap-align:start}
+.nfl-leg-media{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:42px;height:42px}
+.nfl-leg-media>.sport-photo{width:40px;height:40px}
+.nfl-leg-media>.sport-logo{width:34px;height:34px}
+.nfl-leg-media>.sport-photo+.sport-logo{position:absolute;right:-3px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:var(--surface)}
+#tdMarketOptions:not(:empty){margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.td-market-head{color:var(--text);font-size:13px;font-weight:800}
+.td-market-head small{display:block;margin-top:4px;color:var(--amber);font-size:11px;font-weight:600}
+#tdMarketOptions .leg{display:flex;align-items:center;gap:9px;padding:10px 0;border:0;border-bottom:1px solid var(--border);background:transparent}
+#tdMarketOptions .sport-visual-copy{flex:1;min-width:0}
+#tdMarketOptions .leg-quote{color:var(--amber)}
+.td-market-note{color:var(--muted);font-size:12px}
+@media(max-width:600px){
+ body .shell{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+ .pick-of-day{padding:15px}
+ .pick-of-day h2{font-size:19px}
+ .pick-name{font-size:15px}
+ #results.nfl-carousel>.parlay-card{flex-basis:88%}
+ .sport-switch{position:sticky;top:0;z-index:30;background:var(--bg)!important}
+}
+.card-thesis .matchup-logos{display:inline-flex;align-items:center;gap:4px;margin-right:8px;vertical-align:middle}
+.card-thesis .matchup-logos .sport-logo{width:22px;height:22px}
