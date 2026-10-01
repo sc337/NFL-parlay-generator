@@ -60,7 +60,7 @@ function render(){const root=$('#bankrollBuilder');if(!root)return;
  $('#builderEstimate').textContent=row?'Model '+Math.round(Number(row.forecast.modelP)*100)+'% · Kalshi reference '+(row.referenceOdds>0?'+':'')+row.referenceOdds+' · unvalidated estimate':'No bet is required today.';
  const s=calculate();amount.textContent=cash(s.stake);
  $('#builderReason').textContent=s.reason;
- $('#builderRecord').disabled=s.stake<.01;
+ $('#builderRecord').disabled=s.stake<1;
  root.classList.toggle('has-pick',!!row);
  root.classList.toggle('has-bankroll',!!ledger.initialized);
  const setup=$('#builderSetup');
@@ -70,6 +70,7 @@ function render(){const root=$('#bankrollBuilder');if(!root)return;
  $('#builderNotice').textContent=notice;
  $('#builderTrend').innerHTML=ledger.initialized?chart():'';
  const list=$('#builderLog');list.innerHTML=ledger.bets.length?ledger.bets.slice(-8).reverse().map(b=>`<div class="builder-log-row"><span>${esc(b.sport.toUpperCase()+' · '+b.selection)}<small>${esc(b.event)} · ${cash(b.stake)} at ${b.odds>0?'+':''}${b.odds} · ${esc(b.status)}</small></span>${b.status==='pending'?`<span class="builder-settle"><button data-id="${esc(b.id)}" data-result="won">Win</button><button data-id="${esc(b.id)}" data-result="lost">Loss</button><button data-id="${esc(b.id)}" data-result="void">Void</button></span>`:''}</div>`).join(''):'<p class="builder-muted">No bets recorded yet.</p>';
+ window.NFL_BANKROLL?.refresh?.();
 }
 function setBalance(){const input=$('#builderBankroll'),n=Number(input.value);if(!input.value.trim()||!C.validMoney(n)){notice='Enter a valid bankroll amount.';render();return}
  const current=C.balances(ledger).cash;
@@ -79,7 +80,7 @@ function setBalance(){const input=$('#builderBankroll'),n=Number(input.value);if
  if(!save()){ledger.initialized=previous.initialized;ledger.opening=previous.opening;ledger.adjustments.length=previous.adjustments;render();return}
  notice='Bankroll saved. Adjustments are kept in the history.';$('#builderSetup').open=false;render();
 }
-function record(){const row=candidate(),s=calculate();if(!row||s.stake<.01){render();return}
+function record(){const row=candidate(),s=calculate();if(!row||s.stake<1){render();return}
  if(!confirm('Record a real '+cash(s.stake)+' bet at '+quote()+' on '+(row.market.label||row.market.name)+'?'))return;
  const b={id:crypto.randomUUID(),pickId:id(row),createdAt:new Date().toISOString(),sport:row.sport,event:row.market.game_label||row.market.fight||'Upcoming event',selection:row.market.label||row.market.name,start:eventTime(row),odds:Number(quote()),probability:row.forecast.modelP,stake:s.stake,status:'pending',returned:0};
  ledger.bets.push(b);if(!save()){ledger.bets.pop();render();return}notice='Bet recorded. Mark the result after it settles.';selected='';refresh();
@@ -93,7 +94,7 @@ function download(){const file=new Blob([JSON.stringify(ledger,null,2)],{type:'a
 function mount(){load();const root=$('#bankrollBuilder');if(!root)return;
  root.addEventListener('click',e=>{if(e.target.closest('#builderSave'))setBalance();else if(e.target.closest('#builderRecord'))record();else if(e.target.closest('#builderRefresh'))refresh();else if(e.target.closest('#builderExport'))download();else if(e.target.closest('[data-result]')){const btn=e.target.closest('[data-result]');settle(btn.dataset.id,btn.dataset.result)}});
  root.addEventListener('change',e=>{if(e.target.id==='builderPick'){selected=e.target.value;$('#builderOdds').value='';render()}else if(e.target.id==='builderOdds')render()});
- root.addEventListener('input',e=>{if(e.target.id==='builderOdds'){const s=calculate();$('#builderAmount').textContent=cash(s.stake);$('#builderReason').textContent=s.reason;$('#builderRecord').disabled=s.stake<.01}});
+ root.addEventListener('input',e=>{if(e.target.id==='builderOdds'){const s=calculate();$('#builderAmount').textContent=cash(s.stake);$('#builderReason').textContent=s.reason;$('#builderRecord').disabled=s.stake<1}});
  root.addEventListener('keydown',e=>{if(e.target.id==='builderBankroll'&&e.key==='Enter'){e.preventDefault();setBalance()}});
  render();setTimeout(refresh,2500);setTimeout(refresh,12000);setInterval(refresh,120000);
 }

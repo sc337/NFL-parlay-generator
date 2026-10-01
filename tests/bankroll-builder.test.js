@@ -17,14 +17,27 @@ test('does not stake without a verified price, positive EV, fresh event or bankr
  ledger.initialized=false;
  assert.equal(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).stake,0);
 });
-test('flat stake is capped by bankroll and non-chasing daily exposure',()=>{
+test('stakes use whole dollars from available bankroll within daily exposure',()=>{
  const ledger=fresh();
  const s=C.suggestion({ledger,probability:.6,odds:-110,eventTime,now});
- assert.equal(s.stake,.5);
+ assert.equal(s.stake,1);
  assert.ok(s.ev>.02);
  ledger.bets.push({id:'1',createdAt:start,stake:1.99,status:'lost',returned:0});
  assert.equal(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).stake,0);
  assert.equal(C.spentToday(ledger,now),1.99);
+});
+test('minimum stake never exceeds available bankroll or per-bet and daily limits',()=>{
+ const ledger=fresh();
+ ledger.opening=75;
+ assert.equal(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).stake,0);
+ assert.match(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).reason,/cannot support a \$1 stake/);
+ ledger.opening=350;
+ assert.equal(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).stake,2);
+ ledger.opening=1000;
+ assert.equal(C.suggestion({ledger,probability:.6,odds:-110,eventTime,now}).stake,5);
+ assert.equal(C.wholeStake(100,.005,.99),0);
+ assert.equal(C.wholeStake(100,.005,1),1);
+ assert.equal(C.wholeStake(350,.005,1.9),1);
 });
 test('placed stake is reserved; settlements credit returns once; voids refund',()=>{
  const ledger=fresh();

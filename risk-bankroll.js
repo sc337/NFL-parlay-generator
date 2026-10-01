@@ -87,7 +87,8 @@
     const n=Math.max(0,Number(amount)||0);
     return Math.round(n*100)/100;
   }
-  function bankroll(){const input=document.getElementById('currentBankroll');return Math.max(0,Number(input?.value)||loadBankroll().current||0);}
+  function ledger(){const saved=window.BANKROLL_BUILDER?.ledger?.();return saved?.initialized?saved:null;}
+  function bankroll(){const saved=ledger();return saved?Math.max(0,window.BANKROLL_CORE?.balances?.(saved)?.cash||0):0;}
 
   function renderBankroll(){
     const startEl=document.getElementById('startingBankroll'),currentEl=document.getElementById('currentBankroll');
@@ -109,12 +110,15 @@
   }
 
   function ensureSuggestion(container,conf,isParlay=false){
-    if(!container||!conf)return;
+    if(!container)return;
+    const saved=ledger(),bank=bankroll();
+    if(!saved||!conf||bank<1){container.querySelector('.stake-suggestion')?.remove();return;}
     const pct=stakePctFromConfidence(conf,isParlay);
-    const raw=bankroll()*pct;
-    const amount=normalizeStake(raw);
-    const actualPct=bankroll()>0?(amount/bankroll())*100:0;
-    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${actualPct.toFixed(actualPct<1?2:1)}% of bankroll</small>`;
+    const dailyLeft=Math.max(0,bank*.02-window.BANKROLL_CORE.spentToday(saved));
+    const amount=window.BANKROLL_CORE.wholeStake(bank,pct,dailyLeft);
+    if(amount<1){container.querySelector('.stake-suggestion')?.remove();return;}
+    const actualPct=amount/bank*100;
+    const html=`<span>Suggested stake</span><strong>${money(amount)}</strong><small>${actualPct.toFixed(actualPct<1?2:1)}% of available bankroll</small>`;
     let el=container.querySelector('.stake-suggestion');
     if(!el){el=document.createElement('div');el.className='stake-suggestion';container.appendChild(el);}
     if(el.dataset.sig!==html){el.innerHTML=html;el.dataset.sig=html;}
@@ -127,7 +131,7 @@
     });
     document.querySelectorAll('#results .parlay-card').forEach(card=>{
       const txt=card.querySelector('.score')?.textContent||'',conf=Number((txt.match(/([0-9]+)\/100/)||[])[1]);
-      if(Number.isFinite(conf))ensureSuggestion(card,conf,true);
+      ensureSuggestion(card,conf,true);
     });
   }
 
