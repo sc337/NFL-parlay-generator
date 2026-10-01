@@ -177,3 +177,48 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
 }
 .card-thesis .matchup-logos{display:inline-flex;align-items:center;gap:4px;margin-right:8px;vertical-align:middle}
 .card-thesis .matchup-logos .sport-logo{width:22px;height:22px}
+/* Sport color and restrained glass over the dark reading surface. */
+body[data-sport="nfl"]{--sport-accent:#74adff;--sport-glow:#285fc099}
+body[data-sport="mlb"]{--sport-accent:#52d8e7;--sport-glow:#158ba799}
+body[data-sport="ncaaf"]{--sport-accent:#ffcc75;--sport-glow:#b36c2699}
+body[data-sport="ufc"]{--sport-accent:#ff7d83;--sport-glow:#b43d5599}
+body{background:radial-gradient(ellipse 95% 400px at 45% -130px,var(--sport-glow,#285fc099),transparent 78%),#0a121c}
+.topbar{grid-template-columns:auto minmax(0,1fr) 44px 44px;gap:10px}
+.league-mark{border-color:color-mix(in srgb,var(--sport-accent) 45%,#33485b);background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 18%,#152334),#111c2a);box-shadow:0 7px 20px color-mix(in srgb,var(--sport-accent) 12%,transparent)}
+.sport-switch,.pick-of-day,.control-card,#results>.parlay-card,.more-analysis,.explore-panel-toggle{background:linear-gradient(145deg,#ffffff0b,#ffffff03 45%,#ffffff02),#142230d9!important;border-color:color-mix(in srgb,var(--sport-accent) 23%,#35495a)!important;box-shadow:inset 0 1px #ffffff12,0 12px 28px #02080e30}
+.sport-switch{background:linear-gradient(115deg,color-mix(in srgb,var(--sport-accent) 10%,#101d2d),#102032e8)!important}
+.sport-switch button.active{background:color-mix(in srgb,var(--sport-accent) 18%,#182838)!important;box-shadow:inset 0 -3px var(--sport-accent)!important;color:#f7fbff!important}
+.pick-kicker,.pick-reference,.card-explanation>summary,.leg-details>summary{color:var(--sport-accent)}
+.pick-of-day{border-top:2px solid var(--sport-accent)!important}
+.parlay-card .grade{background:color-mix(in srgb,var(--sport-accent) 19%,#172838);color:var(--sport-accent)}
+.chip.active{border-color:var(--sport-accent);background:color-mix(in srgb,var(--sport-accent) 17%,#142230);color:#f4f9fc}
+.primary-btn{background:var(--sport-accent);border-color:var(--sport-accent);color:#0c1722}
+.feed-refresh{grid-column:3;grid-row:1;width:44px;height:44px;border:1px solid color-mix(in srgb,var(--sport-accent) 35%,#405669);border-radius:12px;background:#ffffff12;color:var(--sport-accent);font-size:25px;line-height:1;cursor:pointer;touch-action:manipulation}
+.feed-refresh:disabled{opacity:.55;cursor:wait}.feed-refresh.refreshing{animation:refresh-spin 1s linear infinite}
+@keyframes refresh-spin{to{transform:rotate(360deg)}}
+.topbar>.icon-btn{grid-column:4;grid-row:1;width:44px;height:44px}
+.header-status{grid-column:2;grid-row:1;justify-self:end;max-width:100%;min-width:0;padding:7px 10px;border:1px solid #ffffff20;border-radius:999px;background:#ffffff0d;color:#d6e2ee;font-size:12px}
+.feed-notice{margin:-3px 2px 12px;padding:9px 12px;border:1px solid #a76d4a;border-radius:10px;background:#48301cbd;color:#ffd49e;font-size:12px;line-height:1.4}
+.feed-notice[hidden]{display:none!important}
+body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
+.parlay-swipe-hint{display:flex;align-items:center;gap:8px;min-height:44px;margin:0 0 3px;color:var(--muted)}
+.parlay-swipe-hint[hidden]{display:none!important}
+.carousel-instruction{flex:1;min-width:0}.carousel-position{flex:none;color:var(--sport-accent);font-size:12px;font-variant-numeric:tabular-nums}
+.carousel-dots{display:flex;align-items:center;gap:1px;flex:none}
+.carousel-dot{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation}
+.carousel-dot:before{content:'';width:8px;height:8px;border-radius:50%;background:#8094a6;transition:transform .18s ease,background .18s ease}
+.carousel-dot.active:before{background:var(--sport-accent);transform:scale(1.35)}
+.carousel-dot:focus-visible,.feed-refresh:focus-visible,.sport-switch button:focus-visible,.chip:focus-visible{outline:2px solid var(--sport-accent);outline-offset:2px}
+@media(max-width:600px){
+ .topbar{grid-template-columns:44px minmax(0,1fr) 44px 44px;gap:6px}
+ .topbar>.icon-btn{grid-column:4;grid-row:1}
+ .header-status{grid-column:2;grid-row:1;max-width:100%;font-size:11px;padding:7px 8px}
+ .feed-refresh{grid-column:3;grid-row:1}
+ .sport-switch{position:sticky;top:0;z-index:30;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+ .sport-switch button{min-height:48px!important;height:48px!important;font-size:13px!important;touch-action:manipulation}
+ .chips{gap:7px}.chip{min-height:48px!important;padding:8px 14px;font-size:13px}
+ .market-filter-details>summary,.card-explanation>summary,.leg-details>summary,.more-analysis>summary,.td-more>summary{min-height:48px}
+ .carousel-instruction{font-size:11px}.carousel-dot{width:36px;height:44px}
+}
+@media(prefers-reduced-transparency:reduce){.sport-switch,.pick-of-day,.control-card,#results>.parlay-card,.more-analysis,.explore-panel-toggle{background:#142230!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media(prefers-reduced-motion:reduce){.feed-refresh.refreshing{animation:none}.carousel-dot:before{transition:none}}

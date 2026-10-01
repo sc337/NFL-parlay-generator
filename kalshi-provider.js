@@ -61,6 +61,7 @@
       const props=games.reduce((n,g)=>n+(g.markets||[]).filter(m=>m.player).length,0);
       const total=games.reduce((n,g)=>n+(g.markets||[]).length,0);
       const age=Math.max(0,Math.round(ageMs/60000));
+      window.FEED_FRESHNESS?.set?.('nfl',data.updated_at);
       if(status)status.textContent=`${delayed?'Delayed':'Active'} • ${total} markets`;
       setStatus(`Kalshi ${delayed?'delayed ':''}snapshot • ${games.length} upcoming NFL games • ${props} player props • ${total} markets • updated ${age}m ago`);
       const btn=document.getElementById('generateBtn');

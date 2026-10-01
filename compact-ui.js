@@ -39,6 +39,7 @@ function updateHeader(){
   wrap.classList.toggle('is-delayed',delayed);
   wrap.classList.toggle('is-unavailable',unavailable);
   wrap.classList.toggle('is-loading',/loading|refreshing|initializing|waiting|checking/i.test(raw));
+  window.FEED_FRESHNESS?.update?.();
 }
 
 function moveNflCard(){
