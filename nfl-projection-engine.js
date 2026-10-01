@@ -64,6 +64,11 @@
     // remains the separate payout input for expected value.
     const marketP=num(m.prob)??num(m.marketProbability)??(typeof impliedProbability==='function'?impliedProbability(m.price):null);
     if(!Number.isFinite(marketP))return null;
+    if(m.type==='td'){
+      const result=window.NFL_TD_MODEL?.estimate?.(game,m);
+      return result||{marketP,modelP:marketP,rawModelP:null,edge:0,ev:null,
+        confidence:0,coverage:0,projectionLine:null,experimental:false};
+    }
     let z=0,coverage=0;
     const tp=teamProjection(game);
     let totalLine=null;
@@ -113,6 +118,7 @@
       m.marketProbability=p.marketP;
       m.modelEdge=p.edge;
       m.projectionCoverage=p.coverage;
+      m.tdExperimental=m.type==='td'&&p.experimental===true;
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;
       m.modelEV=p.ev;m.modelConfidence=p.confidence;m.modelUncertainty=p.uncertainty;

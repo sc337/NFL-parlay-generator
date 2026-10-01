@@ -48,11 +48,13 @@ function record(sport,entry,snapshot,now){
   const independent=sport==='nfl'?coverage>=.2&&(!m.player||projectedLine!=null):
     sport==='mlb'?m.kind==='moneyline'&&coverage>=.45:
     sport==='ufc'?m.kind==='moneyline'&&coverage>0:false;
-  const experimental=(sport==='ncaaf'&&f.experimental===true&&coverage>=.6)||(sport==='mlb'&&m.kind==='total'&&f.experimental===true&&coverage>=.45);
+  const experimental=(sport==='ncaaf'&&f.experimental===true&&coverage>=.6)||
+    (sport==='mlb'&&m.kind==='total'&&f.experimental===true&&coverage>=.45)||
+    (sport==='nfl'&&m.type==='td'&&f.experimental===true&&coverage>=.3);
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   return {id:[sport,ticker,side].join('|'),sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
-    market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,
+    market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,
     selection:m.name||m.label||m.title||'',point:finite(m.point),projectedLine:hasModel?projectedLine:null,
     marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
     forecastType:hasModel?(experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),

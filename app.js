@@ -286,7 +286,8 @@ const STRAIGHT_ONLY_MARKETS = new Set([
 ]);
 
 function isParlayEligible(m){
-  return !STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
+  // TD scorer estimates remain experimental until prospective validation.
+  return m?.type!=='td'&&!STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
 }
 
 const PROP_MARKET_META = {
@@ -938,11 +939,11 @@ function reasonFor(leg,isSgp){
 
 function render(parlays){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
-  if(document.body.classList.contains('prediction-only')){const rows=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
+  if(document.body.classList.contains('prediction-only')){const rows=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=tdWatch()+window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
-  if(!valid.length){const qualified=(state.games||[]).flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&m.nflV3Actionable===true));const watch=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
+  if(!valid.length){const watch=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=tdWatch()+window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;
@@ -975,6 +976,19 @@ function render(parlays){
     });
     wrap.appendChild(node);
   }
+  wrap.insertAdjacentHTML('beforeend',tdWatch());
+}
+
+function tdWatch(){
+  const esc=window.MARKET_GUARDS.esc;
+  const rows=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now())
+    .flatMap(g=>(g.markets||[]).filter(m=>m.type==='td'&&m.tdExperimental&&m._rosterVerified&&Number.isFinite(m.modelProbability))
+      .map(m=>({m,g}))).sort((a,b)=>b.m.modelProbability-a.m.modelProbability).slice(0,4);
+  if(!rows.length)return '';
+  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">Touchdown scorer watch</h3></div></div><p class="summary">Opportunity estimates from completed plays, strongly anchored to the market. Tracked for accuracy; no validated edge or staking recommendation.</p><div class="legs">'+rows.map(({m,g},i)=>{
+    const x=m.tdOpportunity;
+    return '<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.name)+'</div><div class="leg-sub">'+esc(g.away+' at '+g.home)+' · Market '+Math.round(m.marketProbability*100)+'% · Experimental '+Math.round(m.modelProbability*100)+'% · Last '+x.games+' games: '+(x.ten_rush+x.ten_target)+' opportunities inside the 10</div></div>';
+  }).join('')+'</div></article>';
 }
 
 function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }

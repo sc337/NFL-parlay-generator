@@ -23,7 +23,7 @@ async function candidates(sport,{all=false}={}){
   const r=runtime(sport),w=r.window;
   if(sport==='nfl'){
     const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];
-    for(const file of ['nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
+    for(const file of ['nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
     w.NFL_PROJECTIONS.enrich(true);w.NFL_MODEL_V3.enrich();
     const picks=all?(snapshot.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,gameId:g.id}))):w.NFL_SELECTIVITY.historyPicks();
     return{snapshot,rows:picks.map(m=>{
@@ -32,7 +32,7 @@ async function candidates(sport,{all=false}={}){
         noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
         noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
       }:null;
-      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,ablations},game};
+      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental,ablations},game};
     })};
   }
   if(sport==='ncaaf')r.run('ncaaf-model.js');

@@ -28,6 +28,12 @@ const college=record('ncaaf',{market:{ticker:'C',kind:'moneyline',game_id:'99',g
 assert.equal(college.forecastType,'experimental');
 assert.equal(college.modelP,.62);
 assert.equal(college.quotedEV,null,'unvalidated college estimate is not an EV claim');
+const touchdown=record('nfl',{market:{...market,type:'td',marketKey:'player_anytime_td',player:'Scorer',name:'Scorer anytime TD',point:null,ticker:'KXNFLTD-26SEP27AWAHOM-SCORER-1'},
+  forecast:{modelP:.43,rawModelP:.36,coverage:.38,experimental:true,projectedLine:null},game},{},now);
+assert.equal(touchdown.forecastType,'experimental');
+assert.equal(touchdown.marketGroup,'touchdown_scorer');
+assert.equal(touchdown.quotedEV,null);
+assert.equal(record('nfl',{market:{...market,type:'td',player:'Scorer'},forecast:{modelP:.43,coverage:.38,experimental:false},game},{},now).forecastType,'market_only');
 const rows=[{...row,result:'win',actualTotal:42},{...row,id:'under',result:'loss',actualTotal:42},
   {...row,id:'other',eventId:'456',result:'loss',actualTotal:50,point:47.5,projectedLine:48}];
 assert.equal(metrics(rows).settled,3);
