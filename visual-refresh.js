@@ -41,6 +41,10 @@ function compactBrief(sport,sub,opponent=''){
 }
 function selectionParts(value,sub=''){
   const text=value.replace(/^\d+\.\s*/,'').trim();
+  const total=text.match(/^([OU])\s+([\d.]+)$/i);
+  if(total)return {subject:'Game total',market:'Total',line:total[1].toUpperCase()+' '+total[2]};
+  const spread=text.match(/^(.+?)\s+([+−-][\d.]+)$/);
+  if(spread)return {subject:spread[1],market:'Spread',line:spread[2]};
   let match=text.match(/^(.+?)\s*·\s*(?:Game\s+)?([OU])\s+([\d.]+)$/i);
   if(match)return {subject:match[1],market:'Total',line:match[2].toUpperCase()+' '+match[3]};
   match=text.match(/^(.+?)\s+([OU])\s+([\d.]+)\s+(.+)$/i);

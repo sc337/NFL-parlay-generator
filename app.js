@@ -1,5 +1,6 @@
 const state = {
   mode:'sgp',
+  nflWeek:'',
   risk:50,
   selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
   games:[],
@@ -425,7 +426,7 @@ async function ensurePropsForGame(game){
 }
 
 async function ensurePropsForMultiGame(limit=6){
-  const targets=(state.games||[]).filter(g=>!state.propsLoaded.has(g.id)).slice(0,limit);
+  const targets=nflSlate().filter(g=>!state.propsLoaded.has(g.id)).slice(0,limit);
   for(const g of targets) await ensurePropsForGame(g);
 }
 
@@ -482,15 +483,43 @@ function normalizeGame(g){
   return {id:g.id,away:g.away_team,home:g.home_team,commence_time:g.commence_time,markets};
 }
 
+// Thursday–Wednesday date ranges keep one NFL slate together without guessing official week numbers.
+function nflWeekKey(value){
+  if(!value||!Number.isFinite(Date.parse(value)))return '';
+  const date=new Date(value);date.setUTCHours(0,0,0,0);
+  date.setUTCDate(date.getUTCDate()-((date.getUTCDay()+3)%7));
+  return date.toISOString().slice(0,10);
+}
+function nflWeeks(){return [...new Set((state.games||[]).map(g=>nflWeekKey(g.commence_time)).filter(Boolean))].sort()}
+function nflSlate(){
+  const weeks=nflWeeks();
+  if(state.nflWeek!=='all'&&!weeks.includes(state.nflWeek))state.nflWeek=weeks[0]||'';
+  return (state.games||[]).filter(g=>state.nflWeek==='all'||!state.nflWeek||nflWeekKey(g.commence_time)===state.nflWeek);
+}
+function nflWeekLabel(key){
+  const start=new Date(key+'T12:00:00Z'),end=new Date(start);end.setUTCDate(end.getUTCDate()+6);
+  const opts={month:'short',day:'numeric',timeZone:'UTC'};
+  return start.toLocaleDateString(undefined,opts)+' – '+end.toLocaleDateString(undefined,opts);
+}
+function syncNflWeek(){
+  const select=$('#nflWeekSelect');nflSlate();if(!select)return;
+  select.replaceChildren();
+  for(const key of nflWeeks()){const option=document.createElement('option');option.value=key;option.textContent=nflWeekLabel(key);select.appendChild(option)}
+  const all=document.createElement('option');all.value='all';all.textContent='All upcoming';select.appendChild(all);
+  select.value=state.nflWeek||'all';select.disabled=!nflWeeks().length;
+}
+
 function hydrateGames(){
-  const sel=$('#gameSelect');
+  syncNflWeek();
+  const sel=$('#gameSelect'),selected=sel.value;
   sel.innerHTML='';
-  (state.games||[]).forEach(g=>{
+  nflSlate().forEach(g=>{
     const o=document.createElement('option');
     o.value=g.id;
     o.textContent=`${g.away} @ ${g.home}`;
     sel.appendChild(o);
   });
+  if([...sel.options].some(o=>o.value===selected))sel.value=selected;
 }
 
 function correlation(a,b){
@@ -869,7 +898,7 @@ function buildMulti(count,risk,variant){
   window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
   const all=[];
-  for(const g of state.games||[]){
+  for(const g of nflSlate()){
     for(const m of g.markets){
       if(!state.selectedMarkets.has(m.type) || !isParlayEligible(m)) continue;
       const score=candidateScore(m,targetRisk,variant);
@@ -958,22 +987,23 @@ function nflKickoff(value){
 function render(parlays){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
   renderNflStraight();renderTdMarkets();
-  if(document.body.classList.contains('prediction-only')){const rows=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
+  if(document.body.classList.contains('prediction-only')){const rows=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
-  if(!valid.length){const watch=(state.games||[]).filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
+  if(!valid.length){const watch=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;
     node.querySelector('.parlay-name').textContent=p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
-    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Individual quotes, indicative';
-    node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+
+    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Price est.';
+    node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
+    node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
     const matchup=p.gameLabel?.split(/\s+@\s+/).map(team=>team.trim().split(/\s+/).at(-1)).join(' @ ');
-    node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(matchup||'Same game')+(nflKickoff(p.kickoff)?' · '+nflKickoff(p.kickoff):'')+' · '+(p.scriptName||'Related legs'):'Multi-game · '+p.legs.length+' qualified legs')+
+    node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(matchup||'Same game')+(nflKickoff(p.kickoff)?' · '+nflKickoff(p.kickoff):'')+' · '+(p.scriptName||'Related legs'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
       (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');
     if(state.mode==='sgp'&&p.gameLabel){const teams=p.gameLabel.split(/\s+@\s+/);if(teams.length===2){node.querySelector('.summary').dataset.away=teams[0];node.querySelector('.summary').dataset.home=teams[1]}}
     node.querySelector('.score').textContent=`Rating ${p.score}/100 · Not win chance`;
@@ -1027,7 +1057,7 @@ async function generate(){
   const variants=['safe','balanced','long'];
   let parlays;
   if(state.mode==='sgp'){
-    const slate=state.games||[];
+    const slate=nflSlate();
     const game=slate.find(g=>g.id===$('#gameSelect').value) || slate[0];
     if(!game){window.PICK_OF_DAY?.show?.('nfl');$('#results').innerHTML='<div class="empty">No NFL games are loaded.</div>';return;}
     await ensurePropsForGame(game);
@@ -1071,6 +1101,7 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   await generate();
 }));
 
+$('#nflWeekSelect')?.addEventListener('change',e=>{state.nflWeek=e.target.value;hydrateGames();generate()});
 $('#gameSelect').addEventListener('change',()=>generate());
 $$('.chip').forEach(c=>c.addEventListener('click',()=>{
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl') return;
