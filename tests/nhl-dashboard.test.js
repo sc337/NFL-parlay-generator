@@ -168,6 +168,7 @@ test('NHL prop ranking discounts weak coverage and keeps market-only props label
 test('NHL Standard / ALT / Both filter all recommendations and preserve stable generation',async()=>{
  const app=runtime(),spread=(id,line,label)=>({...app.a,game_id:id,event_ticker:'KXNHLGAME-'+id,selection_id:id+'-'+line,kind:'spread',line,label});
  app.data.markets=[spread('1',1.5,'Standard 1'),spread('1',2.5,'ALT 1'),spread('2',1.5,'Standard 2'),spread('2',2.5,'ALT 2')];
+ app.window.NHL_MODEL={estimate:()=>({modelP:.75,coverage:.5})};
  await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
  const html=app.nodes.get('#results').innerHTML;assert.match(html,/ALT 1|ALT 2/);assert.doesNotMatch(html,/Standard 1|Standard 2/);assert.equal((html.match(/data-alt-line="true"/g)||[]).length,2);assert.equal(app.daily().market.isAltLine,true);
  app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,html);
@@ -197,4 +198,23 @@ test('NHL date and ALT controls populate available dates and handle change event
  listeners.change({target:{id:'nhlDateSelect',value:key}});assert.equal(app.window.NHL_DASHBOARD.filters().date,key);
  app.window.__ACTIVE_SPORT='nfl';listeners.change({target:{id:'nhlDateSelect',value:'all'}});assert.equal(app.window.NHL_DASHBOARD.filters().date,key);
  const html=fs.readFileSync('index.html','utf8');assert.match(html,/id="nhlDateSelect"/);assert.match(html,/id="nhlLinesSelect"/);assert.match(html,/nhl-alt-lines\.js/);
+});
+test('NHL rejects the distant heavily priced ALT totals in the screenshots',async()=>{
+ const app=runtime(),make=(id,line,ask,p)=>({...app.a,kind:'total',game_id:id,event_ticker:'Game-'+id,selection_id:id+'-'+line,line,label:'Total '+id+' '+line,yes_ask:ask,yes_bid:ask-.02,forecast:{modelP:p,coverage:.5}});
+ app.data.markets=[make('NYR',5.5,.5,.5),make('NYR',8.5,.85,.852),make('VGK',6.5,.5,.5),make('VGK',4.5,.84,.84),make('NYR',6.5,.57,.606),make('VGK',5.5,.65,.667)];
+ app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
+ assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);assert.equal(app.daily().market.line,6.5);
+ assert.doesNotMatch(app.nodes.get('#results').innerHTML,/Total NYR 8.5|Total VGK 4.5/);
+ app.window.NHL_DASHBOARD.setLineMode('standard');assert.equal(app.window.NHL_DASHBOARD.availableCount(),2);
+});
+test('NHL ALT forecasts are withheld after 30 minutes, while standard quotes retain existing freshness gate',async()=>{
+ const app=runtime(),base={...app.a,kind:'spread',game_id:'1',event_ticker:'Game-1',forecast:{modelP:.75,coverage:.5}};
+ app.data.markets=[{...base,line:1.5,selection_id:'std'},{...base,line:2.5,selection_id:'alt'}];app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
+ app.window.NHL_DASHBOARD.setLineMode('alt');assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);app.advance(31*60000);assert.equal(app.window.NHL_DASHBOARD.availableCount(),0);
+ app.window.NHL_DASHBOARD.setLineMode('standard');assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);
+});
+test('NHL team-line ranking balances price advantage against raw win chance',async()=>{
+ const app=runtime(),make=(id,p,ask)=>({...app.a,kind:'total',line:5.5,game_id:id,event_ticker:'Game-'+id,selection_id:id,label:'Pick '+id,yes_ask:ask,yes_bid:ask-.02,forecast:{modelP:p,coverage:.5}});
+ app.data.markets=[make('expensive',.85,.84),make('value',.76,.6)];app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
+ assert.equal(app.daily().market.game_id,'value');assert.ok(app.nodes.get('#results').innerHTML.indexOf('Pick value')<app.nodes.get('#results').innerHTML.indexOf('Pick expensive'));
 });

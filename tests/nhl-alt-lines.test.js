@@ -15,3 +15,11 @@ test('invalid quotes cannot determine the reference and classifications do not r
  const a=api(),rows=[market('total',5.5,.6,{modelP:.2}),market('total',6.5,.5,{yes_bid:null}),market('total',7.5,.5,{yes_ask:NaN})];a.classify(rows);
  assert.deepEqual(rows.map(m=>m.isAltLine),[false,true,true]);rows[0].modelP=.99;a.classify(rows);assert.equal(rows[0].isAltLine,false);
 });
+test('NHL ALT limits reject distant, expensive, low-probability and marginal-price suggestions',()=>{
+ const a=api(),m={kind:'total',isAltLine:true,altDistance:1,yes_ask:.65},f={modelP:.7,coverage:.5};
+ assert.equal(a.qualifies(m,f),true);
+ for(const [patch,forecast] of [[{altDistance:2},f],[{yes_ask:.85},{modelP:.88,coverage:.5}],[{},null],[{}, {...f,coverage:.3}],[{yes_ask:.68},f],[{yes_ask:.4},{modelP:.5,coverage:.5}],[{altDistance:null},f]])assert.equal(a.qualifies({...m,...patch},forecast),false);
+ assert.equal(a.qualifies({...m,isAltLine:false},null),true);
+ assert.equal(a.qualifies({...m,kind:'shots',altDistance:2},f),true);
+ assert.equal(a.qualifies({...m,kind:'shots',altDistance:3},f),false);
+});

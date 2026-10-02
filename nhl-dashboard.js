@@ -19,7 +19,7 @@ function controls(){
   button.disabled=!!lastLoaded&&!available;
   button.title=button.disabled?'No current quotes for this market':kind==='saves'?'Goalie saves are market-only until starter and usage data are verified':'';
  }
- const note=host.querySelector('#nhlMarketNote');if(note)note.textContent=!selectedMarkets.size?'Select at least one market.':'Unavailable markets are disabled. Saves remain market-only until starter data is verified.';
+ const note=host.querySelector('#nhlMarketNote');if(note)note.textContent=!selectedMarkets.size?'Select at least one market.':lastLoaded&&lineMode!=='standard'&&!G.fresh({updated_at:snapshotAt},.5)?'ALT picks paused: quotes are older than 30 minutes. Refresh markets.':'Unavailable markets are disabled. Saves remain market-only until starter data is verified.';
  const lines=host.querySelector('#nhlLinesSelect');if(lines)lines.value=lineMode;
  const dates=host.querySelector('#nhlDateSelect');if(dates){
   const keys=[...new Set(markets.filter(m=>m.game_status==='pre'&&G.pregame(m)).map(m=>dateKey(m.game_time)).filter(Boolean))].sort();
@@ -37,10 +37,11 @@ function quality(m){return Math.round(Math.max(0,Math.min(99,65+Math.min(20,Math
 function fresh(){return !!lastLoaded&&G.fresh({updated_at:snapshotAt},2)}
 function model(m){const tick=Math.floor(Date.now()/30000);if(tick!==modelTick){modelTick=tick;modelCache.clear()}if(!modelCache.has(m))modelCache.set(m,window.NHL_MODEL?.estimate?.(m,context)||null);return modelCache.get(m)}
 function propValue(m,f){return f?.modelP!=null&&f.modelP>G.quote(m)}
-function score(m){const f=model(m),base=f?.modelP!=null?f.modelP*70+quality(m)*.3:quality(m)*.6;if(!PROPS.includes(m.kind)||f?.modelP==null)return base;const coverage=Math.max(0,Math.min(1,Number.isFinite(f.coverage)?f.coverage:.5));return base+200*(f.modelP-G.quote(m))*coverage}
+function score(m){const f=model(m),base=f?.modelP!=null?f.modelP*70+quality(m)*.3:quality(m)*.6;if(f?.modelP==null)return base;const coverage=Math.max(0,Math.min(1,Number.isFinite(f.coverage)?f.coverage:.5));return base+200*(f.modelP-G.quote(m))*coverage}
 function ranked(rows){return rows.sort((a,b)=>score(b)-score(a)||(+b.volume||0)-(+a.volume||0)||String(a.selection_id).localeCompare(String(b.selection_id)))}
-function pool(){if(!fresh())return [];return ranked(markets.filter(m=>enabled(m)&&eligible(m)).filter(m=>{const f=model(m);return !f||f.modelP>=.4&&f.modelP<=.9&&(!PROPS.includes(m.kind)||propValue(m,f))}))}
-function propPool(){if(!fresh())return [];return ranked(markets.filter(m=>enabled(m)&&PROPS.includes(m.kind)&&eligible(m)).filter(m=>{const f=model(m);return !f||f.modelP>=.15&&f.modelP<=.9&&propValue(m,f)}))}
+function altQualified(m,f){if(m.isAltLine&&!G.fresh({updated_at:snapshotAt},(window.NHL_ALT_LINES?.policy?.maxQuoteAgeMinutes||30)/60))return false;return window.NHL_ALT_LINES?.qualifies?.(m,f)??!m.isAltLine}
+function pool(){if(!fresh())return [];return ranked(markets.filter(m=>enabled(m)&&eligible(m)).filter(m=>{const f=model(m);return altQualified(m,f)&&(!f||f.modelP>=.4&&f.modelP<=.9&&(!PROPS.includes(m.kind)||propValue(m,f)))}))}
+function propPool(){if(!fresh())return [];return ranked(markets.filter(m=>enabled(m)&&PROPS.includes(m.kind)&&eligible(m)).filter(m=>{const f=model(m);return altQualified(m,f)&&(!f||f.modelP>=.15&&f.modelP<=.9&&propValue(m,f))}))}
 function media(m){return window.SPORT_MEDIA?.nhl?.(m)||''}
 function note(m){const f=model(m);if(!f)return 'Market only · No independent estimate'+(m.kind==='saves'?' · Starter unconfirmed':'');const projection=f.projectedLine!=null?' · Proj. '+f.projectedLine.toFixed(1):f.projectedAway!=null?' · Proj. '+f.projectedAway.toFixed(1)+'–'+f.projectedHome.toFixed(1):'';return 'Experimental estimate '+Math.round(f.modelP*100)+'%'+projection+(m.player?' · If playing':' · Goalies unconfirmed')}
 function row(m,i){return '<div class="leg sport-visual-leg" data-event-time="'+G.esc(m.game_time)+'" data-alt-line="'+(m.isAltLine?'true':'false')+'" data-matchup="'+G.esc(m.game_label)+'">'+media(m)+'<div class="sport-visual-copy"><div class="leg-title">'+(i!=null?(i+1)+'. ':'')+G.esc(m.label)+'</div><div class="leg-sub">'+G.esc(m.game_label)+' · '+G.esc(note(m))+(m.season_type===1?' · Preseason':'')+'</div></div><div class="leg-quote">Kalshi '+Math.round(G.quote(m)*100)+'¢</div></div>'}
