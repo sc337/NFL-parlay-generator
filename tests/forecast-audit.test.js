@@ -48,3 +48,7 @@ console.log('Prospective forecast audit fixtures passed');
 const underAudit=record("mlb",{market:{ticker:"PAIR",kind:"total",side:"no",quoteSide:"no",label:"Under 8.5 runs scored",game_time:"2026-09-28T00:00:00Z",probability:.55,yes_ask:.55,spread:.02,volume:100},forecast:{}},{},now);
 assert.equal(underAudit.side,"no");
 assert.equal(underAudit.id,"mlb|PAIR|no");
+
+const hockey=record('nhl',{market:{ticker:'KXNHLPTS-26OCT03BOSNYR-PLAYER-1',kind:'points',line:.5,player_id:'100',game_id:'nhl1',game_status:'pre',game_time:'2026-09-28T00:00:00Z',probability:.55,yes_ask:.57,spread:.02,volume:100},forecast:{modelP:.65,rawModelP:.65,coverage:.5,experimental:true,projectedLine:1.1}},{updated_at:'2026-09-27T17:00:00Z'},now);
+assert.equal(hockey.forecastType,'experimental');assert.equal(hockey.quotedEV,null);assert.equal(hockey.point,.5);
+assert.equal(build([{...hockey,result:'win'}]).sports.nhl.experimentalRecorded,1);

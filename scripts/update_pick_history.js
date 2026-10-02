@@ -37,7 +37,8 @@ async function candidates(sport,{all=false}={}){
   }
   if(sport==='ncaaf')r.run('ncaaf-model.js');
   if(sport==='mlb')r.run('mlb-totals-model.js');
-  r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':'ufc-dashboard.js');
+  if(sport==='nhl')r.run('nhl-model.js');
+  r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':sport==='nhl'?'nhl-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');
   const model=sport==='ncaaf'?api.projection:api.model;
@@ -57,7 +58,7 @@ function record(sport,entry,now){
   const modelP=Number(f.modelP),rawModelP=Number(f.rawModelP??f.modelP);
   if(!ticker||!Number.isFinite(Date.parse(close))||Date.parse(close)<=now||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!(marketP>0&&marketP<1))return null;
   const independent=sport==='nfl'?(Number(f.coverage)>=.2&&Number.isFinite(modelP)):sport==='mlb'?m.kind==='moneyline'&&Number(f.context?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:sport==='ufc'?Number(f.match?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:false;
-  const experimental=sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
+  const experimental=(sport==='nhl'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP))||sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
   const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
     marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
@@ -69,7 +70,7 @@ function record(sport,entry,now){
 async function main(){
   const now=Date.now(),old=fs.existsSync(outFile)?JSON.parse(fs.readFileSync(outFile,'utf8')):{records:[]};
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id));
-  for(const sport of ['nfl','mlb','ncaaf','ufc']){
+  for(const sport of ['nfl','mlb','ncaaf','ufc','nhl']){
     try{const {rows:choices}=await candidates(sport);for(const choice of choices){const r=record(sport,choice,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id)}}}
     catch(error){console.warn('History candidates unavailable for',sport,error)}
   }

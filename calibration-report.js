@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),esc=s=>window.MARKET_GUARDS?.esc?.(s)??String(s||'');
 let records=[],updated='',loaded=false,audit=null;
-const sports=['nfl','mlb','ncaaf','ufc'];
+const sports=['nfl','mlb','ncaaf','ufc','nhl'];
 function mount(){
   const host=$('#moreAnalysis');if(!host||$('#calibrationPanel'))return;
   const panel=document.createElement('section');panel.id='calibrationPanel';panel.className='calibration-panel';

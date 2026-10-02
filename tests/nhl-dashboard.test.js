@@ -53,7 +53,7 @@ test('expired loaded feed clears picks on generation and periodic refresh',async
 test('overlapping NHL refreshes retain the newest response even if the older request fails',async()=>{
  for(const fail of [false,true]){
   const app=runtime(),pending=[];
-  app.context.fetch=()=>new Promise((resolve,reject)=>pending.push({resolve,reject}));
+  app.context.fetch=url=>String(url).includes('nhl-context')?Promise.resolve({ok:true,json:async()=>null}):new Promise((resolve,reject)=>pending.push({resolve,reject}));
   const first=app.window.NHL_DASHBOARD.load(),second=app.window.NHL_DASHBOARD.load();
   const latest={...app.data,markets:app.data.markets.map(m=>({...m,label:'Latest ML'}))};
   pending[1].resolve({ok:true,json:async()=>latest});await second;
@@ -71,4 +71,12 @@ test('cached NHL count drops when games start',async()=>{
  assert.match(app.nodes.get('#dataStatus').textContent,/0 qualified games/);
  assert.equal(app.daily(),undefined);
  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
+});
+
+test('verified player props display independently of the parlay game count',async()=>{
+ const prop={kind:'points',player:'Test Player',player_id:'100',player_verified:true,label:'Test Player Over 0.5 Points',volume:50};
+ const app=runtime(prop);await app.window.NHL_DASHBOARD.load();
+ assert.match(app.nodes.get('#results').innerHTML,/NHL Props/);
+ assert.match(app.nodes.get('#results').innerHTML,/Test Player Over 0.5 Points/);
+ assert.equal(app.window.NHL_DASHBOARD.eligible({...app.a,player_verified:false}),false);
 });

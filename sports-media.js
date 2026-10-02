@@ -29,6 +29,6 @@ function ncaaf(m){
  return first?[first,codes.slice(first.length)].map(c=>img(data.ncaaf_codes[c],c+' logo')).join(''):collegeMark({name:'Game'});
 }
 function ufc(m){const label=String(m.label||'');const name=Object.keys(data.ufc||{}).find(n=>label===n||label.startsWith(n+' by '));return name?img(data.ufc[name],name+' headshot',true):''}
-function nhl(m){const teams=(m.teams||[]).filter(t=>m.kind==='total'||t.code===m.team_code);return teams.map(t=>img(t.logo,t.name+' logo')).join('')}
+function nhl(m){if(m.player&&m.headshot)return img(m.headshot,m.player);const teams=(m.teams||[]).filter(t=>m.kind==='total'||t.code===m.team_code);return teams.map(t=>img(t.logo,t.name+' logo')).join('')}
 window.SPORT_MEDIA={load,nfl,ncaaf,ufc,nhl};
 })();

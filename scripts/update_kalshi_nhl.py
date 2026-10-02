@@ -13,6 +13,8 @@ import urllib.parse
 
 API = 'https://external-api.kalshi.com/trade-api/v2'
 SERIES = {'KXNHLGAME': 'moneyline', 'KXNHLSPREAD': 'spread', 'KXNHLTOTAL': 'total'}
+PROP_SERIES = {'KXNHLGOAL': 'goals', 'KXNHLAST': 'assists', 'KXNHLPTS': 'points',
+               'KXNHLSAVE': 'saves', 'KXNHLSAVES': 'saves'}
 ALIASES = {'LAK': 'LA', 'SJS': 'SJ', 'TBL': 'TB', 'NJD': 'NJ', 'VEG': 'VGK', 'UTAH': 'UTA', 'MON': 'MTL', 'WAS': 'WSH'}
 CODES = set('ANA BOS BUF CAR CBJ CGY CHI COL DAL DET EDM FLA LA MIN MTL NJ NSH NYI NYR OTT PHI PIT SEA SJ STL TB TOR UTA VAN VGK WPG WSH'.split()) | set(ALIASES)
 
@@ -119,10 +121,89 @@ def normalize_market(market, series, events):
                      'season_type': (event.get('season') or {}).get('type'), 'close_time': market.get('close_time'), 'source': 'Kalshi'})
     return rows
 
+def official_game(event, context):
+    """Require the same teams and start time across ESPN and official NHL."""
+    try:
+        start = datetime.fromisoformat(event['date'].replace('Z', '+00:00'))
+        sides = {c['homeAway']: code(c['team']['abbreviation'])
+                 for c in event['competitions'][0]['competitors']}
+        matches = [g for g in context.get('games', {}).values()
+                   if g['away'] == sides['away'] and g['home'] == sides['home']
+                   and abs((datetime.fromisoformat(g['start'])-start).total_seconds()) <= 300]
+        return matches[0] if len(matches) == 1 else None
+    except (KeyError, TypeError, ValueError):
+        return None
+
+def normalize_prop(market, series, events, context):
+    try:
+        from scripts.update_nhl_context import name_key
+    except ModuleNotFoundError:
+        from update_nhl_context import name_key
+    if market.get('status') not in ('active', 'open'):
+        return []
+    matched = schedule_match(market, events)
+    if not matched or matched[0].get('status', {}).get('type', {}).get('state') != 'pre':
+        return []
+    event, sides = matched
+    game = official_game(event, context)
+    if not game:
+        return []
+    match = re.fullmatch(r'(.+?):\s*(\d+)\+\s*(goals?|assists?|points?|saves?)', market.get('title', ''), re.I)
+    if not match or int(match[2]) < 1:
+        return []
+    kind = PROP_SERIES[series]
+    if match[3].lower().rstrip('s') != kind.rstrip('s'):
+        return []
+    line = int(match[2])-.5
+    # An explicit strike must agree with the title; no guessed integer settlement.
+    if market.get('floor_strike') is not None:
+        try:
+            floor = float(market['floor_strike'])
+        except (TypeError, ValueError):
+            return []
+        expected = line if market.get('strike_type') == 'greater' else line+.5 if market.get('strike_type') == 'greater_or_equal' else None
+        if expected is None or floor != expected:
+            return []
+    players = [p for p in context.get('rosters', []) if p['team'] in (game['away'], game['home']) and p['key'] == name_key(match[1])]
+    if len(players) != 1:
+        return []
+    player = players[0]
+    if (kind == 'saves') != (player.get('position') == 'G'):
+        return []
+    teams = [{'code': code(sides[s]['abbreviation']), 'name': sides[s].get('displayName'),
+              'short': sides[s].get('shortDisplayName') or sides[s].get('displayName'),
+              'logo': sides[s].get('logo') or ''} for s in ('away', 'home')]
+    rows = []
+    for side in ('yes', 'no'):
+        ask, bid = price(market, side, 'ask'), price(market, side, 'bid')
+        if ask is None or bid is None or ask < bid:
+            continue
+        label = player['name']+' '+('Over' if side == 'yes' else 'Under')+' '+str(line)+' '+kind.title()
+        rows.append({'ticker': market['ticker'], 'event_ticker': market['event_ticker'], 'series': series,
+            'kind': kind, 'side': side, 'quoteSide': side, 'selection_id': market['ticker']+'|'+side,
+            'contract_title': market.get('title'), 'label': label, 'title': label, 'line': line,
+            'player_id': player['id'], 'player': player['name'], 'player_verified': True,
+            'headshot': player['headshot'], 'team_code': player['team'], 'teams': teams,
+            'yes_bid': bid, 'yes_ask': ask, 'probability': round((bid+ask)/2, 6), 'spread': round(ask-bid, 6),
+            'volume': float(market.get('volume_fp') or market.get('volume') or 0),
+            'game_id': str(event['id']), 'context_game_id': game['id'], 'game_time': event['date'],
+            'game_status': 'pre', 'game_label': teams[0]['short']+' vs '+teams[1]['short'],
+            'season_type': game['season_type'], 'close_time': market.get('close_time'), 'source': 'Kalshi',
+            'rules_note': 'Projection assumes participation. Confirm lineup and sportsbook settlement rules.'})
+    return rows
+
 def main():
+    context_path = Path('data/nhl-context.json')
+    context = json.loads(context_path.read_text()) if context_path.exists() else {}
+    try:
+        stamp = datetime.fromisoformat(context['updated_at'])
+        if not 0 <= (datetime.now(timezone.utc)-stamp).total_seconds() <= 4*3600:
+            context = {}
+    except (KeyError, TypeError, ValueError):
+        context = {}
     raw = []
     counts = {}
-    for series in SERIES:
+    for series in {**SERIES, **PROP_SERIES}:
         cursor = ''
         seen = set()
         counts[series] = 0
@@ -151,8 +232,18 @@ def main():
         if not isinstance(data.get('events'), list):
             raise RuntimeError('Invalid NHL schedule; keeping prior snapshot')
         events.extend(data['events'])
-    rows = [row for market, series in raw for row in normalize_market(market, series, events)
-            if datetime.fromisoformat(row['game_time'].replace('Z', '+00:00')) > now]
+    rows = []
+    for market, series in raw:
+        selections = normalize_market(market, series, events) if series in SERIES else normalize_prop(market, series, events, context)
+        for row in selections:
+            if datetime.fromisoformat(row['game_time'].replace('Z', '+00:00')) <= now:
+                continue
+            if series in SERIES:
+                matched = schedule_match(market, events)
+                game = official_game(matched[0], context) if matched else None
+                if game:
+                    row.update(context_game_id=game['id'], season_type=game['season_type'])
+            rows.append(row)
     payload = {'updated_at': now.isoformat(), 'source': 'Kalshi + ESPN', 'series_counts': counts,
                'status': 'ready', 'markets': rows}
     target = Path('data/kalshi-nhl.json')

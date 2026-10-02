@@ -3,7 +3,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const file=path.join(root,'data/forecast-audit.json');
 const output=path.join(root,'data/forecast-report.json');
-const sportNames=['nfl','mlb','ncaaf','ufc'];
+const sportNames=['nfl','mlb','ncaaf','ufc','nhl'];
 const round=x=>+x.toFixed(4);
 function metrics(rows){
   const settled=rows.filter(r=>['win','loss'].includes(r.result)&&r.marketP>0&&r.marketP<1&&r.modelP>0&&r.modelP<1);
