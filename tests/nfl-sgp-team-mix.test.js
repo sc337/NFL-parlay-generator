@@ -7,7 +7,7 @@ const source=fs.readFileSync('app.js','utf8').split('window.generate=generate;')
 const context={window:{},localStorage:{getItem:()=>null},console,Date,Set,Map};
 vm.runInNewContext(source,context);
 
-const game={id:'fixture',away:'Away',home:'Home',markets:[]};
+const game={id:'fixture',away:'Away',home:'Home',commence_time:'2026-10-04T17:00:00Z',markets:[]};
 for(const team of [game.away,game.home]){
   for(let i=0;i<7;i++){
     game.markets.push({type:'receiving',marketKey:'player_reception_yds',name:`${team} WR ${i} Over 39.5 receiving yards`,player:`${team} WR ${i}`,team,position:'WR',side:'over',point:39.5,price:-120,confidence:70});
@@ -23,6 +23,8 @@ test('all SGP variants draw qualified props from both offenses',()=>{
     const p=context.buildSgp(game,6,50,variant,previous);
     assert.ok(p,`${variant} should build`);
     assert.equal(p.legs.length,6);
+    assert.equal(p.kickoff,game.commence_time);
+    if(variant==='safe')assert.equal(p.name,'Conservative');
     const teams=p.legs.filter(l=>l.team==='Away'||l.team==='Home');
     assert.ok(teams.filter(l=>l.team==='Away').length>=2,`${variant} lacks away exposure`);
     assert.ok(teams.filter(l=>l.team==='Home').length>=2,`${variant} lacks home exposure`);
@@ -46,4 +48,11 @@ test('thin one-team markets fall back without inventing an opponent pick',()=>{
   assert.ok(p);
   assert.equal(p.teamMix,'Concentrated');
   assert.ok(p.legs.every(l=>l.team!=='Away'));
+});
+
+test('NFL kickoff labels contain date, time and zone without inventing invalid dates',()=>{
+  assert.match(context.nflKickoff(game.commence_time),/Oct/);
+  assert.match(context.nflKickoff(game.commence_time),/\d+:\d{2}/);
+  assert.equal(context.nflKickoff('invalid'),'');
+  assert.equal(context.nflKickoff(null),'');
 });
