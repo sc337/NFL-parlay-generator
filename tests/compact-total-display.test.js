@@ -37,6 +37,8 @@ test('NFL spread and bare total names produce matching odds tiles', () => {
     ['Under 43.5','Total','U 43.5','Game total'],
     ['Dallas Cowboys +3.5','Spread','+3.5','Dallas Cowboys'],
     ['Minnesota Vikings -10.5','Spread','-10.5','Minnesota Vikings'],
+    ['Los Angeles Dodgers -3.5 Run Line','Run line','-3.5','Los Angeles Dodgers'],
+    ['San Diego Padres +1.5 Run Line','Run line','+1.5','San Diego Padres'],
   ]) {
     const result = context.selectionParts(context.compactTitle(label, 'nfl', ''));
     assert.equal(result.market, market);
