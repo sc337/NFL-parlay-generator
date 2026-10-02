@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const G=window.MARKET_GUARDS,$=s=>document.querySelector(s),PROPS=['goals','assists','points','shots','saves'];
-let markets=[],context=null,legs=2,generation=0,lastLoaded=0,lastStatus='',snapshotAt='',loadSequence=0,modelCache=new Map(),modelTick=0;
+let markets=[],context=null,legs=2,lastLoaded=0,lastStatus='',snapshotAt='',loadSequence=0,modelCache=new Map(),modelTick=0;
 function eligible(m){const prop=PROPS.includes(m.kind),ask=G.quote(m);return ['moneyline','spread','total',...PROPS].includes(m.kind)&&(!prop||m.player_verified===true)&&m.game_status==='pre'&&G.pregame(m)&&!!m.game_id&&ask!==null&&Number.isFinite(m.yes_bid)&&m.yes_bid>0&&m.yes_bid<=ask&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=(prop?.10:.08)&&Number(m.volume)>=(prop?25:100)&&ask>=(prop?.10:.35)&&ask<=.85}
 function quality(m){return Math.round(Math.max(0,Math.min(99,65+Math.min(20,Math.log10((+m.volume||0)+1)*4)-(+m.spread||0)*180)))}
 function fresh(){return !!lastLoaded&&G.fresh({updated_at:snapshotAt},2)}
@@ -22,7 +22,7 @@ function render(){
  window.PICK_OF_DAY?.show?.('nhl',today&&{market:today,eventTime:today.game_time,label:today.label,event:today.game_label,media:media(today),note:note(today)});
  const games=G.unique(ranked,Infinity),covered=ranked.filter(m=>model(m)).length;
  lastStatus='Kalshi NHL · '+games.length+' qualified games · '+(covered?'Experimental NHL model':'Market only');$('#dataStatus').textContent=lastStatus;
- const start=games.length?generation%games.length:0,rotated=games.slice(start).concat(games.slice(0,start)),selected=rotated.slice(0,legs);
+ const selected=games.slice(0,legs);
  $('#resultsTitle').textContent='NHL Recommendations';
  $('#results').innerHTML=(selected.length===legs&&G.independent(selected)?card(selected):'<div class="empty">'+(games.length?games.length+' of '+legs+' games qualify · Try fewer legs.':'No qualifying NHL picks · Pass.')+'</div>')+propsCard();
  window.PARLAY_GENERATOR?.syncLabel?.();
@@ -45,5 +45,5 @@ async function load(){
 function showCached(){if(!lastLoaded||Date.now()-lastLoaded>60000||!fresh())return false;render();window.COMPACT_UI?.refresh?.();return true}
 function historyPicks(){const today=window.PICK_OF_DAY?.today||((time)=>new Date(time).toDateString()===new Date().toDateString());const m=pool().find(m=>today(m.game_time));return m?[{market:m,forecast:model(m)||{}}]:[]}
 window.setInterval?.(()=>{if(window.__ACTIVE_SPORT==='nhl'&&lastLoaded){render();window.COMPACT_UI?.refresh?.()}},30000);
-window.NHL_DASHBOARD={load,render,showCached,eligible,quality,model,historyPicks,availableCount:()=>lastLoaded?G.unique(pool(),Infinity).length:null,setLegs:n=>{legs=Math.max(2,Math.min(6,Number(n)||2));generation++;render();window.COMPACT_UI?.refresh?.()}};
+window.NHL_DASHBOARD={load,render,showCached,eligible,quality,model,historyPicks,availableCount:()=>lastLoaded?G.unique(pool(),Infinity).length:null,setLegs:n=>{legs=Math.max(2,Math.min(6,Number(n)||2));render();window.COMPACT_UI?.refresh?.()}};
 })();

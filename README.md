@@ -11,6 +11,8 @@ A static dashboard for NFL, MLB, NCAAF, UFC, and NHL picks and parlay ideas. [Op
 
 Bankroll Builder starts with no balance rather than assuming a $100 bankroll. A provisional positive-EV straight is capped at 0.5% of available cash and 2% in total daily stakes. These limits do not guarantee safety or profitability; the sport models are not yet proven. Only bets you explicitly **Record bet placed** enter the private browser ledger. Manually mark a recorded bet Win, Loss, or Void; pending stakes are reserved, voids are refunded, and the trend shows balance changes. Editing the bankroll creates an adjustment separate from betting profit. Export a JSON backup under **History & trend** before clearing browser storage or changing devices. There is no sportsbook sync or automatic settlement, and the published pick-history audit is separate from your actual bets.
 
+Generate chooses the highest-ranked qualifying build for the selected leg count. Repeated clicks keep the same picks until market data, eligibility, or settings change. It never rotates to weaker combinations just to show something new.
+
 The dashboard uses current market snapshots. If a sport has no qualifying pregame pick or its data is unavailable, it says so instead of showing demo bets. Suggested parlays are ideas; check the exact line and price at your sportsbook before deciding whether to place one.
 
 ## Data and probabilities

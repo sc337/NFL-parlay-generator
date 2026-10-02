@@ -1094,7 +1094,7 @@ async function generate(){
     }
     parlays=[];
     for(const v of variants){
-      const p=buildSgp(game,count,state.risk,v,parlays.filter(Boolean));
+      const p=buildSgp(game,count,state.risk,v,[]);
       parlays.push(p);
     }
   }else{
@@ -1102,7 +1102,7 @@ async function generate(){
     if(!current())return;
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
   }
-  if(current())render(parlays);
+  if(current())render(parlays.filter(Boolean).sort((a,b)=>Number(b.legs.length===count)-Number(a.legs.length===count)||b.legs.length-a.legs.length||b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b))).slice(0,1));
 }
 
 window.generate=generate;

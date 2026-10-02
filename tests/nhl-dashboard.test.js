@@ -87,3 +87,14 @@ test('scheduled NHL history can record a featured forecast without browser widge
  app.data.markets.forEach(m=>m.game_time=new Date(Date.now()+1000).toISOString());
  const picks=app.window.NHL_DASHBOARD.historyPicks();assert.equal(picks.length,1);assert.ok(picks[0].market.game_id);
 });
+
+test('NHL Generate keeps the highest-ranked distinct games for the selected leg count',async()=>{
+ const app=runtime();
+ const more={...app.b,game_id:'30',event_ticker:'KXNHLGAME-30',selection_id:'30|yes',label:'Third ML',spread:.05,yes_bid:.55};
+ app.data.markets.push(more);await app.window.NHL_DASHBOARD.load();
+ const first=app.nodes.get('#results').innerHTML;
+ for(let i=0;i<4;i++){app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,first)}
+ assert.doesNotMatch(first,/Third ML/);
+ app.window.NHL_DASHBOARD.setLegs(3);assert.match(app.nodes.get('#results').innerHTML,/Third ML/);
+ app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,first);
+});
