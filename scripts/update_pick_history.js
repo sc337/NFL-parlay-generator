@@ -47,7 +47,7 @@ async function candidates(sport,{all=false}={}){
 function readCalibrationVersion(){try{return JSON.parse(fs.readFileSync(path.join(root,'data/model-calibration.js'),'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,'')).updated_at}catch{return null}}
 function record(sport,entry,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
-  const ticker=String(m.ticker||'');const side=sport==='nfl'&&m.quoteSide==='no'?'no':'yes';
+  const ticker=String(m.ticker||'');const side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const close=m.close_time||g.commence_time||m.game_time;
   const eventDate=String(m.event_ticker||ticker).match(/-(\d{2})([A-Z]{3})(\d{2})(?:\d{4})?[A-Z]/);
   const month={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};

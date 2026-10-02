@@ -12,3 +12,7 @@ assert.equal(record('mlb',{...entry,forecast:{modelP:.58,context:{coverage:0},be
 assert.equal(record('ncaaf',{market:{...market,game_time:undefined}},now).eventTime,'2026-09-27T00:00:00.000Z');
 assert.equal(record('ncaaf',{market:{...market,ticker:''}},now),null);
 (async()=>{for(const sport of ['nfl','mlb','ncaaf','ufc']){const {rows}=await candidates(sport);assert.ok(Array.isArray(rows),sport+' candidates');}console.log('Pick history selection and pregame timing passed')})().catch(e=>{console.error(e);process.exitCode=1});
+
+const underHistory=record("mlb",{...entry,market:{...market,kind:"total",side:"no",quoteSide:"no",label:"Under 8.5 runs scored"}},now);
+assert.equal(underHistory.side,"no");
+assert.equal(underHistory.id,["mlb",market.ticker,"no"].join("|"));

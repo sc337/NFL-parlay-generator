@@ -44,3 +44,7 @@ assert.equal(metrics(rows).positiveEV.distinctEvents,2);
 assert.equal(build([{...row,snapshotAt:'2026-09-29T00:00:00Z'}]).pregameViolations,1);
 assert.equal(metrics([{...college,result:'win'}]).experimentalComparison.settled,1);
 console.log('Prospective forecast audit fixtures passed');
+
+const underAudit=record("mlb",{market:{ticker:"PAIR",kind:"total",side:"no",quoteSide:"no",label:"Under 8.5 runs scored",game_time:"2026-09-28T00:00:00Z",probability:.55,yes_ask:.55,spread:.02,volume:100},forecast:{}},{},now);
+assert.equal(underAudit.side,"no");
+assert.equal(underAudit.id,"mlb|PAIR|no");

@@ -49,3 +49,34 @@ test('MLB dashboard displays a projection only when simulation coverage exists',
  assert.ok(Number.isFinite(estimate.projectedTotal));
  assert.equal(estimate.experimental,true);
 });
+test('neutral teams preserve league scoring and low/high scoring changes both sides symmetrically',()=>{
+ const {window,context,market}=setup();
+ const neutral={...context,pitchers:{},scoring:{...context.scoring,teams:{
+  '111':{games:20,runs_for:90,runs_against:90},'147':{games:20,runs_for:90,runs_against:90}}}};
+ const means=window.MLB_TOTALS_MODEL.scoring(context.games[0],neutral);
+ assert.ok(Math.abs(means.awayMean+means.homeMean-9)<1e-9);
+ const baseline=window.MLB_TOTALS_MODEL.estimate(market('Over 8.5 runs scored'),neutral);
+ assert.ok(Math.abs(baseline.projectedTotal-9)<.15);
+ const low={...neutral,scoring:{...neutral.scoring,teams:{
+  '111':{games:20,runs_for:40,runs_against:40},'147':{games:20,runs_for:40,runs_against:40}}}};
+ const over=window.MLB_TOTALS_MODEL.estimate(market('Over 8.5 runs scored'),low);
+ const under=window.MLB_TOTALS_MODEL.estimate(market('Under 8.5 runs scored'),low);
+ assert.ok(under.modelP>over.modelP);
+ assert.equal(over.modelP+under.modelP,1);
+ assert.ok(over.projectedTotal<baseline.projectedTotal);
+});
+test('MLB builder selects an under when its quote offers the qualifying side',async()=>{
+ const {context,market}=setup(),nodes=new Map();
+ const document={body:{classList:{contains:()=>false}},querySelector:s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:''});return nodes.get(s)}};
+ const over={...market('Over 12.5 runs scored'),ticker:'PAIR',side:'yes',probability:.45,yes_ask:.45};
+ const under={...market('Under 12.5 runs scored'),ticker:'PAIR',side:'no',probability:.55,yes_ask:.55};
+ const window={__ACTIVE_SPORT:'mlb',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},COMPACT_UI:{refresh(){}}};
+ const fetch=async url=>({ok:true,json:async()=>url.includes('context')?context:{updated_at:new Date().toISOString(),markets:[over,under]}});
+ const sandbox=vm.createContext({window,document,fetch,Date,Math});
+ for(const file of ['market-guards.js','model-core.js','mlb-totals-model.js','mlb-dashboard.js'])vm.runInContext(fs.readFileSync(file,'utf8'),sandbox);
+ await window.MLB_DASHBOARD.load();
+ assert.match(nodes.get('#results').innerHTML,/Game Total Under 12.5/);
+ assert.doesNotMatch(nodes.get('#results').innerHTML,/Game Total Over 12.5/);
+ assert.ok(window.MLB_DASHBOARD.model(under).betEV>0);
+ assert.ok(window.MLB_DASHBOARD.model(over).betEV<0);
+});

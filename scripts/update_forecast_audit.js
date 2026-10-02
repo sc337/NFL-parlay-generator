@@ -31,7 +31,7 @@ function start(sport,m,g,snapshot){
 }
 function record(sport,entry,snapshot,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
-  const ticker=String(m.ticker||''),side=sport==='nfl'&&m.quoteSide==='no'?'no':'yes';
+  const ticker=String(m.ticker||''),side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const eventTime=start(sport,m,g,snapshot),closeTime=m.close_time||eventTime;
   const marketP=finite(m.prob??m.probability??m.marketProbability);
   const ask=finite(sport==='nfl'?m.quoteProbability:m.yes_ask);
