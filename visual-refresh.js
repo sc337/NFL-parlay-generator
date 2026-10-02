@@ -20,14 +20,14 @@ function compactTitle(value,sport,sub){
   if(sport==='ufc'&&/\bWinner\b/i.test(sub)&&!text.includes(' ML'))text+=' ML';
   return text.replace(/\s+/g,' ').trim();
 }
-function compactBrief(sport,sub){
+function compactBrief(sport,sub,opponent=''){
   const market=sub.match(/\bMarket\s+(\d+)%/i)||sub.match(/\bKalshi\s+(\d+)%/i);
   const model=sub.match(/\b(?:Simulated|Model|Experimental estimate)\s+(\d+)%/i);
   const parts=[];
   const starts=sub.match(/ · Starts (.+)$/);if(starts)parts.push(starts[1]);
   if(sport==='ufc'){
     const fight=sub.split(' · ')[0]||'';
-    const opponent=fight.split(/\s+vs\s+/i)[1];if(opponent)parts.push('vs '+opponent);
+    if(opponent)parts.push('vs '+opponent);else if(fight)parts.push(fight);
   }
   if(sport==='nfl'){
     const game=sub.split(' · ')[0];if(game)parts.push(game.replace(/\s+at\s+/i,' @ '));
@@ -88,7 +88,7 @@ function compactParlays(){
       const original=title.textContent.trim(),subText=sub?.textContent.trim()||'',reasonText=reason?.textContent.trim()||'';
       const selection=selectionParts(compactTitle(original,sport,subText),subText),quote=leg.querySelector('.leg-quote');
       title.textContent=(i+1)+'. '+selection.subject;
-      if(sport!=='nfl'||subText){const brief=compactBrief(sport,subText).replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
+      if(sport!=='nfl'||subText){const brief=compactBrief(sport,subText,leg.dataset.opponent||'').replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
       if(selection.line){
         const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
         tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';

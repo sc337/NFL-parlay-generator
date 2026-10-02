@@ -15,3 +15,14 @@ test('college total descriptions produce an odds tile with the matchup as subjec
     assert.equal(result.line, `${side[0]} 55.5`);
   }
 });
+
+test('compact UFC rows use the selected fighter’s actual opponent in either matchup order', () => {
+  const source = fs.readFileSync(require.resolve('../visual-refresh.js'), 'utf8');
+  const functions = source.slice(source.indexOf('function compactTitle'), source.indexOf('function compactSummaries'));
+  const context = vm.createContext({});
+  vm.runInContext(functions, context);
+  const sub = 'Opponent A vs Fighter B · Winner · Kalshi 35% · Model 39%';
+  assert.equal(context.compactBrief('ufc', sub, 'Opponent A'), 'vs Opponent A · Mkt 35% · Model 39%');
+  assert.equal(context.compactBrief('ufc', sub, 'Fighter B'), 'vs Fighter B · Mkt 35% · Model 39%');
+  assert.match(context.compactBrief('ufc', sub), /^Opponent A vs Fighter B/);
+});
