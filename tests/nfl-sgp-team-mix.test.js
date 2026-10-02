@@ -61,3 +61,12 @@ test('NFL compact labels shorten matchups and times while full details retain th
   assert.equal(context.nflKickoff('invalid'),'');
   assert.equal(context.nflKickoff(null),'');
 });
+
+ test('every NFL profile rejects a second prop for the same player',()=>{
+ const first={type:'receptions',marketKey:'player_receptions',player:'Receiver',team:'Home',price:120};
+ const second={...first,type:'receiving',marketKey:'player_reception_yds'};
+ for(const variant of ['safe','balanced','long']){
+  assert.equal(context.coherentWithLegs(second,[first],variant),false);
+  assert.equal(context.packageParlay([first,second],variant,true),null);
+ }
+ });

@@ -19,7 +19,7 @@ function variants(){
  const cards=[...grid.children].filter(x=>x.classList.contains('parlay-card'));
  const carousel=nfl&&cards.length>=2;
  grid.classList.toggle('nfl-carousel',carousel);
- grid.setAttribute('aria-label',carousel?'NFL parlay ideas. Swipe left or right for Conservative, Best Balance and Longshot.':'Recommendations');
+ grid.setAttribute('aria-label',carousel?'NFL parlay ideas. Swipe left or right for Conservative, Balanced and Longshot.':'Recommendations');
  cards.forEach(card=>card.classList.remove('variant-hidden'));
  const hint=$('#parlaySwipeHint');if(hint){hint.hidden=!carousel;if(carousel){
    if(!hint.querySelector('.carousel-position'))hint.innerHTML='<span class="carousel-instruction">Swipe parlays</span><span class="carousel-position" aria-live="polite"></span><span class="carousel-dots" role="group" aria-label="Parlay options"></span>';

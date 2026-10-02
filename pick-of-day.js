@@ -10,8 +10,8 @@ function selection(label){
   m=label.match(/^(.+?)\s+wins by (?:over|more than)\s+([\d.]+)\s+points?$/i);
   if(m)return {subject:m[1],market:'Spread',line:'−'+m[2]};
   m=label.match(/^(.+?)\s+(?:ML|moneyline)$/i);
-  if(m)return {subject:m[1],market:'Moneyline',line:'ML'};
-  return {subject:label,market:'Moneyline',line:'ML'};
+  if(m)return {subject:m[1],market:'Winner',line:'ML'};
+  return {subject:label,market:'Winner',line:'ML'};
 }
 function loading(){const host=$('#pickOfDayContent');if(host)host.textContent='Checking today’s qualified pregame markets…'}
 function show(sport,pick){if(window.__ACTIVE_SPORT!==sport)return;const host=$('#pickOfDayContent');if(!host)return;
@@ -21,8 +21,8 @@ function show(sport,pick){if(window.__ACTIVE_SPORT!==sport)return;const host=$('
   const row=document.createElement('div'),media=document.createElement('span'),copy=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('span'),reference=document.createElement('small'),foot=document.createElement('small'),tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong');
   row.className='pick-row';media.className='pick-media';copy.className='pick-copy';name.className='pick-name';meta.className='pick-meta';reference.className='market-tile-price';foot.className='pick-foot';tile.className='market-tile pick-market-tile';heading.className='market-tile-heading';line.className='market-tile-line';
   const parsed=selection(pick.label||pick.market?.name||pick.market?.label||'Qualified straight');
-  media.innerHTML=pick.media||'';name.textContent=parsed.subject||pick.event||'Upcoming event';
-  meta.textContent=(parsed.subject?(pick.event||'Upcoming event')+' · ':'')+new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  media.innerHTML=pick.media||'';name.textContent=sport==='mlb'?(window.DISPLAY_COPY?.mlbTeam?.(parsed.subject)||parsed.subject||pick.event||'Upcoming event'):(parsed.subject||pick.event||'Upcoming event');
+  meta.textContent=[window.DISPLAY_COPY?.date?.(pick.eventTime)||new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),parsed.subject?(window.DISPLAY_COPY?.matchup?.(pick.event)||pick.event||'Upcoming event'):''].filter(Boolean).join(' · ');
   const ask=window.MARKET_GUARDS?.quote?.(pick.market);
   reference.textContent=sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
   foot.textContent=pick.note||'Reference only. Verify the current line at your sportsbook.';

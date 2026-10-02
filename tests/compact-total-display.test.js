@@ -46,3 +46,16 @@ test('NFL spread and bare total names produce matching odds tiles', () => {
     assert.equal(result.subject, subject);
   }
 });
+
+test('shared labels shorten dates and MLB names without removing nonzero minutes',()=>{
+ const source=fs.readFileSync(require.resolve('../visual-refresh.js'),'utf8');
+ const context=vm.createContext({Date});
+ vm.runInContext(source.slice(source.indexOf('function compactDate'),source.indexOf('function compactSummaries')),context);
+ assert.equal(context.shortMlbTeam('Los Angeles Dodgers'),'Dodgers');
+ assert.equal(context.shortMlbTeam('Chicago White Sox'),'White Sox');
+ assert.equal(context.shortMatchup('Dodgers at Rockies'),'Dodgers vs Rockies');
+ assert.equal(context.compactDate('invalid'),'');
+ assert.equal(context.compactDate('2026-10-03T12:00:00Z',true),'Oct 3');
+ assert.doesNotMatch(context.compactDate('2026-10-03T17:00:00Z'),/:00|UTC|MST|PDT/);
+ assert.match(context.compactDate('2026-10-03T17:30:00Z'),/:30/);
+});

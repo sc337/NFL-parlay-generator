@@ -584,14 +584,14 @@ const PROFILE_RULES = {
     corrWeight:9,
     propShare:.75,
     maxSamePlayer:1,
-    label:'Best Balance'
+    label:'Balanced'
   },
   long:{
     minPrice:-125,maxPrice:450,
     targetMin:-110,targetMax:300,
     corrWeight:7,
     propShare:.75,
-    maxSamePlayer:2,
+    maxSamePlayer:1,
     label:'Longshot'
   }
 };
@@ -915,7 +915,7 @@ function buildMulti(count,risk,variant){
   // (especially receptions) from monopolizing a multi-game build.
   for(const x of all){
     if(legs.length>=count) break;
-    if(usedGames.has(x.g.id)) continue;
+    if(usedGames.has(x.g.id)||x.m.player&&playerCount(legs,x.m.player)) continue;
     const fam=propFamily(x.m),n=familyCounts.get(fam)||0;
     if(n>=maxFamily) continue;
     legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time});
@@ -933,6 +933,8 @@ function buildMulti(count,risk,variant){
 
 function packageParlay(legs,variant,isSgp,meta={}){
   if(!legs?.length || legs.some(m=>!isParlayEligible(m))) return null;
+  const players=legs.map(l=>l.player).filter(Boolean);
+  if(new Set(players).size!==players.length)return null;
   let decimal=1;
   legs.forEach(l=>decimal*=americanToDecimal(l.price));
   let avg=legs.reduce((s,l)=>s+(Number(l.selectionConfidence)||Number(l.confidence)||impliedProbability(l.price)*100),0)/legs.length;
@@ -940,7 +942,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   if(isSgp){
     for(let i=0;i<legs.length;i++) for(let j=i+1;j<legs.length;j++) corr+=correlation(legs[i],legs[j]);
   }
-  const names={safe:'Conservative',balanced:'Best Balance',long:'Longshot'};
+  const names={safe:'Conservative',balanced:'Balanced',long:'Longshot'};
   const grades={safe:'CONSERVATIVE',balanced:'BEST FIT',long:'HIGHER PAYOUT'};
   return {
     name:names[variant],grade:grades[variant],legs,
