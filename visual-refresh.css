@@ -406,6 +406,11 @@ body[data-sport="nhl"]{--league:#8ed8ff;--league-bg:#183649;--sport-accent:#8ed8
 html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0f3fc;--sport-accent:#12668a;--sport-glow:#d6f0fc}
 .league-mark[data-league="NHL"]{background:#f1f5f9}
 .league-mark[data-league="NHL"] .league-fallback{color:#183649}
+#nhlMarketFilters{margin-bottom:10px;padding:4px 16px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+#nhlMarketFilters>summary{font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between}
+#nhlMarketFilters>summary:after{content:'⌄';color:var(--sport-accent)}
+#nhlMarketFilters[open]>summary:after{content:'⌃'}
+#nhlMarketFilters[open]{padding-bottom:12px}
 #nhlMarketFilters .chip:disabled{opacity:.45;cursor:not-allowed}
 #nhlMarketNote{display:block;margin-top:8px;font-size:11px;line-height:1.4;color:var(--muted)}
 .sport-switch button{min-width:0;white-space:nowrap}

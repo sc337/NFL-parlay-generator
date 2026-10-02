@@ -133,3 +133,34 @@ test('NHL filter markup uses dedicated kinds and accessible pressed states',()=>
  for(const kind of ['moneyline','spread','total','goals','assists','points','shots','saves'])assert.match(html,new RegExp('data-nhl-market="'+kind+'" aria-pressed="true"'));
  assert.match(html,/id="nhlMarketFilters"[^>]+hidden/);assert.match(fs.readFileSync('app.js','utf8'),/#marketChips \.chip/);
 });
+
+test('NHL controls live outside the collapsed parlay panel',()=>{
+ const app=runtime(),main={insertBefore(host,pick){this.moved=host;this.before=pick}},pick={parentElement:null};pick.parentElement=main;
+ const host={style:{},querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}};
+ app.nodes.set('main',main);app.nodes.set('#pickOfDay',pick);app.nodes.set('#nhlMarketFilters',host);app.start();
+ assert.equal(main.moved,host);assert.equal(main.before,pick);assert.equal(host.hidden,false);
+ assert.match(fs.readFileSync('ufc-dashboard.js','utf8'),/show\('\.market-filter-details:not\(#nhlMarketFilters\)',nfl\)/);
+ app.window.__ACTIVE_SPORT='mlb';app.window.NHL_DASHBOARD.controls();assert.equal(host.hidden,true);
+});
+
+test('NHL props rank price-adjusted value rather than raw chance and exclude overpriced estimates',async()=>{
+ const app=runtime(),make=(id,kind,label,ask,p,coverage=.5)=>({...app.a,game_id:id,selection_id:id+'|yes',player_id:id,player:'Player '+id,player_verified:true,kind,label,yes_ask:ask,yes_bid:ask-.02,probability:ask-.01,forecast:{modelP:p,coverage}});
+ app.data.markets=[make('1','goals','Expensive goal under',.85,.88),make('2','points','Better value points over',.6,.76),make('3','assists','Overpriced assist under',.8,.7),make('4','goals','Equal price goals',.7,.7)];
+ app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
+ const html=app.nodes.get('#results').innerHTML,props=html.slice(html.indexOf('NHL Props'));
+ assert.ok(props.indexOf('Better value points over')<props.indexOf('Expensive goal under'));
+ assert.doesNotMatch(html,/Overpriced assist under|Equal price goals/);
+ assert.match(html,/Experimental, unvalidated/);assert.match(html,/not a forced over\/under mix/);
+ const first=html;app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,first);
+ app.window.NHL_DASHBOARD.setMarkets(['goals']);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/Better value points over/);
+});
+
+test('NHL prop ranking discounts weak coverage and keeps market-only props labeled',async()=>{
+ const app=runtime(),make=(id,p,coverage)=>({...app.a,kind:'points',label:'Prop '+id,selection_id:id+'|yes',player_id:id,player:'Player '+id,player_verified:true,forecast:p==null?null:{modelP:p,coverage}});
+ app.data.markets=[make('weak',.8,.2),make('covered',.8,.7),make('unmodeled',null,null)];
+ app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
+ const props=app.nodes.get('#results').innerHTML.split('NHL Props')[1];
+ assert.ok(props.indexOf('Prop covered')<props.indexOf('Prop weak'));
+ assert.ok(props.indexOf('Prop weak')<props.indexOf('Prop unmodeled'));
+ assert.match(props,/Market only · No independent estimate/);
+});
