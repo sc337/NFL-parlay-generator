@@ -1,15 +1,15 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-function runtime(patch={},dataPatch={}){
- const nodes=new Map(),document={querySelector:s=>{if(!nodes.has(s))nodes.set(s,{textContent:'',innerHTML:''});return nodes.get(s)}};
+function runtime(patch={},dataPatch={},storage){
+ const ready=[],nodes=new Map(),document={readyState:'loading',addEventListener:(_event,fn)=>ready.push(fn),querySelector:s=>{if(!nodes.has(s))nodes.set(s,{textContent:'',innerHTML:''});return nodes.get(s)}};
  let daily,refreshes=0,tick,now=Date.now();
  class Clock extends Date {constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
  const window={setInterval:fn=>{tick=fn},__ACTIVE_SPORT:'nhl',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},SPORT_MEDIA:{nhl:()=>''},PICK_OF_DAY:{today:()=>true,show:(_s,p)=>daily=p},COMPACT_UI:{refresh:()=>refreshes++}};
  const make=(id)=>({kind:'moneyline',label:'Bruins ML',selection_id:id+'|yes',event_ticker:'KXNHLGAME-'+id,game_id:id,game_time:new Date(Date.now()+3600000).toISOString(),game_label:'Bruins vs Rangers',game_status:'pre',yes_bid:.58,yes_ask:.60,probability:.59,volume:1000,spread:.02});
  const a={...make('10'),...patch},b=make('20');
  const data={updated_at:new Date().toISOString(),markets:[a,{...a,kind:'total',label:'Over 5.5 goals',selection_id:'total|yes'},b],...dataPatch};
- const context=vm.createContext({window,document,Date:Clock,console,fetch:async()=>({ok:true,json:async()=>data})});
+ const context=vm.createContext({window,document,Date:Clock,console,localStorage:storage,fetch:async()=>({ok:true,json:async()=>data})});
  for(const file of ['market-guards.js','nhl-dashboard.js'])vm.runInContext(fs.readFileSync(file,'utf8'),context);
- return {window,nodes,a,b,context,data,advance:ms=>{now+=ms},tick:()=>tick(),daily:()=>daily,refreshes:()=>refreshes};
+ return {window,nodes,a,b,context,data,start:()=>ready.forEach(fn=>fn()),advance:ms=>{now+=ms},tick:()=>tick(),daily:()=>daily,refreshes:()=>refreshes};
 }
 test('NHL shows compact market-only picks and one leg per distinct game',async()=>{
  const app=runtime();await app.window.NHL_DASHBOARD.load();
@@ -97,4 +97,39 @@ test('NHL Generate keeps the highest-ranked distinct games for the selected leg 
  assert.doesNotMatch(first,/Third ML/);
  app.window.NHL_DASHBOARD.setLegs(3);assert.match(app.nodes.get('#results').innerHTML,/Third ML/);
  app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,first);
+});
+
+test('NHL selected markets filter the parlay, featured pick and prop list',async()=>{
+ const app=runtime();await app.window.NHL_DASHBOARD.load();
+ app.window.NHL_DASHBOARD.setMarkets(['moneyline']);
+ assert.doesNotMatch(app.nodes.get('#results').innerHTML,/Over 5.5|NHL Props/);
+ assert.equal(app.daily().market.kind,'moneyline');
+ app.window.NHL_DASHBOARD.setMarkets(['total']);
+ assert.match(app.nodes.get('#results').innerHTML,/1 of 2 games qualify/);
+ assert.equal(app.daily().market.kind,'total');
+ assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);
+ app.window.NHL_DASHBOARD.setMarkets([]);
+ assert.match(app.nodes.get('#results').innerHTML,/Select at least one NHL market/);
+ assert.equal(app.daily(),undefined);assert.equal(app.window.NHL_DASHBOARD.availableCount(),0);
+});
+test('NHL market preferences survive reload independently of NFL settings',async()=>{
+ const saved=new Map([['nflSelectedMarkets','unchanged']]),storage={getItem:key=>saved.get(key)||null,setItem:(key,value)=>saved.set(key,value)};
+ const app=runtime({}, {},storage);app.window.NHL_DASHBOARD.setMarkets(['points','bogus']);
+ const restored=runtime({}, {},storage);assert.deepEqual([...restored.window.NHL_DASHBOARD.selectedMarkets()],['points']);
+ restored.window.NHL_DASHBOARD.setMarkets([]);assert.deepEqual([...runtime({}, {},storage).window.NHL_DASHBOARD.selectedMarkets()],[]);
+ assert.equal(saved.get('nflSelectedMarkets'),'unchanged');
+});
+test('NHL market buttons handle clicks, disabled feeds and sport switching',async()=>{
+ const app=runtime();let click;const note={textContent:''};
+ const buttons=['moneyline','total','shots','saves'].map(kind=>({dataset:{nhlMarket:kind},classList:{toggle(){}},setAttribute(k,v){this[k]=v}}));
+ const host={style:{},querySelectorAll:()=>buttons,querySelector:()=>note,addEventListener:(_type,fn)=>click=fn};app.nodes.set('#nhlMarketFilters',host);app.start();await app.window.NHL_DASHBOARD.load();
+ assert.equal(host.hidden,false);assert.equal(buttons[2].disabled,true);assert.match(buttons[2].title,/No current quotes/);
+ click({target:{closest:()=>buttons[0]}});assert.equal(buttons[0]['aria-pressed'],'false');assert.equal(app.daily().market.kind,'total');
+ const before=[...app.window.NHL_DASHBOARD.selectedMarkets()];click({target:{closest:()=>buttons[2]}});assert.deepEqual([...app.window.NHL_DASHBOARD.selectedMarkets()],before);
+ app.window.__ACTIVE_SPORT='nfl';app.window.NHL_DASHBOARD.controls();assert.equal(host.hidden,true);assert.equal(host.style.display,'none');
+});
+test('NHL filter markup uses dedicated kinds and accessible pressed states',()=>{
+ const html=fs.readFileSync('index.html','utf8');
+ for(const kind of ['moneyline','spread','total','goals','assists','points','shots','saves'])assert.match(html,new RegExp('data-nhl-market="'+kind+'" aria-pressed="true"'));
+ assert.match(html,/id="nhlMarketFilters"[^>]+hidden/);assert.match(fs.readFileSync('app.js','utf8'),/#marketChips \.chip/);
 });

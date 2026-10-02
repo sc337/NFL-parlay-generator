@@ -1108,7 +1108,7 @@ async function generate(){
 window.generate=generate;
 window.NFL_PARLAY_STATE=state;
 window.NFL_PARLAY_ELIGIBILITY={isParlayEligible,straightOnlyMarkets:[...STRAIGHT_ONLY_MARKETS]};
-$$('.chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
+$$('#marketChips .chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
 $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   $$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;
@@ -1120,7 +1120,7 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
 
 $('#nflWeekSelect')?.addEventListener('change',e=>{state.nflWeek=e.target.value;hydrateGames();generate()});
 $('#gameSelect').addEventListener('change',()=>generate());
-$$('.chip').forEach(c=>c.addEventListener('click',()=>{
+$$('#marketChips .chip').forEach(c=>c.addEventListener('click',()=>{
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl') return;
   c.classList.toggle('active');
   c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false');
