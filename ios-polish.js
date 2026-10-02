@@ -26,6 +26,7 @@ async function refresh(){
     if(active==='nfl')await window.NFL_NO_DEMO?.load?.();
     else if(active==='mlb')await window.MLB_DASHBOARD?.load?.();
     else if(active==='ncaaf')await window.NCAAF_DASHBOARD?.load?.();
+    else if(active==='nhl')await window.NHL_DASHBOARD?.load?.();
     else if(active==='ufc')await window.UFC_DASHBOARD?.load?.();
   }finally{button.disabled=false;button.classList.remove('refreshing');update()}
 }

@@ -16,6 +16,9 @@ async function run(){
    }else if(s==='ncaaf'){
      if(!window.NCAAF_DASHBOARD?.setLegs)throw Error('NCAAF generator unavailable');
      window.NCAAF_DASHBOARD.setLegs(n);
+   }else if(s==='nhl'){
+     if(!window.NHL_DASHBOARD?.setLegs)throw Error('NHL generator unavailable');
+     window.NHL_DASHBOARD.setLegs(n);
    }else if(s==='ufc'){
      if(!window.UFC_DASHBOARD?.setLegs)throw Error('UFC generator unavailable');
      window.UFC_DASHBOARD.setLegs(n);

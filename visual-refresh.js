@@ -51,6 +51,8 @@ function selectionParts(value,sub=''){
   const text=value.replace(/^\d+\.\s*/,'').trim();
   const total=text.match(/^([OU])\s+([\d.]+)$/i);
   if(total)return {subject:'Game total',market:'Total',line:total[1].toUpperCase()+' '+total[2]};
+  const puckLine=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Puck\s+Line$/i);
+  if(puckLine)return {subject:puckLine[1],market:'Puck line',line:puckLine[2]};
   const runLine=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Run\s+Line$/i);
   if(runLine)return {subject:runLine[1],market:'Run line',line:runLine[2]};
   const spread=text.match(/^(.+?)\s+([+−-][\d.]+)$/);
@@ -59,7 +61,7 @@ function selectionParts(value,sub=''){
   if(match)return {subject:match[1],market:'Total',line:match[2].toUpperCase()+' '+match[3]};
   match=text.match(/^(.+?)\s+([OU])\s+([\d.]+)\s+(.+)$/i);
   if(match)return {subject:match[1],market:match[4],line:match[2].toUpperCase()+' '+match[3]};
-  match=text.match(/^([OU])\s+([\d.]+)\s+(?:points?|runs?)(?:\s+scored)?$/i);
+  match=text.match(/^([OU])\s+([\d.]+)\s+(?:points?|runs?|goals?)(?:\s+scored)?$/i);
   if(match)return {subject:(sub.split(' · ')[0]||'Game').replace(/\s+at\s+/i,' @ '),market:'Total',line:match[1].toUpperCase()+' '+match[2]};
   match=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Spread$/i);
   if(match)return {subject:match[1],market:'Spread',line:match[2]};
@@ -127,7 +129,7 @@ function compactParlays(){
     if(score&&sport==='ufc')score.textContent=score.textContent.replace(/^Rating/,'Model rating');
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
     if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating').replace(/^Rating/,'Model rating');
-    if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.textContent=sport==='ncaaf'?'Quote quality: liquidity and spread, not win probability.':'Model rating: selection score, not win probability.';details.append(definition)}
+    if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.textContent=['ncaaf','nhl'].includes(sport)?'Quote quality: liquidity and spread, not win probability.':'Model rating: selection score, not win probability.';details.append(definition)}
   });
 }
 function dockMatchups(){

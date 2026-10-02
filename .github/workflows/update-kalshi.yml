@@ -9,6 +9,7 @@ on:
       - 'scripts/update_kalshi_ufc.py'
       - 'scripts/update_kalshi_ncaaf.py'
       - 'scripts/update_kalshi_mlb.py'
+      - 'scripts/update_kalshi_nhl.py'
       - 'scripts/update_mlb_context.py'
       - 'scripts/attach_game_context.py'
       - 'scripts/update_ncaaf_context.py'
@@ -53,6 +54,8 @@ jobs:
         run: python scripts/update_kalshi_ufc.py
       - name: Fetch and normalize Kalshi MLB markets
         run: python scripts/update_kalshi_mlb.py
+      - name: Fetch and schedule-verify Kalshi NHL markets
+        run: python scripts/update_kalshi_nhl.py
       - name: Fetch free MLB probable-pitcher context
         run: python scripts/update_mlb_context.py
       - name: Match MLB games to schedule
@@ -85,7 +88,7 @@ jobs:
           import json, pathlib, sys
           files = [
             'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
-            'data/kalshi-mlb.json','data/mlb-context.json','data/ncaaf-context.json','data/sports-media.json',
+            'data/kalshi-mlb.json','data/kalshi-nhl.json','data/mlb-context.json','data/ncaaf-context.json','data/sports-media.json',
             'data/pick-history.json','data/model-calibration.js',
             'data/forecast-audit.json','data/forecast-report.json'
           ]
@@ -131,6 +134,7 @@ jobs:
           cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
           cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
           cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
+          cp data/kalshi-nhl.json /tmp/kalshi-nhl.json
           cp data/mlb-context.json /tmp/mlb-context.json
           cp data/ncaaf-context.json /tmp/ncaaf-context.json
           cp data/sports-media.json /tmp/sports-media.json
@@ -142,6 +146,7 @@ jobs:
           git restore data/kalshi-ufc.json 2>/dev/null || true
           git restore data/kalshi-ncaaf.json 2>/dev/null || true
           git restore data/kalshi-mlb.json 2>/dev/null || true
+          git restore data/kalshi-nhl.json 2>/dev/null || true
           git restore data/mlb-context.json 2>/dev/null || true
           git restore data/ncaaf-context.json 2>/dev/null || true
           git restore data/sports-media.json 2>/dev/null || true
@@ -154,6 +159,7 @@ jobs:
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
           cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
           cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
+          cp /tmp/kalshi-nhl.json data/kalshi-nhl.json
           cp /tmp/mlb-context.json data/mlb-context.json
           cp /tmp/ncaaf-context.json data/ncaaf-context.json
           cp /tmp/sports-media.json data/sports-media.json
@@ -162,7 +168,7 @@ jobs:
           cp /tmp/forecast-audit.json data/forecast-audit.json
           cp /tmp/forecast-report.json data/forecast-report.json
 
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -178,6 +184,7 @@ jobs:
             cp data/kalshi-ufc.json /tmp/kalshi-ufc.json
             cp data/kalshi-ncaaf.json /tmp/kalshi-ncaaf.json
             cp data/kalshi-mlb.json /tmp/kalshi-mlb.json
+          cp data/kalshi-nhl.json /tmp/kalshi-nhl.json
             cp data/mlb-context.json /tmp/mlb-context.json
             cp data/ncaaf-context.json /tmp/ncaaf-context.json
             cp data/sports-media.json /tmp/sports-media.json
@@ -191,6 +198,7 @@ jobs:
             cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
             cp /tmp/kalshi-ncaaf.json data/kalshi-ncaaf.json
             cp /tmp/kalshi-mlb.json data/kalshi-mlb.json
+          cp /tmp/kalshi-nhl.json data/kalshi-nhl.json
             cp /tmp/mlb-context.json data/mlb-context.json
             cp /tmp/ncaaf-context.json data/ncaaf-context.json
             cp /tmp/sports-media.json data/sports-media.json
@@ -198,7 +206,7 @@ jobs:
             cp /tmp/model-calibration.js data/model-calibration.js
             cp /tmp/forecast-audit.json data/forecast-audit.json
             cp /tmp/forecast-report.json data/forecast-report.json
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0

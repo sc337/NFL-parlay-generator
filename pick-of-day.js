@@ -3,12 +3,14 @@ const $=s=>document.querySelector(s);
 const today=time=>{const d=new Date(time),now=new Date();return Number.isFinite(+d)&&d>now&&d.toDateString()===now.toDateString()};
 const money=n=>Number(n)>0?'+'+Math.round(n):String(Math.round(n));
 function selection(label){
-  let m=label.match(/^(?:Game Total\s+)?(Over|Under)\s+([\d.]+)(?:\s+(?:runs?|points?))?$/i);
+  let m=label.match(/^(?:Game Total\s+)?(Over|Under)\s+([\d.]+)(?:\s+(?:runs?|points?|goals?))?$/i);
   if(m)return {market:'Total',line:(/^Over$/i.test(m[1])?'O ':'U ')+m[2]};
   m=label.match(/^(.+?)\s+(Over|Under)\s+([\d.]+)\s+(.+)$/i);
   if(m)return {subject:m[1],market:m[4],line:(/^Over$/i.test(m[2])?'O ':'U ')+m[3]};
   m=label.match(/^(.+?)\s+wins by (?:over|more than)\s+([\d.]+)\s+points?$/i);
   if(m)return {subject:m[1],market:'Spread',line:'−'+m[2]};
+  m=label.match(/^(.+?)\s+([+−-][\d.]+)\s+(Puck line)$/i);
+  if(m)return {subject:m[1],market:'Puck line',line:m[2]};
   m=label.match(/^(.+?)\s+(?:ML|moneyline)$/i);
   if(m)return {subject:m[1],market:'Winner',line:'ML'};
   return {subject:label,market:'Winner',line:'ML'};
