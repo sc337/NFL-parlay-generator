@@ -396,3 +396,7 @@ body:not([data-sport="nfl"]) #nflWeekWrap{display:none!important}
 
 #results>.parlay-card .grade.card-status{display:inline-block!important;font-size:10px;margin-top:4px}
 html[data-theme="light"] #results>.parlay-card .grade.card-status{background:color-mix(in srgb,var(--sport-accent) 10%,#fff);color:var(--sport-accent)}
+body:not([data-sport="nfl"]) #nflLinesWrap{display:none!important}
+#nflLinesNote{font-size:10px;line-height:1.4;color:var(--muted)}
+.market-tile:has(.alt-tag){position:relative}
+.alt-tag{position:absolute;top:-5px;right:4px;font-size:8px;font-weight:800;line-height:1;padding:2px 4px;border-radius:4px;background:var(--sport-accent);color:var(--bg)}

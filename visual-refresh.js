@@ -108,9 +108,10 @@ function compactParlays(){
         const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
         tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';
         heading.textContent=selection.market;line.textContent=selection.line;
+        if(leg.dataset.altLine==='true'){const badge=document.createElement('span');badge.className='alt-tag';badge.textContent='ALT';tile.append(badge);if(leg.dataset.altLabel)line.textContent=leg.dataset.altLabel;}
         const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
         price.textContent=quote?.textContent.trim()|| (market?'Mkt '+market[1]+'%':'Line check');
-        tile.setAttribute('aria-label',selection.market+' '+selection.line+', '+price.textContent);
+        tile.setAttribute('aria-label',(leg.dataset.altLine==='true'?'ALT ':'')+selection.market+' '+line.textContent+', '+price.textContent);
         tile.append(heading,line,price);quote?.remove();leg.append(tile);leg.classList.add('has-market-tile');
       }
       if(subText||reasonText){const row=document.createElement('div');row.className='card-detail-row';const heading=document.createElement('strong');heading.textContent=original;row.append(heading);if(sub)row.append(sub);if(reason)row.append(reason);details.append(row)}

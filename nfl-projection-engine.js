@@ -53,9 +53,10 @@
     const get=k=>same.find(x=>x.marketKey===k&&x.side==='over'&&num(x.point)!=null);
     const attempts=get('player_pass_attempts'),comps=get('player_pass_completions'),rush=get('player_rush_attempts'),rec=get('player_receptions');
     let line=null,coverage=0;
-    if(m.marketKey==='player_pass_yds'&&attempts){line=num(attempts.point)*7.05;coverage=.32;}
-    if(m.marketKey==='player_rush_yds'&&rush){line=num(rush.point)*4.15;coverage=.32;}
-    if(m.marketKey==='player_reception_yds'&&rec){line=num(rec.point)*11.3;coverage=.32;}
+    const marketKey=String(m.marketKey||'').replace(/_alternate$/,'');
+    if(marketKey==='player_pass_yds'&&attempts){line=num(attempts.point)*7.05;coverage=.32;}
+    if(marketKey==='player_rush_yds'&&rush){line=num(rush.point)*4.15;coverage=.32;}
+    if(marketKey==='player_reception_yds'&&rec){line=num(rec.point)*11.3;coverage=.32;}
     if(m.marketKey==='player_receptions'&&comps){line=num(comps.point)*.24;coverage=.18;}
     return line==null?null:{line,coverage};
   }
@@ -74,7 +75,8 @@
     let totalLine=null;
     if(tp){
       if(m.type==='totals'&&num(m.point)!=null){
-        totalLine=totalForecast(game,tp,num(m.point));
+        const main=(game.markets||[]).find(x=>x.type==='totals'&&!x.isAltLine&&num(x.point)!=null);
+        totalLine=totalForecast(game,tp,num(main?.point)??num(m.point));
         const d=totalLine-num(m.point);z+=clamp(d/13,-.45,.45)*(m.side==='under'?-1:1);coverage+=tp.coverage;
       }else if(m.type==='spreads'&&num(m.point)!=null&&m.team){
         const teamMargin=m.team===game.home?tp.homeMargin:-tp.homeMargin;

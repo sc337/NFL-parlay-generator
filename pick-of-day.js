@@ -27,6 +27,7 @@ function show(sport,pick){if(window.__ACTIVE_SPORT!==sport)return;const host=$('
   reference.textContent=sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
   foot.textContent=pick.note||'Reference only. Verify the current line at your sportsbook.';
   heading.textContent=parsed.market;line.textContent=parsed.line;tile.setAttribute('aria-label',parsed.market+' '+parsed.line+', '+reference.textContent);
+  if(sport==='nfl'&&pick.market?.isAltLine){const badge=document.createElement('span');badge.className='alt-tag';badge.textContent='ALT';tile.append(badge);const milestone=window.NFL_ALT_LINES?.label?.(pick.market);if(milestone)line.textContent=milestone;}
   tile.append(heading,line,reference);copy.append(name,meta);row.append(media,copy,tile);host.append(row,foot);
 }
 window.PICK_OF_DAY={show,loading,today};

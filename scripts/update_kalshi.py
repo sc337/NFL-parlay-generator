@@ -80,12 +80,16 @@ def parse_prop(m,g,s):
  if not mm:return
  player=mm.group(1).strip();threshold=float(mm.group(2));line=max(.5,threshold-.5);g['_candidates']['props'].setdefault((player,key),[]).append((abs(p-.5),line,m,p,typ,label))
 def finalize(g):
- if g['_candidates']['totals']:
-  _,pt,m,p=min(g['_candidates']['totals'],key=lambda x:x[0]);g['markets'] += [{'type':'totals','marketKey':'totals','name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)},{'type':'totals','marketKey':'totals','name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,1-p,'no')}]
- if g['_candidates']['spreads']:
-  _,line,team,other,m,p=min(g['_candidates']['spreads'],key=lambda x:x[0]);g['markets'] += [{'type':'spreads','marketKey':'spreads','name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)},{'type':'spreads','marketKey':'spreads','name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,1-p,'no')}]
+ for i,(_,pt,m,p) in enumerate(sorted(g['_candidates']['totals'],key=lambda x:x[0])):
+  g['markets'] += [{'type':'totals','marketKey':'totals','isAltLine':i>0,'name':f'Over {pt:g}','team':'Game','side':'over','point':pt,**base_leg(m,p)},{'type':'totals','marketKey':'totals','isAltLine':i>0,'name':f'Under {pt:g}','team':'Game','side':'under','point':pt,**base_leg(m,1-p,'no')}]
+ for i,(_,line,team,other,m,p) in enumerate(sorted(g['_candidates']['spreads'],key=lambda x:x[0])):
+  g['markets'] += [{'type':'spreads','marketKey':'spreads','isAltLine':i>0,'name':f'{team} -{line:g}','team':team,'point':-line,**base_leg(m,p)},{'type':'spreads','marketKey':'spreads','isAltLine':i>0,'name':f'{other} +{line:g}','team':other,'point':line,**base_leg(m,1-p,'no')}]
  for (player,key),rows in g['_candidates']['props'].items():
-  _,line,m,p,typ,label=min(rows,key=lambda x:x[0]);g['markets'] += [{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)},{'type':typ,'marketKey':key,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,1-p,'no')}]
+  supported_alt=key in ('player_pass_yds','player_rush_yds','player_reception_yds')
+  chosen=sorted(rows,key=lambda x:x[0]) if supported_alt else [min(rows,key=lambda x:x[0])]
+  for i,(_,line,m,p,typ,label) in enumerate(chosen):
+   market_key=key+'_alternate' if supported_alt and i>0 else key
+   g['markets'] += [{'type':typ,'marketKey':market_key,'isAltLine':i>0,'player':player,'team':'Player','side':'over','point':line,'name':f'{player} Over {line:g} {label}',**base_leg(m,p)},{'type':typ,'marketKey':market_key,'isAltLine':i>0,'player':player,'team':'Player','side':'under','point':line,'name':f'{player} Under {line:g} {label}',**base_leg(m,1-p,'no')}]
  g.pop('_candidates',None);seen=set();out=[]
  for x in g['markets']:
   k=(x.get('marketKey'),x.get('player') or x.get('team'),x.get('side'),x.get('point'))
