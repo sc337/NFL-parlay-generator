@@ -80,3 +80,10 @@ test('verified player props display independently of the parlay game count',asyn
  assert.match(app.nodes.get('#results').innerHTML,/Test Player Over 0.5 Points/);
  assert.equal(app.window.NHL_DASHBOARD.eligible({...app.a,player_verified:false}),false);
 });
+
+test('scheduled NHL history can record a featured forecast without browser widgets',async()=>{
+ const app=runtime();delete app.window.PICK_OF_DAY;await app.window.NHL_DASHBOARD.load();
+ // Recorder has no browser Pick of the Day widget.
+ app.data.markets.forEach(m=>m.game_time=new Date(Date.now()+1000).toISOString());
+ const picks=app.window.NHL_DASHBOARD.historyPicks();assert.equal(picks.length,1);assert.ok(picks[0].market.game_id);
+});

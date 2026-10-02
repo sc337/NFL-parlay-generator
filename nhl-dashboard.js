@@ -43,7 +43,7 @@ async function load(){
  }
 }
 function showCached(){if(!lastLoaded||Date.now()-lastLoaded>60000||!fresh())return false;render();window.COMPACT_UI?.refresh?.();return true}
-function historyPicks(){const m=pool().find(m=>window.PICK_OF_DAY?.today?.(m.game_time));return m?[{market:m,forecast:model(m)||{}}]:[]}
+function historyPicks(){const today=window.PICK_OF_DAY?.today||((time)=>new Date(time).toDateString()===new Date().toDateString());const m=pool().find(m=>today(m.game_time));return m?[{market:m,forecast:model(m)||{}}]:[]}
 window.setInterval?.(()=>{if(window.__ACTIVE_SPORT==='nhl'&&lastLoaded){render();window.COMPACT_UI?.refresh?.()}},30000);
 window.NHL_DASHBOARD={load,render,showCached,eligible,quality,model,historyPicks,availableCount:()=>lastLoaded?G.unique(pool(),Infinity).length:null,setLegs:n=>{legs=Math.max(2,Math.min(6,Number(n)||2));generation++;render();window.COMPACT_UI?.refresh?.()}};
 })();
