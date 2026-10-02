@@ -1,6 +1,6 @@
 # Sports Betting Dashboard
 
-A static dashboard for NFL, MLB, NCAAF, and UFC picks and parlay ideas. [Open the live dashboard](https://sc337.github.io/NFL-parlay-generator/).
+A static dashboard for NFL, MLB, NCAAF, UFC, and NHL picks and parlay ideas. [Open the live dashboard](https://sc337.github.io/NFL-parlay-generator/).
 
 ## What it shows
 
@@ -15,9 +15,11 @@ The dashboard uses current market snapshots. If a sport has no qualifying pregam
 
 ## Data and probabilities
 
-A scheduled GitHub Actions workflow refreshes Kalshi snapshots and free sports context for all four sports. Market consensus can also compare Kalshi with public Polymarket data. The Odds API is optional: requests are made only after you enter your own key in Settings. The key is stored in your browser, not in the repository. GitHub Pages cannot keep a browser-entered key secret from the browser's network requests.
+A scheduled GitHub Actions workflow refreshes Kalshi snapshots and free sports context for all five sports. Market consensus can also compare Kalshi with public Polymarket data. The Odds API is optional: requests are made only after you enter your own key in Settings. The key is stored in your browser, not in the repository. GitHub Pages cannot keep a browser-entered key secret from the browser's network requests.
 
 **Market probability** comes from quoted prices. **Model probability** is an independent estimate only where enough sport-specific context exists; otherwise the pick is a market-quality signal. MLB game and team totals use 20,000 repeatable run simulations per game, using completed games from the last 30 days and available probable-pitcher context. They show projected team/game runs and a middle-80% game-score range. They are experimental, require sufficient recent scores and a fresh pregame matchup, and otherwise say “Market-only; no run projection.” NCAAF likewise shows **experimental** pregame estimates when completed ESPN scores and SportsDataverse team box scores cover both teams. Outdoor games may also use a National Weather Service forecast matched to the venue city. Neither experimental model uses Kalshi prices as a simulation input; their displayed EV at a quoted ask is not a validated betting advantage. Some other MLB and UFC markets lack an independent projection. **Edge** is the model probability minus the market-implied probability; **EV** also uses the offered payout. A positive estimate is not a guarantee of profit.
+
+NHL currently supports schedule-verified pregame moneylines, puck lines, and goal totals, including alternate lines available in the feed. Its multi-game builder uses one selection per matchup and supports 2–6 legs. NHL picks rank quote liquidity and bid/ask spread, not an independent win forecast. Player props and an independent NHL model are not implemented. Expired feeds clear the NHL picks; use the refresh button to retrieve current quotes.
 
 ## Pick history and calibration
 
