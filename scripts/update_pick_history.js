@@ -37,7 +37,7 @@ async function candidates(sport,{all=false}={}){
   }
   if(sport==='ncaaf')r.run('ncaaf-model.js');
   if(sport==='mlb')r.run('mlb-totals-model.js');
-  if(sport==='nhl')r.run('nhl-model.js');
+  if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
   r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':sport==='nhl'?'nhl-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');

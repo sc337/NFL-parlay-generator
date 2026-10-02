@@ -412,6 +412,10 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 #nhlMarketFilters>summary:after{content:'⌄';color:var(--sport-accent)}
 #nhlMarketFilters[open]>summary:after{content:'⌃'}
 #nhlMarketFilters[open]{padding-bottom:12px}
+.nhl-filter-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nhl-filter-fields .field{margin-bottom:6px}
+.nhl-filter-fields select{min-height:44px;font-size:13px}
+#nhlLinesNote{display:block;color:var(--muted);font-size:11px;line-height:1.4}
 #nhlMarketChips{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:7px;overflow:visible}
 #nhlMarketChips .chip{min-width:0;white-space:normal}
 @media(max-width:600px){#nhlMarketChips{grid-template-columns:repeat(2,minmax(0,1fr))}#nhlMarketChips .chip{min-height:44px!important;font-size:12px;padding:7px}}

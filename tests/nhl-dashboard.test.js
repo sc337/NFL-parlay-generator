@@ -8,7 +8,7 @@ function runtime(patch={},dataPatch={},storage){
  const a={...make('10'),...patch},b=make('20');
  const data={updated_at:new Date().toISOString(),markets:[a,{...a,kind:'total',label:'Over 5.5 goals',selection_id:'total|yes'},b],...dataPatch};
  const context=vm.createContext({window,document,Date:Clock,console,localStorage:storage,fetch:async()=>({ok:true,json:async()=>data})});
- for(const file of ['market-guards.js','nhl-dashboard.js'])vm.runInContext(fs.readFileSync(file,'utf8'),context);
+ for(const file of ['market-guards.js','nhl-alt-lines.js','nhl-dashboard.js'])vm.runInContext(fs.readFileSync(file,'utf8'),context);
  return {window,nodes,a,b,context,data,start:()=>ready.forEach(fn=>fn()),advance:ms=>{now+=ms},tick:()=>tick(),daily:()=>daily,refreshes:()=>refreshes};
 }
 test('NHL shows compact market-only picks and one leg per distinct game',async()=>{
@@ -122,7 +122,7 @@ test('NHL market preferences survive reload independently of NFL settings',async
 test('NHL market buttons handle clicks, disabled feeds and sport switching',async()=>{
  const app=runtime();let click;const note={textContent:''};
  const buttons=['moneyline','total','shots','saves'].map(kind=>({dataset:{nhlMarket:kind},classList:{toggle(){}},setAttribute(k,v){this[k]=v}}));
- const host={style:{},querySelectorAll:()=>buttons,querySelector:()=>note,addEventListener:(_type,fn)=>click=fn};app.nodes.set('#nhlMarketFilters',host);app.start();await app.window.NHL_DASHBOARD.load();
+ const host={style:{},querySelectorAll:()=>buttons,querySelector:()=>note,addEventListener:(type,fn)=>{if(type==='click')click=fn}};app.nodes.set('#nhlMarketFilters',host);app.start();await app.window.NHL_DASHBOARD.load();
  assert.equal(host.hidden,false);assert.equal(buttons[2].disabled,true);assert.match(buttons[2].title,/No current quotes/);
  click({target:{closest:()=>buttons[0]}});assert.equal(buttons[0]['aria-pressed'],'false');assert.equal(app.daily().market.kind,'total');
  const before=[...app.window.NHL_DASHBOARD.selectedMarkets()];click({target:{closest:()=>buttons[2]}});assert.deepEqual([...app.window.NHL_DASHBOARD.selectedMarkets()],before);
@@ -163,4 +163,38 @@ test('NHL prop ranking discounts weak coverage and keeps market-only props label
  assert.ok(props.indexOf('Prop covered')<props.indexOf('Prop weak'));
  assert.ok(props.indexOf('Prop weak')<props.indexOf('Prop unmodeled'));
  assert.match(props,/Market only · No independent estimate/);
+});
+
+test('NHL Standard / ALT / Both filter all recommendations and preserve stable generation',async()=>{
+ const app=runtime(),spread=(id,line,label)=>({...app.a,game_id:id,event_ticker:'KXNHLGAME-'+id,selection_id:id+'-'+line,kind:'spread',line,label});
+ app.data.markets=[spread('1',1.5,'Standard 1'),spread('1',2.5,'ALT 1'),spread('2',1.5,'Standard 2'),spread('2',2.5,'ALT 2')];
+ await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
+ const html=app.nodes.get('#results').innerHTML;assert.match(html,/ALT 1|ALT 2/);assert.doesNotMatch(html,/Standard 1|Standard 2/);assert.equal((html.match(/data-alt-line="true"/g)||[]).length,2);assert.equal(app.daily().market.isAltLine,true);
+ app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,html);
+ app.window.NHL_DASHBOARD.setLineMode('standard');assert.doesNotMatch(app.nodes.get('#results').innerHTML,/ALT 1|ALT 2/);assert.equal(app.daily().market.isAltLine,false);
+ app.window.NHL_DASHBOARD.setLineMode('both');assert.equal(app.window.NHL_DASHBOARD.availableCount(),2);
+});
+test('NHL date selection filters parlay, props, featured pick and available game count',async()=>{
+ const app=runtime(),now=new Date(Date.now()+3600000),later=new Date(Date.now()+2*86400000),api=app.window.NHL_DASHBOARD;
+ const make=(id,time,prop=false)=>({...app.a,game_id:id,selection_id:id,game_time:time.toISOString(),kind:prop?'points':'moneyline',player_verified:prop,player_id:prop?id:undefined,label:'Pick '+id});
+ app.data.markets=[make('today',now),make('laterA',later),make('laterB',later),make('laterProp',later,true)];await api.load();api.setDate(api.dateKey(later));
+ assert.equal(api.availableCount(),3);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/Pick today/);assert.match(app.nodes.get('#results').innerHTML,/Pick laterProp/);assert.match(app.daily().label,/later/);
+ api.setDate(api.dateKey(now));assert.equal(api.availableCount(),1);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/Pick later/);
+ const state=api.filters().date;api.setDate('2026-02-31');assert.equal(api.filters().date,state);
+ api.setDate('all');assert.equal(api.availableCount(),4);
+});
+test('NHL date keys use local calendar dates and line preferences persist independently',()=>{
+ const storage=new Map(),saved={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},app=runtime({}, {},saved),api=app.window.NHL_DASHBOARD;
+ const nearMidnight=new Date(2026,9,3,0,15);assert.equal(api.dateKey(nearMidnight),'2026-10-03');assert.equal(api.dateKey('invalid'),'');
+ api.setLineMode('alt');api.setDate('2026-10-03');const restored=runtime({}, {},saved).window.NHL_DASHBOARD;
+ assert.equal(restored.filters().lineMode,'alt');assert.equal(restored.filters().date,'all');assert.equal(storage.get('nflLineMode'),undefined);
+});
+test('NHL date and ALT controls populate available dates and handle change events',async()=>{
+ const app=runtime(),listeners={},date={innerHTML:'',value:''},lines={value:''},host={style:{},querySelectorAll:()=>[],querySelector:s=>s==='#nhlDateSelect'?date:s==='#nhlLinesSelect'?lines:null,addEventListener:(type,fn)=>listeners[type]=fn};
+ app.nodes.set('#nhlMarketFilters',host);app.start();await app.window.NHL_DASHBOARD.load();
+ const key=app.window.NHL_DASHBOARD.dateKey(app.a.game_time);assert.match(date.innerHTML,new RegExp('value="'+key+'"'));assert.equal(lines.value,'both');
+ listeners.change({target:{id:'nhlLinesSelect',value:'alt'}});assert.equal(app.window.NHL_DASHBOARD.filters().lineMode,'alt');assert.equal(app.window.NHL_DASHBOARD.availableCount(),0);
+ listeners.change({target:{id:'nhlDateSelect',value:key}});assert.equal(app.window.NHL_DASHBOARD.filters().date,key);
+ app.window.__ACTIVE_SPORT='nfl';listeners.change({target:{id:'nhlDateSelect',value:'all'}});assert.equal(app.window.NHL_DASHBOARD.filters().date,key);
+ const html=fs.readFileSync('index.html','utf8');assert.match(html,/id="nhlDateSelect"/);assert.match(html,/id="nhlLinesSelect"/);assert.match(html,/nhl-alt-lines\.js/);
 });

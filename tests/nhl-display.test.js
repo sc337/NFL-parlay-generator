@@ -39,6 +39,10 @@ test('cards with footers retain contained Details and unready cards can retry tr
  const card=slip(true),app=display([card]);app.context.compactParlays();assert.equal(card.dataset.compact,undefined);
  app.run();assert.equal(card.querySelector('.card-explanation').parentElement,card);assert.equal(card.dataset.compact,'1');
 });
+test('NHL ALT parlay rows show a badge and an accessible ALT tile label',()=>{
+ const card=slip(),app=display([card]);card.querySelector('.leg').dataset.altLine='true';app.run();
+ const tile=card.querySelector('.market-tile');assert.equal(tile.querySelector('.alt-tag').textContent,'ALT');assert.match(tile.attributes['aria-label'],/^ALT Goals U 0.5/);
+});
 test('NHL uses the same primary-card and secondary-analysis structure as other sports',()=>{
  const source=fs.readFileSync('compact-ui.js','utf8');
  for(const sport of ['nhl','mlb','ncaaf','ufc']){

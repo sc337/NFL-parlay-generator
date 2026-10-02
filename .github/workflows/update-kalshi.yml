@@ -12,6 +12,7 @@ on:
       - 'scripts/update_kalshi_nhl.py'
       - 'scripts/update_nhl_context.py'
       - 'nhl-model.js'
+      - 'nhl-alt-lines.js'
       - 'nhl-dashboard.js'
       - 'scripts/update_mlb_context.py'
       - 'scripts/attach_game_context.py'
@@ -59,7 +60,7 @@ jobs:
         run: python scripts/update_kalshi_mlb.py
       - name: Check NHL models and player-market mapping
         run: |
-          node --test tests/nhl-model.test.js tests/nhl-dashboard.test.js
+          node --test tests/nhl-model.test.js tests/nhl-alt-lines.test.js tests/nhl-dashboard.test.js
           python -m unittest discover -s tests -p 'test_nhl*.py'
       - name: Refresh official NHL model context
         run: python scripts/update_nhl_context.py
