@@ -105,18 +105,18 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
  .variant-choices>summary:after,.explore-panel-toggle:after{margin-left:auto}
 }
 /* Pick hierarchy: one thesis, unboxed legs, and one secondary drawer. */
-#results .parlay-card>.card-thesis{margin:10px 0 2px;color:var(--text);font-size:13px;font-weight:700;line-height:1.4}
-#results .parlay-card .script-badge{display:none!important}
+:is(#results,#analysisSecondary)>.parlay-card>.card-thesis{margin:10px 0 2px;color:var(--text);font-size:13px;font-weight:700;line-height:1.4}
+:is(#results,#analysisSecondary)>.parlay-card .script-badge{display:none!important}
 .card-explanation{margin:0 0 9px}
 .card-explanation>summary{display:inline-flex;align-items:center;min-height:32px;cursor:pointer;color:var(--blue);font-size:12px;font-weight:700;list-style:none}
 .card-explanation>summary::-webkit-details-marker{display:none}
 .card-explanation>summary:after{content:'⌄';margin-left:6px}
 .card-explanation[open]>summary:after{content:'⌃'}
 .card-explanation>.summary{margin:3px 0 8px;color:var(--muted);font-size:12px;line-height:1.5}
-#results .parlay-card .legs{gap:0}
-#results .parlay-card .leg{padding:11px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
-#results .parlay-card .leg:last-child{border-bottom:0}
-#results .parlay-card .sport-visual-copy,#results .parlay-card .mlb-leg-copy{flex:1;min-width:0}
+:is(#results,#analysisSecondary)>.parlay-card .legs{gap:0}
+:is(#results,#analysisSecondary)>.parlay-card .leg{padding:11px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+:is(#results,#analysisSecondary)>.parlay-card .leg:last-child{border-bottom:0}
+:is(#results,#analysisSecondary)>.parlay-card .sport-visual-copy,:is(#results,#analysisSecondary)>.parlay-card .mlb-leg-copy{flex:1;min-width:0}
 .leg-quote-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .leg-pick{min-width:0;flex:1}
 .leg-quote{flex:none;min-width:43px;text-align:right;color:var(--text);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
@@ -131,8 +131,8 @@ body:not(.explore-expanded):not([data-sport="bankroll"]) #sportLegSelector{displ
 .variant-options{padding:0 8px 8px}
 @media(max-width:600px){
  .header-status{max-width:min(55vw,220px);font-size:11px}
- #results .parlay-card .leg{padding:12px 0!important}
- #results .parlay-card>.card-thesis{font-size:14px}
+ :is(#results,#analysisSecondary)>.parlay-card .leg{padding:12px 0!important}
+ :is(#results,#analysisSecondary)>.parlay-card>.card-thesis{font-size:14px}
  .card-explanation>summary{min-height:44px;font-size:13px}
  .leg-quote{font-size:15px}
  .variant-options button{min-height:44px}
@@ -223,44 +223,44 @@ body.feed-delayed #results>.parlay-card,body.feed-delayed .pick-row{opacity:.68}
 @media(prefers-reduced-transparency:reduce){.sport-switch,.pick-of-day,.control-card,#results>.parlay-card,.more-analysis,.explore-panel-toggle{background:#142230!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @media(prefers-reduced-motion:reduce){.feed-refresh.refreshing{animation:none}.carousel-dot:before{transition:none}}
 /* Compact parlay slips: preserve the full analysis in one disclosure. */
-#results>.parlay-card .grade{display:none!important}
-#results>.parlay-card .parlay-name{margin-top:0;font-size:19px;line-height:1.25}
-#results>.parlay-card .odds-wrap{max-width:120px}
-#results>.parlay-card .odds-label{font-size:10px;letter-spacing:.06em}
-#results>.parlay-card .odds.quote-unavailable{margin-top:5px;font-size:12px;color:var(--sport-accent);white-space:nowrap}
-#results>.parlay-card>.card-thesis{margin:10px 0 6px;font-size:13px;line-height:1.35}
-#results>.parlay-card>.legs{margin-top:5px}
-#results>.parlay-card .leg{min-height:58px;padding:9px 0!important;align-items:center}
-#results>.parlay-card .leg-title{font-size:14px;line-height:1.35}
-#results>.parlay-card .leg-brief{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35}
-#results>.parlay-card .leg-quote{font-size:14px}
-#results>.parlay-card .card-footer{margin-top:4px;padding-top:8px;font-size:11px;color:var(--muted)}
-#results>.parlay-card .card-explanation{margin:8px 0 0;border-top:1px solid var(--border);padding-top:5px}
-#results>.parlay-card .card-explanation>summary{display:flex;min-height:44px;width:100%;align-items:center;color:var(--sport-accent);font-size:12px}
-#results>.parlay-card .card-detail-row{padding:10px 0;border-top:1px solid var(--border);color:var(--muted);font-size:12px;line-height:1.45}
-#results>.parlay-card .card-detail-row strong{display:block;margin-bottom:3px;color:var(--text);font-size:12px}
-#results>.parlay-card .card-detail-row .leg-sub,#results>.parlay-card .card-detail-row .leg-reason{margin:3px 0;color:var(--muted);font-size:12px;line-height:1.45}
-#results>.parlay-card .card-detail-row small{display:block;margin-top:3px;color:var(--muted)}
+:is(#results,#analysisSecondary)>.parlay-card .grade{display:none!important}
+:is(#results,#analysisSecondary)>.parlay-card .parlay-name{margin-top:0;font-size:19px;line-height:1.25}
+:is(#results,#analysisSecondary)>.parlay-card .odds-wrap{max-width:120px}
+:is(#results,#analysisSecondary)>.parlay-card .odds-label{font-size:10px;letter-spacing:.06em}
+:is(#results,#analysisSecondary)>.parlay-card .odds.quote-unavailable{margin-top:5px;font-size:12px;color:var(--sport-accent);white-space:nowrap}
+:is(#results,#analysisSecondary)>.parlay-card>.card-thesis{margin:10px 0 6px;font-size:13px;line-height:1.35}
+:is(#results,#analysisSecondary)>.parlay-card>.legs{margin-top:5px}
+:is(#results,#analysisSecondary)>.parlay-card .leg{min-height:58px;padding:9px 0!important;align-items:center}
+:is(#results,#analysisSecondary)>.parlay-card .leg-title{font-size:14px;line-height:1.35}
+:is(#results,#analysisSecondary)>.parlay-card .leg-brief{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35}
+:is(#results,#analysisSecondary)>.parlay-card .leg-quote{font-size:14px}
+:is(#results,#analysisSecondary)>.parlay-card .card-footer{margin-top:4px;padding-top:8px;font-size:11px;color:var(--muted)}
+:is(#results,#analysisSecondary)>.parlay-card .card-explanation{margin:8px 0 0;border-top:1px solid var(--border);padding-top:5px}
+:is(#results,#analysisSecondary)>.parlay-card .card-explanation>summary{display:flex;min-height:44px;width:100%;align-items:center;color:var(--sport-accent);font-size:12px}
+:is(#results,#analysisSecondary)>.parlay-card .card-detail-row{padding:10px 0;border-top:1px solid var(--border);color:var(--muted);font-size:12px;line-height:1.45}
+:is(#results,#analysisSecondary)>.parlay-card .card-detail-row strong{display:block;margin-bottom:3px;color:var(--text);font-size:12px}
+:is(#results,#analysisSecondary)>.parlay-card .card-detail-row .leg-sub,:is(#results,#analysisSecondary)>.parlay-card .card-detail-row .leg-reason{margin:3px 0;color:var(--muted);font-size:12px;line-height:1.45}
+:is(#results,#analysisSecondary)>.parlay-card .card-detail-row small{display:block;margin-top:3px;color:var(--muted)}
 #results:not(.nfl-carousel)>.parlay-card,#results:not(.nfl-carousel)>.ufc-matchups{grid-column:1/-1}
 /* Sportsbook-inspired selection rows: one participant and one clear market quote. */
-#results>.parlay-card .leg.has-market-tile{display:flex;align-items:center;gap:9px;min-width:0}
-#results>.parlay-card .has-market-tile>.sport-visual-copy,#results>.parlay-card .has-market-tile>.mlb-leg-copy{flex:1;min-width:0}
-#results>.parlay-card .has-market-tile .leg-title{overflow-wrap:anywhere}
-#results>.parlay-card .has-market-tile .leg-quote-row{display:block}
+:is(#results,#analysisSecondary)>.parlay-card .leg.has-market-tile{display:flex;align-items:center;gap:9px;min-width:0}
+:is(#results,#analysisSecondary)>.parlay-card .has-market-tile>.sport-visual-copy,:is(#results,#analysisSecondary)>.parlay-card .has-market-tile>.mlb-leg-copy{flex:1;min-width:0}
+:is(#results,#analysisSecondary)>.parlay-card .has-market-tile .leg-title{overflow-wrap:anywhere}
+:is(#results,#analysisSecondary)>.parlay-card .has-market-tile .leg-quote-row{display:block}
 .market-tile{display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;width:96px;min-height:66px;padding:7px 5px;border:1px solid color-mix(in srgb,var(--sport-accent) 34%,var(--border2));border-radius:9px;background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 13%,#19332f),#152c2de6);text-align:center;font-variant-numeric:tabular-nums;box-shadow:inset 0 1px #ffffff16}
 .market-tile-heading{color:var(--muted);font-size:10px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .market-tile-line{margin-top:3px;color:var(--text);font-size:15px;font-weight:850;line-height:1.1;white-space:nowrap}
 .market-tile-price{margin-top:4px;color:var(--sport-accent);font-size:12px;font-weight:850;line-height:1.1;white-space:nowrap}
 .pick-market-tile{width:108px;min-height:70px}
 @media(max-width:600px){
- #results>.parlay-card .parlay-name{font-size:18px}
- #results>.parlay-card .leg{min-height:58px;padding:9px 0!important}
- #results>.parlay-card .leg-title{font-size:14px}
- #results>.parlay-card .leg-brief{font-size:11px}
- #results>.parlay-card .card-explanation>summary{font-size:13px}
- #results>.parlay-card .has-market-tile{gap:8px}
- #results>.parlay-card .has-market-tile .sport-photo,#results>.parlay-card .has-market-tile .mlb-player-photo{width:34px;height:34px}
- #results>.parlay-card .has-market-tile .sport-logo,#results>.parlay-card .has-market-tile .mlb-team-logo{width:30px;height:30px}
+ :is(#results,#analysisSecondary)>.parlay-card .parlay-name{font-size:18px}
+ :is(#results,#analysisSecondary)>.parlay-card .leg{min-height:58px;padding:9px 0!important}
+ :is(#results,#analysisSecondary)>.parlay-card .leg-title{font-size:14px}
+ :is(#results,#analysisSecondary)>.parlay-card .leg-brief{font-size:11px}
+ :is(#results,#analysisSecondary)>.parlay-card .card-explanation>summary{font-size:13px}
+ :is(#results,#analysisSecondary)>.parlay-card .has-market-tile{gap:8px}
+ :is(#results,#analysisSecondary)>.parlay-card .has-market-tile .sport-photo,:is(#results,#analysisSecondary)>.parlay-card .has-market-tile .mlb-player-photo{width:34px;height:34px}
+ :is(#results,#analysisSecondary)>.parlay-card .has-market-tile .sport-logo,:is(#results,#analysisSecondary)>.parlay-card .has-market-tile .mlb-team-logo{width:30px;height:30px}
  .market-tile{width:82px;min-height:62px;padding:6px 3px}
  .market-tile-line{font-size:14px}
  .market-tile-price{font-size:11px}
@@ -307,7 +307,7 @@ html[data-theme="light"] body[data-sport="nfl"]{--sport-accent:#145daf;--sport-g
 html[data-theme="light"] body[data-sport="mlb"]{--sport-accent:#08788b;--sport-glow:#cff3f7}
 html[data-theme="light"] body[data-sport="ncaaf"]{--sport-accent:#946109;--sport-glow:#fff0ce}
 html[data-theme="light"] body[data-sport="ufc"]{--sport-accent:#bd334a;--sport-glow:#ffe0e6}
-html[data-theme="light"] .sport-switch,html[data-theme="light"] .pick-of-day,html[data-theme="light"] .control-card,html[data-theme="light"] #results>.parlay-card,html[data-theme="light"] .more-analysis,html[data-theme="light"] .explore-panel-toggle{background:var(--surface)!important;border-color:var(--border2)!important;box-shadow:0 9px 25px #17334a0d,inset 0 1px #fff}
+html[data-theme="light"] .sport-switch,html[data-theme="light"] .pick-of-day,html[data-theme="light"] .control-card,html[data-theme="light"] :is(#results,#analysisSecondary)>.parlay-card,html[data-theme="light"] .more-analysis,html[data-theme="light"] .explore-panel-toggle{background:var(--surface)!important;border-color:var(--border2)!important;box-shadow:0 9px 25px #17334a0d,inset 0 1px #fff}
 html[data-theme="light"] .sport-switch{background:#f7f9fbe8!important}
 html[data-theme="light"] .sport-switch button.active{background:#e2ecf8!important;color:var(--text)!important}
 html[data-theme="light"] .header-status,html[data-theme="light"] .feed-refresh,html[data-theme="light"] .topbar>.icon-btn{background:#ffffffcf;color:var(--text);border-color:var(--border2)}
@@ -317,7 +317,7 @@ html[data-theme="light"] .settings-sheet,html[data-theme="light"] #settingsDialo
 html[data-theme="light"] .theme-options button[aria-pressed="true"]{background:#fff}
 html[data-theme="light"] .league-mark{background:#fff;border-color:var(--border2)}
 html[data-theme="light"] .chip.active{color:var(--sport-accent);background:color-mix(in srgb,var(--sport-accent) 10%,#fff)}
-html[data-theme="light"] .card-thesis,html[data-theme="light"] #results>.parlay-card .leg-title{color:var(--text)}
+html[data-theme="light"] .card-thesis,html[data-theme="light"] :is(#results,#analysisSecondary)>.parlay-card .leg-title{color:var(--text)}
 @media(prefers-reduced-transparency:reduce){#settingsDialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}html[data-theme="light"] .sport-switch{background:var(--surface)!important}}
 /* A legible UFC wordmark regardless of the remote logo asset or theme. */
 .league-mark[data-league="UFC"] img{display:none!important}
@@ -350,31 +350,31 @@ html[data-theme="light"] .league-mark[data-league="UFC"] .league-fallback{color:
  .carousel-instruction,.carousel-position{font-size:10px}.carousel-dot{width:29px;height:27px}.carousel-dot:before{width:6px;height:6px}
  #results,#results.nfl-carousel{flex:1;min-height:0;margin:0 0 44px;padding:0 1px 1px;overflow-y:hidden;align-items:stretch}
  #results:not(.nfl-carousel){display:grid;grid-template-columns:1fr!important;grid-template-rows:minmax(0,1fr)}
- #results>.parlay-card{height:100%;min-height:0;display:flex;flex-direction:column;padding:10px 12px!important;border-radius:17px;box-shadow:0 6px 18px #0002}
+ :is(#results,#analysisSecondary)>.parlay-card{height:100%;min-height:0;display:flex;flex-direction:column;padding:10px 12px!important;border-radius:17px;box-shadow:0 6px 18px #0002}
  #results.nfl-carousel>.parlay-card{flex-basis:94%;height:100%}
- #results>.parlay-card .parlay-top{flex:none;align-items:center}
- #results>.parlay-card .parlay-name{font-size:16px}
- #results>.parlay-card .odds-label{font-size:9px}
- #results>.parlay-card .odds.quote-unavailable{font-size:11px;margin-top:0}
- #results>.parlay-card>.card-thesis{flex:none;margin:5px 0 2px;font-size:11px;line-height:1.25}
+ :is(#results,#analysisSecondary)>.parlay-card .parlay-top{flex:none;align-items:center}
+ :is(#results,#analysisSecondary)>.parlay-card .parlay-name{font-size:16px}
+ :is(#results,#analysisSecondary)>.parlay-card .odds-label{font-size:9px}
+ :is(#results,#analysisSecondary)>.parlay-card .odds.quote-unavailable{font-size:11px;margin-top:0}
+ :is(#results,#analysisSecondary)>.parlay-card>.card-thesis{flex:none;margin:5px 0 2px;font-size:11px;line-height:1.25}
  .card-thesis .matchup-logos .sport-logo{width:17px;height:17px}
- #results>.parlay-card>.legs{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;margin:0;overflow:hidden}
- #results>.parlay-card .leg.has-market-tile{flex:1;min-height:0;gap:7px;padding:3px 0!important}
- #results>.parlay-card .leg-title{font-size:12px;line-height:1.2}
- #results>.parlay-card .leg-brief{font-size:9px;margin-top:2px;line-height:1.2}
- #results>.parlay-card .sport-photo,#results>.parlay-card .mlb-player-photo{width:29px;height:29px}
- #results>.parlay-card .sport-logo,#results>.parlay-card .mlb-team-logo{width:25px;height:25px}
- #results>.parlay-card .nfl-leg-media{min-width:53px;gap:3px}
- #results>.parlay-card .nfl-leg-media>.sport-photo+.sport-logo{width:19px;height:19px}
- #results>.parlay-card .market-tile{width:78px;min-height:49px;padding:4px 2px;border-radius:10px}
- #results>.parlay-card .market-tile-heading{font-size:9px}
- #results>.parlay-card .market-tile-line{font-size:13px;margin-top:2px}
- #results>.parlay-card .market-tile-price{font-size:10px;margin-top:2px}
- #results>.parlay-card .card-footer{flex:none;margin:0;padding:4px 0;font-size:9px}
- #results>.parlay-card .card-explanation{flex:none;margin:0;padding:0;border-top:1px solid var(--border)}
- #results>.parlay-card .card-explanation>summary{min-height:31px;font-size:11px}
- #results>.parlay-card .card-explanation[open]{position:absolute;z-index:5;inset:auto 0 0;max-height:75%;overflow-y:auto;padding:10px 13px;border:1px solid var(--border2);border-radius:15px;background:var(--surface);box-shadow:0 -10px 35px #0008}
- #results>.parlay-card{position:relative}
+ :is(#results,#analysisSecondary)>.parlay-card>.legs{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;margin:0;overflow:hidden}
+ :is(#results,#analysisSecondary)>.parlay-card .leg.has-market-tile{flex:1;min-height:0;gap:7px;padding:3px 0!important}
+ :is(#results,#analysisSecondary)>.parlay-card .leg-title{font-size:12px;line-height:1.2}
+ :is(#results,#analysisSecondary)>.parlay-card .leg-brief{font-size:9px;margin-top:2px;line-height:1.2}
+ :is(#results,#analysisSecondary)>.parlay-card .sport-photo,:is(#results,#analysisSecondary)>.parlay-card .mlb-player-photo{width:29px;height:29px}
+ :is(#results,#analysisSecondary)>.parlay-card .sport-logo,:is(#results,#analysisSecondary)>.parlay-card .mlb-team-logo{width:25px;height:25px}
+ :is(#results,#analysisSecondary)>.parlay-card .nfl-leg-media{min-width:53px;gap:3px}
+ :is(#results,#analysisSecondary)>.parlay-card .nfl-leg-media>.sport-photo+.sport-logo{width:19px;height:19px}
+ :is(#results,#analysisSecondary)>.parlay-card .market-tile{width:78px;min-height:49px;padding:4px 2px;border-radius:10px}
+ :is(#results,#analysisSecondary)>.parlay-card .market-tile-heading{font-size:9px}
+ :is(#results,#analysisSecondary)>.parlay-card .market-tile-line{font-size:13px;margin-top:2px}
+ :is(#results,#analysisSecondary)>.parlay-card .market-tile-price{font-size:10px;margin-top:2px}
+ :is(#results,#analysisSecondary)>.parlay-card .card-footer{flex:none;margin:0;padding:4px 0;font-size:9px}
+ :is(#results,#analysisSecondary)>.parlay-card .card-explanation{flex:none;margin:0;padding:0;border-top:1px solid var(--border)}
+ :is(#results,#analysisSecondary)>.parlay-card .card-explanation>summary{min-height:31px;font-size:11px}
+ :is(#results,#analysisSecondary)>.parlay-card .card-explanation[open]{position:absolute;z-index:5;inset:auto 0 0;max-height:75%;overflow-y:auto;padding:10px 13px;border:1px solid var(--border2);border-radius:15px;background:var(--surface);box-shadow:0 -10px 35px #0008}
+ :is(#results,#analysisSecondary)>.parlay-card{position:relative}
  .dashboard-footer{display:none}
  .more-analysis{position:fixed;z-index:35;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));margin:0;border-radius:12px;background:var(--surface)!important;box-shadow:0 4px 18px #0003}
  .more-analysis>summary{min-height:34px;padding:5px 11px;font-size:11px}
@@ -389,13 +389,13 @@ html[data-theme="light"] .league-mark[data-league="UFC"] .league-fallback{color:
  #explorePanelToggle{flex-basis:30px;min-height:30px}
  .pick-of-day{min-height:48px;padding:6px 10px!important}
  #parlaySwipeHint{flex-basis:23px;min-height:23px}
- #results>.parlay-card .leg-brief{display:none}
+ :is(#results,#analysisSecondary)>.parlay-card .leg-brief{display:none}
 }
 
 body:not([data-sport="nfl"]) #nflWeekWrap{display:none!important}
 
-#results>.parlay-card .grade.card-status{display:inline-block!important;font-size:10px;margin-top:4px}
-html[data-theme="light"] #results>.parlay-card .grade.card-status{background:color-mix(in srgb,var(--sport-accent) 10%,#fff);color:var(--sport-accent)}
+:is(#results,#analysisSecondary)>.parlay-card .grade.card-status{display:inline-block!important;font-size:10px;margin-top:4px}
+html[data-theme="light"] :is(#results,#analysisSecondary)>.parlay-card .grade.card-status{background:color-mix(in srgb,var(--sport-accent) 10%,#fff);color:var(--sport-accent)}
 body:not([data-sport="nfl"]) #nflLinesWrap{display:none!important}
 #nflLinesNote{font-size:10px;line-height:1.4;color:var(--muted)}
 .market-tile:has(.alt-tag){position:relative}
@@ -406,8 +406,9 @@ body[data-sport="nhl"]{--league:#8ed8ff;--league-bg:#183649;--sport-accent:#8ed8
 html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0f3fc;--sport-accent:#12668a;--sport-glow:#d6f0fc}
 .league-mark[data-league="NHL"]{background:#f1f5f9}
 .league-mark[data-league="NHL"] .league-fallback{color:#183649}
-#nhlMarketFilters{margin-bottom:10px;padding:4px 16px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
-#nhlMarketFilters>summary{font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between}
+#nhlMarketFilters{margin-bottom:9px;padding:0 15px;border:1px solid var(--border2);border-radius:11px;background:var(--surface2)}
+#nhlMarketFilters>summary{color:var(--text);font-size:13px;font-weight:750;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;list-style:none}
+#nhlMarketFilters>summary::-webkit-details-marker{display:none}
 #nhlMarketFilters>summary:after{content:'⌄';color:var(--sport-accent)}
 #nhlMarketFilters[open]>summary:after{content:'⌃'}
 #nhlMarketFilters[open]{padding-bottom:12px}

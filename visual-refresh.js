@@ -70,7 +70,7 @@ function selectionParts(value,sub=''){
   return {subject:text,market:'Pick',line:''};
 }
 function compactSummaries(){
-  document.querySelectorAll('#results>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
+  document.querySelectorAll(':is(#results,#analysisSecondary)>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
     const card=full.closest('.parlay-card'),sport=document.body.dataset.sport||'nfl';
     if(sport==='nfl'){
       const short=(full.dataset.shortText||'').replace('Lower-scoring control game','Low scoring').replace('Favorite controls the game','Favorite control').replace('Underdog forced to throw','Underdog passing');
@@ -84,16 +84,17 @@ function compactSummaries(){
     }
     const details=document.createElement('details'),label=document.createElement('summary');
     details.className='card-explanation';label.textContent='Details';details.open=false;
-    const footer=card.querySelector('.card-footer');(footer||card).after(details);
+    const footer=card.querySelector('.card-footer');if(footer)footer.after(details);else card.append(details);
     details.append(label,full);
   });
 }
 function compactParlays(){
-  document.querySelectorAll('#results>.parlay-card:not(.td-watch):not([data-compact])').forEach(card=>{
-    card.dataset.compact='1';const sport=document.body.dataset.sport||'nfl',legs=[...card.querySelectorAll(':scope>.legs>.leg')],details=card.querySelector('.card-explanation');
+  document.querySelectorAll(':is(#results,#analysisSecondary)>.parlay-card:not(.td-watch):not([data-compact])').forEach(card=>{
+    const sport=document.body.dataset.sport||'nfl',legs=[...card.querySelectorAll(':scope>.legs>.leg')],details=card.querySelector('.card-explanation');
     if(!details)return;
+    card.dataset.compact='1';
     const title=card.querySelector('.parlay-name');
-    if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/\s+\d+-Leg$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(legs.length===1?'leg':'legs')}
+    if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/\s+\d+-Leg$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(card.classList.contains('player-props-card')?(legs.length===1?'pick':'picks'):(legs.length===1?'leg':'legs'))}
     if(sport==='nfl'){
       const odds=card.querySelector('.odds'),label=card.querySelector('.odds-label');
       if(odds?.textContent.trim()==='—'){odds.textContent='Check book';odds.classList.add('quote-unavailable');if(label)label.textContent='SGP odds'}
@@ -124,7 +125,7 @@ function compactParlays(){
     const score=footer?.firstElementChild;
     if(sport==='ufc'){const dates=[...new Set(legs.map(l=>l.dataset.eventDate).filter(Boolean))];if(dates.length){const event=document.createElement('p');event.className='card-thesis';event.textContent=dates.map(d=>compactDate(d+'T12:00:00Z',true)).join(' · ');card.querySelector('.parlay-top').after(event)}}
     if(sport==='mlb'&&/Experimental/i.test(details.textContent)){const badge=document.createElement('span');badge.className='grade card-status';badge.textContent='Experimental';card.querySelector('.parlay-name').after(badge)}
-    if(sport==='ncaaf'&&/Experimental/i.test(details.textContent))card.querySelector('.grade')?.classList.add('card-status');
+    if(['ncaaf','nhl'].includes(sport)&&/Experimental/i.test(details.textContent))card.querySelector('.grade')?.classList.add('card-status');
     if(footer){const note=footer.children[1];if(note&&/^(Distinct matchups|Separate games|Independent fights)$/.test(note.textContent)){note.textContent=note.textContent.replace('Independent fights','Separate fights');const row=document.createElement('div');row.className='card-detail-row';row.append(note);details.append(row)}}
     if(score&&sport==='ufc')score.textContent=score.textContent.replace(/^Rating/,'Model rating');
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
