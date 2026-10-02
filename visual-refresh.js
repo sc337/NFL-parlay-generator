@@ -33,9 +33,10 @@ function compactBrief(sport,sub){
     const game=sub.split(' · ')[0];if(game)parts.push(game.replace(/\s+at\s+/i,' @ '));
   }
   if(market)parts.push('Mkt '+market[1]+'%');
-  if(model)parts.push((/Simulated/i.test(sub)?'Sim':'Model')+' '+model[1]+'%');
+  if(sport==='ncaaf'){const game=sub.split(' · ')[0];if(game)parts.unshift(game.replace(/\s+at\s+/i,' @ '))}
+  if(model)parts.push((sport==='ncaaf'?'Exp':/Simulated/i.test(sub)?'Sim':'Model')+' '+model[1]+'%');
   if(/Market-only|no independent estimate/i.test(sub))parts.push('Market only');
-  else if(/Experimental/i.test(sub))parts.push('Experimental');
+  else if(/Experimental/i.test(sub)&&sport!=='ncaaf')parts.push('Experimental');
   return parts.join(' · ');
 }
 function selectionParts(value,sub=''){

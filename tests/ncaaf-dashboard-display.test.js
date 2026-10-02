@@ -3,7 +3,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const test=require('node:test');
 
-function runtime(context){
+function runtime(context,patch={}){
   const nodes=new Map();
   const querySelector=s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{}});return nodes.get(s)};
   const document={querySelector,body:{classList:{contains:()=>false}}};
@@ -13,7 +13,7 @@ function runtime(context){
   const kickoff=new Date(Date.now()+86400000).toISOString();
   const market={game_id:'99',game_time:kickoff,close_time:kickoff,game_status:'pre',game_label:'Away at Alabama',
     ticker:'T',event_ticker:'T',label:'Alabama',title:'Alabama wins',kind:'moneyline',probability:.68,yes_ask:.69,
-    spread:.03,volume:2000,open_interest:500};
+    spread:.03,volume:2000,open_interest:500,...patch};
   const data={updated_at:new Date().toISOString(),markets:[market]};
   const fetch=async url=>({ok:true,json:async()=>context,text:async()=>JSON.stringify(data)});
   const sandbox=vm.createContext({window,document,fetch,Date,console});
@@ -37,4 +37,32 @@ test('NCAAF card distinguishes an experimental estimate from a market-only signa
   const marketOnly=runtime({});
   await marketOnly.window.NCAAF_DASHBOARD.load();
   assert.equal(marketOnly.window.NCAAF_DASHBOARD.projection(marketOnly.market).experimental,false);
+  assert.match(app.nodes.get('#results').innerHTML,/EXPERIMENTAL/);
+  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/MARKET ONLY/);
+  assert.match(app.nodes.get('#results').innerHTML,/Quote quality .*Not win chance/);
+  assert.match(app.nodes.get('#results').innerHTML,/Starts /);
+  assert.match(app.nodes.get('#results').innerHTML,/1 of 2 legs available/);
+  assert.match(marketOnly.nodes.get('#results').innerHTML,/MARKET SIGNALS/);
+});
+
+test('contradicted experimental picks cannot enter recommendations or creator fallback',async()=>{
+  const strong={available:true,games:4,box_games:4,points_for:35,points_against:16,margin:19,yards_for:450,yards_against:270};
+  const weak={...strong,points_for:19,points_against:30,margin:-11,yards_for:300,yards_against:400};
+  const app=runtime({updated_at:new Date().toISOString(),league_points_per_team:25,games:{'99':{
+    kickoff:new Date(Date.now()+86400000).toISOString(),home:{aliases:['Alabama'],form:weak},away:{aliases:['Away'],form:strong}}}});
+  await app.window.NCAAF_DASHBOARD.load();
+  assert.ok(app.window.NCAAF_DASHBOARD.projection(app.market).modelP<app.market.yes_ask);
+  for(const mode of ['bankroll','balanced','long'])assert.equal(app.window.NCAAF_DASHBOARD.eligible(app.market,mode),false);
+  app.window.NCAAF_DASHBOARD.setLegs(6);
+  assert.equal(app.daily(),undefined);
+  assert.match(app.nodes.get('#results').innerHTML,/No qualifying NCAAF picks/);
+  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/class="parlay-card"/);
+});
+
+test('missing executable quote or unverified kickoff cannot be a college recommendation',async()=>{
+  for(const patch of [{yes_ask:null},{game_time:null,event_ticker:'KXNCAAFGAME-30JAN01OSUIOWA'},{game_status:'Live'}]){
+    const app=runtime({},patch);await app.window.NCAAF_DASHBOARD.load();
+    assert.equal(app.daily(),undefined);
+    assert.doesNotMatch(app.nodes.get('#results').innerHTML,/class="parlay-card"/);
+  }
 });
