@@ -45,7 +45,7 @@ function selectionParts(value,sub=''){
   if(match)return {subject:match[1],market:'Total',line:match[2].toUpperCase()+' '+match[3]};
   match=text.match(/^(.+?)\s+([OU])\s+([\d.]+)\s+(.+)$/i);
   if(match)return {subject:match[1],market:match[4],line:match[2].toUpperCase()+' '+match[3]};
-  match=text.match(/^([OU])\s+([\d.]+)\s+(?:points?|runs?)$/i);
+  match=text.match(/^([OU])\s+([\d.]+)\s+(?:points?|runs?)(?:\s+scored)?$/i);
   if(match)return {subject:(sub.split(' · ')[0]||'Game').replace(/\s+at\s+/i,' @ '),market:'Total',line:match[1].toUpperCase()+' '+match[2]};
   match=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Spread$/i);
   if(match)return {subject:match[1],market:'Spread',line:match[2]};
