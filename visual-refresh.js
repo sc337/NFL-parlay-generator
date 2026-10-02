@@ -91,8 +91,9 @@ function compactParlays(){
       if(!title)return;
       const original=title.textContent.trim(),subText=sub?.textContent.trim()||'',reasonText=reason?.textContent.trim()||'';
       const selection=selectionParts(compactTitle(original,sport,subText),subText),quote=leg.querySelector('.leg-quote');
-      title.textContent=(i+1)+'. '+selection.subject;
-      if(sport!=='nfl'||subText){const brief=compactBrief(sport,subText,leg.dataset.opponent||'').replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
+      const subject=sport==='nfl'&&['Moneyline','Spread'].includes(selection.market)?(window.NFL_DISPLAY?.team?.(selection.subject)||selection.subject):selection.subject;
+      title.textContent=(i+1)+'. '+subject;
+      if(sport!=='nfl'||subText){const brief=(sport==='nfl'&&leg.dataset.compactMatchup?leg.dataset.compactMatchup:compactBrief(sport,subText,leg.dataset.opponent||'')).replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
       if(selection.line){
         const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
         tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';

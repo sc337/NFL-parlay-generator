@@ -50,9 +50,14 @@ test('thin one-team markets fall back without inventing an opponent pick',()=>{
   assert.ok(p.legs.every(l=>l.team!=='Away'));
 });
 
-test('NFL kickoff labels contain date, time and zone without inventing invalid dates',()=>{
+test('NFL compact labels shorten matchups and times while full details retain the zone',()=>{
   assert.match(context.nflKickoff(game.commence_time),/Oct/);
-  assert.match(context.nflKickoff(game.commence_time),/\d+:\d{2}/);
+  assert.match(context.nflKickoff(game.commence_time),/\d+(?::\d{2})?[AP]M/);
+  assert.doesNotMatch(context.nflKickoff(game.commence_time),/Sun|PDT|MST|UTC/);
+  assert.match(context.nflKickoff(game.commence_time,true),/Sun/);
+  assert.equal(context.nflMatchup('Jacksonville Jaguars @ Cincinnati Bengals'),'Jaguars vs Bengals');
+  assert.equal(context.nflMatchup('Indianapolis Colts @ Washington Commanders'),'Colts vs Commanders');
+  assert.equal(context.nflTeamShort('San Francisco 49ers'),'49ers');
   assert.equal(context.nflKickoff('invalid'),'');
   assert.equal(context.nflKickoff(null),'');
 });

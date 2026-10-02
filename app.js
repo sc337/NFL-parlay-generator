@@ -516,7 +516,7 @@ function hydrateGames(){
   nflSlate().forEach(g=>{
     const o=document.createElement('option');
     o.value=g.id;
-    o.textContent=`${g.away} @ ${g.home}`;
+    o.textContent=[nflKickoff(g.commence_time),nflMatchup(g.away+' @ '+g.home)].filter(Boolean).join(' · ');
     sel.appendChild(o);
   });
   if([...sel.options].some(o=>o.value===selected))sel.value=selected;
@@ -974,15 +974,22 @@ function renderNflStraight(){
     .sort((a,b)=>(Number(b.x.confidence)+Math.max(0,Number(b.x.ev))*20)-(Number(a.x.confidence)+Math.max(0,Number(a.x.ev))*20));
   const best=choices[0];
   window.PICK_OF_DAY?.show?.('nfl',best&&{market:best.m,eventTime:best.g.commence_time,label:best.m.name,
-    event:best.g.away+' @ '+best.g.home,
+    event:nflMatchup(best.g.away+' @ '+best.g.home),
     media:(window.SPORT_MEDIA?.nfl(best.m)||'')+(best.m.player&&best.m.team?window.SPORT_MEDIA?.nfl({team:best.m.team})||'':''),
     note:'Model-screened straight. Verify the current line at your sportsbook.'});
 }
 
-function nflKickoff(value){
+function nflTeamShort(value){return String(value||'').trim().split(/\s+/).at(-1)||''}
+function nflMatchup(value){return String(value||'').split(/\s+(?:@|at|vs)\s+/i).map(nflTeamShort).join(' vs ')}
+function nflKickoff(value,full=false){
   if(!value||!Number.isFinite(Date.parse(value)))return '';
-  return new Date(value).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+  const date=new Date(value);
+  if(full)return date.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+  const day=date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const time=date.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}).replace(/:00(?=\s*[AP]M)/,'').replace(/\s+([AP]M)/,'$1');
+  return day+' '+time;
 }
+window.NFL_DISPLAY={matchup:nflMatchup,team:nflTeamShort,kickoff:nflKickoff};
 
 function render(parlays){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
@@ -1002,8 +1009,8 @@ function render(parlays){
     node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
     node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
-    const matchup=p.gameLabel?.split(/\s+@\s+/).map(team=>team.trim().split(/\s+/).at(-1)).join(' @ ');
-    node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(matchup||'Same game')+(nflKickoff(p.kickoff)?' · '+nflKickoff(p.kickoff):'')+' · '+(p.scriptName||'Related legs'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
+    const matchup=nflMatchup(p.gameLabel);
+    node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(nflKickoff(p.kickoff)?nflKickoff(p.kickoff)+' · ':'')+(matchup||'Same game'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
       (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');
     if(state.mode==='sgp'&&p.gameLabel){const teams=p.gameLabel.split(/\s+@\s+/);if(teams.length===2){node.querySelector('.summary').dataset.away=teams[0];node.querySelector('.summary').dataset.home=teams[1]}}
     node.querySelector('.score').textContent=`Rating ${p.score}/100 · Not win chance`;
@@ -1011,6 +1018,7 @@ function render(parlays){
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
       const d=document.createElement('div'); d.className='leg sport-visual-leg';
+      if(state.mode==='multi')d.dataset.compactMatchup=[nflKickoff(l.kickoff),nflMatchup(l.gameLabel)].filter(Boolean).join(' · ');
       const px=window.NFL_PROJECTIONS?.describe?.(l)||{};
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
@@ -1024,7 +1032,7 @@ function render(parlays){
         metrics.push('Market-qualified');
         metrics.push('Confidence '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
       }
-      d.innerHTML=`<span class="nfl-leg-media">${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}${l.player&&l.team?window.SPORT_MEDIA?.nfl({team:l.team})||'':''}</span><div class="sport-visual-copy"><div class="leg-quote-row"><div class="leg-pick"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div>${state.mode==='multi'?`<div class="leg-sub">${window.MARKET_GUARDS.esc((l.gameLabel||'')+(nflKickoff(l.kickoff)?' · Starts '+nflKickoff(l.kickoff):''))}</div>`:''}</div><strong class="leg-quote" aria-label="American odds ${fmtOdds(l.price)}">${fmtOdds(l.price)}</strong></div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
+      d.innerHTML=`<span class="nfl-leg-media">${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}${l.player&&l.team?window.SPORT_MEDIA?.nfl({team:l.team})||'':''}</span><div class="sport-visual-copy"><div class="leg-quote-row"><div class="leg-pick"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div>${state.mode==='multi'?`<div class="leg-sub">${window.MARKET_GUARDS.esc((l.gameLabel||'')+(nflKickoff(l.kickoff)?' · Starts '+nflKickoff(l.kickoff,true):''))}</div>`:''}</div><strong class="leg-quote" aria-label="American odds ${fmtOdds(l.price)}">${fmtOdds(l.price)}</strong></div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
       legs.appendChild(d);
     });
     wrap.appendChild(node);
