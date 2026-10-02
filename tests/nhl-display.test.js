@@ -60,3 +60,20 @@ test('NHL official player images use the shared photo class and reject unrelated
  assert.match(html,/sport-photo/);assert.match(html,/Andrew Copp headshot/);
  assert.equal(window.SPORT_MEDIA.nhl({player:'Player',headshot:'https://untrusted.example/image.png'}),'');
 });
+test('NHL empty prop notices are secondary, not an extra main grid row',()=>{
+ const source=fs.readFileSync('compact-ui.js','utf8'),card=el('div','empty secondary-props-empty'),secondary=el('div','analysis-secondary'),analysis=el('details','more-analysis');secondary.id='analysisSecondary';analysis.append(secondary);
+ const context=vm.createContext({window:{__ACTIVE_SPORT:'nhl'},document:{body:{dataset:{}}},$:()=>analysis,$$:()=>[card]});
+ vm.runInContext(source.slice(source.indexOf('function ensureAnalysis'),source.indexOf('function moveConsensus'))+source.slice(source.indexOf('function compactSportResults'),source.indexOf('function tidy')),context);
+ context.compactSportResults();assert.equal(card.style.display,'none');assert.equal(secondary.children.length,1);
+ assert.match(fs.readFileSync('nhl-dashboard.js','utf8'),/empty secondary-props-empty/);
+});
+test('mobile cards cannot squeeze tile rows and all NHL market buttons remain reachable',()=>{
+ const css=fs.readFileSync('visual-refresh.css','utf8');
+ assert.match(css,/main\{flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto\}/);
+ assert.match(css,/#results,#results\.nfl-carousel\{flex:1 0 240px;min-height:240px/);
+ assert.match(css,/\.leg\.has-market-tile\{flex:0 0 auto;min-height:58px/);
+ assert.match(css,/#results>\.parlay-card>\.legs\{[^}]*overflow-y:auto/);
+ assert.doesNotMatch(css,/:is\(#results,#analysisSecondary\)>\.parlay-card\{height:100%/);
+ assert.doesNotMatch(css,/:is\(#results,#analysisSecondary\)>\.parlay-card \.card-explanation\[open\]\{position:absolute/);
+ assert.match(css,/#nhlMarketChips\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+});
