@@ -24,6 +24,7 @@ function compactBrief(sport,sub){
   const market=sub.match(/\bMarket\s+(\d+)%/i)||sub.match(/\bKalshi\s+(\d+)%/i);
   const model=sub.match(/\b(?:Simulated|Model|Experimental estimate)\s+(\d+)%/i);
   const parts=[];
+  const starts=sub.match(/ · Starts (.+)$/);if(starts)parts.push(starts[1]);
   if(sport==='ufc'){
     const fight=sub.split(' · ')[0]||'';
     const opponent=fight.split(/\s+vs\s+/i)[1];if(opponent)parts.push('vs '+opponent);
@@ -65,7 +66,7 @@ function compactSummaries(){
       full.before(thesis);
     }
     const details=document.createElement('details'),label=document.createElement('summary');
-    details.className='card-explanation';label.textContent='Why these picks?';
+    details.className='card-explanation';label.textContent='Details';details.open=false;
     const footer=card.querySelector('.card-footer');(footer||card).after(details);
     details.append(label,full);
   });
