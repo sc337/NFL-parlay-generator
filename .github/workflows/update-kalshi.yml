@@ -13,6 +13,9 @@ on:
       - 'scripts/update_nhl_context.py'
       - 'nhl-model.js'
       - 'nhl-alt-lines.js'
+      - 'team-alt-lines.js'
+      - 'mlb-dashboard.js'
+      - 'ncaaf-dashboard.js'
       - 'nhl-dashboard.js'
       - 'scripts/update_mlb_context.py'
       - 'scripts/attach_game_context.py'
@@ -60,6 +63,7 @@ jobs:
         run: python scripts/update_kalshi_mlb.py
       - name: Check NHL models and player-market mapping
         run: |
+          node --test tests/team-alt-lines.test.js tests/pick-of-day.test.js tests/ncaaf-dashboard-display.test.js tests/mlb-distinct-parlay.test.js
           node --test tests/nhl-model.test.js tests/nhl-alt-lines.test.js tests/nhl-dashboard.test.js
           python -m unittest discover -s tests -p 'test_nhl*.py'
       - name: Refresh official NHL model context

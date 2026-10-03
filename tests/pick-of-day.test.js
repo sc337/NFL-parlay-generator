@@ -25,13 +25,14 @@ test('Pick of the Day shows one pregame straight and never a stake',()=>{
  window.PICK_OF_DAY.show('nfl');
  assert.match(host.children[0].textContent,/Pass/);
 });
-test('NHL selected dates support future featured picks with ALT tiles, without changing other sports',()=>{
+test('supported sport date filters show future featured picks with ALT tiles',()=>{
  const app=runtime(),future=new Date(Date.now()+2*86400000),key=future.getFullYear()+'-'+String(future.getMonth()+1).padStart(2,'0')+'-'+String(future.getDate()).padStart(2,'0');
  app.window.__ACTIVE_SPORT='nhl';const pick={market:{yes_ask:.7,isAltLine:true},eventTime:future,label:'Bruins +2.5 Puck line',event:'Bruins vs Jets'};
  app.window.PICK_OF_DAY.show('nhl',pick,{date:key});assert.equal(app.title.textContent,'Featured Pick');assert.equal(app.host.children.length,2);assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT');
  app.window.PICK_OF_DAY.show('nhl',pick);assert.equal(app.title.textContent,'Pick of the Day');assert.match(app.host.children[0].textContent,/No pick today/);
  app.window.PICK_OF_DAY.show('nhl',null,{date:key});assert.match(app.host.children[0].textContent,/selected date/);
- app.window.__ACTIVE_SPORT='mlb';app.window.PICK_OF_DAY.show('mlb',pick,{date:key});assert.match(app.host.children[0].textContent,/No pick today/);
+ for(const sport of ['mlb','ncaaf']){app.window.__ACTIVE_SPORT=sport;app.window.PICK_OF_DAY.show(sport,pick,{date:key});assert.equal(app.title.textContent,'Featured Pick');assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT')}
+ app.window.__ACTIVE_SPORT='nfl';app.window.PICK_OF_DAY.show('nfl',pick,{date:key});assert.match(app.host.children[0].textContent,/No pick today/);
 });
 
 test('stale NFL feed and future-day event do not create a pick',()=>{

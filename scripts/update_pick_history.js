@@ -35,6 +35,7 @@ async function candidates(sport,{all=false}={}){
       return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental,ablations},game};
     })};
   }
+  if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
   if(sport==='ncaaf')r.run('ncaaf-model.js');
   if(sport==='mlb')r.run('mlb-totals-model.js');
   if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
@@ -61,6 +62,7 @@ function record(sport,entry,now){
   const experimental=(sport==='nhl'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP))||sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
   const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
+    isAltLine:m.isAltLine===true,altReferenceLine:m.altReferenceLine??null,altDistance:m.altDistance??null,
     marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
     forecastType:experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,

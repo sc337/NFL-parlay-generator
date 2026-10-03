@@ -423,3 +423,12 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 #nhlMarketNote{display:block;margin-top:8px;font-size:11px;line-height:1.4;color:var(--muted)}
 .sport-switch button{min-width:0;white-space:nowrap}
 @media(max-width:380px){.sport-switch button{font-size:10px!important;padding-inline:2px!important;letter-spacing:0!important}}
+
+/* Match the NHL market controls across modeled team sports. */
+.team-line-filters{flex:none;margin-bottom:9px;padding:0 15px;border:1px solid var(--border2);border-radius:11px;background:var(--surface2)}
+.team-line-filters>summary{color:var(--text);font-size:13px;font-weight:750;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;list-style:none}
+.team-line-filters>summary::-webkit-details-marker{display:none}
+.team-line-filters>summary:after{content:"⌄";color:var(--sport-accent)}
+.team-line-filters[open]>summary:after{content:"⌃"}
+.team-line-filters[open]{padding-bottom:12px}
+.team-line-filters small{display:block;color:var(--muted);font-size:11px;line-height:1.5}
