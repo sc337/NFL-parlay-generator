@@ -43,3 +43,19 @@ test('stale NFL feed and future-day event do not create a pick',()=>{
  future.window.PICK_OF_DAY.show('nfl',{market:{price:-110},eventTime:new Date(Date.now()+172800000),label:'Team ML'});
  assert.match(future.host.children[0].textContent,/Pass/);
 });
+
+test('featured MLB and college team markets retain their actual line rather than a moneyline label',()=>{
+ for(const [sport,label,heading,value] of [
+  ['mlb','Atlanta Team Total Over 2.5','Team total','O 2.5'],
+  ['mlb','Atlanta Team Total Under 3.5','Team total','U 3.5'],
+  ['mlb','Dodgers -1.5 Run Line','Run line','-1.5'],
+  ['mlb','Padres +1.5 Run Line','Run line','+1.5'],
+  ['ncaaf','Over 55.5 points scored','Total','O 55.5'],
+  ['ncaaf','Under 55.5 points scored','Total','U 55.5']
+ ]){
+  const app=runtime();app.window.__ACTIVE_SPORT=sport;
+  app.window.PICK_OF_DAY.show(sport,{market:{yes_ask:.6},eventTime:new Date(Date.now()+60000),label,event:'Away vs Home'});
+  const tile=app.host.children[0].children[2];
+  assert.equal(tile.children[0].textContent,heading);assert.equal(tile.children[1].textContent,value);assert.equal(tile.children[2].textContent,'Kalshi 60¢');
+ }
+});
