@@ -3,6 +3,20 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
+test('MLB team totals separate the selected team from both sides of the market tile',()=>{
+ const source=fs.readFileSync(require.resolve('../visual-refresh.js'),'utf8');
+ const context=vm.createContext({});
+ vm.runInContext(source.slice(source.indexOf('function compactTitle'),source.indexOf('function compactSummaries')),context);
+ for(const side of ['Over','Under']){
+  const result=context.selectionParts(context.compactTitle('4. Braves at Dodgers · Atlanta Team Total '+side+' 2.5','mlb',''));
+  assert.equal(result.subject,'Braves @ Dodgers · Atlanta');
+  assert.equal(result.market,'Team total');
+  assert.equal(result.line,side[0]+' 2.5');
+ }
+ const standalone=context.selectionParts(context.compactTitle('Seattle Mariners Team Total Under 3.5','mlb',''));
+ assert.equal(standalone.subject,'Seattle Mariners');assert.equal(standalone.market,'Team total');assert.equal(standalone.line,'U 3.5');
+});
+
 test('college total descriptions produce an odds tile with the matchup as subject', () => {
   const source = fs.readFileSync(require.resolve('../visual-refresh.js'), 'utf8');
   const functions = source.slice(source.indexOf('function compactTitle'), source.indexOf('function compactSummaries'));

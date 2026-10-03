@@ -51,6 +51,8 @@ function selectionParts(value,sub=''){
   const text=value.replace(/^\d+\.\s*/,'').trim();
   const total=text.match(/^([OU])\s+([\d.]+)$/i);
   if(total)return {subject:'Game total',market:'Total',line:total[1].toUpperCase()+' '+total[2]};
+  const teamTotal=text.match(/^(.+?)\s+Team(?:\s+Total)?\s+([OU])\s+([\d.]+)$/i);
+  if(teamTotal)return {subject:teamTotal[1],market:'Team total',line:teamTotal[2].toUpperCase()+' '+teamTotal[3]};
   const puckLine=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Puck\s+Line$/i);
   if(puckLine)return {subject:puckLine[1],market:'Puck line',line:puckLine[2]};
   const runLine=text.match(/^(.+?)\s+([+−-][\d.]+)\s+Run\s+Line$/i);
