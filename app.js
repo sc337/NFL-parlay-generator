@@ -593,7 +593,7 @@ const PROFILE_RULES = {
     corrWeight:7,
     propShare:.75,
     maxSamePlayer:1,
-    label:'Longshot'
+    label:'Lotto'
   }
 };
 
@@ -946,7 +946,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   if(isSgp){
     for(let i=0;i<legs.length;i++) for(let j=i+1;j<legs.length;j++) corr+=correlation(legs[i],legs[j]);
   }
-  const names={safe:'Conservative',balanced:'Balanced',long:'Longshot'};
+  const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'};
   const grades={safe:'CONSERVATIVE',balanced:'BEST FIT',long:'HIGHER PAYOUT'};
   return {
     name:names[variant],grade:grades[variant],legs,
@@ -1102,7 +1102,9 @@ async function generate(){
     if(!current())return;
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
   }
-  if(current())render(parlays.filter(Boolean).sort((a,b)=>Number(b.legs.length===count)-Number(a.legs.length===count)||b.legs.length-a.legs.length||b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b))).slice(0,1));
+  // Keep the best independent build for each risk profile in swipe order.
+  // Repeated generation uses the same inputs; profiles never penalize each other.
+  if(current())render(parlays.filter(Boolean));
 }
 
 window.generate=generate;

@@ -10,14 +10,17 @@ function nfl(mode='multi'){
  vm.runInContext(source.slice(source.indexOf('async function generate(){'),source.indexOf('window.generate=generate;')),context);
  return {run:()=>context.generate(),builds,output,previous};
 }
-test('NFL Generate selects one highest-ranked requested-length build and repeats it',async()=>{
+test('NFL Generate preserves Conservative, Balanced and Lotto swipe order and repeats each best build',async()=>{
  for(const mode of ['multi','sgp']){
   const app=nfl(mode);await app.run();await app.run();
-  assert.equal(app.output[0].length,1);assert.equal(app.output[0][0],app.builds.balanced);assert.equal(app.output[1][0],app.output[0][0]);
+  assert.deepEqual([...app.output[0]],[app.builds.safe,app.builds.balanced,app.builds.long]);assert.deepEqual([...app.output[1]],[...app.output[0]]);
   assert.ok(app.previous.every(p=>p.length===0),'Risk profiles must not penalize overlap with other profiles');
  }
 });
-test('NFL prefers a complete selected-leg build over a higher-scoring shorter fallback',async()=>{
+test('NFL profiles remain separate when one produces a shorter fallback',async()=>{
  const app=nfl();app.builds.balanced.legs=[1,2];app.builds.balanced.score=99;
- await app.run();assert.equal(app.output[0][0],app.builds.long);
+  await app.run();assert.deepEqual([...app.output[0]],[app.builds.safe,app.builds.balanced,app.builds.long]);assert.equal(app.output[0][1].legs.length,2);
+});
+test('NFL unavailable profiles are omitted without replacing them with another risk profile',async()=>{
+ const app=nfl();app.builds.safe=null;await app.run();assert.deepEqual([...app.output[0]],[app.builds.balanced,app.builds.long]);
 });
