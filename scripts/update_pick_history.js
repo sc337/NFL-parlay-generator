@@ -7,12 +7,13 @@ const root=path.resolve(__dirname,'..');
 const outFile=path.join(root,'data/pick-history.json');
 const read=name=>JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8'));
 
-function runtime(sport){
+function runtime(sport,{dataDir=path.join(root,'data'),capture}={}){
   const elements=new Map();
   const element=selector=>{if(!elements.has(selector))elements.set(selector,{innerHTML:'',textContent:'',style:{},classList:{contains:()=>false}});return elements.get(selector)};
-  const document={readyState:'loading',addEventListener(){},querySelector:element,body:{classList:{contains:()=>false}}};
+  const document={readyState:'loading',addEventListener(){},querySelectorAll:()=>[],querySelector:element,body:{classList:{contains:()=>false}}};
   const window={__ACTIVE_SPORT:sport,__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},COMPACT_UI:{refresh(){}},SPORT_MEDIA:{load:async()=>{},nfl:()=>'',mlb:()=>'',ncaaf:()=>'',ufc:()=>''}};
-  const fetch=async url=>{const name=String(url).split('?')[0];if(!/^data\/[a-z0-9-]+\.json$/.test(name))throw Error('Unexpected fetch '+url);const data=read(name.slice(5));return{ok:true,json:async()=>data,text:async()=>JSON.stringify(data)}};
+  const fetch=async url=>{const name=String(url).split('?')[0];if(!/^data\/[a-z0-9-]+\.json$/.test(name))throw Error('Unexpected fetch '+url);const data=JSON.parse(fs.readFileSync(path.join(dataDir,name.slice(5)),'utf8'));return{ok:true,json:async()=>data,text:async()=>JSON.stringify(data)}};
+  if(capture)window.RECOMMENDATION_CAPTURE=capture;
   const ctx=vm.createContext({window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
   run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');
@@ -83,4 +84,4 @@ async function main(){
   console.log('History',payload.records.length,'records;',pending.length,'pending');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
-module.exports={record,candidates};
+module.exports={record,candidates,runtime};

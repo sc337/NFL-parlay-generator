@@ -58,6 +58,7 @@ function render(){
  const games=G.unique(ranked,Infinity),covered=ranked.filter(m=>model(m)).length;
  lastStatus='Kalshi NHL · '+games.length+' qualified games · '+(covered?'Experimental NHL model':'Market only');$('#dataStatus').textContent=lastStatus;
  const selected=games.slice(0,legs);
+ window.RECOMMENDATION_CAPTURE?.('nhl',{requestedLegs:legs,mode:'multi',profile:'balanced',legs:selected.length===legs&&G.independent(selected)?selected.map(m=>({market:m,forecast:model(m)||{}})):[]});
  $('#resultsTitle').textContent='NHL Recommendations';
  $('#results').innerHTML=(selected.length===legs&&G.independent(selected)?card(selected):'<div class="empty">'+(games.length?games.length+' of '+legs+' games qualify · Try fewer legs.':'No qualifying NHL picks in selected markets · Pass.')+'</div>')+(PROPS.some(kind=>selectedMarkets.has(kind))?propsCard():'');
  window.PARLAY_GENERATOR?.syncLabel?.();
