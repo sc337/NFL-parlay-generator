@@ -8,15 +8,19 @@ function ensureAnalysis(){
   d=document.createElement('details');
   d.id='moreAnalysis';
   d.className='more-analysis';
-  d.innerHTML='<summary><span>More analysis</span><small>Context · diagnostics</small></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus"></div>';
+  d.innerHTML='<summary><span>More picks</span></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus" hidden></div>';
   const results=$('#results');
   (results?.parentElement||$('.shell'))?.appendChild(d);
   return d;
 }
 
 function moveConsensus(){
-  const d=ensureAnalysis(),host=d.querySelector('#analysisConsensus'),p=$('#predictionPanel');
-  if(p&&p.parentElement!==host)host.appendChild(p);
+  const host=$('#settingsDiagnosticsBody'),p=$('#predictionPanel');
+  if(host&&p&&p.parentElement!==host)host.appendChild(p);
+  for(const node of [$('#apiUsageCard'),$('.source-status-card'),$('#calibrationPanel')]){
+    if(host&&node&&node.parentElement!==host)host.appendChild(node);
+    if(node?.textContent.trim()&&node.id!=='calibrationPanel'){node.hidden=false;node.classList.remove('qhidden-tech')}
+  }
 }
 
 function updateHeader(){
@@ -80,9 +84,18 @@ function compactSportResults(){
   const cards=[...$$('#results > .parlay-card, #results > .secondary-props-empty')];
   cards.forEach(c=>{c.style.display='';c.classList.remove('compact-secondary')});
   cards.filter((c,i)=>i>0||c.classList.contains('player-props-card')||c.classList.contains('secondary-props-empty')).forEach(c=>{
+    if(c.classList.contains('secondary-props-empty')){c.style.display='none';return}
     const clone=c.cloneNode(true);clone.dataset.compactOrigin='sport';clone.classList.add('compact-secondary');secondary.appendChild(clone);
     c.style.display='none';
   });
+}
+
+function tidyExtraPicks(){
+ const drawer=ensureAnalysis(),secondary=drawer.querySelector('#analysisSecondary');
+ secondary.querySelectorAll('.secondary-props-empty,.qcard.pass').forEach(node=>node.remove());
+ const sport=window.__ACTIVE_SPORT||'nfl';
+ const hasPicks=!!secondary.querySelector('.parlay-card')||sport==='nfl'&&!!secondary.querySelector('.qcard:not(.pass)')||sport==='ufc'&&!!secondary.querySelector('.ufc-matchups .leg');
+ drawer.hidden=!hasPicks;if(!hasPicks)drawer.open=false;
 }
 
 function tidy(){
@@ -92,13 +105,22 @@ function tidy(){
     moveConsensus();
     moveNflCard();
     compactSportResults();
+    tidyExtraPicks();
     updateHeader();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
   }finally{busy=false}
 }
 let timer;
 const obs=new MutationObserver(muts=>{if(muts.some(m=>m.target?.closest?.('#results,#predictionPanel,#qolV3 .qgrid,#dataStatus'))) {clearTimeout(timer);timer=setTimeout(tidy,80)}});
-function init(){obs.observe(document.body,{subtree:true,childList:true});tidy()}
+async function refreshDiagnostics(){
+ const host=$('#automationHealth');if(!host)return;
+ try{
+  const res=await fetch('data/dashboard-health.json?ts='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error(res.status);const report=await res.json();
+  host.replaceChildren();const status=document.createElement('p');status.textContent='Automations: '+(report.status||'pending')+(report.updated_at?' · '+new Date(report.updated_at).toLocaleString():'');host.append(status);
+  for(const alert of report.alerts||[]){const note=document.createElement('p');note.textContent=(alert.sport?alert.sport.toUpperCase()+': ':'')+alert.message;host.append(note)}
+ }catch{host.textContent='Automation health is temporarily unavailable.'}
+}
+function init(){obs.observe(document.body,{subtree:true,childList:true});tidy();$('#settingsDiagnostics')?.addEventListener('toggle',e=>{if(e.target.open)refreshDiagnostics()})}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.COMPACT_UI={refresh:tidy};
 })();

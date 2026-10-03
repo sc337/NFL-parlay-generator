@@ -108,7 +108,7 @@ function compactParlays(){
       const selection=selectionParts(compactTitle(original,sport,subText),subText),quote=leg.querySelector('.leg-quote');
       const subject=sport==='nfl'&&['Winner','Spread'].includes(selection.market)?(window.NFL_DISPLAY?.team?.(selection.subject)||selection.subject):sport==='mlb'?shortMlbTeam(selection.subject):selection.subject;
       title.textContent=(i+1)+'. '+shortMatchup(subject);
-      if(sport!=='nfl'||subText){const brief=(sport==='nfl'&&leg.dataset.compactMatchup?leg.dataset.compactMatchup:leg.dataset.eventTime?[compactDate(leg.dataset.eventTime),shortMatchup(leg.dataset.matchup||''),compactBrief(sport,subText,leg.dataset.opponent||'').split(' · ').filter(x=>/^(?:Model|Sim|Exp) \d+%$|^Market only$|^vs /.test(x)).join(' · ')].filter(Boolean).join(' · '):compactBrief(sport,subText,leg.dataset.opponent||'')).replace(/(?:^| · )Mkt \d+%(?= · |$)/,'').replace(/^ · /,'');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
+      if(sport!=='nfl'||subText){const brief=(sport==='nfl'&&leg.dataset.compactMatchup?leg.dataset.compactMatchup:leg.dataset.eventTime?[compactDate(leg.dataset.eventTime),shortMatchup(leg.dataset.matchup||''),compactBrief(sport,subText,leg.dataset.opponent||'').split(' · ').filter(x=>/^vs /.test(x)).join(' · ')].filter(Boolean).join(' · '):compactBrief(sport,subText,leg.dataset.opponent||'')).split(' · ').filter(x=>! /^(?:Mkt|Model|Sim|Exp) \d+%$|^Market only$|^Experimental$/.test(x)).join(' · ');if(brief){const line=document.createElement('div');line.className='leg-brief';line.textContent=brief;title.after(line)}}
       if(selection.line){
         const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
         tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';
@@ -128,11 +128,17 @@ function compactParlays(){
     if(sport==='ufc'){const dates=[...new Set(legs.map(l=>l.dataset.eventDate).filter(Boolean))];if(dates.length){const event=document.createElement('p');event.className='card-thesis';event.textContent=dates.map(d=>compactDate(d+'T12:00:00Z',true)).join(' · ');card.querySelector('.parlay-top').after(event)}}
     if(sport==='mlb'&&/Experimental/i.test(details.textContent)){const badge=document.createElement('span');badge.className='grade card-status';badge.textContent='Experimental';card.querySelector('.parlay-name').after(badge)}
     if(['ncaaf','nhl'].includes(sport)&&/Experimental/i.test(details.textContent))card.querySelector('.grade')?.classList.add('card-status');
+    if(!card.querySelector('.card-status')){
+      const subs=[...details.querySelectorAll('.leg-sub')];
+      const status=/experimental/i.test(details.textContent)?'Experimental':subs.length&&subs.every(node=>/market.only|no independent estimate/i.test(node.textContent))?'Market only':'';
+      if(status){const badge=document.createElement('span');badge.className='grade card-status';badge.textContent=status;card.querySelector('.parlay-name')?.after(badge)}
+    }
     if(footer){const note=footer.children[1];if(note&&/^(Distinct matchups|Separate games|Independent fights)$/.test(note.textContent)){note.textContent=note.textContent.replace('Independent fights','Separate fights');const row=document.createElement('div');row.className='card-detail-row';row.append(note);details.append(row)}}
     if(score&&sport==='ufc')score.textContent=score.textContent.replace(/^Rating/,'Model rating');
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
     if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating').replace(/^Rating/,'Model rating');
-    if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.textContent=['ncaaf','nhl'].includes(sport)?'Quote quality: liquidity and spread, not win probability.':'Model rating: selection score, not win probability.';details.append(definition)}
+    if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.append(score);const note=document.createElement('small');note.textContent=['ncaaf','nhl'].includes(sport)?'Selection quality, not win probability.':'Model rating, not win probability.';definition.append(note);details.append(definition)}
+    if(footer&&!footer.children.length)footer.remove();
   });
 }
 function dockMatchups(){

@@ -432,3 +432,16 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 .team-line-filters[open]>summary:after{content:"⌃"}
 .team-line-filters[open]{padding-bottom:12px}
 .team-line-filters small{display:block;color:var(--muted);font-size:11px;line-height:1.5}
+
+/* One detail view per pick; technical information lives in Settings. */
+.more-analysis[hidden]{display:none!important}
+.card-detail-row>small{display:block;margin-top:4px}
+.settings-diagnostics{border-top:1px solid var(--border);padding-top:14px}
+.settings-diagnostics>summary,.ticket-details>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--sport-accent);font-weight:750}
+#settingsDiagnosticsBody{font-size:12px;line-height:1.5;color:var(--muted)}
+#settingsDiagnosticsBody h3{color:var(--text)}
+#settingsDiagnosticsBody p{margin:8px 0}
+#settingsDiagnosticsBody a{color:var(--sport-accent)}
+#settingsDiagnosticsBody :is(.api-usage-card,.source-status-card):not([hidden]){display:block!important}
+#settingsDiagnosticsBody .calibration-panel{margin-top:12px}
+.ticket-details .model-strip{flex-wrap:wrap;gap:8px}

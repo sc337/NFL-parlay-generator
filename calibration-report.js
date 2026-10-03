@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s),esc=s=>window.MARKET_GUARDS?.esc?.(s)??Stri
 let records=[],updated='',loaded=false,audit=null;
 const sports=['nfl','mlb','ncaaf','ufc','nhl'];
 function mount(){
-  const host=$('#moreAnalysis');if(!host||$('#calibrationPanel'))return;
+  const host=$('#settingsDiagnosticsBody');if(!host||$('#calibrationPanel'))return;
   const panel=document.createElement('section');panel.id='calibrationPanel';panel.className='calibration-panel';
   panel.innerHTML='<div class="calibration-head"><span>PICK HISTORY</span><h3>Forecast check</h3></div><div id="calibrationBody" class="calibration-body">Loading tracked picks…</div>';
   host.appendChild(panel);

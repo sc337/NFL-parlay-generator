@@ -34,7 +34,10 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
   meta.textContent=[window.DISPLAY_COPY?.date?.(pick.eventTime)||new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),parsed.subject?(window.DISPLAY_COPY?.matchup?.(pick.event)||pick.event||'Upcoming event'):''].filter(Boolean).join(' · ');
   const ask=window.MARKET_GUARDS?.quote?.(pick.market);
   reference.textContent=sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
-  foot.textContent=pick.note||'Reference only. Verify the current line at your sportsbook.';
+  const note=pick.note||'';
+  foot.textContent=[/experimental/i.test(note)?'Experimental':/market.only|no independent/i.test(note)?'Market only':'',/if playing|participation/i.test(note)?'Confirm participation':/goalies unconfirmed/i.test(note)?'Goalies unconfirmed':''].filter(Boolean).join(' · ');
+  foot.hidden=!foot.textContent;
+  foot.title=note;
   heading.textContent=parsed.market;line.textContent=parsed.line;tile.setAttribute('aria-label',parsed.market+' '+parsed.line+', '+reference.textContent);
   if(pick.market?.isAltLine){const badge=document.createElement('span');badge.className='alt-tag';badge.textContent='ALT';tile.append(badge);tile.setAttribute('aria-label','ALT '+parsed.market+' '+parsed.line+', '+reference.textContent);const milestone=sport==='nfl'?window.NFL_ALT_LINES?.label?.(pick.market):null;if(milestone)line.textContent=milestone;}
   tile.append(heading,line,reference);copy.append(name,meta);row.append(media,copy,tile);host.append(row,foot);

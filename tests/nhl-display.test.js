@@ -20,7 +20,7 @@ class Element {
 }
 const el=(tag,cls,text)=>{const node=new Element(tag,cls);if(text)node.textContent=text;return node};
 function slip(withFooter=false){const card=el('article','parlay-card player-props-card'),top=el('div','parlay-top'),title=el('h3','parlay-name','NHL Props'),summary=el('p','summary','Experimental estimates, confirm participation.'),legs=el('div','legs'),leg=el('div','leg sport-visual-leg'),copy=el('div','sport-visual-copy');top.append(title);copy.append(el('div','leg-title','Andrew Copp Under 0.5 Goals'),el('div','leg-sub','Rangers vs Red Wings · Experimental estimate 89% · If playing'));leg.dataset.eventTime='2026-10-02T22:30:00Z';leg.dataset.matchup='Rangers vs Red Wings';leg.append(copy,el('div','leg-quote','Kalshi 79¢'));legs.append(leg);card.append(top,summary,legs);if(withFooter)card.append(el('div','card-footer'));return card}
-function display(cards){const roots=cards.map(c=>{const r=el('section','');r.append(c);return r}),document={body:{dataset:{sport:'nhl'}},createElement:tag=>el(tag,''),querySelectorAll:sel=>sel.endsWith('>.summary')?cards.flatMap(c=>c.children.filter(n=>n.classList.contains('summary'))):cards.filter(c=>!c.dataset.compact)};
+function display(cards,sport='nhl'){const roots=cards.map(c=>{const r=el('section','');r.append(c);return r}),document={body:{dataset:{sport}},createElement:tag=>el(tag,''),querySelectorAll:sel=>sel.endsWith('>.summary')?cards.flatMap(c=>c.children.filter(n=>n.classList.contains('summary'))):cards.filter(c=>!c.dataset.compact)};
  const context=vm.createContext({document,window:{},Date});const source=fs.readFileSync('visual-refresh.js','utf8');
  vm.runInContext(source.slice(source.indexOf('function compactDate'),source.indexOf('function dockMatchups')),context);
  return {context,roots,run:()=>{context.compactSummaries();context.compactParlays()}};
@@ -64,12 +64,25 @@ test('NHL official player images use the shared photo class and reject unrelated
  assert.match(html,/sport-photo/);assert.match(html,/Andrew Copp headshot/);
  assert.equal(window.SPORT_MEDIA.nhl({player:'Player',headshot:'https://untrusted.example/image.png'}),'');
 });
-test('NHL empty prop notices are secondary, not an extra main grid row',()=>{
+test('empty prop notices are hidden without creating an empty extra-picks card',()=>{
  const source=fs.readFileSync('compact-ui.js','utf8'),card=el('div','empty secondary-props-empty'),secondary=el('div','analysis-secondary'),analysis=el('details','more-analysis');secondary.id='analysisSecondary';analysis.append(secondary);
  const context=vm.createContext({window:{__ACTIVE_SPORT:'nhl'},document:{body:{dataset:{}}},$:()=>analysis,$$:()=>[card]});
  vm.runInContext(source.slice(source.indexOf('function ensureAnalysis'),source.indexOf('function moveConsensus'))+source.slice(source.indexOf('function compactSportResults'),source.indexOf('function tidy')),context);
- context.compactSportResults();assert.equal(card.style.display,'none');assert.equal(secondary.children.length,1);
+ context.compactSportResults();assert.equal(card.style.display,'none');assert.equal(secondary.children.length,0);
  assert.match(fs.readFileSync('nhl-dashboard.js','utf8'),/empty secondary-props-empty/);
+});
+
+test('ratings and model estimates stay in Details while partial-leg notices remain visible',()=>{
+ for(const sport of ['nfl','mlb','ncaaf','nhl','ufc']){
+  const card=slip(true),footer=card.querySelector('.card-footer'),score=el('span','score','Model rating 87/100'),partial=el('span','','4 of 6 legs available');
+  footer.append(score,partial);const app=display([card],sport);app.run();
+  assert.equal(score.closest('.card-explanation'),card.querySelector('.card-explanation'));
+  assert.equal(partial.parentElement,footer);assert.equal(footer.textContent,'4 of 6 legs available');
+  assert.doesNotMatch(card.querySelector('.leg-brief').textContent,/87|89|Exp|Model/);
+  assert.match(card.querySelector('.card-explanation').textContent,/89%/);
+  assert.equal(card.querySelectorAll('.card-status').length,1);
+  app.run();assert.equal(card.querySelectorAll('.card-status').length,1);
+ }
 });
 test('mobile cards cannot squeeze tile rows and all NHL market buttons remain reachable',()=>{
  const css=fs.readFileSync('visual-refresh.css','utf8');
