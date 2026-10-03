@@ -35,14 +35,19 @@ test('empty offseason feeds are healthy but stale feeds and failed refreshes ale
 });
 test('market-drop alerts compare still-upcoming games and ignore completed games',()=>{
  const previous={snapshotAt:at,futureEvents:[1,2,3].map(id=>({id:String(id),time:future})),playerCounts:{}};
- assert.ok(checkSport('mlb',{updated_at:at,markets:[market(1)]},previous,now).alerts.some(a=>a.code==='market-drop'));
+ const dropped=checkSport('mlb',{updated_at:at,markets:[market(1)]},previous,now);
+ assert.ok(dropped.alerts.some(a=>a.code==='market-drop'));
+ const repeat=checkSport('mlb',{updated_at:at,markets:[market(1)]},dropped.summary,now+60000);
+ assert.ok(repeat.alerts.some(a=>a.code==='market-drop'),'An unchanged disappearance must not resolve on its own');
  previous.futureEvents.forEach(e=>e.time=new Date(now-1).toISOString());assert.equal(checkSport('mlb',{updated_at:at,markets:[]},previous,now).alerts.length,0);
 });
 test('missing player data and player-market disappearance raise targeted alerts',()=>{
  const props=[1,2].map(id=>market(id,{kind:'goals',player:'Player',player_id:null}));
  assert.ok(checkSport('nhl',{updated_at:at,markets:props},{},now).alerts.some(a=>a.code==='player-data'));
  const prev={snapshotAt:at,futureEvents:[{id:'1',time:future},{id:'2',time:future}],playerCounts:{'1':3,'2':2}};
- assert.ok(checkSport('mlb',{updated_at:at,markets:[market(1),market(2)]},prev,now).alerts.some(a=>a.code==='props-missing'));
+ const missing=checkSport('mlb',{updated_at:at,markets:[market(1),market(2)]},prev,now);
+ assert.ok(missing.alerts.some(a=>a.code==='props-missing'));
+ assert.ok(checkSport('mlb',{updated_at:at,markets:[market(1),market(2)]},missing.summary,now+60000).alerts.some(a=>a.code==='props-missing'));
 });
 test('capture uses the actual MLB builder, including its honest partial fallback',async()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'recommendation-test-'));

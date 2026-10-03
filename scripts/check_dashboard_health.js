@@ -35,7 +35,12 @@ function checkSport(sport,snapshot,previous,now,context){
   const missing=props.filter(m=>sport==='nfl'?m._invalidRoster===true||m._rosterVerified!==true:sport==='nhl'?!m.player_id:sport==='mlb'?!context?.players?.[String(m.label||'').split(':')[0].trim()]:false).length;
   if(missing/props.length>.5)add('player-data','warning',missing+' of '+props.length+' player markets lack verified player data.');
  }
- return {summary:{snapshotAt:at,ageMinutes:Number.isFinite(age)?Math.round(age/60000):null,markets:active,quotedMarkets:quotes,playerMarkets:props.length,families,futureEvents:[...futureEvents.values()],playerCounts},alerts};
+ const expectedEvents=new Map(futureEvents),expectedPlayerCounts={...playerCounts};
+ if(previous?.snapshotAt&&now-Date.parse(previous.snapshotAt)<7200000)for(const event of prior){
+  if(!expectedEvents.has(event.id))expectedEvents.set(event.id,event);
+  if(!expectedPlayerCounts[event.id]&&previous.playerCounts?.[event.id])expectedPlayerCounts[event.id]=previous.playerCounts[event.id];
+ }
+ return {summary:{snapshotAt:at,ageMinutes:Number.isFinite(age)?Math.round(age/60000):null,markets:active,quotedMarkets:quotes,playerMarkets:props.length,families,futureEvents:[...expectedEvents.values()],playerCounts:expectedPlayerCounts},alerts};
 }
 function build(data,previous={},now=Date.now(),refreshStatus='success'){
  const sports={},alerts=[];
