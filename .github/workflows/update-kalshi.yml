@@ -202,7 +202,9 @@ jobs:
           git restore data/model-calibration.js 2>/dev/null || true
           git restore data/forecast-audit.json 2>/dev/null || true
           git restore data/forecast-report.json 2>/dev/null || true
-          git restore data/daily-picks.json data/dashboard-health.json data/daily-picks 2>/dev/null || true
+          git restore data/daily-picks.json 2>/dev/null || true
+          git restore data/dashboard-health.json 2>/dev/null || true
+          git restore data/daily-picks 2>/dev/null || true
           git pull --rebase origin main
           cp /tmp/kalshi-nfl.json data/kalshi-nfl.json
           cp /tmp/kalshi-ufc.json data/kalshi-ufc.json
