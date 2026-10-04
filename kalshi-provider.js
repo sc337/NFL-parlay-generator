@@ -5,16 +5,21 @@
   function saveCache(x){try{localStorage.setItem(CACHE_KEY,JSON.stringify(x))}catch{}}
   const WARN_AGE_MS=30*60*1000;
   const QUALITY_PENALTY_AGE_MS=2*60*60*1000;
-  const MAX_AGE_MS=12*60*60*1000;
+  const MAX_AGE_MS=2*60*60*1000;
+  let requestId=0;
+  const usable=x=>{const at=Date.parse(x?.updated_at||'');return Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=MAX_AGE_MS};
   const diag=d=>window.NFL_DIAGNOSTICS?.add?.(d);
   const isPregame=g=>{
     const kickoff=Date.parse(g?.commence_time||'');
     return g?.game_status==='pre' && Number.isFinite(kickoff) && kickoff>Date.now();
   };
   async function load(){
+    const request=++requestId;
+    const token=window.__SPORT_TOKEN;
+    const current=()=>request===requestId&&(window.__ACTIVE_SPORT||'nfl')==='nfl'&&token===window.__SPORT_TOKEN;
     const status=document.getElementById('kalshiStatus');
     const warm=cached();
-    if(warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{window.NFL_PROJECTIONS?.refresh?.();generate()},0)}}
+    if(usable(warm)&&warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{if(current()){window.NFL_PROJECTIONS?.refresh?.();generate()}},0)}}
     if(status)status.textContent='Checking…';
     const started=performance.now();
     try{
@@ -22,7 +27,7 @@
       const res=await fetch(url,{cache:'no-store'});
       if(!res.ok) throw new Error('Snapshot HTTP '+res.status);
       const data=await res.json();
-      saveCache(data);
+      if(!current())return false;
       const rawGames=Array.isArray(data.games)?data.games:[];
       let games=rawGames.filter(isPregame);
       const removed=rawGames.length-games.length;
@@ -33,7 +38,7 @@
         return false;
       }
       const updated=Date.parse(data.updated_at||'');
-      if(!Number.isFinite(updated)) throw new Error('Kalshi snapshot missing valid timestamp');
+      if(!Number.isFinite(updated)||updated>Date.now()+300000) throw new Error('Kalshi snapshot missing valid timestamp');
       const ageMs=Math.max(0,Date.now()-updated);
       if(ageMs>MAX_AGE_MS){
         if(status)status.textContent='Stale';
@@ -55,6 +60,7 @@
 
       diag({source:'Kalshi snapshot',url:SNAPSHOT,status:res.status,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:`${data.updated_at||'snapshot'}${removed?` • ${removed} started games removed`:''}${delayed?' • delayed snapshot accepted for future games':''}${heavilyDelayed?' • stale-price quality penalty applied':''}`});
       if(!games.length) throw new Error('Kalshi snapshot has no upcoming NFL markets');
+      saveCache(data);
       state.games=games;
       state.propsLoaded?.clear?.();
       hydrateGames();
@@ -70,10 +76,12 @@
       await generate();
       return true;
     }catch(e){
+      if(!current())return false;
+      if(!usable(warm)){state.games=[];state.propsLoaded?.clear?.();window.PICK_OF_DAY?.show?.('nfl');}
       diag({source:'Kalshi snapshot',url:SNAPSHOT,status:'ERR',ok:false,error:String(e.message||e),ms:Math.round(performance.now()-started)});
       if(status&&status.textContent!=='Stale')status.textContent='Unavailable';
       return false;
     }
   }
-  window.NFL_KALSHI={load,clearCache:()=>{}};
+  window.NFL_KALSHI={load,clearCache:()=>{try{localStorage.removeItem(CACHE_KEY)}catch{}}};
 })();

@@ -1005,7 +1005,7 @@ function render(parlays){
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
   if(!valid.length&&state.lineMode==='alt'){wrap.innerHTML='<div class="empty">No qualifying ALT build. Try fewer legs, another game, or Both.</div>';return;}
-  if(!valid.length){const watch=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));wrap.innerHTML=window.MARKET_GUARDS.watchlist(watch,'NFL');return;}
+  if(!valid.length){const count=Number($('#legsSelect')?.value)||2;wrap.innerHTML='<div class="empty">No qualifying NFL '+count+'-leg parlay for these markets. Try other markets, fewer legs, or refresh the feed.</div>';return;}
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.grade').textContent=p.grade;

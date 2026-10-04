@@ -94,3 +94,11 @@ test('mobile cards cannot squeeze tile rows and all NHL market buttons remain re
  assert.doesNotMatch(css,/:is\(#results,#analysisSecondary\)>\.parlay-card \.card-explanation\[open\]\{position:absolute/);
  assert.match(css,/#nhlMarketChips\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
 });
+
+ test('plain watchlist rows retain their Kalshi price and group copy beside the tile',()=>{
+ const card=slip();card.classList.remove('player-props-card');const leg=card.querySelector('.leg');leg.textContent='';leg.append(el('div','leg-title','1. Washington Commanders ML'),el('div','leg-sub','Colts at Commanders · Kalshi ask 63¢ · Volume 100'));
+ const app=display([card],'nfl');app.run();
+ assert.equal(leg.querySelector('.market-tile-price').textContent,'Kalshi 63¢');
+ assert.equal(leg.querySelector('.leg-title').parentElement.className,'sport-visual-copy');
+ assert.equal(leg.querySelector('.market-tile').parentElement,leg);
+ });
