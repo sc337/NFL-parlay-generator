@@ -445,3 +445,7 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 #settingsDiagnosticsBody :is(.api-usage-card,.source-status-card):not([hidden]){display:block!important}
 #settingsDiagnosticsBody .calibration-panel{margin-top:12px}
 .ticket-details .model-strip{flex-wrap:wrap;gap:8px}
+
+/* Empty messages use their own height instead of stretching to a card viewport. */
+#results:has(>.empty){flex:0 0 auto;min-height:0;grid-template-rows:auto;align-items:start}
+#results>.empty{width:100%;box-sizing:border-box;align-self:start}

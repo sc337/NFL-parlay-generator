@@ -921,9 +921,18 @@ function buildMulti(count,risk,variant){
     if(legs.length>=count) break;
     if(usedGames.has(x.g.id)||x.m.player&&playerCount(legs,x.m.player)) continue;
     const fam=propFamily(x.m),n=familyCounts.get(fam)||0;
-    if(n>=maxFamily) continue;
+    if(x.m.player && n>=maxFamily) continue;
     legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time});
     usedGames.add(x.g.id);familyCounts.set(fam,n+1);
+  }
+
+  // Diversity is a preference, not a reason to discard an otherwise valid build.
+  // Fill remaining slots from qualified markets on unused games.
+  for(const x of all){
+    if(legs.length>=count) break;
+    if(usedGames.has(x.g.id)||x.m.player&&playerCount(legs,x.m.player)) continue;
+    legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time});
+    usedGames.add(x.g.id);
   }
 
   // Never fill with unqualified legs. If the requested size is unavailable,
