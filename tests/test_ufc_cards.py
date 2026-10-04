@@ -11,7 +11,9 @@ from unittest.mock import patch
 SOURCE = Path(__file__).resolve().parents[1] / 'scripts/update_kalshi_ufc.py'
 module = ast.parse(SOURCE.read_text())
 function = next(node for node in module.body if isinstance(node, ast.FunctionDef) and node.name == 'official_cards')
+validation = next(node for node in module.body if isinstance(node, ast.FunctionDef) and node.name == 'validate_market_responses')
 namespace = {'re': re, 'html': html, 'datetime': datetime, 'timezone': timezone, 'timedelta': timedelta, 'ZoneInfo': ZoneInfo}
+exec(compile(ast.Module(body=[validation], type_ignores=[]), str(SOURCE), 'exec'), namespace)
 exec(compile(ast.Module(body=[function], type_ignores=[]), str(SOURCE), 'exec'), namespace)
 
 class Response:
@@ -24,6 +26,13 @@ class Response:
     def __exit__(self, *args): return False
 
 class OfficialCardTests(unittest.TestCase):
+    def test_successful_empty_market_responses_are_valid(self):
+        namespace['validate_market_responses']({'fight':0,'rounds':0}, [])
+
+    def test_empty_responses_with_api_failure_preserve_prior_snapshot(self):
+        with self.assertRaisesRegex(RuntimeError, 'keeping the prior snapshot'):
+            namespace['validate_market_responses']({'fight':0,'rounds':0}, ['fight'])
+
     def test_official_names_and_utc_windows(self):
         import urllib.request
         namespace['urllib'] = __import__('urllib')

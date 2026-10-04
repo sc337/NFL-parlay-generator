@@ -130,10 +130,16 @@ def official_profile(name):
     except Exception as exc:
         print('UFC athlete page unavailable',name,exc);return None
 
-now=datetime.now(timezone.utc);rows=[];counts={};names=set()
+def validate_market_responses(counts, errors):
+    # Empty open-market responses are normal after a card starts. Transport
+    # failures must still preserve the previous snapshot and fail the job.
+    if not any(counts.values()) and errors:
+        raise RuntimeError('Kalshi UFC requests failed; keeping the prior snapshot: '+', '.join(errors))
+
+now=datetime.now(timezone.utc);rows=[];counts={};names=set();fetch_errors=[]
 for series,kind in SERIES.items():
     try:ms=markets(series)
-    except Exception as e:print(series,e);ms=[]
+    except Exception as e:print(series,e);fetch_errors.append(series);ms=[]
     counts[series]=len(ms)
     for m in ms:
         p,b,a=mid(m)
@@ -164,8 +170,7 @@ for group in by_bout.values():
     for row in group:row['fighter1']=a;row['fighter2']=b;row['fight']=a+' vs '+b
     names.update((a,b))
 # Verify bout identity and bell time against the actual fight schedule.
-if not rows and not any(counts.values()):
-    raise RuntimeError('All Kalshi UFC series returned no markets; keeping the prior snapshot')
+validate_market_responses(counts, fetch_errors)
 schedule_by_day={}
 def same_fighter(a,b):
     x=re.sub(r'[^a-z0-9]','',str(a or '').lower())
