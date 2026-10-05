@@ -184,7 +184,7 @@ body[data-sport="ncaaf"]{--sport-accent:#ffcc75;--sport-glow:#b36c2699}
 body[data-sport="ufc"]{--sport-accent:#ff7d83;--sport-glow:#b43d5599}
 body{background:radial-gradient(ellipse 95% 400px at 45% -130px,var(--sport-glow,#285fc099),transparent 78%),#0a121c}
 .topbar{grid-template-columns:auto minmax(0,1fr) 44px 44px;gap:10px}
-.league-mark{border-color:color-mix(in srgb,var(--sport-accent) 45%,#33485b);background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 18%,#152334),#111c2a);box-shadow:0 7px 20px color-mix(in srgb,var(--sport-accent) 12%,transparent)}
+ .league-mark{border:0;border-radius:0;background:transparent;box-shadow:none}
 .sport-switch,.pick-of-day,.control-card,#results>.parlay-card,.more-analysis,.explore-panel-toggle{background:linear-gradient(145deg,#ffffff0b,#ffffff03 45%,#ffffff02),#142230d9!important;border-color:color-mix(in srgb,var(--sport-accent) 23%,#35495a)!important;box-shadow:inset 0 1px #ffffff12,0 12px 28px #02080e30}
 .sport-switch{background:linear-gradient(115deg,color-mix(in srgb,var(--sport-accent) 10%,#101d2d),#102032e8)!important}
 .sport-switch button.active{background:color-mix(in srgb,var(--sport-accent) 18%,#182838)!important;box-shadow:inset 0 -3px var(--sport-accent)!important;color:#f7fbff!important}
@@ -315,14 +315,12 @@ html[data-theme="light"] .header-status{color:var(--muted)}
 html[data-theme="light"] .market-tile{background:linear-gradient(145deg,color-mix(in srgb,var(--sport-accent) 9%,#fff),#f6fafb);border-color:color-mix(in srgb,var(--sport-accent) 30%,var(--border2));box-shadow:inset 0 1px #fff}
 html[data-theme="light"] .settings-sheet,html[data-theme="light"] #settingsDialog{background:#fff}
 html[data-theme="light"] .theme-options button[aria-pressed="true"]{background:#fff}
-html[data-theme="light"] .league-mark{background:#fff;border-color:var(--border2)}
+html[data-theme="light"] .league-mark{background:transparent;border:0}
 html[data-theme="light"] .chip.active{color:var(--sport-accent);background:color-mix(in srgb,var(--sport-accent) 10%,#fff)}
 html[data-theme="light"] .card-thesis,html[data-theme="light"] :is(#results,#analysisSecondary)>.parlay-card .leg-title{color:var(--text)}
 @media(prefers-reduced-transparency:reduce){#settingsDialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}html[data-theme="light"] .sport-switch{background:var(--surface)!important}}
-/* A legible UFC wordmark regardless of the remote logo asset or theme. */
-.league-mark[data-league="UFC"] img{display:none!important}
-.league-mark[data-league="UFC"] .league-fallback,.league-mark[data-league="UFC"].logo-loaded .league-fallback{display:block!important;color:#fa5062;font-size:18px;font-style:italic;font-weight:950;letter-spacing:-.11em;transform:skew(-10deg)}
-html[data-theme="light"] .league-mark[data-league="UFC"] .league-fallback{color:#bf233a}
+/* Use the transparent local UFC wordmark in both themes. */
+.league-mark[data-league="UFC"] img{filter:none}
 
 /* Phone app surface: the first decision fits within the visible Safari viewport. */
 @media(max-width:600px){
@@ -404,7 +402,7 @@ body:not([data-sport="nfl"]) #nflLinesWrap{display:none!important}
 /* Fifth sport: an ice-blue NHL identity with readable, equal-width tabs. */
 body[data-sport="nhl"]{--league:#8ed8ff;--league-bg:#183649;--sport-accent:#8ed8ff;--sport-glow:#2e83ae99}
 html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0f3fc;--sport-accent:#12668a;--sport-glow:#d6f0fc}
-.league-mark[data-league="NHL"]{background:#f1f5f9}
+
 .league-mark[data-league="NHL"] .league-fallback{color:#183649}
 #nhlMarketFilters{flex:none;margin-bottom:9px;padding:0 15px;border:1px solid var(--border2);border-radius:11px;background:var(--surface2)}
 #nhlMarketFilters>summary{color:var(--text);font-size:13px;font-weight:750;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;list-style:none}
@@ -449,3 +447,6 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 /* Empty messages use their own height instead of stretching to a card viewport. */
 #results:has(>.empty){flex:0 0 auto;min-height:0;grid-template-rows:auto;align-items:start}
 #results>.empty{width:100%;box-sizing:border-box;align-self:start}
+
+/* League logos sit directly on the page in every theme and viewport. */
+.league-mark,html[data-theme="light"] .league-mark{border:0;border-radius:0;background:transparent;box-shadow:none}
