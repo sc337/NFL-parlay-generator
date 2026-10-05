@@ -763,11 +763,8 @@ function mixedTeamTarget(pool,game,count,risk,variant){
   if(count<3) return 0;
   const qualified=pool.filter(m=>m.player && sgpTeam(m,game) && candidateScore(m,risk,variant)>-900);
   const top=Math.max(...qualified.map(m=>candidateScore(m,risk,variant)),-Infinity);
-  const minimum=count>=5?2:1;
-  return [game.away,game.home].every(team=>{
-    const players=new Set(qualified.filter(m=>m.team===team && candidateScore(m,risk,variant)>=top-20).map(m=>m.player));
-    return players.size>=minimum;
-  }) ? minimum : 0;
+  const available=[game.away,game.home].map(team=>new Set(qualified.filter(m=>m.team===team && candidateScore(m,risk,variant)>=top-20).map(m=>m.player)).size);
+  return Math.min(count>=5?2:1,...available);
 }
 
 function teamCounts(legs,game){
@@ -812,7 +809,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
 
           const corr=beam.legs.reduce((s,l)=>s+correlation(l,m),0);
           const scriptFit=GAME_SCRIPTS[scriptKey].legFit(m,game);
-          if(scriptFit<0) continue;
+          if(!window.PICK_QUALITY&&scriptFit<0) continue;
 
           const diversityPenalty=previous.reduce((pen,p)=>pen + (p?.legs?.some(l=>l.name===m.name)?18:0),0);
 
@@ -846,14 +843,15 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       .filter(b=>!target || teamCounts(b.legs,game).every(n=>n>=target))
       .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
       .filter(b=>{
+        if(window.PICK_QUALITY)return true;
         const positiveFits=b.legs.filter(l=>GAME_SCRIPTS[scriptKey].legFit(l,game)>=8).length;
         return positiveFits>=Math.min(2,count);
       })
       .map(b=>{
         const p=packageParlay(b.legs,variant,true,{
-          scriptKey,
-          scriptName:GAME_SCRIPTS[scriptKey].name,
-          thesis:GAME_SCRIPTS[scriptKey].thesis(game)
+          scriptKey:window.PICK_QUALITY?'quality_mix':scriptKey,
+          scriptName:window.PICK_QUALITY?'Quality-screened mix':GAME_SCRIPTS[scriptKey].name,
+          thesis:window.PICK_QUALITY?'Individually qualifying picks, with both teams represented when comparable options are available. Same-game dependence and combined value remain unverified.':GAME_SCRIPTS[scriptKey].thesis(game)
         });
         if(p){p.gameLabel=`${game.away} @ ${game.home}`;p.kickoff=game.commence_time;p.teamMix=teamCounts(b.legs,game).every(n=>n>0)?'Both teams':'Concentrated';}
         return {raw:b,parlay:p};
