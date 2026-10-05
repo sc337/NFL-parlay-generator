@@ -49,6 +49,15 @@
   }
   function usageProjection(game,m){
     if(!m?.player)return null;
+    const history=m.propHistory,key=String(m.marketKey||'').replace(/_alternate$/,'');
+    const values=history?.metrics?.[key],latest=Date.parse(history?.latest_game+'T23:59:59Z'),kickoff=Date.parse(game?.commence_time);
+    if(history?.source==='nflverse completed plays'&&Array.isArray(values)&&values.length>=3&&values.length===history.games&&
+       values.every(v=>typeof v==='number'&&Number.isFinite(v))&&history.played>=3&&history.played/history.games>=.6&&
+       Number.isFinite(latest)&&latest<Date.now()&&latest<kickoff&&kickoff-latest<=28*86400000){
+      const line=values.reduce((a,b)=>a+b,0)/values.length;
+      if(line>0){const variance=values.reduce((s,v)=>s+(v-line)**2,0)/(values.length-1);
+        return {line,coverage:clamp(.3+.05*values.length,.45,.55),sd:Math.sqrt(variance),experimental:true,roleStability:history.played/history.games};}
+    }
     const same=(game.markets||[]).filter(x=>x.player===m.player);
     const get=k=>same.find(x=>x.marketKey===k&&x.side==='over'&&num(x.point)!=null);
     const attempts=get('player_pass_attempts'),comps=get('player_pass_completions'),rush=get('player_rush_attempts'),rec=get('player_receptions');
@@ -94,7 +103,7 @@
         z+=clamp(d,-.38,.38)*(m.side==='under'?-1:1);coverage+=up.coverage;
       }
       const breadth=num(m?.contextSignals?.market_breadth)||1;
-      z+=clamp((breadth-2)*.025,0,.12);coverage+=.08;
+      if(!up?.experimental){z+=clamp((breadth-2)*.025,0,.12);coverage+=.08;}
       const ip=injuryPenalty(m);z+=ip;coverage+=ip? .22:0;
       const wf=weatherFactor(game,m);z+=wf;coverage+=wf? .12:0;
     } else {
@@ -109,7 +118,7 @@
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
+    return {experimental:upFinal?.experimental===true,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
@@ -120,6 +129,7 @@
       m.marketProbability=p.marketP;
       m.modelEdge=p.edge;
       m.projectionCoverage=p.coverage;
+      m.nflPropExperimental=!!m.player&&m.type!=='td'&&p.experimental===true;
       m.tdExperimental=m.type==='td'&&p.experimental===true;
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;

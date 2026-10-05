@@ -13,7 +13,7 @@
    const at=Date.parse(old?.context?.updated_at||'');
    if(!old||!Number.isFinite(at)||at>Date.now()+300000||Date.now()-at>4*3600000)continue;
    g.context=old.context;
-   for(const m of g.markets||[]){const prev=(old.markets||[]).find(x=>x.ticker===m.ticker&&x.quoteSide===m.quoteSide&&x.point===m.point&&x.player===m.player);if(prev?.contextSignals)m.contextSignals={...prev.contextSignals};}
+   for(const m of g.markets||[]){const prev=(old.markets||[]).find(x=>x.ticker===m.ticker&&x.quoteSide===m.quoteSide&&x.point===m.point&&x.player===m.player);if(prev?.contextSignals)m.contextSignals={...prev.contextSignals};if(prev?._rosterVerified&&m._rosterVerified&&prev.team===m.team){if(prev.propHistory)m.propHistory=prev.propHistory;if(prev.tdOpportunity)m.tdOpportunity=prev.tdOpportunity;}}
   }
   return live;
  }

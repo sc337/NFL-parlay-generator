@@ -67,6 +67,10 @@ jobs:
         timeout-minutes: 2
         continue-on-error: true
         run: python scripts/enrich_snapshot_context.py
+      - name: Refresh completed-game NFL player history
+        timeout-minutes: 2
+        continue-on-error: true
+        run: python scripts/update_nfl_td_context.py
       - name: Publish NFL without waiting for other sports
         run: python scripts/publish_nfl_snapshot.py
 

@@ -45,7 +45,7 @@ def player_key(rows, name):
 
 def parse_plays(stream):
     games=defaultdict(lambda:{'players':defaultdict(lambda:{'rush':0,'target':0,'rz_rush':0,
-        'rz_target':0,'ten_rush':0,'ten_target':0,'name':''}), 'tds':0,'date':''})
+        'rz_target':0,'ten_rush':0,'ten_target':0,'name':'','pass_attempts':0,'pass_completions':0,'pass_yards':0,'rush_yards':0,'receptions':0,'rec_yards':0,'pass_tds':0,'pass_interceptions':0}), 'tds':0,'date':''})
     for p in csv.DictReader(stream):
         if p.get('season_type') not in (None,'REG') or truth(p.get('no_play')) or truth(p.get('two_point_attempt')):continue
         date=str(p.get('game_date') or '')[:10]
@@ -62,6 +62,22 @@ def parse_plays(stream):
             stats=game['players'][who];stats['name']=name;stats[kind]+=1
             if yardline is not None and yardline<=20:stats['rz_'+kind]+=1
             if yardline is not None and yardline<=10:stats['ten_'+kind]+=1
+        # Count official stat outcomes separately from touchdown opportunity.
+        passer=p.get('passer_player_id');name=p.get('passer_player_name')
+        if passer and name and truth(p.get('pass_attempt')) and not truth(p.get('sack')):
+            stats=game['players'][passer];stats['name']=name;stats['pass_attempts']+=1
+            if truth(p.get('complete_pass')):
+                stats['pass_completions']+=1
+                stats['pass_yards']+=number(p.get('passing_yards')) or number(p.get('yards_gained')) or 0
+            stats['pass_tds']+=int(truth(p.get('pass_touchdown')))
+            stats['pass_interceptions']+=int(truth(p.get('interception')))
+        rusher=p.get('rusher_player_id')
+        if rusher and truth(p.get('rush_attempt')):
+            game['players'][rusher]['rush_yards']+=number(p.get('rushing_yards')) or number(p.get('yards_gained')) or 0
+        receiver=p.get('receiver_player_id')
+        if receiver and truth(p.get('complete_pass')):
+            stats=game['players'][receiver];stats['receptions']+=1
+            stats['rec_yards']+=number(p.get('receiving_yards')) or number(p.get('yards_gained')) or 0
     return games
 
 def weight(s):
@@ -71,6 +87,9 @@ def weight(s):
 def attach(snapshot,games,now=None):
     now=now or datetime.now(timezone.utc)
     attached=0
+    props_attached=0
+    for game in snapshot.get('games') or []:
+        for market in game.get('markets') or []:market.pop('propHistory',None)
     for game in snapshot.get('games') or []:
         kickoff=game.get('commence_time')
         try: day=datetime.fromisoformat(kickoff.replace('Z','+00:00')).date().isoformat()
@@ -87,6 +106,29 @@ def attach(snapshot,games,now=None):
                 for key,stats in row['players'].items():
                     entry=players.setdefault(key,{'name':stats['name'],**{k:0 for k in ('rush','target','rz_rush','rz_target','ten_rush','ten_target')}})
                     for k in ('rush','target','rz_rush','rz_target','ten_rush','ten_target'):entry[k]+=stats[k]
+            # Include zero-usage games in samples, and require activity in the
+            # latest completed team game. Never infer role from quote counts.
+            for market in game.get('markets') or []:
+                if not market.get('player') or market.get('team')!=team or not market.get('_rosterVerified'):continue
+                key=player_key(players,market.get('player'))
+                if key is None or len(prior)<3:continue
+                history=[row['players'].get(key,{}) for _,row in prior]
+                active=lambda s:sum(s.get(k,0) for k in ('rush','target','pass_attempts'))>0
+                played=sum(active(s) for s in history)
+                if played<3 or not active(history[-1]):continue
+                metrics={}
+                mapping={'player_pass_yds':'pass_yards','player_rush_yds':'rush_yards',
+                    'player_reception_yds':'rec_yards','player_receptions':'receptions',
+                    'player_rush_attempts':'rush','player_pass_attempts':'pass_attempts',
+                    'player_pass_completions':'pass_completions','player_pass_tds':'pass_tds',
+                    'player_pass_interceptions':'pass_interceptions'}
+                for kind,stat in mapping.items():
+                    values=[float(s.get(stat,0)) for s in history]
+                    if any(v!=0 for v in values):metrics[kind]=values
+                if not metrics:continue
+                market['propHistory']={'games':len(prior),'played':played,'latest_game':prior[-1][1]['date'],
+                    'dates':[row['date'] for _,row in prior],'metrics':metrics,'source':'nflverse completed plays'}
+                props_attached+=1
             total=sum(weight(s) for s in players.values())
             if total<5:continue
             tds=sum(row['tds'] for _,row in prior)
@@ -101,6 +143,7 @@ def attach(snapshot,games,now=None):
                     'rush':s['rush'],'target':s['target'],'rz_rush':s['rz_rush'],'rz_target':s['rz_target'],
                     'ten_rush':s['ten_rush'],'ten_target':s['ten_target'],'source':'nflverse completed plays'}
                 attached+=1
+    snapshot['prop_context']={'source':'nflverse completed plays','updated_at':now.isoformat(),'attached':props_attached}
     snapshot['td_context']={'source':'nflverse play by play','updated_at':now.isoformat(),'attached':attached}
     return attached
 
@@ -120,6 +163,9 @@ def main():
         print('Touchdown opportunity attached:',attach(data,all_games,now))
     except Exception as error:
         print('WARN touchdown opportunity unavailable:',error)
+        for game in data.get('games') or []:
+            for market in game.get('markets') or []:market.pop('propHistory',None)
+        data['prop_context']={'updated_at':now.isoformat(),'attached':0,'status':'unavailable'}
         data['td_context']={'source':'nflverse play by play','updated_at':now.isoformat(),'attached':0,'status':'unavailable'}
     SNAPSHOT.write_text(json.dumps(data,separators=(',',':')))
 

@@ -70,6 +70,7 @@ function assess(s,m,f={},options={}){
  const buffer=(validated ? .015 : .035)+(1-coverage)*.02+uncertainty*.015;
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
+ if(s==='nfl'&&m.player&&f.experimental&&!validated)warnings.push('Experimental player-history estimate');
  const anchored=s==='nfl'&&!m.player&&f.marketAnchored===true;
  const quoteAge=Date.now()-Date.parse(q.checkedAt||'');
  const delayedReference=quoteAge>TTL&&quoteAge<=2*3600000;
