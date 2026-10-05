@@ -127,7 +127,9 @@ jobs:
           node scripts/update_forecast_audit.js
           node scripts/build_forecast_report.js
       - name: Check recommendation archive and health rules
-        run: node --test tests/dashboard-automation.test.js
+        run: |
+          node --test tests/dashboard-automation.test.js tests/pick-quality.test.js tests/price-check-ui.test.js tests/price-movement.test.js
+          python -m unittest discover -s tests -p 'test_quality*.py'
       - name: Save daily dashboard recommendations
         timeout-minutes: 5
         env:
@@ -307,3 +309,4 @@ jobs:
             git commit -m "Update Kalshi sports market snapshots"
             git push
           fi
+

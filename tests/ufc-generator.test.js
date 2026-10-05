@@ -20,7 +20,7 @@ function element(key){if(!elements.has(key))elements.set(key,{innerHTML:'',textC
 const document={readyState:'loading',addEventListener(){},querySelector:element,body:{classList:{contains:()=>false}}};
 const window={__ACTIVE_SPORT:'ufc',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},SPORT_MEDIA:{load:async()=>{},ufc:()=>''},COMPACT_UI:{refresh(){}}};
 const context={window,document,Option:class{constructor(label,value){this.label=label;this.value=value}},fetch:async()=>({ok:true,json:async()=>snapshot}),Date:ClockDate,console};
-for(const file of ['market-guards.js','data/model-calibration.js','model-calibration.js','model-core.js','ufc-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),context);
+for(const file of ['market-guards.js','data/model-calibration.js','model-calibration.js','model-core.js','pick-quality.js','ufc-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),context);
 (async()=>{
  await window.UFC_DASHBOARD.load();
  const options=element('#ufcCardSelect').options;

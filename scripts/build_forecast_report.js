@@ -17,6 +17,7 @@ function metrics(rows){
     return {range:[lo,hi],count:part.length,predicted:part.length?round(part.reduce((s,r)=>s+r.modelP,0)/part.length):null,
       observed:part.length?round(part.filter(r=>r.result==='win').length/part.length):null};
   });
+  const movement=rows.filter(r=>r.closingAsk>0&&r.closingAsk<1&&r.ask>0&&r.ask<1&&Date.parse(r.closingQuoteAt)<Date.parse(r.eventTime)&&Date.parse(r.closingQuoteAt)>=Date.parse(r.eventTime)-15*60000);
   const value=model.filter(r=>r.quotedEV>0&&r.ask>0&&r.ask<1);
   const ablations={};
   for(const key of new Set(model.flatMap(r=>Object.keys(r.ablations||{})))){
@@ -38,7 +39,7 @@ function metrics(rows){
       distinctEvents:new Set(experimental.map(eventKey)).size,
       brierEstimate:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.modelP,r.result==='win'?1:0),0)/experimental.length):null,
       brierMarket:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.marketP,r.result==='win'?1:0),0)/experimental.length):null},
-    calibrationBins:bins,ablations,
+    calibrationBins:bins,ablations,priceMovement:{source:'Kalshi near-start reference; not Caesars',count:movement.length,meanCLV:movement.length?round(movement.reduce((sum,r)=>sum+r.closingAsk-r.ask,0)/movement.length):null},
     positiveEV:{settled:value.length,distinctEvents:new Set(value.map(eventKey)).size,
       grossReturnPerUnit:value.length?round(value.reduce((s,r)=>s+(r.result==='win'?1/r.ask-1:-1),0)/value.length):null}};
 }
@@ -73,3 +74,4 @@ function main(){const rows=JSON.parse(fs.readFileSync(file,'utf8')).records||[];
 }
 if(require.main===module)main();
 module.exports={metrics,totals,build};
+

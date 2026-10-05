@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
 const {fit,build,calibrated}=require('../scripts/build_model_calibration');
-const sample=(n,wins,offset=0)=>Array.from({length:n},(_,i)=>({id:String(i+offset),event:'Game '+(i+offset),eventTime:'2026-10-01T00:00:00Z',recordedAt:new Date(Date.UTC(2026,8,1+i+offset)).toISOString(),forecastType:'model',modelP:.8,rawModelP:.8,marketP:.6,result:i%5<wins?'win':'loss'}));
+const sample=(n,wins,offset=0)=>Array.from({length:n},(_,i)=>({id:String(i+offset),event:'Game '+(i+offset),eventTime:new Date(Date.UTC(2026,8,2+i+offset)).toISOString(),recordedAt:new Date(Date.UTC(2026,8,1+i+offset)).toISOString(),forecastType:'model',modelP:.8,rawModelP:.8,marketP:.6,result:i%5<wins?'win':'loss'}));
 const rows=sample(60,3),rule=fit(rows);
 assert.equal(rule.active,true,'adjustment must improve later results');
 assert.ok(rule.adjustedBrier<rule.rawBrier);
@@ -25,3 +25,4 @@ assert.equal(adjusted.rawModelP,bare.modelP);
 assert.notEqual(adjusted.modelP,bare.modelP);
 assert.equal(untouched.modelP,bare.modelP);
 console.log('Model calibration holdout and activation gates passed');
+

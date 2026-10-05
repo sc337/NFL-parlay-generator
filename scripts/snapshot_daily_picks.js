@@ -59,7 +59,7 @@ async function collect(sport,dataDir,now,version){
   // Load declarations through the public state export, before browser listeners.
   const source=fs.readFileSync(path.join(root,'app.js'),'utf8');const boundary=source.indexOf("$$('#marketChips .chip').forEach");if(boundary<0)throw Error('NFL builder boundary missing');
   vm.runInContext(source.slice(0,boundary),r.ctx,{filename:'app.js'});
-  r.window.NFL_PARLAY_STATE.games=snapshot.games||[];
+  r.window.NFL_PARLAY_STATE.games=snapshot.games||[];r.window.PICK_QUALITY.prepare('nfl',(snapshot.games||[]).flatMap(g=>g.markets||[]),{},snapshot.games||[],snapshot.updated_at);
   for(const file of ['nfl-alt-lines.js','nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
   r.window.NFL_PROJECTIONS.enrich(true);r.window.NFL_MODEL_V3.enrich();r.window.NFL_CONFIDENCE.refresh();
   vm.runInContext('renderNflStraight()',r.ctx);
@@ -101,3 +101,4 @@ async function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
 module.exports={main,collect,captureRecord,legRecord,mergeRecords,settle,dayKey};
+

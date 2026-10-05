@@ -7,6 +7,7 @@
     if(Array.isArray(value)) return value.map(rewriteBookmakerKeys);
     if(value && typeof value === 'object'){
       const out = {};
+      if(value.key===BOOKMAKER_KEY)out.dashboardBookSource=BOOKMAKER_LABEL;
       for(const [k,v] of Object.entries(value)){
         if(k === 'key' && v === BOOKMAKER_KEY) out[k] = 'fanduel';
         else out[k] = rewriteBookmakerKeys(v);
@@ -57,27 +58,10 @@
     }
   };
 
-  function replaceBookLabel(root=document.body){
-    if(!root) return;
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes=[];
-    while(walker.nextNode()) nodes.push(walker.currentNode);
-    for(const node of nodes){
-      if(node.nodeValue && node.nodeValue.includes('FanDuel')){
-        node.nodeValue = node.nodeValue.replaceAll('FanDuel', BOOKMAKER_LABEL);
-      }
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    replaceBookLabel();
-    const observer = new MutationObserver(() => replaceBookLabel());
-    observer.observe(document.body,{childList:true,subtree:true,characterData:true});
-  });
-
   window.NFL_PARLAY_SPORTSBOOK = {
     key: BOOKMAKER_KEY,
     label: BOOKMAKER_LABEL,
     paidPlanRequired: true
   };
 })();
+

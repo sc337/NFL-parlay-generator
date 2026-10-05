@@ -117,10 +117,11 @@ def main():
             player=m.get('player')
             if not player:continue
             hit=next((x for x in injuries if normalize_name(x.get('player'))==normalize_name(player)),None)
-            m['contextSignals']={'injury_status':hit.get('status') if hit else 'none_reported','injury_detail':hit.get('detail') if hit else '','market_breadth':player_market_counts.get(player,1)}
+            m['contextSignals']={'injury_checked':'injuries' in summary,'injury_status':hit.get('status') if hit else ('none_reported' if 'injuries' in summary else 'unknown'),'injury_detail':hit.get('detail') if hit else '','market_breadth':player_market_counts.get(player,1)}
         g['context']={'available':True,'event_id':event_id,'weather':weather_context(comp,summary),'injuries':injuries,'recent_form':form,'updated_at':now.isoformat()}
     data['context_enrichment']={'updated_at':now.isoformat(),'source':'ESPN','games_enriched':sum(1 for g in data.get('games') or [] if (g.get('context') or {}).get('available'))}
     SNAPSHOT.write_text(json.dumps(data,separators=(',',':')))
     print('context enriched',data['context_enrichment']['games_enriched'],'games')
 
 if __name__=='__main__':main()
+

@@ -3,6 +3,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
+const {track}=require('./track_price_movement');
 const root=path.resolve(__dirname,'..');
 const outFile=path.join(root,'data/pick-history.json');
 const read=name=>JSON.parse(fs.readFileSync(path.join(root,'data',name),'utf8'));
@@ -16,14 +17,14 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture}={}){
   if(capture)window.RECOMMENDATION_CAPTURE=capture;
   const ctx=vm.createContext({window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');
   return{window,ctx,run};
 }
 
 async function candidates(sport,{all=false}={}){
   const r=runtime(sport),w=r.window;
   if(sport==='nfl'){
-    const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];
+    const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];w.PICK_QUALITY.prepare('nfl',(snapshot.games||[]).flatMap(g=>g.markets||[]),{},snapshot.games||[],snapshot.updated_at);
     for(const file of ['nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
     w.NFL_PROJECTIONS.enrich(true);w.NFL_MODEL_V3.enrich();
     const picks=all?(snapshot.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,gameId:g.id}))):w.NFL_SELECTIVITY.historyPicks();
@@ -64,7 +65,7 @@ function record(sport,entry,now){
   const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
     isAltLine:m.isAltLine===true,altReferenceLine:m.altReferenceLine??null,altDistance:m.altDistance??null,
-    marketGroup:sport==='nfl'?(m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+    marketGroup:sport==='nfl'?(m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
     forecastType:experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
     ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent?Number(f.betEV):null,result:null};
@@ -74,7 +75,7 @@ async function main(){
   const now=Date.now(),old=fs.existsSync(outFile)?JSON.parse(fs.readFileSync(outFile,'utf8')):{records:[]};
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id));
   for(const sport of ['nfl','mlb','ncaaf','ufc','nhl']){
-    try{const {rows:choices}=await candidates(sport);for(const choice of choices){const r=record(sport,choice,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id)}}}
+    try{const {rows:choices,snapshot}=await candidates(sport);track(rows,snapshot,sport,now);for(const choice of choices){const r=record(sport,choice,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id)}}}
     catch(error){console.warn('History candidates unavailable for',sport,error)}
   }
   // Never drop an unsettled forecast. Keep a bounded settled archive.
@@ -85,3 +86,4 @@ async function main(){
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
 module.exports={record,candidates,runtime};
+

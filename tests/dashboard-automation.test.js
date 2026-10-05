@@ -49,7 +49,7 @@ test('missing player data and player-market disappearance raise targeted alerts'
  assert.ok(missing.alerts.some(a=>a.code==='props-missing'));
  assert.ok(checkSport('mlb',{updated_at:at,markets:[market(1),market(2)]},missing.summary,now+60000).alerts.some(a=>a.code==='props-missing'));
 });
-test('capture uses the actual MLB builder, including its honest partial fallback',async()=>{
+test('capture refuses market-only MLB filler at every requested leg count',async()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'recommendation-test-'));
  try{
   const actualNow=Date.now(),start=new Date(actualNow+86400000).toISOString(),pairs=['CWSCLE','SDMIL','NYYTB'];
@@ -57,12 +57,12 @@ test('capture uses the actual MLB builder, including its honest partial fallback
   fs.writeFileSync(path.join(dir,'kalshi-mlb.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),markets}));
   fs.writeFileSync(path.join(dir,'mlb-context.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),games:[],players:{},pitchers:{}}));
   const result=await collect('mlb',dir,actualNow,'fixture');
-  const six=result.records.find(r=>r.mode==='multi'&&r.requestedLegs===6);assert.equal(six.actualLegs,3);assert.equal(six.legs[0].forecastType,'market_only');assert.equal(six.legs[0].modelP,null);
+  assert.equal(result.records.length,0);assert.ok(result.status.passes.some(r=>r.requestedLegs===6&&r.reason==='No qualifying build'));
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 });
 test('NFL archive loads the browser builder after preference initialization changes',async()=>{
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'nfl-archive-'));
  const current=Date.now(),kickoff=new Date(current+86400000).toISOString();
  const games=[['New Orleans Saints','Tampa Bay Buccaneers'],['Buffalo Bills','Miami Dolphins'],['Kansas City Chiefs','Denver Broncos']].map(([away,home],i)=>({id:'g'+i,away,home,game_status:'pre',commence_time:kickoff,dataSource:'Kalshi',markets:[{ticker:'NFL'+i,type:'h2h',marketKey:'h2h',team:away,name:away+' ML',price:-150,quoteProbability:.6,marketProbability:.59,sourceQuality:80,source:'Kalshi'}]}));
- try{fs.writeFileSync(path.join(directory,'kalshi-nfl.json'),JSON.stringify({updated_at:new Date(current).toISOString(),games}));const out=await collect('nfl',directory,current,'test');assert.ok(out.records.some(r=>r.mode==='multi'),'Default markets must remain selected without browser preferences');assert.ok(out.records.every(r=>r.snapshotAt===new Date(current).toISOString()))}finally{fs.rmSync(directory,{recursive:true,force:true})}
+ try{fs.writeFileSync(path.join(directory,'kalshi-nfl.json'),JSON.stringify({updated_at:new Date(current).toISOString(),games}));const out=await collect('nfl',directory,current,'test');assert.ok(out.status.passes.some(r=>r.mode==='multi'),'The default builder must execute and record quality passes without browser preferences');assert.equal(out.records.length,0,'Thin projections must not be archived as picks');assert.ok(out.records.every(r=>r.snapshotAt===new Date(current).toISOString()))}finally{fs.rmSync(directory,{recursive:true,force:true})}
 });

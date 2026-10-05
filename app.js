@@ -307,7 +307,7 @@ const PROP_MARKET_META = {
   player_anytime_td:{type:'td',label:'anytime TD'}
 };
 
-function normalizePropOutcome(marketKey,out){
+function normalizePropOutcome(marketKey,out,quotedAt=new Date().toISOString()){
   const meta=PROP_MARKET_META[marketKey];
   if(!meta || !out?.description || typeof out.price!=='number') return null;
   const player=out.description;
@@ -324,6 +324,7 @@ function normalizePropOutcome(marketKey,out){
   return {
     type:meta.type,
     marketKey,
+    source:'Caesars',quotedAt,
     player,
     name,
     price:out.price,
@@ -334,7 +335,7 @@ function normalizePropOutcome(marketKey,out){
   };
 }
 
-async function discoverFanDuelMarkets(game){
+async function discoverCaesarsMarkets(game){
   const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/markets`);
   url.searchParams.set('apiKey',state.apiKey);
   url.searchParams.set('regions','us');
@@ -342,7 +343,7 @@ async function discoverFanDuelMarkets(game){
   trackApiUsage(res);
   if(!res.ok) throw new Error('Event markets API '+res.status);
   const raw=await res.json();
-  const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
+  const book=(raw.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
   return new Set((book?.markets||[]).map(m=>typeof m==='string'?m:m.key).filter(Boolean));
 }
 
@@ -360,20 +361,20 @@ async function ensurePropsForGame(game){
 
   const task=(async()=>{
     try{
-      setStatus(`Checking FanDuel props: ${game.away} @ ${game.home}…`);
-      const available=await discoverFanDuelMarkets(game);
+      setStatus(`Checking Caesars props: ${game.away} @ ${game.home}…`);
+      const available=await discoverCaesarsMarkets(game);
       const requested=PROP_MARKETS.filter(k=>available.has(k));
 
       if(!requested.length){
         game.propStatus='none';
         game.availablePropMarkets=[];
         state.propsLoaded.add(game.id);
-        setStatus('FanDuel has not posted supported player props for this game yet');
+        setStatus('Caesars has not posted supported player props for this game yet');
         return;
       }
 
       game.availablePropMarkets=requested;
-      setStatus(`Loading ${requested.length} FanDuel prop markets…`);
+      setStatus(`Loading ${requested.length} Caesars prop markets…`);
 
       const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/odds`);
       url.searchParams.set('apiKey',state.apiKey);
@@ -386,12 +387,12 @@ async function ensurePropsForGame(game){
       trackApiUsage(res);
       if(!res.ok) throw new Error('Prop odds API '+res.status);
       const raw=await res.json();
-      const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
+      const book=(raw.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
       const props=[];
 
       for(const m of book?.markets||[]){
         for(const out of m.outcomes||[]){
-          const prop=normalizePropOutcome(m.key,out);
+          const prop=normalizePropOutcome(m.key,out,m.last_update||book.last_update||new Date().toISOString());
           if(prop) props.push(prop);
         }
       }
@@ -410,8 +411,8 @@ async function ensurePropsForGame(game){
 
       setStatus(
         cleaned.length
-          ? `Live FanDuel markets • ${cleaned.length} player props loaded`
-          : 'FanDuel prop markets were listed, but no usable outcomes were returned'
+          ? `Live Caesars markets • ${cleaned.length} player props loaded`
+          : 'Caesars prop markets were listed, but no usable outcomes were returned'
       );
     }catch(err){
       console.error(err);
@@ -440,7 +441,7 @@ async function loadData(){
     return;
   }
   try{
-    setStatus('Loading FanDuel markets…');
+    setStatus('Loading Caesars markets…');
     const url = new URL('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/');
     url.searchParams.set('apiKey',state.apiKey);
     url.searchParams.set('regions','us');
@@ -453,7 +454,7 @@ async function loadData(){
     const raw = await res.json();
     state.games = raw.map(normalizeGame).filter(g=>g.markets.length);
     state.propsLoaded.clear();
-    setStatus('Live FanDuel team markets');
+    setStatus('Live Caesars team markets');
     hydrateGames();
     await generate();
   }catch(err){
@@ -467,7 +468,7 @@ async function loadData(){
 
 function normalizeGame(g){
   const markets=[];
-  const book=(g.bookmakers||[]).find(b=>b.key==='fanduel') || g.bookmakers?.[0];
+  const book=(g.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
   for(const m of book?.markets||[]){
     for(const out of m.outcomes||[]){
       if(m.key==='h2h'){
@@ -481,6 +482,7 @@ function normalizeGame(g){
       }
     }
   }
+  for(const market of markets){market.source='Caesars';market.quotedAt=book?.markets?.find(m=>m.key===(market.marketKey||market.type))?.last_update||book?.last_update||new Date().toISOString();}
   return {id:g.id,away:g.away_team,home:g.home_team,commence_time:g.commence_time,markets};
 }
 
@@ -634,6 +636,7 @@ function marketQuality(m,variant){
 
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
+  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});return x.pass?x.rank:-999;}
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
@@ -749,7 +752,7 @@ function scriptMarketScore(m,game,variant,scriptKey,risk){
   if(!script) return -999;
   const base=candidateScore(m,risk,variant);
   if(base<=-900) return base;
-  return base + script.legFit(m,game);
+  return base + (window.PICK_QUALITY?0:script.legFit(m,game));
 }
 
 function sgpTeam(m,game){
@@ -777,7 +780,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
   let best=null;
 
   for(const scriptKey of scriptKeys){
-    const pool=game.markets.filter(m=>isParlayEligible(m) && state.selectedMarkets.has(m.type) && marketQuality(m,variant)>-900);
+    const pool=game.markets.filter(m=>isParlayEligible(m) && state.selectedMarkets.has(m.type) && candidateScore(m,risk,variant)>-900);
     const props=pool.filter(m=>m.player);
     const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
 
@@ -815,8 +818,8 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
 
           const s=beam.score
             + scriptMarketScore(m,game,variant,scriptKey,risk)
-            + corr*cfg.corrWeight
-            + scriptFit*1.2
+            + (window.PICK_QUALITY?0:corr*cfg.corrWeight)
+            + (window.PICK_QUALITY?0:scriptFit*1.2)
             - diversityPenalty;
 
           next.push({legs:[...beam.legs,m],score:s});
@@ -938,13 +941,16 @@ function buildMulti(count,risk,variant){
   // Never fill with unqualified legs. If the requested size is unavailable,
   // return the strongest qualified build rather than pretending there are zero picks.
   const minLegs=Math.min(2,count);
-  if(legs.length<minLegs) return null;
+  if(legs.length<(window.PICK_QUALITY?count:minLegs)) return null;
   const p=packageParlay(legs,variant,false);
   if(p&&legs.length<count){p.requestedLegs=count;p.summary=`Only ${legs.length} of ${count} requested legs cleared NFLV3. Showing the strongest qualified build instead of forcing weaker legs.`}
   return p;
 }
 
+function nflQualityForecast(m){return {modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental};}
+function prepareNflQuality(){window.PICK_QUALITY?.prepare('nfl',(state.games||[]).flatMap(g=>(g.markets||[])),{},state.games,window.NFL_KALSHI?.snapshotAt?.()||null);window.PRICE_CHECK_UI?.refresh('nfl');}
 function packageParlay(legs,variant,isSgp,meta={}){
+  if(window.PICK_QUALITY&&!window.PICK_QUALITY.checkBuild('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m)})),isSgp).pass)return null;
   if(!legs?.length || legs.some(m=>!isParlayEligible(m))) return null;
   const players=legs.map(l=>l.player).filter(Boolean);
   if(new Set(players).size!==players.length)return null;
@@ -985,8 +991,8 @@ function renderNflStraight(){
   const choices=(state.games||[]).filter(g=>g.game_status==='pre'&&window.PICK_OF_DAY?.today?.(g.commence_time))
     .flatMap(g=>(g.markets||[]).filter(m=>m.type!=='td'&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))&&(!m.player||m._rosterVerified)&&Number.isFinite(Number(m.price))&&m.price!==0)
       .map(m=>({g,m,x:window.NFL_MODEL_V3?.evaluate?.(g,m)})))
-    .filter(row=>row.x?.actionable&&Number(row.x.coverage)>=.2&&Number(row.x.confidence)>=55)
-    .sort((a,b)=>(Number(b.x.confidence)+Math.max(0,Number(b.x.ev))*20)-(Number(a.x.confidence)+Math.max(0,Number(a.x.ev))*20));
+    .filter(row=>window.PICK_QUALITY?window.PICK_QUALITY.assess('nfl',row.m,row.x||{},{game:row.g}).pass:row.x?.actionable&&Number(row.x.coverage)>=.2&&Number(row.x.confidence)>=55)
+    .sort((a,b)=>window.PICK_QUALITY?window.PICK_QUALITY.assess('nfl',b.m,b.x,{game:b.g}).rank-window.PICK_QUALITY.assess('nfl',a.m,a.x,{game:a.g}).rank:(Number(b.x.confidence)+Math.max(0,Number(b.x.ev))*20)-(Number(a.x.confidence)+Math.max(0,Number(a.x.ev))*20));
   const best=choices[0];
   window.PICK_OF_DAY?.show?.('nfl',best&&{market:best.m,eventTime:best.g.commence_time,label:best.m.name,
     event:nflMatchup(best.g.away+' @ '+best.g.home),
@@ -1052,6 +1058,7 @@ function render(parlays){
       d.innerHTML=`<span class="nfl-leg-media">${window.SPORT_MEDIA?.nfl({...l,game:l.gameLabel})||''}${l.player&&l.team?window.SPORT_MEDIA?.nfl({team:l.team})||'':''}</span><div class="sport-visual-copy"><div class="leg-quote-row"><div class="leg-pick"><div class="leg-title">${i+1}. ${window.MARKET_GUARDS.esc(l.name)}</div>${state.mode==='multi'?`<div class="leg-sub">${window.MARKET_GUARDS.esc((l.gameLabel||'')+(nflKickoff(l.kickoff)?' · Starts '+nflKickoff(l.kickoff,true):''))}</div>`:''}</div><strong class="leg-quote" aria-label="American odds ${fmtOdds(l.price)}">${fmtOdds(l.price)}</strong></div><div class="leg-reason">${window.MARKET_GUARDS.esc(metrics.length?metrics.join(' · '):reasonFor(l,state.mode==='sgp'))}</div></div>`;
       legs.appendChild(d);
     });
+    window.PRICE_CHECK_UI?.attach(node.querySelector('.parlay-card'),'nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m)})),state.mode==='sgp');
     wrap.appendChild(node);
   }
 }
@@ -1079,6 +1086,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   const token=window.__SPORT_TOKEN;
   const current=()=>((window.__ACTIVE_SPORT||'nfl')==='nfl'&&window.__SPORT_TOKEN===token&&request===window.__NFL_GENERATION_SEQUENCE);
   window.NFL_PROJECTIONS?.enrich?.();
+  window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
   let parlays;
@@ -1088,9 +1096,10 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     if(!game){window.PICK_OF_DAY?.show?.('nfl');$('#results').innerHTML='<div class="empty">No NFL games are loaded.</div>';return;}
     await ensurePropsForGame(game);
     if(!current())return;
+    window.NFL_PROJECTIONS?.enrich?.(true);window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
     const propCount=countPlayerProps(game);
     if(state.apiKey && propCount===0 && game?.propStatus==='none'){
-      $('#resultsTitle').textContent='No FanDuel player props posted yet';
+      $('#resultsTitle').textContent='No Caesars player props posted yet';
     }else{
       $('#resultsTitle').textContent=propCount
         ? `Logical correlated SGPs • ${propCount} live props`
@@ -1098,7 +1107,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     }
     if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
       render([]);
-      $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
+      $('#results').innerHTML='<div class="empty">No live Caesars player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
       return;
     }
     parlays=[];
@@ -1109,6 +1118,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   }else{
     await ensurePropsForMultiGame(6);
     if(!current())return;
+    window.NFL_PROJECTIONS?.enrich?.(true);window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
     parlays=variants.map(v=>buildMulti(count,state.risk,v));
   }
   // Keep the best independent build for each risk profile in swipe order.
@@ -1157,3 +1167,4 @@ $('#clearKeyBtn').addEventListener('click',()=>{
 });
 
 loadData();
+

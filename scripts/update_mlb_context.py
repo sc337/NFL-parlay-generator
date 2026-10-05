@@ -1,6 +1,7 @@
 import json, re, urllib.request, urllib.parse
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 import csv, io
 import unicodedata
 
@@ -10,9 +11,9 @@ BASE='https://statsapi.mlb.com/api/v1'
 def name_key(name):
  return ''.join(c for c in unicodedata.normalize('NFKD',str(name or '')).casefold() if c.isalnum() and not unicodedata.combining(c))
 
-def get(url):
+def get(url, timeout=30):
  req=urllib.request.Request(url,headers=UA)
- with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+ with urllib.request.urlopen(req,timeout=timeout) as r:return json.load(r)
 
 def season_stats(pid,group):
  try:
@@ -61,6 +62,22 @@ def scoring_form(schedule, cutoff):
    league_runs+=home_score+away_score;league_games+=1
  return {'teams':totals,'league':{'games':league_games,'runs_per_team':round(league_runs/(2*league_games),3) if league_games else None},'as_of':cutoff.isoformat()}
 
+def confirm_lineup(row, fetch=None):
+ row={**row,'startersConfirmed':False,'lineupsConfirmed':False,'lineupPlayerIds':[]}
+ if row.get('status') not in ('Preview','Pre-Game'):return row
+ try:
+  url=f'https://statsapi.mlb.com/api/v1.1/game/{row["gamePk"]}/feed/live'
+  live=fetch(url) if fetch else get(url,timeout=8)
+  box=(live.get('liveData') or {}).get('boxscore',{}).get('teams',{})
+  lineups=[box.get(side,{}).get('battingOrder',[]) for side in ('away','home')]
+  row['lineupsConfirmed']=all(len(set(order))==9 for order in lineups)
+  row['lineupPlayerIds']=[int(pid) for order in lineups for pid in order]
+  # Probable pitchers alone do not prove a final starting assignment.
+  starters=[next((player.get('person',{}).get('id') for player in box.get(side,{}).get('players',{}).values() if (player.get('gameStatus') or {}).get('isCurrentPitcher')),None) for side in ('away','home')]
+  row['startersConfirmed']=bool(all(starters) and all(starters[i]==(row.get(side+'Probable') or {}).get('id') for i,side in enumerate(('away','home'))))
+ except Exception as error: print('lineup confirmation unavailable',row['gamePk'],error)
+ return row
+
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
  d=get(f'{BASE}/schedule?sportId=1&startDate={start}&endDate={end}&hydrate=probablePitcher(note),team')
@@ -77,6 +94,8 @@ def main():
    for side in ('awayProbable','homeProbable'):
     if row[side] and row[side].get('id'):ids.add(row[side]['id'])
    games.append(row)
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  games=list(pool.map(confirm_lineup,games))
  pitchers={}
  for pid in ids:
   try:
@@ -132,3 +151,4 @@ def main():
  Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters,'scoring':form},indent=2))
  print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props',len(hitters),'hitter samples')
 if __name__=='__main__':main()
+

@@ -2,6 +2,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const {candidates}=require('./update_pick_history');
+const {track}=require('./track_price_movement');
 const root=path.resolve(__dirname,'..');
 const file=path.join(root,'data/forecast-audit.json');
 const months={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
@@ -55,7 +56,7 @@ function record(sport,entry,snapshot,now){
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   return {id:[sport,ticker,side].join('|'),sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
-    market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?'player_prop':m.type==='h2h'?'moneyline':m.type):m.kind,
+    market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
     marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
     forecastType:hasModel?(experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
@@ -71,6 +72,7 @@ async function main(){
       const {snapshot,rows:choices}=await candidates(sport,{all:true});
       const updated=Date.parse(snapshot.updated_at||snapshot.generated_at);
       if(!Number.isFinite(updated)||updated>now+60000||now-updated>90*60000)throw Error('Snapshot is stale or future dated');
+      track(rows,snapshot,sport,now);
       for(const choice of choices){const r=record(sport,choice,snapshot,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id);added[sport]=(added[sport]||0)+1}}
     }catch(error){console.warn('Audit candidates unavailable for',sport,error)}
   }
@@ -80,3 +82,4 @@ async function main(){
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
 module.exports={record,mlbStart,start};
+

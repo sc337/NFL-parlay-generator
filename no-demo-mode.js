@@ -2,6 +2,7 @@
   function clearLiveState(message='No live markets available'){
     try{if(Array.isArray(state.games))state.games=[];state.propsLoaded?.clear?.();state.propsLoading?.clear?.()}catch{}
     if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
+    window.PICK_QUALITY?.prepare('nfl',[]);window.PRICE_CHECK_UI?.refresh('nfl');
     try{
       const sel=document.getElementById('gameSelect');if(sel){sel.innerHTML='';const o=document.createElement('option');o.textContent='No live games available';o.disabled=true;o.selected=true;sel.appendChild(o)}
       const results=document.getElementById('results');if(results){const note=document.createElement('div');note.className='empty';note.textContent=message;results.replaceChildren(note)}
