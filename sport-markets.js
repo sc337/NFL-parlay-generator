@@ -1,0 +1,18 @@
+(()=>{'use strict';
+const options={
+ mlb:[['moneyline','Moneyline'],['spread','Run Line'],['game_total','Game Total'],['team_total','Team Total'],['strikeouts','Pitcher Strikeouts'],['hits','Hits'],['home_runs','Home Runs'],['rbi','RBI'],['total_bases','Total Bases'],['hrr','Hits + Runs + RBI']],
+ ncaaf:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total']],
+ ufc:[['moneyline','Fight Winner'],['method_victory','Method of Victory'],['method_finish','Method of Finish'],['round_finish','Round of Finish'],['distance','Goes the Distance']]
+};
+const key='sportsMarketSelectionsV1',selected={},rows={},callbacks={};let saved={};
+try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{}
+for(const [sport,list] of Object.entries(options))selected[sport]=new Set(Array.isArray(saved[sport])?saved[sport].filter(k=>list.some(o=>o[0]===k)):list.map(o=>o[0]));
+function marketKey(sport,m){return sport==='mlb'&&m.kind==='total'?(m.series==='KXMLBTEAMTOTAL'?'team_total':'game_total'):m.kind}
+function allowed(sport,m){return !selected[sport]||selected[sport].has(marketKey(sport,m))}
+function set(sport,kinds){if(!options[sport])return;selected[sport]=new Set(kinds.filter(k=>options[sport].some(o=>o[0]===k)));try{localStorage.setItem(key,JSON.stringify(Object.fromEntries(Object.entries(selected).map(([s,v])=>[s,[...v]]))))}catch{}controls(sport);callbacks[sport]?.();window.PARLAY_GENERATOR?.syncLabel?.();window.COMPACT_UI?.refresh?.()}
+function mount(){const parent=document.querySelector('#parlayControls');if(!parent)return;for(const [sport,list] of Object.entries(options)){if(document.querySelector('#'+sport+'MarketFilters'))continue;const host=document.createElement('details');host.id=sport+'MarketFilters';host.className='market-filter-details';host.hidden=true;host.innerHTML='<summary>'+sport.toUpperCase()+' Markets</summary><div class="market-box"><div class="chips" role="group" aria-label="'+sport.toUpperCase()+' markets">'+list.map(([k,label])=>'<button type="button" class="chip" data-sport-market="'+k+'" aria-pressed="true">'+label+'</button>').join('')+'</div><small data-market-note></small></div>';host.addEventListener('click',e=>{const b=e.target.closest('[data-sport-market]');if(!b||b.disabled)return;const next=new Set(selected[sport]),k=b.dataset.sportMarket;next.has(k)?next.delete(k):next.add(k);set(sport,[...next])});parent.insertBefore(host,document.querySelector('#generateBtn'))}}
+function controls(sport){const host=document.querySelector('#'+sport+'MarketFilters');if(!host)return;host.hidden=(window.__ACTIVE_SPORT||'nfl')!==sport;host.querySelectorAll('[data-sport-market]').forEach(b=>{const k=b.dataset.sportMarket,on=selected[sport].has(k),available=(rows[sport]||[]).some(m=>marketKey(sport,m)===k&&window.MARKET_GUARDS.pregame(m)&&window.MARKET_GUARDS.quote(m)!==null);b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));b.disabled=!available;b.title=available?'':'No available pregame quotes in the current selection'});host.querySelector('[data-market-note]').textContent=!selected[sport].size?'Select at least one market to see picks.':sport==='ufc'?'Unavailable markets are disabled. Finish and distance markets are market-only; recommendations currently support fight winners.':'Unavailable markets are disabled. Picks still need to pass quality checks.'}
+function activate(){mount();for(const sport of Object.keys(options))controls(sport)}
+function sync(sport,markets,onChange){rows[sport]=markets;callbacks[sport]=onChange;mount();controls(sport)}
+window.SPORT_MARKETS={allowed,marketKey,set,sync,activate,options,selections:sport=>[...(selected[sport]||[])]};
+})();

@@ -5,7 +5,7 @@ const test=require('node:test');
 
 function runtime(context,patch={}){
   const nodes=new Map();
-  const querySelector=s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{}});return nodes.get(s)};
+  const querySelector=s=>{if(s==='#parlayControls'||s.endsWith('MarketFilters'))return null;if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{}});return nodes.get(s)};
   const document={querySelector,body:{classList:{contains:()=>false}}};
   let daily;
   const window={__ACTIVE_SPORT:'ncaaf',__SPORT_TOKEN:1,SPORT_MEDIA:{load:async()=>{},ncaaf:()=>''},PICK_OF_DAY:{today:()=>true,show:(_sport,pick)=>{daily=pick}},
@@ -17,7 +17,7 @@ function runtime(context,patch={}){
   const data={updated_at:new Date().toISOString(),markets:[market]};
   const fetch=async url=>({ok:true,json:async()=>context,text:async()=>JSON.stringify(data)});
   const sandbox=vm.createContext({window,document,fetch,Date,console});
-  for(const file of ['market-guards.js','model-core.js','ncaaf-model.js','ncaaf-dashboard.js'])
+  for(const file of ['market-guards.js','sport-markets.js','model-core.js','ncaaf-model.js','ncaaf-dashboard.js'])
     vm.runInContext(fs.readFileSync(file,'utf8'),sandbox,{filename:file});
   return {window,nodes,market,kickoff,daily:()=>daily};
 }
@@ -65,4 +65,18 @@ test('missing executable quote or unverified kickoff cannot be a college recomme
     assert.equal(app.daily(),undefined);
     assert.doesNotMatch(app.nodes.get('#results').innerHTML,/class="parlay-card"/);
   }
+});
+
+
+test('college market selections filter real recommendations and remain separate from baseball',async()=>{
+  const app=runtime({});await app.window.NCAAF_DASHBOARD.load();
+  assert.ok(app.daily());
+  app.window.SPORT_MARKETS.set('mlb',[]);
+  assert.equal(app.window.NCAAF_DASHBOARD.eligible(app.market,'balanced'),true);
+  app.window.SPORT_MARKETS.set('ncaaf',['spread','total']);
+  assert.equal(app.window.NCAAF_DASHBOARD.eligible(app.market,'balanced'),false);
+  assert.equal(app.daily(),undefined);
+  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/class="parlay-card"/);
+  app.window.SPORT_MARKETS.set('ncaaf',['moneyline']);
+  assert.equal(app.daily().market.ticker,app.market.ticker);
 });

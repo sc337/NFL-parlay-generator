@@ -139,7 +139,7 @@ test('NHL controls live outside the collapsed parlay panel',()=>{
  const host={style:{},querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}};
  app.nodes.set('main',main);app.nodes.set('#pickOfDay',pick);app.nodes.set('#nhlMarketFilters',host);app.start();
  assert.equal(main.moved,host);assert.equal(main.before,pick);assert.equal(host.hidden,false);
- assert.match(fs.readFileSync('ufc-dashboard.js','utf8'),/show\('\.market-filter-details:not\(#nhlMarketFilters\)',nfl\)/);
+ assert.match(fs.readFileSync('ufc-dashboard.js','utf8'),/show\('#nflMarketFilters',nfl\)/);
  app.window.__ACTIVE_SPORT='mlb';app.window.NHL_DASHBOARD.controls();assert.equal(host.hidden,true);
 });
 
