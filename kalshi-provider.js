@@ -7,6 +7,16 @@
  const usable=x=>{const at=Date.parse(x?.updated_at||'');return Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=MAX_AGE_MS};
  const isPregame=g=>g?.game_status==='pre'&&Number.isFinite(Date.parse(g.commence_time))&&Date.parse(g.commence_time)>Date.now();
  function validate(data){if(!data||!Array.isArray(data.games)||data.games.some(g=>!Array.isArray(g.markets)))throw Error('NFL snapshot has invalid games/markets');const at=Date.parse(data.updated_at||'');if(!Number.isFinite(at)||at>Date.now()+300000)throw Error('NFL snapshot timestamp invalid');if(Date.now()-at>MAX_AGE_MS){const e=Error('NFL quotes expired ('+Math.round((Date.now()-at)/60000)+'m old)');e.code='expired';throw e}const games=data.games.filter(isPregame);if(!games.length){const e=Error('No upcoming NFL markets in the feed');e.code='empty';throw e}return games}
+ function preserveContext(live,prior){
+  for(const g of live.games||[]){
+   const old=(prior?.games||[]).find(x=>x.away===g.away&&x.home===g.home&&Math.abs(Date.parse(x.commence_time)-Date.parse(g.commence_time))<300000);
+   const at=Date.parse(old?.context?.updated_at||'');
+   if(!old||!Number.isFinite(at)||at>Date.now()+300000||Date.now()-at>4*3600000)continue;
+   g.context=old.context;
+   for(const m of g.markets||[]){const prev=(old.markets||[]).find(x=>x.ticker===m.ticker&&x.quoteSide===m.quoteSide&&x.point===m.point&&x.player===m.player);if(prev?.contextSignals)m.contextSignals={...prev.contextSignals};}
+  }
+  return live;
+ }
  async function load(){
   const uiRequest=window.DASHBOARD_UI?.begin('nfl'),request=++requestId,token=window.__SPORT_TOKEN;
   const current=()=>request===requestId&&(window.__ACTIVE_SPORT||'nfl')==='nfl'&&token===window.__SPORT_TOKEN;
@@ -20,10 +30,10 @@
   try{
    if(current()&&!state.games?.length&&usable(warm)){const games=warm.games.filter(isPregame);if(games.length){state.games=games;state.propsLoaded?.clear?.();hydrateGames();setStatus('Cached Kalshi markets · refreshing…');setTimeout(()=>{if(current()){window.NFL_PROJECTIONS?.refresh?.();generate()}},0)}}
    if(status)status.textContent='Checking…';let data,games,source='Kalshi snapshot',snapshotError;
-   try{const res=await fetch(SNAPSHOT+'?t='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('NFL snapshot HTTP '+res.status);data=await res.json();if(!current())return false;games=validate(data)}catch(e){snapshotError=e}
+   try{const res=await fetch(SNAPSHOT+'?t='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('NFL snapshot HTTP '+res.status);data=await res.json();if(!current())return false;games=validate(data);if(Date.now()-Date.parse(data.updated_at)>30*60000)snapshotError=Error('Refreshing delayed reference prices')}catch(e){snapshotError=e}
    if(!current())return false;
    if(snapshotError){
-    if(window.NFL_LIVE_RECOVERY?.load){setStatus('Recovering fresh NFL markets…');try{data=await window.NFL_LIVE_RECOVERY.load();if(!current())return false;games=validate(data);source='Kalshi live recovery'}catch(e){diag({source:'Kalshi live recovery',ok:false,error:String(e.message||e)})}}
+    if(window.NFL_LIVE_RECOVERY?.load){setStatus('Recovering fresh NFL markets…');try{data=preserveContext(await window.NFL_LIVE_RECOVERY.load(),data||warm);if(!current())return false;games=validate(data);source='Kalshi live recovery'}catch(e){diag({source:'Kalshi live recovery',ok:false,error:String(e.message||e)})}}
     if(!games){if(usable(warm)){const valid=warm.games.filter(isPregame);if(valid.length){data=warm;games=valid;source='Cached Kalshi · snapshot refresh failed'}}}
     if(!games)throw snapshotError;
    }
@@ -34,6 +44,7 @@
    if(status)status.textContent=e.code==='expired'?'Stale':e.code==='empty'?'No upcoming markets':'Unavailable';setStatus(lastResult.message);diag({source:'Kalshi snapshot',ok:false,error:lastResult.message,ms:Math.round(performance.now()-started)});return false;
   }finally{window.DASHBOARD_UI?.end(uiRequest)}
  }
- window.NFL_KALSHI={load,validate,lastResult:()=>lastResult,snapshotAt:()=>lastStamp===null?null:new Date(lastStamp).toISOString(),age:()=>lastStamp===null?Infinity:Math.max(0,Date.now()-lastStamp),clearCache:()=>{try{localStorage.removeItem(CACHE_KEY)}catch{}}};
+ window.NFL_KALSHI={load,validate,preserveContext,lastResult:()=>lastResult,snapshotAt:()=>lastStamp===null?null:new Date(lastStamp).toISOString(),age:()=>lastStamp===null?Infinity:Math.max(0,Date.now()-lastStamp),clearCache:()=>{try{localStorage.removeItem(CACHE_KEY)}catch{}}};
 })();
+
 

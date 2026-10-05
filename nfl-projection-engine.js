@@ -109,14 +109,14 @@
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
+    return {marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
     if(!force&&enrichedRef===state.games)return;
     for(const g of state.games||[])for(const m of g.markets||[]){
       const p=marketProjection(g,m);if(!p)continue;
-      m.modelProbability=p.modelP;m.rawModelProbability=p.rawModelP;
+      m.marketAnchored=p.marketAnchored===true;m.modelProbability=p.modelP;m.rawModelProbability=p.rawModelP;
       m.marketProbability=p.marketP;
       m.modelEdge=p.edge;
       m.projectionCoverage=p.coverage;
@@ -149,3 +149,4 @@
   const init=()=>setTimeout(refresh,0);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
+
