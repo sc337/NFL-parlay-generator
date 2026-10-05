@@ -3,7 +3,7 @@ const state = {
   nflWeek:window.DASHBOARD_UI?.get('nfl','week','')||'',
   lineMode:'standard',
   risk:50,
-  selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])),
+  selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),

@@ -120,7 +120,8 @@ def main():
    else:parse_prop(m,g,s)
  schedules={}
  for g in games.values():
-  day=datetime.fromisoformat(g['event_date']).date();schedules.setdefault(day,espn_schedule(day))
+  day=datetime.fromisoformat(g['event_date']).date()
+  if day not in schedules:schedules[day]=espn_schedule(day)
  out=[];started=unmatched=0
  for g in games.values():
   day=datetime.fromisoformat(g['event_date']).date();ev=schedules.get(day,{}).get('|'.join(sorted((g['away'],g['home']))))

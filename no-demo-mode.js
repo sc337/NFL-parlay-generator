@@ -4,7 +4,7 @@
     if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
     try{
       const sel=document.getElementById('gameSelect');if(sel){sel.innerHTML='';const o=document.createElement('option');o.textContent='No live games available';o.disabled=true;o.selected=true;sel.appendChild(o)}
-      const results=document.getElementById('results');if(results)results.innerHTML='<div class="empty">'+(message.includes('expired')?'NFL quotes are over 2 hours old. Refresh after the feed updates.':'Live Caesars or Kalshi data is required. No demo or placeholder markets are used.')+'</div>';
+      const results=document.getElementById('results');if(results){const note=document.createElement('div');note.className='empty';note.textContent=message;results.replaceChildren(note)}
       const title=document.getElementById('resultsTitle');if(title)title.textContent='No live betting recommendations';
       const btn=document.getElementById('generateBtn');if(btn){btn.disabled=true;btn.textContent='Live data required'}
       const status=document.getElementById('dataStatus');if(status)status.textContent=message;window.__NFL_STATUS=message;
@@ -16,8 +16,7 @@
     if(!hasLiveGames())clearLiveState('Loading Kalshi NFL snapshot…');else setStatus('Refreshing NFL markets…');
     try{if(await window.NFL_KALSHI?.load?.())return true}catch(e){console.warn('Kalshi fallback failed',e)}
     if((window.__ACTIVE_SPORT||'nfl')!=='nfl'||token!==window.__SPORT_TOKEN)return false;
-    const ks=document.getElementById('kalshiStatus')?.textContent||'';
-    clearLiveState(/Stale/i.test(ks)?'NFL quotes expired — waiting for a fresh snapshot':/Initializing/i.test(ks)?'Kalshi feed initializing — first server refresh pending':'No live Caesars or Kalshi NFL markets available');
+    const failure=window.NFL_KALSHI?.lastResult?.();clearLiveState(failure?.message||'NFL feed temporarily unavailable. Retrying automatically.');
     return false;
   }
   const caesarsLoad=async()=>{

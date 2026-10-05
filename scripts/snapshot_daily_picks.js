@@ -57,7 +57,7 @@ async function collect(sport,dataDir,now,version){
   capture(sport,{mode:'straight',profile:'featured',requestedLegs:1,legs:[{market,forecast,game}]});}};
  if(sport==='nfl'){
   // Load declarations through the public state export, before browser listeners.
-  const source=fs.readFileSync(path.join(root,'app.js'),'utf8');const boundary=source.indexOf("$$('#marketChips .chip').forEach(c=>c.setAttribute");if(boundary<0)throw Error('NFL builder boundary missing');
+  const source=fs.readFileSync(path.join(root,'app.js'),'utf8');const boundary=source.indexOf("$$('#marketChips .chip').forEach");if(boundary<0)throw Error('NFL builder boundary missing');
   vm.runInContext(source.slice(0,boundary),r.ctx,{filename:'app.js'});
   r.window.NFL_PARLAY_STATE.games=snapshot.games||[];
   for(const file of ['nfl-alt-lines.js','nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
