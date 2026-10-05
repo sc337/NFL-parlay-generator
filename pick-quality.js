@@ -1,14 +1,11 @@
 (()=>{'use strict';
-const data=new Map(),KEY='sportsPriceChecksV1',TTL=30*60000;
+const data=new Map(),TTL=30*60000;
 const num=v=>v!=null&&v!==''&&Number.isFinite(Number(v))?Number(v):null;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const odds=o=>num(o)!=null&&Math.abs(Number(o))>=100&&Math.abs(Number(o))<=100000;
 const decimal=o=>o>0?1+o/100:1+100/Math.abs(o);
 const implied=o=>odds(o)?1/decimal(Number(o)):null;
 const american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);
-function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch{return[]}}
-let ledger=read();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(ledger.slice(-1000)));return true}catch{return false}}
 function group(s,m){return s==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?m.marketKey||m.type:m.type==='h2h'?'moneyline':m.type):m.kind}
 function line(m){
  if(num(m.point)!=null)return num(m.point);
@@ -25,12 +22,9 @@ function line(m){
 function id(s,m){return JSON.stringify([s,m.ticker||m.selection_id||JSON.stringify([m.game_id||m.gameId||m.event_ticker||m.kickoff||'',m.name||m.label]),m.quoteSide||m.side||'yes',m.marketKey||m.kind||m.type,line(m),m.player||m.team||''])}
 function prepare(s,markets,context={},games=[],at=null){const byTicker=new Map(),byGame=new Map();for(const g of games){byGame.set(g.id,g);for(const m of g.markets||[])if(m.ticker)byTicker.set(m.ticker,g)}data.set(s,{markets,context,games,at,byTicker,byGame})}
 function gameFor(s,m,game){return game||data.get(s)?.byGame?.get(m.gameId)||data.get(s)?.byTicker?.get(m.ticker)||data.get(s)?.games?.find(g=>g.id===m.gameId||(g.markets||[]).some(x=>x===m||x.ticker&&x.ticker===m.ticker))}
-function quote(s,m,now=Date.now()){
- const entry=[...ledger].reverse().find(r=>r.key===id(s,m)&&r.kind==='straight'&&r.book==='Caesars'&&r.line===line(m));
- const start=Date.parse(m.game_time||m.kickoff||gameFor(s,m)?.commence_time||entry?.eventTime||'');
- if(entry&&now>=Date.parse(entry.checkedAt)&&now-Date.parse(entry.checkedAt)<=TTL&&(!Number.isFinite(start)||now<start))return {odds:entry.odds,p:implied(entry.odds),source:'Caesars manual',checkedAt:entry.checkedAt,entry};
+function quote(s,m){
  const price=num(m.price),p=price!=null?implied(price):num(m.yes_ask??m.quoteProbability);
- return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):'Kalshi',checkedAt:m.quotedAt||data.get(s)?.at||null,entry:null};
+ return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):'Kalshi',checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
 function forecast(s,m,f={}){
  const raw=num(f.rawModelP??f.modelP),market=num(f.marketP??m.marketProbability??m.probability),key=group(s,m)+(f.experimental?':experimental':'');
@@ -42,26 +36,25 @@ function forecast(s,m,f={}){
 function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(q.source==='Kalshi'?'Kalshi':'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
 function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
 function participation(s,m,f,game){
- const ctx=data.get(s)?.context||{},g=gameFor(s,m,game),q=quote(s,m),confirmed=q.entry?.participationConfirmed===true;
+ const ctx=data.get(s)?.context||{},g=gameFor(s,m,game);
  const injury=String(m.contextSignals?.injury_status||m.injury_status||m.injuryStatus||'').toLowerCase();
  if(/\b(out|doubtful|inactive|suspended|ir|pup|nfi)\b|injured reserve/.test(injury))return 'Player unavailable';
  if(s==='nfl'&&m.player){
   if(m._invalidRoster||m._rosterVerified!==true)return 'Roster unverified';
   const at=Date.parse(g?.context?.updated_at||'');
-  if(!confirmed&&(!injury||/questionable|unknown|unconfirmed/.test(injury)||m.contextSignals?.injury_checked!==true||!Number.isFinite(at)||Date.now()-at>4*3600000))return 'Confirm current injury status';
-  if(!confirmed&&!(num(f.roleStability??m.roleStability)>=.6))return 'Playing time uncertain';
+  if((!injury||/questionable|unknown|unconfirmed/.test(injury)||m.contextSignals?.injury_checked!==true||!Number.isFinite(at)||Date.now()-at>4*3600000))return 'Confirm current injury status';
+  if(!(num(f.roleStability??m.roleStability)>=.6))return 'Playing time uncertain';
  }
  if(s==='mlb'){
   const event=(ctx.games||[]).find(x=>String(x.gamePk)===String(m.game_id));
-  if(!confirmed&&(!event?.startersConfirmed||!event?.lineupsConfirmed))return 'Confirm pitchers and lineups';
-  if(m.player&&!confirmed&&!event?.lineupPlayerIds?.includes(Number(m.player_id||m.playerId)))return 'Player not in confirmed lineup';
+  if((!event?.startersConfirmed||!event?.lineupsConfirmed))return 'Confirm pitchers and lineups';
+  if(m.player&&!event?.lineupPlayerIds?.includes(Number(m.player_id||m.playerId)))return 'Player not in confirmed lineup';
  }
  if(s==='nhl'){
   if(m.player&&m.player_verified!==true)return 'Roster unverified';
-  if(!confirmed)return m.player?'Confirm participation and role':'Confirm starting goalies and lineups';
-  if(m.kind==='saves'&&!f?.modelP)return 'Goalie usage model unavailable';
+  return m.player?'Confirm participation and role':'Confirm starting goalies and lineups';
  }
- if(s==='ncaaf'&&!confirmed)return 'Confirm college injuries, starters and role';
+ if(s==='ncaaf')return 'Confirm college injuries, starters and role';
  return null;
 }
 function assess(s,m,f={},options={}){
@@ -102,29 +95,7 @@ function checkBuild(s,entries,sgp=false,offer=null){
  if(checks.some(x=>!x.pass))return {pass:false,reason:checks.find(x=>!x.pass).reason,checks};
  if(!sgp)return {pass:true,checks};
  const bounds=joint(checks),breakEven=implied(offer);
- return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Enter actual Caesars SGP odds':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven};
+ return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven};
 }
-function record(s,m,{price,point=line(m),eventTime,participationConfirmed=false,forecast:prediction={}}={}){
- if(!odds(price))throw Error('Enter American odds such as -110 or +150.');
- if(num(point)!==line(m))throw Error('Line differs from the projection. Choose an exact matching market.');
- const start=Date.parse(eventTime||m.game_time||m.kickoff||gameFor(s,m)?.commence_time||'');
- if(!Number.isFinite(start)||start<=Date.now())throw Error('A verified future start is required.');
- const row={key:id(s,m),kind:'straight',sport:s,book:'Caesars',selection:m.name||m.label||m.title,line:line(m),odds:Number(price),eventTime:new Date(start).toISOString(),checkedAt:new Date().toISOString(),participationConfirmed:!!participationConfirmed,marketGroup:group(s,m),forecastType:prediction.experimental?'experimental':'model',modelP:num(prediction.modelP),rawModelP:num(prediction.rawModelP),coverage:num(prediction.coverage??prediction.context?.coverage??prediction.match?.coverage),result:null};
- ledger.push(row);if(!save()){ledger.pop();throw Error('Browser storage unavailable. Quote was not saved.')}return row;
-}
-function recordBuild(s,entries,price){
- if(!odds(price))throw Error('Enter valid American odds.');
- const check=checkBuild(s,entries,true,Number(price));if(!check.pass)throw Error('Pass: '+check.reason);
- const starts=entries.map(e=>Date.parse(e.market.game_time||e.market.start_time||e.market.kickoff||gameFor(s,e.market,e.game)?.commence_time||''));
- if(starts.some(at=>!Number.isFinite(at)||at<=Date.now()))throw Error('A verified future start is required for every leg.');
- const row={key:JSON.stringify([s,'sgp',entries.map(e=>id(s,e.market)).sort()]),kind:'sgp',sport:s,book:'Caesars',selection:'SGP: '+entries.map(e=>e.market.name||e.market.label).join(' + '),line:null,odds:Number(price),eventTime:new Date(Math.min(...starts)).toISOString(),checkedAt:new Date().toISOString(),bounds:check.bounds,valueStatus:check.valueStatus,legs:entries.map(e=>({key:id(s,e.market),selection:e.market.name||e.market.label,line:line(e.market),modelP:num(e.forecast.modelP)})),result:null};
- ledger.push(row);if(!save()){ledger.pop();throw Error('Browser storage unavailable.')}return row;
-}
-function close(key,checkedAt,{price,point,result,observedAt}={}){
- const index=ledger.findIndex(r=>r.key===key&&r.checkedAt===checkedAt);if(index<0)throw Error('Saved quote missing.');const row={...ledger[index]};
- if(price!==''&&price!=null){if(!odds(price)||num(point)!==row.line)throw Error('Closing odds require the same line and American odds.');const at=Date.parse(observedAt||'');if(!Number.isFinite(at)||at>Date.now()||at>Date.parse(row.eventTime)||at<Date.parse(row.eventTime)-30*60000||at<Date.parse(row.checkedAt))throw Error('Closing observation must be within 30 minutes before start and after the saved quote.');row.closingObservedAt=new Date(at).toISOString();row.closingOdds=Number(price);row.closingSource='Caesars manual';row.closingRecordedAt=new Date().toISOString();row.clv=implied(price)-implied(row.odds);}
- if(result&&['win','loss','push','void'].includes(result)){if(Date.now()<Date.parse(row.eventTime))throw Error('Result can be recorded after the event starts.');row.result=result;row.returnPerUnit=result==='win'?decimal(row.odds)-1:result==='loss'?-1:0;}
- const old=ledger[index];ledger[index]=row;if(!save()){ledger[index]=old;throw Error('Browser storage unavailable.')}return row;
-}
-window.PICK_QUALITY={prepare,forecast,assess,quote,quoteLabel,estimateOdds,record,recordBuild,close,ledger:()=>ledger.slice(),markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+window.PICK_QUALITY={prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

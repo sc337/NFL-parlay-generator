@@ -30,7 +30,7 @@
    saveCache(data);diag({source,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:data.updated_at});
    return await apply(data,games,source);
   }catch(e){
-   if(!current())return false;state.games=[];window.PICK_QUALITY?.prepare('nfl',[]);window.PRICE_CHECK_UI?.refresh('nfl');state.propsLoaded?.clear?.();window.PICK_OF_DAY?.show?.('nfl');lastStamp=null;lastResult={code:e.code||'unavailable',message:String(e.message||e)};
+   if(!current())return false;state.games=[];window.PICK_QUALITY?.prepare('nfl',[]);state.propsLoaded?.clear?.();window.PICK_OF_DAY?.show?.('nfl');lastStamp=null;lastResult={code:e.code||'unavailable',message:String(e.message||e)};
    if(status)status.textContent=e.code==='expired'?'Stale':e.code==='empty'?'No upcoming markets':'Unavailable';setStatus(lastResult.message);diag({source:'Kalshi snapshot',ok:false,error:lastResult.message,ms:Math.round(performance.now()-started)});return false;
   }finally{window.DASHBOARD_UI?.end(uiRequest)}
  }
