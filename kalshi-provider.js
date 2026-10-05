@@ -33,7 +33,7 @@
    try{const res=await fetch(SNAPSHOT+'?t='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('NFL snapshot HTTP '+res.status);data=await res.json();if(!current())return false;games=validate(data);if(Date.now()-Date.parse(data.updated_at)>30*60000)snapshotError=Error('Refreshing delayed reference prices')}catch(e){snapshotError=e}
    if(!current())return false;
    if(snapshotError){
-    if(window.NFL_LIVE_RECOVERY?.load){setStatus('Recovering fresh NFL markets…');try{data=preserveContext(await window.NFL_LIVE_RECOVERY.load(),data||warm);if(!current())return false;games=validate(data);source='Kalshi live recovery'}catch(e){diag({source:'Kalshi live recovery',ok:false,error:String(e.message||e)})}}
+    if(window.NFL_LIVE_RECOVERY?.load){setStatus('Recovering fresh NFL markets…');try{const recovered=preserveContext(await window.NFL_LIVE_RECOVERY.load(),data||warm);if(!current())return false;const recoveredGames=validate(recovered);data=recovered;games=recoveredGames;source='Kalshi live recovery'}catch(e){diag({source:'Kalshi live recovery',ok:false,error:String(e.message||e)})}}
     if(!games){if(usable(warm)){const valid=warm.games.filter(isPregame);if(valid.length){data=warm;games=valid;source='Cached Kalshi · snapshot refresh failed'}}}
     if(!games)throw snapshotError;
    }
