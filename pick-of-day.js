@@ -33,7 +33,7 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
   media.innerHTML=pick.media||'';name.textContent=sport==='mlb'?(window.DISPLAY_COPY?.mlbTeam?.(parsed.subject)||parsed.subject||pick.event||'Upcoming event'):(parsed.subject||pick.event||'Upcoming event');
   meta.textContent=[window.DISPLAY_COPY?.date?.(pick.eventTime)||new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),parsed.subject?(window.DISPLAY_COPY?.matchup?.(pick.event)||pick.event||'Upcoming event'):''].filter(Boolean).join(' · ');
   const ask=window.MARKET_GUARDS?.quote?.(pick.market);
-  reference.textContent=sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
+  reference.textContent=window.PICK_QUALITY?window.PICK_QUALITY.quoteLabel(sport,pick.market):sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
   const note=pick.note||'';
   foot.textContent=[/experimental/i.test(note)?'Experimental':/market.only|no independent/i.test(note)?'Market only':'',/if playing|participation/i.test(note)?'Confirm participation':/goalies unconfirmed/i.test(note)?'Goalies unconfirmed':''].filter(Boolean).join(' · ');
   foot.hidden=!foot.textContent;
@@ -44,3 +44,4 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
 }
 window.PICK_OF_DAY={show,loading,today};
 })();
+

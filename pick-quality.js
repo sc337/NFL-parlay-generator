@@ -37,8 +37,10 @@ function forecast(s,m,f={}){
  const rule=window.MODEL_CALIBRATION?.rules?.(s)?.[key],active=rule?.active===true&&rule.validationCount>=20;
  const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):num(f.modelP);
  const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
- return {...f,modelP:p,rawModelP:raw,marketP:market,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
+ return {...f,modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
 }
+function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(q.source==='Kalshi'?'Kalshi':'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
+function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
 function participation(s,m,f,game){
  const ctx=data.get(s)?.context||{},g=gameFor(s,m,game),q=quote(s,m),confirmed=q.entry?.participationConfirmed===true;
  const injury=String(m.contextSignals?.injury_status||m.injury_status||m.injuryStatus||'').toLowerCase();
@@ -124,5 +126,5 @@ function close(key,checkedAt,{price,point,result,observedAt}={}){
  if(result&&['win','loss','push','void'].includes(result)){if(Date.now()<Date.parse(row.eventTime))throw Error('Result can be recorded after the event starts.');row.result=result;row.returnPerUnit=result==='win'?decimal(row.odds)-1:result==='loss'?-1:0;}
  const old=ledger[index];ledger[index]=row;if(!save()){ledger[index]=old;throw Error('Browser storage unavailable.')}return row;
 }
-window.PICK_QUALITY={prepare,forecast,assess,quote,record,recordBuild,close,ledger:()=>ledger.slice(),markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+window.PICK_QUALITY={prepare,forecast,assess,quote,quoteLabel,estimateOdds,record,recordBuild,close,ledger:()=>ledger.slice(),markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
