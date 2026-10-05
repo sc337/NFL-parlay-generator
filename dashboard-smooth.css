@@ -1,0 +1,61 @@
+/* Stable loading regions and consistent slips across leagues. */
+#results{min-height:220px;overflow-anchor:none}
+#pickOfDay{min-height:148px}
+#pickOfDayContent{min-height:74px}
+#results>.empty,#results>.dashboard-skeleton{min-height:220px;width:100%;box-sizing:border-box}
+.dashboard-updating #results>.parlay-card{animation:none}
+.dashboard-skeleton{display:flex;flex-direction:column;gap:18px;padding:20px;border:1px solid var(--border2);border-radius:14px;background:var(--surface)}
+.dashboard-skeleton>span:not(.visually-hidden){display:block;height:16px;border-radius:6px;background:var(--surface2);animation:skeleton-pulse 1.3s ease-in-out infinite alternate}
+.dashboard-skeleton .skeleton-heading{width:55%;height:26px!important}
+.dashboard-skeleton .skeleton-line{height:32px!important}
+.dashboard-skeleton .skeleton-footer{width:40%}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@keyframes skeleton-pulse{to{opacity:.45}}
+.smooth-control-row{display:flex;align-items:flex-start;flex-wrap:wrap;gap:12px;grid-column:1/-1;width:100%;min-width:0}
+.smooth-control-row>#nflWeekWrap,.smooth-control-row>#ufcCardWrap{flex:1 1 180px;min-width:0;margin:0}
+.smooth-control-row>.quality-settings{flex:0 0 84px;margin:0!important}
+.smooth-control-row>.quality-settings>.field{width:100%!important}
+.smooth-control-row>.smooth-sport-filters{flex:1 1 260px;padding:0!important;margin:0!important;border:0!important;background:transparent!important;min-width:0}
+.smooth-sport-filters .nhl-filter-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}
+.smooth-sport-filters>.filter-policy{margin-top:6px;font-size:12px;color:var(--muted)}
+.smooth-sport-filters .market-filter-details{margin-top:10px}
+.smooth-control-row .field label{display:block;min-height:20px;font-size:14px;margin-bottom:5px}
+.smooth-control-row select{width:100%;height:44px;font-size:14px}
+#results>.parlay-card{padding:16px!important;border-radius:14px;min-width:0}
+#results .parlay-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:62px}
+#results .parlay-name{font-size:17px;line-height:1.3}
+#results .odds-wrap{flex:none;text-align:right;min-width:64px}
+#results .odds{font-size:22px;font-variant-numeric:tabular-nums}
+#results .legs{gap:10px}
+#results .sport-media-img,#results .mlb-team-logo{width:32px;height:32px;flex:none;object-fit:contain}
+#results .sport-photo,#results .mlb-player-photo{width:38px;height:38px;object-fit:cover}
+#results .leg-title{font-size:14px;line-height:1.35}
+#results .leg-quote{font-variant-numeric:tabular-nums;min-width:48px}
+#results.nfl-carousel{scroll-snap-type:x mandatory;scroll-padding-inline:2px;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+#results.nfl-carousel>.parlay-card{scroll-snap-align:start;scroll-snap-stop:always;flex-basis:calc(100% - 24px);max-width:560px}
+#results:focus-visible{outline:2px solid var(--sport-accent);outline-offset:4px}
+.primary-btn{min-height:46px!important;transition:opacity .15s ease,transform .12s ease;touch-action:manipulation}
+.primary-btn:active:not(:disabled){transform:scale(.985)}
+.primary-btn[aria-busy="true"]{cursor:wait;opacity:.75}
+@media(max-width:520px){.smooth-control-row{gap:10px}.smooth-control-row>.quality-settings{flex-basis:70px}.smooth-control-row>#nflWeekWrap,.smooth-control-row>#ufcCardWrap{flex-basis:calc(100% - 80px)}.smooth-control-row>.smooth-sport-filters{flex-basis:100%}#results>.parlay-card{padding:14px!important}#results .parlay-name{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.dashboard-skeleton>span{animation:none!important}.primary-btn{transition:none}}
+
+.smooth-control-row{flex:none;margin:10px 0 14px}
+#results .nfl-leg-media>.sport-photo+.sport-logo{width:18px;height:18px}
+@media(max-width:600px){
+ body{height:auto;min-height:100dvh;overflow:auto}
+ .shell{height:auto;min-height:100dvh;max-height:none;overflow:visible}
+ main{overflow:visible;flex:none;min-height:0}
+ #results,#results.nfl-carousel{height:auto!important;flex:none;min-height:220px}
+ #results>.parlay-card,#results.nfl-carousel>.parlay-card{height:auto;min-height:260px}
+ #results>.parlay-card>.legs{overflow:visible;flex:none}
+ #results>.parlay-card .card-explanation[open]{position:static;max-height:none;overflow:visible}
+ .more-analysis{position:static;margin-top:14px}
+ .more-analysis[open]{max-height:none;overflow:visible}
+}
+
+:is(#results,#analysisSecondary)>.parlay-card .parlay-name{font-size:16px;line-height:1.3}
+:is(#results,#analysisSecondary)>.parlay-card .leg-title{font-size:14px;line-height:1.35}
+:is(#results,#analysisSecondary)>.parlay-card .sport-logo,:is(#results,#analysisSecondary)>.parlay-card .mlb-team-logo{width:32px;height:32px;object-fit:contain}
+:is(#results,#analysisSecondary)>.parlay-card .sport-photo,:is(#results,#analysisSecondary)>.parlay-card .mlb-player-photo{width:38px;height:38px;object-fit:cover}
+:is(#results,#analysisSecondary)>.parlay-card .nfl-leg-media>.sport-photo+.sport-logo{width:18px;height:18px}

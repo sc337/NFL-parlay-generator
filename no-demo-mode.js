@@ -12,23 +12,27 @@
     window.NFL_PRODUCT_V2?.refresh?.();
   }
   function hasLiveGames(){try{return (state.games||[]).some(g=>g?.dataSource==='Kalshi'||g?.dataSource==='Caesars'||(!String(g?.id||'').startsWith('demo-')))}catch{return false}}
-  async function kalshiFallback(){
-    clearLiveState('Loading Kalshi NFL snapshot…');
+  async function kalshiFallback(){const token=window.__SPORT_TOKEN;
+    if(!hasLiveGames())clearLiveState('Loading Kalshi NFL snapshot…');else setStatus('Refreshing NFL markets…');
     try{if(await window.NFL_KALSHI?.load?.())return true}catch(e){console.warn('Kalshi fallback failed',e)}
+    if((window.__ACTIVE_SPORT||'nfl')!=='nfl'||token!==window.__SPORT_TOKEN)return false;
     const ks=document.getElementById('kalshiStatus')?.textContent||'';
     clearLiveState(/Stale/i.test(ks)?'NFL quotes expired — waiting for a fresh snapshot':/Initializing/i.test(ks)?'Kalshi feed initializing — first server refresh pending':'No live Caesars or Kalshi NFL markets available');
     return false;
   }
   const caesarsLoad=async()=>{
+    if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return false;
+    const token=window.__SPORT_TOKEN;
+
     if(!state.apiKey)return kalshiFallback();
     try{
       setStatus('Loading Caesars markets…');
       const url=new URL('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/');
       url.searchParams.set('apiKey',state.apiKey);url.searchParams.set('regions','us');url.searchParams.set('markets','h2h,spreads,totals');url.searchParams.set('oddsFormat','american');url.searchParams.set('bookmakers','fanduel');
-      const res=await fetch(url);trackApiUsage(res);if(!res.ok)throw new Error('Odds API '+res.status);const raw=await res.json();
+      const res=await fetch(url);trackApiUsage(res);if(!res.ok)throw new Error('Odds API '+res.status);const raw=await res.json();if((window.__ACTIVE_SPORT||'nfl')!=='nfl'||token!==window.__SPORT_TOKEN)return false;
       state.games=raw.map(normalizeGame).filter(g=>g.markets.length);state.propsLoaded.clear();if(!state.games.length)throw new Error('No Caesars NFL markets returned');
       state.games.forEach(g=>g.dataSource='Caesars');setStatus('Live Caesars markets');hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'}await generate();window.NFL_PRODUCT_V2?.refresh?.();return true;
-    }catch(err){console.warn('Caesars unavailable',err);return kalshiFallback()}
+    }catch(err){if((window.__ACTIVE_SPORT||'nfl')!=='nfl'||token!==window.__SPORT_TOKEN)return false;console.warn('Caesars unavailable',err);return kalshiFallback()}
   };
   loadData=caesarsLoad;
   const originalGenerate=generate;

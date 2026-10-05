@@ -46,7 +46,7 @@ function qualifies(sport,m,forecast){
 }
 const dateKey=time=>{const d=new Date(time);return Number.isFinite(+d)?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):''};
 function create(sport,changed){
- let date='all',mode='both',rows=[];try{const saved=localStorage.getItem(sport+'LineMode');if(['standard','alt','both'].includes(saved))mode=saved}catch{}
+ let date=window.DASHBOARD_UI?.get(sport,'date','all')||'all',mode='both',rows=[];try{const saved=localStorage.getItem(sport+'LineMode');if(['standard','alt','both'].includes(saved))mode=saved}catch{}
  function matches(m){return (date==='all'||dateKey(m.game_time||m.start_time)===date)&&(mode==='both'||(mode==='alt'?m.isAltLine===true:m.isAltLine!==true))}
  function allowed(m,f){return matches(m)&&qualifies(sport,m,f)}
  function controls(){
@@ -58,7 +58,7 @@ function create(sport,changed){
   host.querySelector('select[data-date]').value=date;host.querySelector('select[data-lines]').value=mode;
  }
  function refresh(){controls();changed();window.COMPACT_UI?.refresh?.()}
- function setDate(value){if(value==='all'||/^\d{4}-\d{2}-\d{2}$/.test(value)){date=value;refresh()}}
+ function setDate(value){if(value==='all'||/^\d{4}-\d{2}-\d{2}$/.test(value)){date=value;window.DASHBOARD_UI?.put(sport,'date',value);refresh()}}
  function setLineMode(value){if(['standard','alt','both'].includes(value)){mode=value;try{localStorage.setItem(sport+'LineMode',mode)}catch{}refresh()}}
  document.addEventListener?.('change',e=>{const target=e.target;if(target?.closest?.('#'+sport+'LineFilters')){if(target.hasAttribute('data-date'))setDate(target.value);if(target.hasAttribute('data-lines'))setLineMode(target.value)}});
  return {allowed,matches,controls,setDate,setLineMode,filters:()=>({date,lineMode:mode}),selectedDay:m=>date==='all'?window.PICK_OF_DAY?.today?.(m.game_time||m.start_time):dateKey(m.game_time||m.start_time)===date,load:(markets,at)=>{rows=classify(sport,markets,at);controls();return rows}};

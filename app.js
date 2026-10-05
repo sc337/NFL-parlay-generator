@@ -1,9 +1,9 @@
 const state = {
-  mode:'sgp',
-  nflWeek:'',
+  mode:window.DASHBOARD_UI?.get('nfl','mode','sgp')||'sgp',
+  nflWeek:window.DASHBOARD_UI?.get('nfl','week','')||'',
   lineMode:'standard',
   risk:50,
-  selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
+  selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])),
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),
@@ -512,7 +512,7 @@ function syncNflWeek(){
 
 function hydrateGames(){
   syncNflWeek();
-  const sel=$('#gameSelect'),selected=sel.value;
+  const sel=$('#gameSelect'),previous=sel.value,selected=[...sel.options].some(o=>o.value===previous&&!o.disabled)?previous:window.DASHBOARD_UI?.get('nfl','game','');
   sel.innerHTML='';
   nflSlate().forEach(g=>{
     const o=document.createElement('option');
@@ -1073,11 +1073,11 @@ function renderTdMarkets(){
 
 function countPlayerProps(game){ return game?.markets?.filter(m=>m.player).length || 0; }
 
-async function generate(){
+async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window.__NFL_GENERATION_SEQUENCE||0)+1;
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
   for(const game of state.games)window.NFL_ALT_LINES?.classify?.(game);
   const token=window.__SPORT_TOKEN;
-  const current=()=>((window.__ACTIVE_SPORT||'nfl')==='nfl'&&window.__SPORT_TOKEN===token);
+  const current=()=>((window.__ACTIVE_SPORT||'nfl')==='nfl'&&window.__SPORT_TOKEN===token&&request===window.__NFL_GENERATION_SEQUENCE);
   window.NFL_PROJECTIONS?.enrich?.();
   const count=Number($('#legsSelect').value);
   const variants=['safe','balanced','long'];
@@ -1119,7 +1119,9 @@ async function generate(){
 window.generate=generate;
 window.NFL_PARLAY_STATE=state;
 window.NFL_PARLAY_ELIGIBILITY={isParlayEligible,straightOnlyMarkets:[...STRAIGHT_ONLY_MARKETS]};
-$$('#marketChips .chip').forEach(c=>c.setAttribute('aria-pressed',c.classList.contains('active')?'true':'false'));
+$$('#marketChips .chip').forEach(c=>{c.classList.toggle('active',state.selectedMarkets.has(c.dataset.market));c.setAttribute('aria-pressed',String(c.classList.contains('active')))});
+$$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
+$('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
 $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   $$('.tab').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
   state.mode=btn.dataset.mode;

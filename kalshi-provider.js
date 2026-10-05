@@ -13,13 +13,13 @@
     const kickoff=Date.parse(g?.commence_time||'');
     return g?.game_status==='pre' && Number.isFinite(kickoff) && kickoff>Date.now();
   };
-  async function load(){
+  async function load(){const uiRequest=window.DASHBOARD_UI?.begin('nfl');
     const request=++requestId;
     const token=window.__SPORT_TOKEN;
     const current=()=>request===requestId&&(window.__ACTIVE_SPORT||'nfl')==='nfl'&&token===window.__SPORT_TOKEN;
     const status=document.getElementById('kalshiStatus');
     const warm=cached();
-    if(usable(warm)&&warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{if(current()){window.NFL_PROJECTIONS?.refresh?.();generate()}},0)}}
+    if(!state.games?.length&&usable(warm)&&warm?.games?.length){const wg=warm.games.filter(isPregame);if(wg.length){state.games=wg;state.propsLoaded?.clear?.();hydrateGames();const btn=document.getElementById('generateBtn');if(btn&&(window.__ACTIVE_SPORT||'nfl')==='nfl'){btn.disabled=false;btn.textContent='Generate Parlays'};setStatus('Cached Kalshi markets • refreshing…');setTimeout(()=>{if(current()){window.NFL_PROJECTIONS?.refresh?.();generate()}},0)}}
     if(status)status.textContent='Checking…';
     const started=performance.now();
     try{
@@ -81,7 +81,7 @@
       diag({source:'Kalshi snapshot',url:SNAPSHOT,status:'ERR',ok:false,error:String(e.message||e),ms:Math.round(performance.now()-started)});
       if(status&&status.textContent!=='Stale')status.textContent='Unavailable';
       return false;
-    }
+    }finally{window.DASHBOARD_UI?.end(uiRequest)}
   }
   window.NFL_KALSHI={load,clearCache:()=>{try{localStorage.removeItem(CACHE_KEY)}catch{}}};
 })();
