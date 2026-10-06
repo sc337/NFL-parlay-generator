@@ -1,0 +1,42 @@
+name: Keep sports prices fresh
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-prices.yml'
+      - 'scripts/refresh_price_worker.py'
+  schedule:
+    - cron: '19 * * * *'
+
+permissions:
+  contents: write
+
+# One active session and one pending replacement. New schedule events replace
+# the pending session instead of stopping the worker that is refreshing prices.
+concurrency:
+  group: rolling-sports-price-worker
+  cancel-in-progress: false
+
+jobs:
+  prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check refresh safeguards
+        run: python -m unittest discover -s tests -p 'test_price_worker.py'
+      - name: Refresh independently every ten minutes between schedule dispatches
+        env:
+          TZ: America/Los_Angeles
+          REFRESH_STATUS: success
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600
