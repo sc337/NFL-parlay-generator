@@ -26,10 +26,13 @@ function quote(s,m){
  const price=num(m.price),p=price!=null?implied(price):num(m.yes_ask??m.quoteProbability);
  return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):'Kalshi',checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
+function validatedRule(s,m,f={}){
+ return window.MODEL_CALIBRATION?.validated?.(s,group(s,m)+(f.experimental?':experimental':''))===true;
+}
 function forecast(s,m,f={}){
  const raw=num(f.rawModelP??f.modelP),market=num(f.marketP??m.marketProbability??m.probability),key=group(s,m)+(f.experimental?':experimental':'');
- const rule=window.MODEL_CALIBRATION?.rules?.(s)?.[key],active=rule?.active===true&&rule.validationCount>=20;
- const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):num(f.modelP);
+ const active=validatedRule(s,m,f);
+ const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):raw??num(f.modelP);
  const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
  return {...f,modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
 }
@@ -62,14 +65,15 @@ function participation(s,m,f,game,warnings){
 function assess(s,m,f={},options={}){
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
- const ruleKey=group(s,m)+(f.experimental?':experimental':'');const rule=window.MODEL_CALIBRATION?.rules?.(s)?.[ruleKey],validated=rule?.active===true&&rule.validationCount>=20;
+ const ruleKey=group(s,m)+(f.experimental?':experimental':'');const validated=validatedRule(s,m,f);
  const raw=num(f.rawModelP??m.rawModelProbability),market=num(f.marketP??m.marketProbability??m.probability);if(validated&&raw>0&&raw<1&&market>0&&market<1)p=window.MODEL_CALIBRATION.apply(s,ruleKey,raw,market);
  const uncertainty=clamp(num(f.uncertainty??m.modelUncertainty)??.5,0,1);
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
- const buffer=(validated ? .015 : .035)+(1-coverage)*.02+uncertainty*.015;
+ const buffer=(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015;
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
+ if(!validated)warnings.push('Model unvalidated; value unverified');
  if(s==='nfl'&&m.player&&f.experimental&&!validated)warnings.push('Experimental player-history estimate');
  const anchored=s==='nfl'&&!m.player&&f.marketAnchored===true;
  const quoteAge=Date.now()-Date.parse(q.checkedAt||'');
@@ -79,7 +83,7 @@ function assess(s,m,f={},options={}){
  if(Number.isFinite(start)&&start<=Date.now()||['in','post','Live','Final'].includes(m.game_status)||['in','post'].includes(g?.game_status))reason='Event already started';
  else if(!Number.isFinite(start))reason='Event start unverified';
  else if(!q.checkedAt)reason='Quote timestamp unavailable';
- else if(q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL&&!delayedReference))reason='Quote older than 30 minutes';
+ else if(q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL))reason='Quote older than 30 minutes';
  else if(m._invalidRoster===true)reason='Roster unverified';
  else if(!(q.p>0&&q.p<1))reason='Quote unavailable';
  else if(num(m.sourceQuality)!=null&&num(m.sourceQuality)<60)reason='Source quality too low';
@@ -90,11 +94,18 @@ function assess(s,m,f={},options={}){
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
  const logicalSuggestion=anchored&&coverage>=.2&&p>=.52&&p<=.85&&q.p<=.85&&market>0&&p>market;
  if(!reason&&!clearsValue&&!logicalSuggestion)reason='Edge does not clear uncertainty buffer';
+ // Policy safeguards for provisional estimates, not measured confidence limits.
+ if(!reason&&!validated&&(q.p<.35||p<.45))reason='Unvalidated longshot; insufficient reliability';
+ const referenceP=market>0&&market<1?market:q.p;
+ if(!reason&&!validated&&Math.abs(p-referenceP)>.15)reason='Model disagrees too strongly with market';
+ if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
+ if(!reason&&options.featured&&(q.p<.55||conservativeP<.55))reason='Featured pick needs stronger likelihood';
  const tier=anchored?'suggestion':warnings.length?'conditional':'value';
  if(anchored)warnings.push('Context-supported suggestion; value unverified');
- const valueQualified=!reason&&clearsValue&&!anchored&&!warnings.length;
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(m.marketKey))reason='Caesars straight only';
- return {pass:!reason,reason,modelP:p,conservativeP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,rank:!reason?(tier==='value'?200:tier==='conditional'?100:0)+(anchored?p*70+Math.max(0,p-market)*100:conservativeEV*100)+coverage*5:-999};
+ const valueQualified=validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
+ const rankingP=validated?conservativeP:Math.min(conservativeP,q.p);
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,evidence:validated?'Calibrated estimate':'Unvalidated model',rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.conservativeP??l.modelP??l.modelProbability));
@@ -111,6 +122,5 @@ function checkBuild(s,entries,sgp=false,offer=null){
  return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven&&checks.every(x=>x.valueQualified)};
 }
 function note(s,m,f,game){const x=assess(s,m,f,{game});return x.pass?x.warnings.join(' · '):x.reason;}
-window.PICK_QUALITY={note,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+window.PICK_QUALITY={note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
-

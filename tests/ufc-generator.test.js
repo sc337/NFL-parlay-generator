@@ -11,7 +11,7 @@ const weak={slpm:2,sapm:5,str_acc:35,str_def:35,td_avg:0,td_def:35,sub_avg:0,win
 snapshot.fighter_stats={};
 snapshot.markets=['Alpha','Bravo','Charlie'].map((name,i)=>{
  const opponent='Opponent '+name;snapshot.fighter_stats[name]=strong;snapshot.fighter_stats[opponent]=weak;
- return {ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase()+'-A',event_ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase(),kind:'moneyline',fight:name+' vs '+opponent,fighter1:i===1?opponent:name,fighter2:i===1?name:opponent,label:name+' wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,open_interest:500,close_time:'2026-09-27T06:00:00Z'};
+ return {ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase()+'-A',event_ticker:'KXUFCFIGHT-26SEP26'+name.toUpperCase(),kind:'moneyline',fight:name+' vs '+opponent,fighter1:i===1?opponent:name,fighter2:i===1?name:opponent,label:name+' wins',probability:.70,yes_ask:.71,yes_bid:.69,spread:.02,volume:500,open_interest:500,close_time:'2026-09-27T06:00:00Z'};
 });
 snapshot.markets.push({ticker:'KXUFCFIGHT-26SEP29TEST-A',event_ticker:'KXUFCFIGHT-26SEP29TEST',kind:'moneyline',fight:'Prospect A vs Prospect B',fighter1:'Prospect A',fighter2:'Prospect B',label:'Prospect A wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,close_time:'2026-09-30T06:00:00Z'});
 snapshot.markets.push({ticker:'KXUFCFIGHT-26OCT03TEST-A',event_ticker:'KXUFCFIGHT-26OCT03TEST',kind:'moneyline',fight:'Prospect C vs Prospect D',fighter1:'Prospect C',fighter2:'Prospect D',label:'Prospect C wins',probability:.55,yes_ask:.56,yes_bid:.54,spread:.02,volume:500,close_time:'2026-10-04T06:00:00Z'});

@@ -22,7 +22,7 @@ function fit(rows,previous={},cohort='model'){
     .sort((a,b)=>a.trainBrier-b.trainBrier||Math.abs(a.bias)-Math.abs(b.bias))[0];
   const raw=brier(validation,r=>r.rawModelP),market=brier(validation,r=>r.marketP);
   const adjusted=brier(validation,r=>calibrated(r,best.alpha,best.bias));
-  const active=adjusted<=raw-.002&&adjusted<=market+.001;
+  const active=adjusted<=raw-.002&&adjusted<=market-.002;
   const priced=validation.filter(r=>r.ask>0&&r.ask<1);
   const returnPerUnit=priced.length?priced.reduce((sum,r)=>sum+(r.result==='win'?1/r.ask-1:-1),0)/priced.length:null;
   return {active,alpha:best.alpha,bias:best.bias,settled:all.length,distinctEvents:clean.length,trainingCount:train.length,validationCount:20,
@@ -43,4 +43,3 @@ function main(){const payload=JSON.parse(fs.readFileSync(history,'utf8'));const 
 }
 if(require.main===module)main();
 module.exports={fit,build,calibrated};
-

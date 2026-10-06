@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
 const {fit,build,calibrated}=require('../scripts/build_model_calibration');
-const sample=(n,wins,offset=0)=>Array.from({length:n},(_,i)=>({id:String(i+offset),event:'Game '+(i+offset),eventTime:new Date(Date.UTC(2026,8,2+i+offset)).toISOString(),recordedAt:new Date(Date.UTC(2026,8,1+i+offset)).toISOString(),forecastType:'model',modelP:.8,rawModelP:.8,marketP:.6,result:i%5<wins?'win':'loss'}));
+const sample=(n,wins,offset=0)=>Array.from({length:n},(_,i)=>({id:String(i+offset),event:'Game '+(i+offset),eventTime:new Date(Date.UTC(2026,8,2+i+offset)).toISOString(),recordedAt:new Date(Date.UTC(2026,8,1+i+offset)).toISOString(),forecastType:'model',modelP:.8,rawModelP:.8,marketP:.5,result:i%5<wins?'win':'loss'}));
 const rows=sample(60,3),rule=fit(rows);
 assert.equal(rule.active,true,'adjustment must improve later results');
 assert.ok(rule.adjustedBrier<rule.rawBrier);
@@ -15,14 +15,13 @@ assert.equal(fit(duplicate).active,false,'same-event picks cannot create validat
 const grouped=build({records:[...rows.map(r=>({...r,sport:'mlb',marketGroup:'moneyline'})),...rows.slice(0,10).map(r=>({...r,id:'prop'+r.id,sport:'mlb',marketGroup:'player_prop'}))]});
 assert.equal(grouped.sports.mlb.moneyline.active,true);
 assert.equal(grouped.sports.mlb.player_prop.active,false,'market families need separate evidence');
-const context={window:{MODEL_CALIBRATION_DATA:{sports:{mlb:{moneyline:rule}}}},localStorage:{getItem:()=>null},Math};
+const context={window:{MODEL_CALIBRATION_DATA:{updated_at:new Date().toISOString(),sports:{mlb:{moneyline:rule}}}},localStorage:{getItem:()=>null},Math};
 vm.runInNewContext(fs.readFileSync('model-calibration.js','utf8'),context);
 vm.runInNewContext(fs.readFileSync('model-core.js','utf8'),context);
-const bare=context.window.MODEL_CORE.evaluate({marketP:.6,signal:2,coverage:.5});
-const adjusted=context.window.MODEL_CORE.evaluate({marketP:.6,signal:2,coverage:.5,sport:'mlb',marketGroup:'moneyline',calibrate:true});
-const untouched=context.window.MODEL_CORE.evaluate({marketP:.6,signal:2,coverage:.5,sport:'mlb',marketGroup:'player_prop',calibrate:true});
+const bare=context.window.MODEL_CORE.evaluate({marketP:.5,signal:2,coverage:.5});
+const adjusted=context.window.MODEL_CORE.evaluate({marketP:.5,signal:2,coverage:.5,sport:'mlb',marketGroup:'moneyline',calibrate:true});
+const untouched=context.window.MODEL_CORE.evaluate({marketP:.5,signal:2,coverage:.5,sport:'mlb',marketGroup:'player_prop',calibrate:true});
 assert.equal(adjusted.rawModelP,bare.modelP);
 assert.notEqual(adjusted.modelP,bare.modelP);
 assert.equal(untouched.modelP,bare.modelP);
 console.log('Model calibration holdout and activation gates passed');
-
