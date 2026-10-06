@@ -1146,7 +1146,7 @@ $$('#marketChips .chip').forEach(c=>c.addEventListener('click',()=>{
   if(c.dataset.market==='td')renderTdMarkets();
   const title=$('#resultsTitle');
   if(title) title.textContent=state.selectedMarkets.size?'Generating selected NFL markets…':'Select at least one NFL market';
-  if(state.selectedMarkets.size) generate(); else $('#results').innerHTML='<div class="empty">Select one or more markets to build an NFL parlay.</div>';
+  if(state.selectedMarkets.size) generate(); else {window.EXTRA_PICKS?.clear?.();$('#results').innerHTML='<div class="empty">Select one or more markets to build an NFL parlay.</div>'}
 }));
 
 const dialog=$('#settingsDialog');
