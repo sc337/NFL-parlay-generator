@@ -5,6 +5,7 @@ their original timestamps. The slow forecast settlement pipeline stays separate.
 """
 import argparse
 import json
+import os
 import subprocess
 import tempfile
 import time
@@ -117,7 +118,16 @@ def cycle(publish_changes=True):
         names.extend(['data/daily-picks.json', *map(str, Path('data/daily-picks').glob('*.json'))])
     except Exception as error:
         print('::error title=Recommendation capture::' + str(error), flush=True)
-    run(['node', 'scripts/check_dashboard_health.js'], timeout=60)
+    # A partially failed cycle must remain visible even before old quotes expire.
+    prior_status = os.environ.get('REFRESH_STATUS')
+    os.environ['REFRESH_STATUS'] = 'success' if all(results.values()) else 'failure'
+    try:
+        run(['node', 'scripts/check_dashboard_health.js'], timeout=60)
+    finally:
+        if prior_status is None:
+            os.environ.pop('REFRESH_STATUS', None)
+        else:
+            os.environ['REFRESH_STATUS'] = prior_status
     names.append('data/dashboard-health.json')
     if publish_changes:
         publish(names)
