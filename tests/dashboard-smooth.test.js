@@ -10,7 +10,7 @@ function setup(saved={},blocked=false){
 test('preferences preserve independent sport settings and reject invalid counts',()=>{
  const a=setup({sport:'nhl',nfl:{legs:4,mode:'multi',markets:['rushing','bogus']},nhl:{legs:2,date:'2026-10-06'},mlb:{legs:99}});
  assert.equal(a.ui.getSport(),'nhl');assert.equal(a.ui.get('nfl','legs',3),4);assert.equal(a.ui.get('nhl','legs',3),2);assert.equal(a.ui.get('mlb','legs',2),2);assert.deepEqual([...a.ui.get('nfl','markets',[])],['rushing']);
- a.ui.put('mlb','legs',5);a.ui.selectSport('mlb');assert.equal(a.ui.get('nfl','legs',3),4);assert.equal(JSON.parse(a.storage.get('sportsDashboardUIV2')).sport,'mlb');
+ a.ui.put('mlb','legs',5);a.ui.selectSport('mlb');assert.equal(a.ui.get('mlb','legs',2),4);assert.equal(a.node.value,'4');assert.equal(a.ui.get('nfl','legs',3),4);assert.equal(JSON.parse(a.storage.get('sportsDashboardUIV2')).sport,'mlb');
 });
 test('quiet refresh preserves cards and reserves height until the newest request settles',()=>{
  const a=setup(),first=a.ui.begin('nfl');a.ui.placeholder('nfl');assert.equal(a.node.innerHTML,'existing picks');assert.equal(a.node.style.minHeight,'440px');assert.equal(a.node.attrs['aria-busy'],'true');

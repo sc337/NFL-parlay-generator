@@ -1,7 +1,8 @@
 (()=>{'use strict';
-const selector='.card-explanation, .leg-details, .ticket-details';
+const selector='.card-explanation, .leg-details, .ticket-details, .extra-picks-details';
 let dialog,content,title,trigger,source,sport,slots=[],position=0;
 function restore(){
+ content?.querySelectorAll?.('[data-caesars-extra-id]').forEach(node=>node.removeAttribute('data-caesars-id'));
  for(const {node,marker} of slots){if(marker.parentNode&&source?.isConnected)marker.replaceWith(node);else marker.remove()}
  slots=[];if(source?.isConnected)for(const node of [...content.childNodes])source.append(node);content?.replaceChildren();
  document.body.classList.remove('details-sheet-open');
@@ -26,14 +27,16 @@ function open(details,button){
  mount();if(dialog.open)return;source=details;trigger=button;position=window.scrollY;sport=document.body.dataset.sport;
  const card=details.closest('.parlay-card,.qcard'),leg=details.closest('.leg');
  const heading=leg?.querySelector('.leg-title')||card?.querySelector('.parlay-name,h3,.ticket-main h3');
- title.textContent=(document.body.dataset.sport||'nfl').toUpperCase()+' · '+(heading?.textContent.trim()||'Pick details');
+ title.textContent=(document.body.dataset.sport||'nfl').toUpperCase()+' · '+(details.classList.contains('extra-picks-details')?'Extra Picks':heading?.textContent.trim()||'Pick details');
  // Move, rather than clone, so listeners, IDs and expanded analysis survive.
  for(const node of [...details.childNodes]){if(node===button||node.nodeType===1&&node.tagName==='SUMMARY')continue;const marker=document.createComment('pick-detail');details.insertBefore(marker,node);slots.push({node,marker});content.append(node)}
  if(card?.classList.contains('qcard')){content.classList.add('qcard');content.dataset.k=card.dataset.k||''}else{content.classList.remove('qcard');delete content.dataset.k}
+ content.querySelectorAll?.('[data-caesars-extra-id]').forEach(node=>node.setAttribute('data-caesars-id',node.dataset.caesarsExtraId));
+ window.CAESARS_COMPARE?.refresh?.();
  details.open=false;
  document.documentElement.style.setProperty('--details-scroll-offset',-position+'px');document.body.classList.add('details-sheet-open');
  dialog.showModal();dialog.querySelector('.details-sheet-scroll').scrollTop=0;dialog.querySelector('button').focus({preventScroll:true});
 }
-document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(!summary)return;const details=summary.parentElement;if(!details?.matches(selector)||!details.closest('#results,#analysisSecondary,#qolV3'))return;e.preventDefault();open(details,summary)});
+document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(!summary)return;const details=summary.parentElement;if(!details?.matches(selector)||!details.closest('#results,#analysisSecondary,#qolV3,#extraPicks'))return;e.preventDefault();open(details,summary)});
 window.PICK_DETAILS_SHEET={close};
 })();

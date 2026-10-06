@@ -8,7 +8,7 @@ function ensureAnalysis(){
   d=document.createElement('details');
   d.id='moreAnalysis';
   d.className='more-analysis';
-  d.innerHTML='<summary><span>More picks</span></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus" hidden></div>';
+  d.innerHTML='<summary><span>More analysis</span></summary><div id="analysisSecondary" class="analysis-secondary"></div><div id="analysisConsensus" hidden></div>';
   const results=$('#results');
   (results?.parentElement||$('.shell'))?.appendChild(d);
   return d;

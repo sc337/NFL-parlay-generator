@@ -19,7 +19,7 @@ test('NHL shows compact market-only picks and one leg per distinct game',async()
  assert.equal((html.match(/data-matchup="Bruins vs Rangers"/g)||[]).length,2);
  assert.equal(app.daily().market.game_id,'10');
  assert.match(app.daily().note,/Market only/);
- app.window.NHL_DASHBOARD.setLegs(6);assert.match(app.nodes.get('#results').innerHTML,/2 of 6/);
+ app.window.NHL_DASHBOARD.setLegs(6);assert.match(app.nodes.get('#results').innerHTML,/2 of 4/);
  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
 });
 test('missing, stale, live and wide quotes cannot qualify',async()=>{

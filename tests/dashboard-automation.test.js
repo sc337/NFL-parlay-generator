@@ -57,7 +57,7 @@ test('capture refuses market-only MLB filler at every requested leg count',async
   fs.writeFileSync(path.join(dir,'kalshi-mlb.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),markets}));
   fs.writeFileSync(path.join(dir,'mlb-context.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),games:[],players:{},pitchers:{}}));
   const result=await collect('mlb',dir,actualNow,'fixture');
-  assert.equal(result.records.length,0);assert.ok(result.status.passes.some(r=>r.requestedLegs===6&&r.reason==='No qualifying build'));
+  assert.equal(result.records.length,0);assert.ok(result.status.passes.some(r=>r.requestedLegs===4&&r.reason==='No qualifying build'));assert.ok(result.status.passes.every(r=>r.requestedLegs<=4));
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 });
 test('NFL archive loads the browser builder after preference initialization changes',async()=>{
