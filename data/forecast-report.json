@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-06T23:11:30.964Z",
+  "updated_at": "2026-10-06T23:54:12.863Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
@@ -7,23 +7,23 @@
       "recorded": 9949,
       "independentRecorded": 6390,
       "experimentalRecorded": 111,
-      "settled": 2311,
+      "settled": 2325,
       "distinctEvents": 18,
-      "independentSettled": 348,
+      "independentSettled": 362,
       "independentEvents": 18,
       "brier": {
-        "model": 0.2357,
-        "market": 0.2335
+        "model": 0.2352,
+        "market": 0.2329
       },
       "logLoss": {
-        "model": 0.6689,
-        "market": 0.6632
+        "model": 0.6675,
+        "market": 0.6619
       },
       "independentComparison": {
-        "brierModel": 0.2518,
-        "brierMarket": 0.2368,
-        "logLossModel": 0.7049,
-        "logLossMarket": 0.667
+        "brierModel": 0.2474,
+        "brierMarket": 0.233,
+        "logLossModel": 0.6949,
+        "logLossMarket": 0.6585
       },
       "experimentalComparison": {
         "settled": 6,
@@ -37,16 +37,16 @@
             0,
             0.4
           ],
-          "count": 57,
-          "predicted": 0.2489,
-          "observed": 0.4211
+          "count": 63,
+          "predicted": 0.2516,
+          "observed": 0.3968
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 233,
+          "count": 235,
           "predicted": 0.4999,
           "observed": 0.5021
         },
@@ -55,32 +55,32 @@
             0.6,
             0.8
           ],
-          "count": 36,
-          "predicted": 0.6625,
-          "observed": 0.5
+          "count": 41,
+          "predicted": 0.6678,
+          "observed": 0.5366
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 22,
-          "predicted": 0.8926,
-          "observed": 0.6818
+          "count": 23,
+          "predicted": 0.889,
+          "observed": 0.6957
         }
       ],
       "ablations": {
         "noWeather": {
-          "settled": 92,
+          "settled": 106,
           "distinctEvents": 18,
-          "fullBrier": 0.2507,
-          "removedBrier": 0.2507
+          "fullBrier": 0.2357,
+          "removedBrier": 0.2357
         },
         "noForm": {
-          "settled": 92,
+          "settled": 106,
           "distinctEvents": 18,
-          "fullBrier": 0.2507,
-          "removedBrier": 0.2503
+          "fullBrier": 0.2357,
+          "removedBrier": 0.2354
         }
       },
       "priceMovement": {
@@ -89,9 +89,9 @@
         "meanCLV": null
       },
       "positiveEV": {
-        "settled": 67,
+        "settled": 71,
         "distinctEvents": 12,
-        "grossReturnPerUnit": 0.1025
+        "grossReturnPerUnit": 0.0968
       },
       "groups": {
         "player_prop": {
@@ -254,23 +254,23 @@
           "recorded": 1112,
           "independentRecorded": 1112,
           "experimentalRecorded": 0,
-          "settled": 92,
+          "settled": 106,
           "distinctEvents": 18,
-          "independentSettled": 92,
+          "independentSettled": 106,
           "independentEvents": 18,
           "brier": {
-            "model": 0.2507,
-            "market": 0.2503
+            "model": 0.2357,
+            "market": 0.2354
           },
           "logLoss": {
-            "model": 0.6946,
-            "market": 0.6937
+            "model": 0.6617,
+            "market": 0.6614
           },
           "independentComparison": {
-            "brierModel": 0.2507,
-            "brierMarket": 0.2503,
-            "logLossModel": 0.6946,
-            "logLossMarket": 0.6937
+            "brierModel": 0.2357,
+            "brierMarket": 0.2354,
+            "logLossModel": 0.6617,
+            "logLossMarket": 0.6614
           },
           "experimentalComparison": {
             "settled": 0,
@@ -284,16 +284,16 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 6,
+              "predicted": 0.2772,
+              "observed": 0.1667
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 92,
+              "count": 94,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -302,32 +302,32 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 5,
+              "predicted": 0.7056,
+              "observed": 0.8
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 1,
+              "predicted": 0.8088,
+              "observed": 1
             }
           ],
           "ablations": {
             "noWeather": {
-              "settled": 92,
+              "settled": 106,
               "distinctEvents": 18,
-              "fullBrier": 0.2507,
-              "removedBrier": 0.2507
+              "fullBrier": 0.2357,
+              "removedBrier": 0.2357
             },
             "noForm": {
-              "settled": 92,
+              "settled": 106,
               "distinctEvents": 18,
-              "fullBrier": 0.2507,
-              "removedBrier": 0.2503
+              "fullBrier": 0.2357,
+              "removedBrier": 0.2354
             }
           },
           "priceMovement": {
@@ -336,9 +336,9 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 3,
+            "settled": 7,
             "distinctEvents": 3,
-            "grossReturnPerUnit": -0.3197
+            "grossReturnPerUnit": -0.1362
           }
         },
         "spreads": {
@@ -1436,10 +1436,10 @@
       }
     },
     "mlb": {
-      "recorded": 3653,
+      "recorded": 3689,
       "independentRecorded": 0,
-      "experimentalRecorded": 621,
-      "settled": 1642,
+      "experimentalRecorded": 623,
+      "settled": 1647,
       "distinctEvents": 18,
       "independentSettled": 0,
       "independentEvents": 0,
@@ -1514,9 +1514,9 @@
       },
       "groups": {
         "total": {
-          "recorded": 709,
+          "recorded": 711,
           "independentRecorded": 0,
-          "experimentalRecorded": 621,
+          "experimentalRecorded": 623,
           "settled": 263,
           "distinctEvents": 12,
           "independentSettled": 0,
@@ -1673,17 +1673,17 @@
           "recorded": 124,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 69,
-          "distinctEvents": 12,
+          "settled": 71,
+          "distinctEvents": 13,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2187,
-            "market": 0.2187
+            "model": 0.2157,
+            "market": 0.2157
           },
           "logLoss": {
-            "model": 0.6295,
-            "market": 0.6295
+            "model": 0.6229,
+            "market": 0.6229
           },
           "independentComparison": {
             "brierModel": null,
@@ -1748,20 +1748,20 @@
           }
         },
         "hits": {
-          "recorded": 610,
+          "recorded": 621,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 285,
+          "settled": 287,
           "distinctEvents": 13,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.155,
-            "market": 0.155
+            "model": 0.1555,
+            "market": 0.1555
           },
           "logLoss": {
-            "model": 0.466,
-            "market": 0.466
+            "model": 0.4671,
+            "market": 0.4671
           },
           "independentComparison": {
             "brierModel": null,
@@ -1826,7 +1826,7 @@
           }
         },
         "home_runs": {
-          "recorded": 316,
+          "recorded": 321,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 154,
@@ -1982,20 +1982,20 @@
           }
         },
         "hrr": {
-          "recorded": 729,
+          "recorded": 742,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 329,
+          "settled": 330,
           "distinctEvents": 13,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2244,
-            "market": 0.2244
+            "model": 0.2242,
+            "market": 0.2242
           },
           "logLoss": {
-            "model": 0.6413,
-            "market": 0.6413
+            "model": 0.6409,
+            "market": 0.6409
           },
           "independentComparison": {
             "brierModel": null,
@@ -2060,7 +2060,7 @@
           }
         },
         "total_bases": {
-          "recorded": 560,
+          "recorded": 563,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 248,
@@ -2138,7 +2138,7 @@
           }
         },
         "rbi": {
-          "recorded": 299,
+          "recorded": 301,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 127,
@@ -2218,20 +2218,20 @@
       }
     },
     "ncaaf": {
-      "recorded": 2468,
+      "recorded": 2470,
       "independentRecorded": 0,
-      "experimentalRecorded": 1482,
-      "settled": 1280,
+      "experimentalRecorded": 1484,
+      "settled": 1304,
       "distinctEvents": 105,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1866,
-        "market": 0.1791
+        "model": 0.1869,
+        "market": 0.1786
       },
       "logLoss": {
-        "model": 0.5497,
-        "market": 0.5309
+        "model": 0.5506,
+        "market": 0.53
       },
       "independentComparison": {
         "brierModel": null,
@@ -2240,10 +2240,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 622,
-        "distinctEvents": 64,
-        "brierEstimate": 0.1831,
-        "brierMarket": 0.1676
+        "settled": 645,
+        "distinctEvents": 65,
+        "brierEstimate": 0.1837,
+        "brierMarket": 0.1668
       },
       "calibrationBins": [
         {
@@ -2286,8 +2286,8 @@
       "ablations": {},
       "priceMovement": {
         "source": "Kalshi near-start reference; not Caesars",
-        "count": 0,
-        "meanCLV": null
+        "count": 51,
+        "meanCLV": -0.0055
       },
       "positiveEV": {
         "settled": 0,
@@ -2364,8 +2364,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 2,
+            "meanCLV": -0.075
           },
           "positiveEV": {
             "settled": 0,
@@ -2374,20 +2374,20 @@
           }
         },
         "spread": {
-          "recorded": 1349,
+          "recorded": 1351,
           "independentRecorded": 0,
-          "experimentalRecorded": 1041,
-          "settled": 712,
-          "distinctEvents": 83,
+          "experimentalRecorded": 1043,
+          "settled": 724,
+          "distinctEvents": 84,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1873,
-            "market": 0.1783
+            "model": 0.1888,
+            "market": 0.1789
           },
           "logLoss": {
-            "model": 0.5551,
-            "market": 0.5312
+            "model": 0.5586,
+            "market": 0.5329
           },
           "independentComparison": {
             "brierModel": null,
@@ -2396,10 +2396,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 420,
-            "distinctEvents": 60,
-            "brierEstimate": 0.1699,
-            "brierMarket": 0.1547
+            "settled": 432,
+            "distinctEvents": 62,
+            "brierEstimate": 0.173,
+            "brierMarket": 0.1563
           },
           "calibrationBins": [
             {
@@ -2442,8 +2442,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 30,
+            "meanCLV": -0.0173
           },
           "positiveEV": {
             "settled": 0,
@@ -2455,17 +2455,17 @@
           "recorded": 826,
           "independentRecorded": 0,
           "experimentalRecorded": 355,
-          "settled": 395,
-          "distinctEvents": 67,
+          "settled": 407,
+          "distinctEvents": 71,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1863,
-            "market": 0.1778
+            "model": 0.1846,
+            "market": 0.1752
           },
           "logLoss": {
-            "model": 0.5455,
-            "market": 0.5266
+            "model": 0.5421,
+            "market": 0.5209
           },
           "independentComparison": {
             "brierModel": null,
@@ -2474,10 +2474,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 200,
-            "distinctEvents": 46,
-            "brierEstimate": 0.2089,
-            "brierMarket": 0.1921
+            "settled": 211,
+            "distinctEvents": 49,
+            "brierEstimate": 0.2041,
+            "brierMarket": 0.1859
           },
           "calibrationBins": [
             {
@@ -2520,8 +2520,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 19,
+            "meanCLV": 0.0205
           },
           "positiveEV": {
             "settled": 0,
@@ -2535,17 +2535,17 @@
       "recorded": 237,
       "independentRecorded": 42,
       "experimentalRecorded": 0,
-      "settled": 123,
-      "distinctEvents": 39,
+      "settled": 131,
+      "distinctEvents": 41,
       "independentSettled": 20,
       "independentEvents": 10,
       "brier": {
-        "model": 0.128,
-        "market": 0.1266
+        "model": 0.1313,
+        "market": 0.13
       },
       "logLoss": {
-        "model": 0.4011,
-        "market": 0.3982
+        "model": 0.409,
+        "market": 0.4062
       },
       "independentComparison": {
         "brierModel": 0.1426,
@@ -2691,17 +2691,17 @@
           "recorded": 14,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 8,
-          "distinctEvents": 7,
+          "settled": 9,
+          "distinctEvents": 8,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2045,
-            "market": 0.2045
+            "model": 0.1958,
+            "market": 0.1958
           },
           "logLoss": {
-            "model": 0.6004,
-            "market": 0.6004
+            "model": 0.5824,
+            "market": 0.5824
           },
           "independentComparison": {
             "brierModel": null,
@@ -2769,17 +2769,17 @@
           "recorded": 97,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 65,
-          "distinctEvents": 31,
+          "settled": 71,
+          "distinctEvents": 33,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.0989,
-            "market": 0.0989
+            "model": 0.1049,
+            "market": 0.1049
           },
           "logLoss": {
-            "model": 0.316,
-            "market": 0.316
+            "model": 0.3311,
+            "market": 0.3311
           },
           "independentComparison": {
             "brierModel": null,
@@ -2925,17 +2925,17 @@
           "recorded": 43,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 16,
-          "distinctEvents": 11,
+          "settled": 17,
+          "distinctEvents": 12,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1923,
-            "market": 0.1923
+            "model": 0.1998,
+            "market": 0.1998
           },
           "logLoss": {
-            "model": 0.5603,
-            "market": 0.5603
+            "model": 0.5763,
+            "market": 0.5763
           },
           "independentComparison": {
             "brierModel": null,
@@ -3002,9 +3002,9 @@
       }
     },
     "nhl": {
-      "recorded": 3782,
+      "recorded": 3804,
       "independentRecorded": 0,
-      "experimentalRecorded": 3547,
+      "experimentalRecorded": 3567,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -3070,8 +3070,8 @@
       "ablations": {},
       "priceMovement": {
         "source": "Kalshi near-start reference; not Caesars",
-        "count": 250,
-        "meanCLV": -0.0003
+        "count": 380,
+        "meanCLV": 0.0008
       },
       "positiveEV": {
         "settled": 0,
@@ -3148,8 +3148,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 4,
-            "meanCLV": 0
+            "count": 6,
+            "meanCLV": -0.0033
           },
           "positiveEV": {
             "settled": 0,
@@ -3226,8 +3226,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 14,
-            "meanCLV": -0.0014
+            "count": 22,
+            "meanCLV": -0.0018
           },
           "positiveEV": {
             "settled": 0,
@@ -3236,243 +3236,9 @@
           }
         },
         "total": {
-          "recorded": 580,
+          "recorded": 582,
           "independentRecorded": 0,
-          "experimentalRecorded": 546,
-          "settled": 0,
-          "distinctEvents": 0,
-          "independentSettled": 0,
-          "independentEvents": 0,
-          "brier": {
-            "model": null,
-            "market": null
-          },
-          "logLoss": {
-            "model": null,
-            "market": null
-          },
-          "independentComparison": {
-            "brierModel": null,
-            "brierMarket": null,
-            "logLossModel": null,
-            "logLossMarket": null
-          },
-          "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
-          },
-          "calibrationBins": [
-            {
-              "range": [
-                0,
-                0.4
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.4,
-                0.6
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.6,
-                0.8
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.8,
-                1
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            }
-          ],
-          "ablations": {},
-          "priceMovement": {
-            "source": "Kalshi near-start reference; not Caesars",
-            "count": 34,
-            "meanCLV": -0.0065
-          },
-          "positiveEV": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "grossReturnPerUnit": null
-          }
-        },
-        "goals": {
-          "recorded": 1666,
-          "independentRecorded": 0,
-          "experimentalRecorded": 1564,
-          "settled": 0,
-          "distinctEvents": 0,
-          "independentSettled": 0,
-          "independentEvents": 0,
-          "brier": {
-            "model": null,
-            "market": null
-          },
-          "logLoss": {
-            "model": null,
-            "market": null
-          },
-          "independentComparison": {
-            "brierModel": null,
-            "brierMarket": null,
-            "logLossModel": null,
-            "logLossMarket": null
-          },
-          "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
-          },
-          "calibrationBins": [
-            {
-              "range": [
-                0,
-                0.4
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.4,
-                0.6
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.6,
-                0.8
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.8,
-                1
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            }
-          ],
-          "ablations": {},
-          "priceMovement": {
-            "source": "Kalshi near-start reference; not Caesars",
-            "count": 118,
-            "meanCLV": 0.0013
-          },
-          "positiveEV": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "grossReturnPerUnit": null
-          }
-        },
-        "assists": {
-          "recorded": 484,
-          "independentRecorded": 0,
-          "experimentalRecorded": 460,
-          "settled": 0,
-          "distinctEvents": 0,
-          "independentSettled": 0,
-          "independentEvents": 0,
-          "brier": {
-            "model": null,
-            "market": null
-          },
-          "logLoss": {
-            "model": null,
-            "market": null
-          },
-          "independentComparison": {
-            "brierModel": null,
-            "brierMarket": null,
-            "logLossModel": null,
-            "logLossMarket": null
-          },
-          "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
-          },
-          "calibrationBins": [
-            {
-              "range": [
-                0,
-                0.4
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.4,
-                0.6
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.6,
-                0.8
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            },
-            {
-              "range": [
-                0.8,
-                1
-              ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
-            }
-          ],
-          "ablations": {},
-          "priceMovement": {
-            "source": "Kalshi near-start reference; not Caesars",
-            "count": 26,
-            "meanCLV": -0.0008
-          },
-          "positiveEV": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "grossReturnPerUnit": null
-          }
-        },
-        "points": {
-          "recorded": 656,
-          "independentRecorded": 0,
-          "experimentalRecorded": 628,
+          "experimentalRecorded": 548,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3539,7 +3305,241 @@
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
             "count": 50,
-            "meanCLV": 0.0006
+            "meanCLV": -0.0066
+          },
+          "positiveEV": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "grossReturnPerUnit": null
+          }
+        },
+        "goals": {
+          "recorded": 1676,
+          "independentRecorded": 0,
+          "experimentalRecorded": 1574,
+          "settled": 0,
+          "distinctEvents": 0,
+          "independentSettled": 0,
+          "independentEvents": 0,
+          "brier": {
+            "model": null,
+            "market": null
+          },
+          "logLoss": {
+            "model": null,
+            "market": null
+          },
+          "independentComparison": {
+            "brierModel": null,
+            "brierMarket": null,
+            "logLossModel": null,
+            "logLossMarket": null
+          },
+          "experimentalComparison": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "brierEstimate": null,
+            "brierMarket": null
+          },
+          "calibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "ablations": {},
+          "priceMovement": {
+            "source": "Kalshi near-start reference; not Caesars",
+            "count": 172,
+            "meanCLV": 0.0023
+          },
+          "positiveEV": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "grossReturnPerUnit": null
+          }
+        },
+        "assists": {
+          "recorded": 488,
+          "independentRecorded": 0,
+          "experimentalRecorded": 464,
+          "settled": 0,
+          "distinctEvents": 0,
+          "independentSettled": 0,
+          "independentEvents": 0,
+          "brier": {
+            "model": null,
+            "market": null
+          },
+          "logLoss": {
+            "model": null,
+            "market": null
+          },
+          "independentComparison": {
+            "brierModel": null,
+            "brierMarket": null,
+            "logLossModel": null,
+            "logLossMarket": null
+          },
+          "experimentalComparison": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "brierEstimate": null,
+            "brierMarket": null
+          },
+          "calibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "ablations": {},
+          "priceMovement": {
+            "source": "Kalshi near-start reference; not Caesars",
+            "count": 44,
+            "meanCLV": 0.0005
+          },
+          "positiveEV": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "grossReturnPerUnit": null
+          }
+        },
+        "points": {
+          "recorded": 660,
+          "independentRecorded": 0,
+          "experimentalRecorded": 632,
+          "settled": 0,
+          "distinctEvents": 0,
+          "independentSettled": 0,
+          "independentEvents": 0,
+          "brier": {
+            "model": null,
+            "market": null
+          },
+          "logLoss": {
+            "model": null,
+            "market": null
+          },
+          "independentComparison": {
+            "brierModel": null,
+            "brierMarket": null,
+            "logLossModel": null,
+            "logLossMarket": null
+          },
+          "experimentalComparison": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "brierEstimate": null,
+            "brierMarket": null
+          },
+          "calibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "ablations": {},
+          "priceMovement": {
+            "source": "Kalshi near-start reference; not Caesars",
+            "count": 82,
+            "meanCLV": 0.0032
           },
           "positiveEV": {
             "settled": 0,
@@ -3548,7 +3548,7 @@
           }
         },
         "saves": {
-          "recorded": 32,
+          "recorded": 34,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 0,
