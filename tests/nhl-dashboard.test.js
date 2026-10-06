@@ -211,7 +211,18 @@ test('NHL ALT forecasts are withheld after 30 minutes, while standard quotes ret
  const app=runtime(),base={...app.a,kind:'spread',game_id:'1',event_ticker:'Game-1',forecast:{modelP:.75,coverage:.5}};
  app.data.markets=[{...base,line:1.5,selection_id:'std'},{...base,line:2.5,selection_id:'alt'}];app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
  app.window.NHL_DASHBOARD.setLineMode('alt');assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);app.advance(31*60000);assert.equal(app.window.NHL_DASHBOARD.availableCount(),0);
+ app.window.NHL_DASHBOARD.render();assert.match(app.nodes.get('#results').innerHTML,/ALT prices expired/);assert.equal(app.daily(),undefined);
  app.window.NHL_DASHBOARD.setLineMode('standard');assert.equal(app.window.NHL_DASHBOARD.availableCount(),1);
+});
+
+test('one qualifying future NHL ALT remains a straight pick without filling a parlay',async()=>{
+ const app=runtime(),base={...app.a,kind:'spread',game_id:'1',line:2.5,forecast:{modelP:.75,coverage:.5}};
+ app.data.markets=[base];app.window.NHL_MODEL={estimate:m=>m.forecast};app.window.PICK_OF_DAY.today=()=>false;
+ await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
+ assert.equal(app.daily().market.game_id,'1');assert.match(app.nodes.get('#results').innerHTML,/Only 1 of 2 games qualify/);
+ assert.match(app.nodes.get('#results').innerHTML,/straight pick shown above/);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
+ app.window.NHL_MODEL.estimate=()=>null;app.advance(30000);app.window.NHL_DASHBOARD.render();
+ assert.equal(app.daily(),undefined);assert.match(app.nodes.get('#results').innerHTML,/No ALT lines meet quality checks/);
 });
 test('NHL team-line ranking balances price advantage against raw win chance',async()=>{
  const app=runtime(),make=(id,p,ask)=>({...app.a,kind:'total',line:5.5,game_id:id,event_ticker:'Game-'+id,selection_id:id,label:'Pick '+id,yes_ask:ask,yes_bid:ask-.02,forecast:{modelP:p,coverage:.5}});

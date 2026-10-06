@@ -257,6 +257,7 @@ jobs:
           mkdir -p data/daily-picks
           cp /tmp/daily-pick-archive/*.json data/daily-picks/
 
+          python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(SPORTS, True))"
           git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
           if git diff --cached --quiet; then
             echo "No market changes"
@@ -305,6 +306,7 @@ jobs:
             python scripts/preserve_newer_snapshot.py /tmp/dashboard-health.json data/dashboard-health.json
             mkdir -p data/daily-picks
             cp /tmp/daily-pick-archive/*.json data/daily-picks/
+            python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(SPORTS, True))"
             git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/forecast-audit.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"

@@ -17,7 +17,7 @@ permissions:
 # the pending session instead of stopping the worker that is refreshing prices.
 concurrency:
   group: rolling-sports-price-worker
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   prices:
@@ -39,4 +39,24 @@ jobs:
         env:
           TZ: America/Los_Angeles
           REFRESH_STATUS: success
-        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nfl mlb ncaaf ufc
+
+  nhl-prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check NHL refresh safeguards
+        run: python -m unittest discover -s tests -p 'test_nhl_refresh.py'
+      - name: Publish NHL prices independently every ten minutes
+        env:
+          TZ: America/Los_Angeles
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nhl

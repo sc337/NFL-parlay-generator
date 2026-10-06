@@ -79,7 +79,30 @@ def refresh(sport):
                 Path(name).unlink(missing_ok=True)
         return False
 
-def publish(names):
+def refresh_health(results):
+    file = Path('data/dashboard-health.json')
+    try:
+        previous = json.loads(file.read_text()).get('refreshResults', {})
+    except (OSError, ValueError):
+        previous = {}
+    at = datetime.now(timezone.utc).isoformat()
+    previous.update({sport: {'ok': ok, 'at': at} for sport, ok in results.items()})
+    failed = any(not row.get('ok') and (stamp({'updated_at': row.get('at')}) or 0) > time.time()-1800
+                 for row in previous.values())
+    prior_status = os.environ.get('REFRESH_STATUS')
+    os.environ['REFRESH_STATUS'] = 'failure' if failed else 'success'
+    try:
+        run(['node', 'scripts/check_dashboard_health.js'], timeout=60)
+        report = json.loads(file.read_text())
+        report['refreshResults'] = previous
+        file.write_text(json.dumps(report, indent=2)+'\n')
+    finally:
+        if prior_status is None:
+            os.environ.pop('REFRESH_STATUS', None)
+        else:
+            os.environ['REFRESH_STATUS'] = prior_status
+
+def publish(names, results=None):
     # Synchronize before committing and retain a newer feed from another job.
     with tempfile.TemporaryDirectory() as folder:
         saved = {name: Path(name).read_bytes() for name in names if Path(name).exists()}
@@ -99,6 +122,11 @@ def publish(names):
                 Path(name).parent.mkdir(parents=True, exist_ok=True)
                 Path(name).write_bytes(raw)
                 selected.append(name)
+            # Diagnose the final reconciled snapshots, including newer feeds
+            # published by another worker while this cycle was running.
+            if results is not None:
+                refresh_health(results)
+                selected.append('data/dashboard-health.json')
             if not selected:
                 return
             run(['git', 'add', '--', *selected])
@@ -109,28 +137,26 @@ def publish(names):
                 return
         raise RuntimeError('Price publication failed after three attempts')
 
-def cycle(publish_changes=True):
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        results = dict(zip(SPORTS, pool.map(refresh, SPORTS)))
+def cycle(publish_changes=True, sports=SPORTS):
+    with ThreadPoolExecutor(max_workers=len(sports)) as pool:
+        results = dict(zip(sports, pool.map(refresh, sports)))
     names = [name for sport, ok in results.items() if ok for name in FILES[sport]]
+    if sports == ('nhl',):
+        # NHL publication must never wait for multi-sport capture.
+        if publish_changes:
+            publish(names, results)
+        else:
+            refresh_health(results)
+        return results
     try:
         run(['node', 'scripts/snapshot_daily_picks.js'], timeout=300)
         names.extend(['data/daily-picks.json', *map(str, Path('data/daily-picks').glob('*.json'))])
     except Exception as error:
         print('::error title=Recommendation capture::' + str(error), flush=True)
-    # A partially failed cycle must remain visible even before old quotes expire.
-    prior_status = os.environ.get('REFRESH_STATUS')
-    os.environ['REFRESH_STATUS'] = 'success' if all(results.values()) else 'failure'
-    try:
-        run(['node', 'scripts/check_dashboard_health.js'], timeout=60)
-    finally:
-        if prior_status is None:
-            os.environ.pop('REFRESH_STATUS', None)
-        else:
-            os.environ['REFRESH_STATUS'] = prior_status
-    names.append('data/dashboard-health.json')
     if publish_changes:
-        publish(names)
+        publish(names, results)
+    else:
+        refresh_health(results)
     return results
 
 def main():
@@ -138,6 +164,7 @@ def main():
     parser.add_argument('--minutes', type=int, default=0)
     parser.add_argument('--interval', type=int, default=600)
     parser.add_argument('--no-publish', action='store_true')
+    parser.add_argument('--sports', nargs='+', choices=SPORTS, default=list(SPORTS))
     args = parser.parse_args()
     deadline = time.monotonic() + max(0, args.minutes) * 60
     if not args.no_publish:
@@ -147,7 +174,7 @@ def main():
         started = time.monotonic()
         try:
             print('Refreshing sports prices', datetime.now(timezone.utc).isoformat(), flush=True)
-            print(cycle(not args.no_publish), flush=True)
+            print(cycle(not args.no_publish, tuple(args.sports)), flush=True)
         except Exception as error:
             print('::error title=Price worker::' + str(error), flush=True)
         if time.monotonic() + args.interval >= deadline:

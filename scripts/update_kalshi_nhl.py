@@ -12,6 +12,21 @@ except ModuleNotFoundError:
 import urllib.parse
 
 API = 'https://external-api.kalshi.com/trade-api/v2'
+BACKUP_API = 'https://api.elections.kalshi.com/trade-api/v2'
+
+def fetch_json(url):
+    # Retry transient schedule failures; use the alternate Kalshi host for quotes.
+    urls = [url, url.replace(API, BACKUP_API)] if url.startswith(API + '/') else [url, url]
+    last_error = None
+    for endpoint in urls:
+        try:
+            payload = get(endpoint)
+            if not isinstance(payload, dict):
+                raise ValueError('Invalid JSON response')
+            return payload
+        except Exception as error:
+            last_error = error
+    raise RuntimeError('NHL upstream failed after retry') from last_error
 SERIES = {'KXNHLGAME': 'moneyline', 'KXNHLSPREAD': 'spread', 'KXNHLTOTAL': 'total'}
 PROP_SERIES = {'KXNHLGOAL': 'goals', 'KXNHLAST': 'assists', 'KXNHLPTS': 'points',
                'KXNHLSAVE': 'saves', 'KXNHLSAVES': 'saves'}
@@ -211,7 +226,7 @@ def main():
             params = {'series_ticker': series, 'status': 'open', 'limit': 1000, 'mve_filter': 'exclude'}
             if cursor:
                 params['cursor'] = cursor
-            data = get(API+'/markets?'+urllib.parse.urlencode(params))
+            data = fetch_json(API+'/markets?'+urllib.parse.urlencode(params))
             markets = data.get('markets')
             if not isinstance(markets, list):
                 raise RuntimeError('Invalid NHL market response; keeping prior snapshot')
@@ -228,7 +243,7 @@ def main():
             and now.date()-timedelta(days=1) <= p[0] <= now.date()+timedelta(days=14)}
     events = []
     for day in sorted(days):
-        data = get('https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates='+day.strftime('%Y%m%d')+'&limit=1000')
+        data = fetch_json('https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates='+day.strftime('%Y%m%d')+'&limit=1000')
         if not isinstance(data.get('events'), list):
             raise RuntimeError('Invalid NHL schedule; keeping prior snapshot')
         events.extend(data['events'])
