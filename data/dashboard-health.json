@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-06T12:14:00.158Z",
+  "updated_at": "2026-10-06T12:14:56.830Z",
   "status": "critical",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-06T12:13:27.055011+00:00",
+      "snapshotAt": "2026-10-06T12:14:23.322469+00:00",
       "ageMinutes": 1,
-      "markets": 1634,
-      "quotedMarkets": 1634,
-      "playerMarkets": 336,
+      "markets": 1654,
+      "quotedMarkets": 1654,
+      "playerMarkets": 356,
       "families": {
         "h2h": 58,
         "td": 20,
         "totals": 532,
         "spreads": 708,
-        "receiving": 170,
+        "receiving": 194,
         "rushing": 102,
-        "passing": 44
+        "passing": 40
       },
       "futureEvents": [
         {
@@ -137,20 +137,19 @@
         }
       ],
       "playerCounts": {
-        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 336
+        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 356
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-06T12:13:27.096718+00:00",
+      "snapshotAt": "2026-10-06T12:14:23.314461+00:00",
       "ageMinutes": 1,
-      "markets": 338,
-      "quotedMarkets": 338,
-      "playerMarkets": 108,
+      "markets": 119,
+      "quotedMarkets": 119,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 10,
         "spread": 24,
-        "total": 196,
-        "total_bases": 108
+        "total": 85
       },
       "futureEvents": [
         {
@@ -174,15 +173,10 @@
           "time": "2026-10-07T20:00:00Z"
         }
       ],
-      "playerCounts": {
-        "849819": 35,
-        "849826": 25,
-        "849833": 23,
-        "849838": 25
-      }
+      "playerCounts": {}
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-06T12:13:27.050216+00:00",
+      "snapshotAt": "2026-10-06T12:14:23.321476+00:00",
       "ageMinutes": 1,
       "markets": 3218,
       "quotedMarkets": 3214,
@@ -457,15 +451,15 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-06T09:50:45.014793+00:00",
-      "ageMinutes": 143,
-      "markets": 664,
-      "quotedMarkets": 664,
+      "snapshotAt": "2026-10-06T02:56:51.557814+00:00",
+      "ageMinutes": 558,
+      "markets": 638,
+      "quotedMarkets": 638,
       "playerMarkets": 0,
       "families": {
         "moneyline": 92,
-        "spread": 176,
-        "total": 396
+        "spread": 168,
+        "total": 378
       },
       "futureEvents": [
         {
@@ -656,17 +650,15 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-06T12:13:27.075996+00:00",
+      "snapshotAt": "2026-10-06T12:14:23.446913+00:00",
       "ageMinutes": 1,
-      "markets": 104,
-      "quotedMarkets": 104,
+      "markets": 89,
+      "quotedMarkets": 89,
       "playerMarkets": 0,
       "families": {
-        "distance": 5,
         "method_finish": 20,
         "method_victory": 35,
-        "moneyline": 34,
-        "round_finish": 10
+        "moneyline": 34
       },
       "futureEvents": [
         {
@@ -723,6 +715,15 @@
   },
   "alerts": [
     {
+      "id": "pipeline:refresh-failed",
+      "sport": null,
+      "code": "refresh-failed",
+      "severity": "critical",
+      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
+      "firstSeen": "2026-10-06T12:14:56.830Z",
+      "changedAt": "2026-10-06T12:14:56.830Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -736,20 +737,20 @@
       "sport": "nhl",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 143 minutes old.",
-      "firstSeen": "2026-10-06T10:24:00.159Z",
-      "changedAt": "2026-10-06T11:54:00.402Z"
+      "message": "Feed is 558 minutes old.",
+      "firstSeen": "2026-10-06T06:54:06.571Z",
+      "changedAt": "2026-10-06T06:54:06.571Z"
     },
     {
       "id": "ufc:starts-missing",
       "sport": "ufc",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "80 upcoming markets lack verified start times.",
+      "message": "65 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-05T20:30:24.588Z",
       "changedAt": "2026-10-05T20:30:24.588Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37426303361"
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37426405931"
 }
