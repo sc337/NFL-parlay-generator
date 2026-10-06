@@ -433,37 +433,10 @@ async function ensurePropsForMultiGame(limit=6){
 }
 
 async function loadData(){
-  if(!state.apiKey){
-    state.games = structuredClone(demoGames);
-    setStatus('Demo market data');
-    hydrateGames();
-    generate();
-    return;
-  }
-  try{
-    setStatus('Loading Caesars markets…');
-    const url = new URL('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds/');
-    url.searchParams.set('apiKey',state.apiKey);
-    url.searchParams.set('regions','us');
-    url.searchParams.set('markets','h2h,spreads,totals');
-    url.searchParams.set('oddsFormat','american');
-    url.searchParams.set('bookmakers','fanduel');
-    const res = await fetch(url);
-    trackApiUsage(res);
-    if(!res.ok) throw new Error('Odds API '+res.status);
-    const raw = await res.json();
-    state.games = raw.map(normalizeGame).filter(g=>g.markets.length);
-    state.propsLoaded.clear();
-    setStatus('Live Caesars team markets');
-    hydrateGames();
-    await generate();
-  }catch(err){
-    console.error(err);
-    state.games = structuredClone(demoGames);
-    setStatus('API unavailable — demo data active');
-    hydrateGames();
-    generate();
-  }
+  // The Kalshi provider is loaded later in the script stack; no paid-feed bootstrap.
+  if(window.NFL_NO_DEMO)return window.NFL_NO_DEMO.load();
+  setStatus('Loading Kalshi NFL snapshot…');
+  return false;
 }
 
 function normalizeGame(g){
@@ -1167,11 +1140,11 @@ $('#settingsBtn').addEventListener('click',()=>{$('#apiKeyInput').value=state.ap
 $('#saveKeyBtn').addEventListener('click',()=>{
   state.apiKey=$('#apiKeyInput').value.trim();
   if(state.apiKey)localStorage.setItem('nflParlayOddsApiKey',state.apiKey); else localStorage.removeItem('nflParlayOddsApiKey');
-  dialog.close(); renderApiUsage();
+  dialog.close(); renderApiUsage(); window.CAESARS_COMPARE?.refresh?.();
 loadData();
 });
 $('#clearKeyBtn').addEventListener('click',()=>{
-  state.apiKey=''; localStorage.removeItem('nflParlayOddsApiKey'); dialog.close(); loadData();
+  state.apiKey=''; localStorage.removeItem('nflParlayOddsApiKey'); dialog.close(); window.CAESARS_COMPARE?.refresh?.(); loadData();
 });
 
 loadData();

@@ -28,7 +28,7 @@ test('NFL descriptors retain Kalshi provenance and convert milestone to exact ha
  const {api}=runtime('fixture'),g={away:teams[0],home:teams[1],commence_time:time},m={source:'Kalshi',marketKey:'player_rush_yds_alternate',player:'Runner',name:'Runner 50+ rushing yards',point:49.5,side:'over'};
  const d=api.descriptor('nfl',m,g);assert.equal(d.market,'player_rush_yds');assert.equal(d.line,49.5);assert.equal(api.descriptor('nfl',{...m,source:'Caesars'},g),null);
 });
-test('no key makes no paid API requests',async()=>{const app=runtime();assert.equal(app.api.register('nhl',pick),'');app.api.refresh();await app.flush();assert.equal(app.calls.length,0)});
+test('no key makes no paid API requests and adding a key prices existing picks',async()=>{const app=runtime(),token=app.api.register('nhl',pick),read=app.mount(token);app.api.refresh();await app.flush();assert.equal(app.calls.length,0);assert.equal(read(),undefined);app.setKey('fixture');app.api.refresh();await app.flush();assert.equal(read(),'Caesars -125');assert.equal(app.calls.length,2)});
 test('unsupported selections show unavailable and make no API request',async()=>{const app=runtime('fixture'),read=app.mount(app.api.register('nhl',{...pick,kind:'unsupported'}));await app.flush();assert.equal(read(),'Caesars unavailable');assert.equal(app.calls.length,0)});
 test('quotes populate the same tile, request only Caesars and reuse cached event prices',async()=>{
  const app=runtime('fixture'),read=app.mount(app.api.register('nhl',pick));await app.flush();assert.equal(read(),'Caesars -125');assert.equal(app.calls.length,2);
@@ -42,4 +42,8 @@ test('API-mode NFL loader retains Kalshi recommendations',async()=>{
  let calls=0,refresh=0;
  const context=vm.createContext({window:{__ACTIVE_SPORT:'nfl',NFL_KALSHI:{load:async()=>{calls++;return true}},CAESARS_COMPARE:{refresh:()=>refresh++}},state:{apiKey:'fixture',games:[],propsLoaded:new Set(),propsLoading:new Set()},document:{getElementById:()=>null},setStatus(){},generate:async()=>{},loadData:()=>{},setTimeout(){},console});
  vm.runInContext(fs.readFileSync('no-demo-mode.js','utf8'),context);assert.equal(await context.loadData(),true);assert.equal(calls,1);assert.equal(refresh,1);
+});
+test('initial API-key startup cannot race a paid sportsbook feed against Kalshi',async()=>{
+ const source=fs.readFileSync('app.js','utf8'),context=vm.createContext({window:{},state:{apiKey:'fixture'},setStatus(){},fetch(){throw Error('Bootstrap must not fetch paid odds')}});
+ vm.runInContext(source.slice(source.indexOf('async function loadData(){'),source.indexOf('\nfunction normalizeGame')),context);assert.equal(await context.loadData(),false);
 });

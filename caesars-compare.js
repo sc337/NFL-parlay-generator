@@ -52,7 +52,6 @@ function matchingQuote(d,event){
  const prices=new Set(quotes.map(q=>q.price));return prices.size===1?quotes[0]:null;
 }
 function register(s,m){
- if(!key())return '';
  const d=descriptor(s,m,window.PICK_QUALITY?.gameFor(s,m));
  const identity=d?JSON.stringify(d):JSON.stringify([s,window.PICK_QUALITY?.id(s,m)||m.ticker||m.name||m.label]);let token=tokens.get(identity);
  if(!token){token='cq'+(++serial);tokens.set(identity,token);records.set(token,{d,status:d?'loading':'unavailable',quote:null})}
