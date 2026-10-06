@@ -874,7 +874,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
 }
 function buildSgp(game,count,risk,variant,previous=[]){
   window.NFL_ALT_LINES?.classify?.(game);
-  const live=state.apiKey && !String(game.id).startsWith('demo-');
+  const live=game.dataSource==='Caesars' && !String(game.id).startsWith('demo-');
   const props=game.markets.filter(m=>m.player && state.selectedMarkets.has(m.type));
 
   if(live && props.length===0) return null;
@@ -1024,7 +1024,7 @@ function render(parlays){
     if(window.PICK_QUALITY){
       const choices=nflSlate().flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
-      if(singles.length){const esc=window.MARKET_GUARDS.esc;wrap.innerHTML+='<article class="parlay-card"><div class="parlay-top"><div><span class="grade">SINGLES</span><h3 class="parlay-name">Available straight picks</h3></div></div><p class="summary">These picks qualify individually. The requested parlay could not be filled.</p><div class="legs">'+singles.map(x=>'<div class="leg"><div class="leg-title">'+esc(x.m.name)+'</div><div class="leg-sub">'+esc(nflMatchup(x.g.away+' @ '+x.g.home)+' · '+nflKickoff(x.g.commence_time))+'</div><div class="leg-quote">'+esc(window.PICK_QUALITY.quoteLabel('nfl',x.m))+'</div><div class="leg-reason">'+esc(x.q.warnings.join(' · ')||'Model-screened; verify current sportsbook line')+'</div></div>').join('')+'</div></article>';}
+      if(singles.length){const esc=window.MARKET_GUARDS.esc;wrap.innerHTML+='<article class="parlay-card"><div class="parlay-top"><div><span class="grade">SINGLES</span><h3 class="parlay-name">Available straight picks</h3></div></div><p class="summary">These picks qualify individually. The requested parlay could not be filled.</p><div class="legs">'+singles.map(x=>'<div class="leg" data-caesars-id="'+(window.CAESARS_COMPARE?.register('nfl',x.m)||'')+'"><div class="leg-title">'+esc(x.m.name)+'</div><div class="leg-sub">'+esc(nflMatchup(x.g.away+' @ '+x.g.home)+' · '+nflKickoff(x.g.commence_time))+'</div><div class="leg-quote">'+esc(window.PICK_QUALITY.quoteLabel('nfl',x.m))+'</div><div class="leg-reason">'+esc(x.q.warnings.join(' · ')||'Model-screened; verify current sportsbook line')+'</div></div>').join('')+'</div></article>';}
     }
     return;
   }
@@ -1046,7 +1046,7 @@ function render(parlays){
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? 'Joint value unverified' : `${p.legs.length} games/legs`;
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
-      const d=document.createElement('div'); d.className='leg sport-visual-leg';
+      const d=document.createElement('div'); d.className='leg sport-visual-leg'; d.dataset.caesarsId=window.CAESARS_COMPARE?.register('nfl',l)||'';
       if(l.isAltLine){d.dataset.altLine='true';const milestone=window.NFL_ALT_LINES?.label?.(l);if(milestone)d.dataset.altLabel=milestone;}
       if(state.mode==='multi')d.dataset.compactMatchup=[nflKickoff(l.kickoff),nflMatchup(l.gameLabel)].filter(Boolean).join(' · ');
       const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l));const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
@@ -1175,5 +1175,3 @@ $('#clearKeyBtn').addEventListener('click',()=>{
 });
 
 loadData();
-
-

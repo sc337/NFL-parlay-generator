@@ -28,7 +28,7 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
   host.replaceChildren();
   if(!pick||!matchesDate(pick.eventTime)||tooOld){const note=document.createElement('p');note.className='pick-pass';note.textContent=tooOld?'Feed delayed · Pass':/unavailable|stale|failed/i.test(status)?'Feed unavailable · Pass':selectedDate?'No pick for selected date · Pass':'No pick today · Pass';host.append(note);return}
   const row=document.createElement('div'),media=document.createElement('span'),copy=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('span'),reference=document.createElement('small'),foot=document.createElement('small'),tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong');
-  row.className='pick-row';media.className='pick-media';copy.className='pick-copy';name.className='pick-name';meta.className='pick-meta';reference.className='market-tile-price';foot.className='pick-foot';tile.className='market-tile pick-market-tile';heading.className='market-tile-heading';line.className='market-tile-line';
+  row.className='pick-row';media.className='pick-media';copy.className='pick-copy';name.className='pick-name';meta.className='pick-meta';reference.className='market-tile-price';foot.className='pick-foot';tile.className='market-tile pick-market-tile';tile.setAttribute('data-caesars-id',window.CAESARS_COMPARE?.register(sport,pick.market)||'');heading.className='market-tile-heading';line.className='market-tile-line';
   const parsed=selection(pick.label||pick.market?.name||pick.market?.label||'Qualified straight');
   media.innerHTML=pick.media||'';name.textContent=sport==='mlb'?(window.DISPLAY_COPY?.mlbTeam?.(parsed.subject)||parsed.subject||pick.event||'Upcoming event'):(parsed.subject||pick.event||'Upcoming event');
   meta.textContent=[window.DISPLAY_COPY?.date?.(pick.eventTime)||new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),parsed.subject?(window.DISPLAY_COPY?.matchup?.(pick.event)||pick.event||'Upcoming event'):''].filter(Boolean).join(' · ');
@@ -44,5 +44,3 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
 }
 window.PICK_OF_DAY={show,loading,today};
 })();
-
-
