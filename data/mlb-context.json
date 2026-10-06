@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-06T02:56:52.857908+00:00",
+  "updated_at": "2026-10-06T06:53:29.872834+00:00",
   "source": "MLB Stats API",
   "games": [
     {
@@ -28,7 +28,7 @@
     {
       "gamePk": 849839,
       "gameDate": "2026-10-06T00:00:00Z",
-      "status": "Live",
+      "status": "Final",
       "venue": "Tropicana Field",
       "away": "New York Yankees",
       "home": "Tampa Bay Rays",
@@ -133,7 +133,11 @@
       "home": "New York Yankees",
       "awayId": 139,
       "homeId": 147,
-      "awayProbable": null,
+      "awayProbable": {
+        "id": 607259,
+        "fullName": "Nick Martinez",
+        "link": "/api/v1/people/607259"
+      },
       "homeProbable": {
         "id": 608331,
         "fullName": "Max Fried",
@@ -473,48 +477,58 @@
       "kPer9": "8.31",
       "bbPer9": "3.36",
       "recent30": {}
+    },
+    "607259": {
+      "id": 607259,
+      "name": "Nick Martinez",
+      "throws": "R",
+      "era": "3.10",
+      "whip": "1.09",
+      "innings": 180.0,
+      "strikeouts": 109.0,
+      "walks": 26.0,
+      "battersFaced": 722.0,
+      "kRate": 0.151,
+      "bbRate": 0.036,
+      "kPer9": "5.45",
+      "bbPer9": "1.30",
+      "recent30": {}
     }
   },
   "players": {
-    "Jonny DeLuca": 676356,
-    "Spencer Jones": 682987,
-    "Liam Hicks": 689414,
-    "Jackson Merrill": 701538,
-    "Munetaka Murakami": 808959,
-    "Jos\u00e9 Ram\u00edrez": 608070,
-    "Shohei Ohtani": 660271,
-    "Ozzie Albies": 645277,
-    "Ronald Acu\u00f1a Jr.": 660670,
-    "Trent Grisham": 663757,
-    "Jackson Chourio": 694192,
-    "Fernando Tatis Jr.": 665487,
-    "Freddie Freeman": 518692,
-    "William Contreras": 661388,
-    "Junior Caminero": 691406,
-    "Mookie Betts": 605141,
-    "Chandler Simpson": 802415,
-    "Jazz Chisholm Jr.": 665862,
-    "Yoshinobu Yamamoto": 808967,
-    "Dustin May": 669160,
-    "Matt Olson": 621566,
+    "Ben Rice": 700250,
     "Manny Machado": 592518,
-    "Brayan Rocchio": 677587,
-    "Colson Montgomery": 695657,
+    "Ozzie Albies": 645277,
+    "Dustin May": 669160,
+    "Junior Caminero": 691406,
     "Yandy D\u00edaz": 650490,
+    "Mookie Betts": 605141,
     "Cody Bellinger": 641355,
-    "Richie Palacios": 680700,
-    "Austin Riley": 663586,
-    "Brice Turang": 668930,
-    "Andy Pages": 681624,
-    "Taylor Walls": 670764,
+    "William Contreras": 661388,
+    "Ronald Acu\u00f1a Jr.": 660670,
+    "Munetaka Murakami": 808959,
     "Drake Baldwin": 686948,
+    "Jo Adell": 666176,
+    "Jackson Chourio": 694192,
+    "Jos\u00e9 Ram\u00edrez": 608070,
+    "Nick Martinez": 607259,
+    "Matt Olson": 621566,
+    "Brice Turang": 668930,
+    "Shohei Ohtani": 660271,
     "Jonathan Aranda": 666018,
-    "Austin Wells": 669224,
     "Miguel Vargas": 678246,
+    "Jackson Merrill": 701538,
     "Nick Pivetta": 601713,
     "Chris Sale": 519242,
-    "Luis Garc\u00eda": 472610,
-    "Jo Adell": 666176
+    "Max Fried": 608331,
+    "Fernando Tatis Jr.": 665487,
+    "Freddie Freeman": 518692,
+    "Brayan Rocchio": 677587,
+    "Yoshinobu Yamamoto": 808967,
+    "Andy Pages": 681624,
+    "Austin Riley": 663586,
+    "Jazz Chisholm Jr.": 665862,
+    "Colson Montgomery": 695657
   },
   "hitters": {
     "518692": {
@@ -601,13 +615,6 @@
       "rbi": 72,
       "totalBases": 206
     },
-    "663757": {
-      "games": 121,
-      "hits": 88,
-      "homeRuns": 18,
-      "rbi": 59,
-      "totalBases": 165
-    },
     "665487": {
       "games": 159,
       "hits": 181,
@@ -643,27 +650,6 @@
       "rbi": 100,
       "totalBases": 262
     },
-    "669224": {
-      "games": 122,
-      "hits": 62,
-      "homeRuns": 14,
-      "rbi": 32,
-      "totalBases": 111
-    },
-    "670764": {
-      "games": 124,
-      "hits": 82,
-      "homeRuns": 2,
-      "rbi": 36,
-      "totalBases": 110
-    },
-    "676356": {
-      "games": 112,
-      "hits": 93,
-      "homeRuns": 11,
-      "rbi": 50,
-      "totalBases": 150
-    },
     "677587": {
       "games": 153,
       "hits": 135,
@@ -678,13 +664,6 @@
       "rbi": 93,
       "totalBases": 279
     },
-    "680700": {
-      "games": 124,
-      "hits": 81,
-      "homeRuns": 10,
-      "rbi": 57,
-      "totalBases": 129
-    },
     "681624": {
       "games": 134,
       "hits": 140,
@@ -692,26 +671,12 @@
       "rbi": 85,
       "totalBases": 239
     },
-    "682987": {
-      "games": 86,
-      "hits": 64,
-      "homeRuns": 11,
-      "rbi": 40,
-      "totalBases": 112
-    },
     "686948": {
       "games": 138,
       "hits": 156,
       "homeRuns": 25,
       "rbi": 79,
       "totalBases": 252
-    },
-    "689414": {
-      "games": 142,
-      "hits": 136,
-      "homeRuns": 18,
-      "rbi": 82,
-      "totalBases": 208
     },
     "691406": {
       "games": 162,
@@ -734,19 +699,19 @@
       "rbi": 87,
       "totalBases": 229
     },
+    "700250": {
+      "games": 154,
+      "hits": 151,
+      "homeRuns": 41,
+      "rbi": 97,
+      "totalBases": 306
+    },
     "701538": {
       "games": 158,
       "hits": 156,
       "homeRuns": 26,
       "rbi": 87,
       "totalBases": 270
-    },
-    "802415": {
-      "games": 151,
-      "hits": 175,
-      "homeRuns": 0,
-      "rbi": 38,
-      "totalBases": 203
     },
     "808959": {
       "games": 127,
@@ -854,9 +819,9 @@
         "runs_against": 86
       },
       "139": {
-        "games": 21,
-        "runs_for": 96,
-        "runs_against": 58
+        "games": 22,
+        "runs_for": 101,
+        "runs_against": 60
       },
       "115": {
         "games": 20,
@@ -884,9 +849,9 @@
         "runs_against": 98
       },
       "147": {
-        "games": 22,
-        "runs_for": 114,
-        "runs_against": 79
+        "games": 23,
+        "runs_for": 116,
+        "runs_against": 84
       },
       "145": {
         "games": 24,
@@ -910,9 +875,9 @@
       }
     },
     "league": {
-      "games": 305,
-      "runs_per_team": 4.438
+      "games": 306,
+      "runs_per_team": 4.435
     },
-    "as_of": "2026-10-06T02:56:52.857908+00:00"
+    "as_of": "2026-10-06T06:53:29.872834+00:00"
   }
 }
