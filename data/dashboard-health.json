@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-06T08:14:13.742Z",
+  "updated_at": "2026-10-06T08:24:15.508Z",
   "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-06T08:13:27.053478+00:00",
+      "snapshotAt": "2026-10-06T08:23:27.125181+00:00",
       "ageMinutes": 1,
-      "markets": 1636,
-      "quotedMarkets": 1636,
-      "playerMarkets": 338,
+      "markets": 1624,
+      "quotedMarkets": 1624,
+      "playerMarkets": 326,
       "families": {
         "h2h": 58,
         "td": 20,
         "totals": 532,
         "spreads": 708,
-        "receiving": 170,
+        "receiving": 194,
         "rushing": 108,
-        "passing": 40
+        "passing": 4
       },
       "futureEvents": [
         {
@@ -137,21 +137,22 @@
         }
       ],
       "playerCounts": {
-        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 338
+        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 326
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-06T08:13:27.045750+00:00",
+      "snapshotAt": "2026-10-06T08:23:27.047509+00:00",
       "ageMinutes": 1,
-      "markets": 204,
-      "quotedMarkets": 204,
-      "playerMarkets": 85,
+      "markets": 504,
+      "quotedMarkets": 504,
+      "playerMarkets": 273,
       "families": {
         "moneyline": 10,
         "spread": 24,
-        "total": 85,
+        "total": 197,
         "home_runs": 30,
-        "rbi": 55
+        "hrr": 135,
+        "total_bases": 108
       },
       "futureEvents": [
         {
@@ -176,14 +177,14 @@
         }
       ],
       "playerCounts": {
-        "849819": 28,
-        "849826": 18,
-        "849833": 20,
-        "849838": 19
+        "849819": 90,
+        "849826": 61,
+        "849833": 60,
+        "849838": 62
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-06T08:13:27.048008+00:00",
+      "snapshotAt": "2026-10-06T08:23:27.102625+00:00",
       "ageMinutes": 1,
       "markets": 3218,
       "quotedMarkets": 3214,
@@ -458,8 +459,8 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-06T06:53:34.608009+00:00",
-      "ageMinutes": 81,
+      "snapshotAt": "2026-10-06T08:12:36.226460+00:00",
+      "ageMinutes": 12,
       "markets": 664,
       "quotedMarkets": 664,
       "playerMarkets": 0,
@@ -657,16 +658,16 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-06T08:13:27.119302+00:00",
+      "snapshotAt": "2026-10-06T08:23:27.072290+00:00",
       "ageMinutes": 1,
-      "markets": 99,
-      "quotedMarkets": 99,
+      "markets": 94,
+      "quotedMarkets": 94,
       "playerMarkets": 0,
       "families": {
+        "distance": 5,
         "method_finish": 20,
         "method_victory": 35,
-        "moneyline": 34,
-        "round_finish": 10
+        "moneyline": 34
       },
       "futureEvents": [
         {
@@ -732,24 +733,20 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     },
     {
-      "id": "nhl:stale",
-      "sport": "nhl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 81 minutes old.",
-      "firstSeen": "2026-10-06T07:24:00.100Z",
-      "changedAt": "2026-10-06T07:24:00.100Z"
-    },
-    {
       "id": "ufc:starts-missing",
       "sport": "ufc",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "75 upcoming markets lack verified start times.",
+      "message": "70 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-05T20:30:24.588Z",
       "changedAt": "2026-10-05T20:30:24.588Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:stale",
+      "resolvedAt": "2026-10-06T08:24:15.508Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37426303361"
 }
