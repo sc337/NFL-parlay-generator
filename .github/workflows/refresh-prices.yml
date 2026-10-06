@@ -13,14 +13,11 @@ on:
 permissions:
   contents: write
 
-# One active session and one pending replacement. New schedule events replace
-# the pending session instead of stopping the worker that is refreshing prices.
-concurrency:
-  group: rolling-sports-price-worker
-  cancel-in-progress: ${{ github.event_name == 'push' }}
-
 jobs:
   prices:
+    concurrency:
+      group: rolling-sports-price-worker
+      cancel-in-progress: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     timeout-minutes: 355
     steps:
@@ -42,6 +39,9 @@ jobs:
         run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nfl mlb ncaaf ufc
 
   nhl-prices:
+    concurrency:
+      group: rolling-nhl-price-worker
+      cancel-in-progress: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     timeout-minutes: 355
     steps:
