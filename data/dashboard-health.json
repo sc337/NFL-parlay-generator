@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-06T15:44:43.263Z",
+  "updated_at": "2026-10-06T15:54:43.763Z",
   "status": "critical",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-06T15:44:23.269818+00:00",
+      "snapshotAt": "2026-10-06T15:54:23.226357+00:00",
       "ageMinutes": 0,
-      "markets": 1353,
-      "quotedMarkets": 1353,
-      "playerMarkets": 55,
+      "markets": 1416,
+      "quotedMarkets": 1416,
+      "playerMarkets": 118,
       "families": {
         "h2h": 58,
-        "td": 37,
         "totals": 532,
         "spreads": 708,
-        "rushing": 6,
-        "passing": 12
+        "passing": 88,
+        "receiving": 24,
+        "rushing": 6
       },
       "futureEvents": [
         {
@@ -136,12 +136,12 @@
         }
       ],
       "playerCounts": {
-        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 34,
-        "kalshi-jacksonville-jaguars-philadelphia-eagles": 21
+        "kalshi-dallas-cowboys-tampa-bay-buccaneers": 78,
+        "kalshi-jacksonville-jaguars-philadelphia-eagles": 40
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-06T15:44:23.267564+00:00",
+      "snapshotAt": "2026-10-06T15:54:23.255291+00:00",
       "ageMinutes": 0,
       "markets": 203,
       "quotedMarkets": 203,
@@ -183,7 +183,7 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-06T15:44:23.225124+00:00",
+      "snapshotAt": "2026-10-06T15:54:23.256102+00:00",
       "ageMinutes": 0,
       "markets": 3218,
       "quotedMarkets": 3214,
@@ -459,7 +459,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-06T15:24:27.267823+00:00",
-      "ageMinutes": 20,
+      "ageMinutes": 30,
       "markets": 2150,
       "quotedMarkets": 2150,
       "playerMarkets": 1486,
@@ -669,15 +669,16 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-10-06T15:44:23.238578+00:00",
+      "snapshotAt": "2026-10-06T15:54:23.237099+00:00",
       "ageMinutes": 0,
-      "markets": 89,
-      "quotedMarkets": 89,
+      "markets": 99,
+      "quotedMarkets": 99,
       "playerMarkets": 0,
       "families": {
         "method_finish": 20,
         "method_victory": 35,
-        "moneyline": 34
+        "moneyline": 34,
+        "round_finish": 10
       },
       "futureEvents": [
         {
@@ -752,11 +753,20 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     },
     {
+      "id": "nhl:stale",
+      "sport": "nhl",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 30 minutes old.",
+      "firstSeen": "2026-10-06T15:54:43.763Z",
+      "changedAt": "2026-10-06T15:54:43.763Z"
+    },
+    {
       "id": "ufc:starts-missing",
       "sport": "ufc",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "65 upcoming markets lack verified start times.",
+      "message": "75 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-05T20:30:24.588Z",
       "changedAt": "2026-10-05T20:30:24.588Z"
     }
