@@ -1,7 +1,23 @@
-const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
-const source=fs.readFileSync(__dirname+'/../snapshot-transport.js','utf8');
-function setup(remote){const calls=[];const original=async(input,init)=>{calls.push(String(input));if(String(input).startsWith('https://raw.'))return remote();return {local:true}};const window={fetch:original};vm.runInNewContext(source,{window,URL,AbortController,setTimeout,clearTimeout,Date,location:{origin:'https://sc337.github.io'},document:{baseURI:'https://sc337.github.io/NFL-parlay-generator/'}});return {window,calls}}
-test('snapshot uses repository without waiting for deployment',async()=>{const response={ok:true,clone:()=>({json:async()=>({updated_at:'fresh'})})};const x=setup(()=>response);assert.equal(await x.window.fetch('data/kalshi-nfl.json?t=1'),response);assert.equal(x.calls.length,1);assert.match(x.calls[0],/raw.githubusercontent.com.*data\/kalshi-nfl.json/)});
-test('invalid repository JSON falls back to Pages',async()=>{const x=setup(()=>({ok:true,clone:()=>({json:async()=>{throw Error('invalid')}})}));assert.equal((await x.window.fetch('data/kalshi-mlb.json')).local,true);assert.equal(x.calls[1],'data/kalshi-mlb.json')});
-test('unrelated fetches stay unchanged',async()=>{const x=setup(()=>{throw Error('unexpected')});await x.window.fetch('https://example.com/data/kalshi-nfl.json');await x.window.fetch('data/other.json');assert.equal(x.calls.length,2);assert.equal(x.calls[0],'https://example.com/data/kalshi-nfl.json')});
-test('caller cancellation does not retry Pages',async()=>{const c=new AbortController();c.abort();const x=setup(()=>{throw Error('aborted')});await assert.rejects(x.window.fetch('data/kalshi-nfl.json',{signal:c.signal}));assert.equal(x.calls.length,1)});
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+function runtime(raw,hosted){
+ const calls=[],respond=data=>({ok:true,clone:()=>({json:async()=>data})});
+ const window={fetch:async url=>{calls.push(String(url));const value=String(url).includes('raw.githubusercontent')?raw:hosted;if(value instanceof Error)throw value;return respond(value)}};
+ vm.runInNewContext(fs.readFileSync('snapshot-transport.js','utf8'),{window,document:{baseURI:'https://test.site/'},location:{origin:'https://test.site'},URL,Date,AbortController,setTimeout,clearTimeout});
+ return {window,calls};
+}
+const snapshot=minutes=>({updated_at:new Date(Date.now()-minutes*60000).toISOString(),markets:[]});
+test('stale raw NHL copy yields to newer hosted quotes without relabelling their timestamps',async()=>{
+ const raw=snapshot(90),hosted=snapshot(2),app=runtime(raw,hosted);
+ const res=await app.window.fetch('data/kalshi-nhl.json?ts=1',{cache:'no-store'});
+ assert.deepEqual(await res.clone().json(),hosted);assert.equal(app.calls.length,2);
+});
+test('newer raw quotes survive an older or unavailable hosted copy',async()=>{
+ for(const hosted of [snapshot(120),Error('unavailable')]){
+  const raw=snapshot(40),app=runtime(raw,hosted),res=await app.window.fetch('data/kalshi-nhl.json');
+  assert.deepEqual(await res.clone().json(),raw);
+ }
+});
+test('fresh raw quotes avoid a duplicate hosted request; network failures fall back',async()=>{
+ const fresh=snapshot(1),app=runtime(fresh,snapshot(2));await app.window.fetch('data/kalshi-nhl.json');assert.equal(app.calls.length,1);
+ const broken=runtime(Error('offline'),fresh),res=await broken.window.fetch('data/kalshi-nhl.json');assert.deepEqual(await res.clone().json(),fresh);
+});

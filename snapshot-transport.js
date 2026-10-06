@@ -25,6 +25,19 @@
       // Validate before falling back: consumers retain their freshness/schema guards.
       const data = await response.clone().json();
       if (!data || typeof data !== 'object') throw new Error('Invalid snapshot JSON');
+      const at = Date.parse(data.updated_at || data.generated_at || '');
+      if (file.startsWith('kalshi-') && (!Number.isFinite(at) || at > Date.now()+300000 || Date.now()-at > 1800000)) {
+        // Raw GitHub can lag behind Pages. Check the hosted copy before
+        // letting a successful but old response trigger a stale-feed screen.
+        try {
+          const hosted = await nativeFetch(input, init);
+          if (hosted.ok) {
+            const candidate = await hosted.clone().json();
+            const newer = Date.parse(candidate?.updated_at || candidate?.generated_at || '');
+            if (Number.isFinite(newer) && newer <= Date.now()+300000 && (!Number.isFinite(at) || at > Date.now()+300000 || newer > at)) return hosted;
+          }
+        } catch (error) { if (signal?.aborted) throw error; }
+      }
       return response;
     } catch (error) {
       if (signal?.aborted) throw error;
