@@ -11,9 +11,9 @@ function decision(row,offered=null){
  const independent=row.forecast?.marketAnchored!==true;
  return {quality:q,minimum:independent?minimumOdds(q.conservativeP):null,ev,ready:q.pass&&q.validated&&independent&&!q.warnings.length&&valid&&ev>=.02,offered:valid?offered:null};
 }
-function eligible(rows,{date='upcoming',sport='all',excluded=[],now=Date.now()}={}){
- const omit=new Set(excluded),seen=new Set(),counts={},day=new Date(now).toDateString();
- const ranked=rows.filter(r=>sports.includes(r.sport)&&(sport==='all'||sport===r.sport)&&!omit.has(id(r))&&Date.parse(start(r))>now&&Date.parse(start(r))<=now+7*86400000&&(date!=='today'||new Date(start(r)).toDateString()===day))
+function eligible(rows,{date='upcoming',sport='all',excluded=[],excludedEvents=[],now=Date.now()}={}){
+ const omit=new Set(excluded),omitEvents=new Set(excludedEvents),seen=new Set(),counts={},day=new Date(now).toDateString();
+ const ranked=rows.filter(r=>sports.includes(r.sport)&&(sport==='all'||sport===r.sport)&&!omit.has(id(r))&&!omitEvents.has(event(r))&&Date.parse(start(r))>now&&Date.parse(start(r))<=now+7*86400000&&(date!=='today'||new Date(start(r)).toDateString()===day))
   .map(r=>({...r,quality:decision(r).quality})).filter(r=>r.quality.pass).sort((a,b)=>b.quality.rank-a.quality.rank||id(a).localeCompare(id(b)));
  return ranked.filter(r=>{const key=event(r);if(seen.has(key)||(counts[r.sport]||0)>=3)return false;seen.add(key);counts[r.sport]=(counts[r.sport]||0)+1;return true});
 }

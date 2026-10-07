@@ -5,7 +5,7 @@ const quoteTokens=new Map();
 const esc=x=>G.esc(String(x??'')),fmt=o=>o>0?'+'+o:String(o),active=()=>window.__ACTIVE_SPORT==='bankroll';
 try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x?.version===1&&Array.isArray(x.passed)&&Array.isArray(x.records)){state={version:1,passed:x.passed.filter(r=>typeof r.id==='string'&&Date.now()-r.at<7*86400000).slice(-500),records:x.records.filter(r=>typeof r.id==='string'&&Q.odds(r.odds)&&['pending','won','lost','void'].includes(r.status)).slice(-500)}}}catch{}
 function write(next){try{localStorage.setItem(KEY,JSON.stringify(next));state=next;return true}catch{notice='Storage is unavailable. This action was not saved.';return false}}
-function available(){return C.eligible(rows,{date,sport,excluded:[...state.passed.map(r=>r.id),...state.records.map(r=>r.pickId)]})}
+function available(){return C.eligible(rows,{date,sport,excludedEvents:state.records.map(r=>r.eventId).filter(Boolean),excluded:[...state.passed.map(r=>r.id),...state.records.map(r=>r.pickId)]})}
 function current(){return available()[0]}
 function time(r){return new Date(C.start(r)).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'})}
 function book(r){return window.CAESARS_COMPARE?.lookup?.(quoteTokens.get(C.id(r)))||null}
@@ -68,7 +68,7 @@ function act(action){
  const pickId=C.id(r);
  if(action==='pass'){if(write({...state,passed:[...state.passed,{id:pickId,at:Date.now()}].slice(-500)})){history.push({pickId});notice='Passed. Swipe or choose the next pick.'}}
  if(action==='save'){
-  const odds=d.offered?.price||d.quality.quote.odds,record={id:crypto.randomUUID(),pickId,sport:r.sport,label:r.label,event:r.event,start:C.start(r),createdAt:new Date().toISOString(),snapshotAt:r.snapshotAt,odds,oddsSource:d.offered?'Caesars':'Simulated '+d.quality.quote.source,modelP:d.quality.modelP,conservativeP:d.quality.conservativeP,evidence:d.quality.validated?'Validated estimate':'Unvalidated estimate',status:'pending',profit:0};
+  const odds=d.offered?.price||d.quality.quote.odds,record={id:crypto.randomUUID(),pickId,eventId:C.event(r),sport:r.sport,label:r.label,event:r.event,start:C.start(r),createdAt:new Date().toISOString(),snapshotAt:r.snapshotAt,odds,oddsSource:d.offered?'Caesars':'Simulated '+d.quality.quote.source,modelP:d.quality.modelP,conservativeP:d.quality.conservativeP,evidence:d.quality.validated?'Validated estimate':'Unvalidated estimate',status:'pending',profit:0};
   if(write({...state,records:[...state.records,record].slice(-500)})){history.push({pickId,recordId:record.id});notice='Saved to paper tracking at '+fmt(odds)+'.'}
  }
  render();
