@@ -29,4 +29,4 @@ test('Generate ignores repeated clicks and regenerates once for a changed leg co
  select.value='4';a.window.PARLAY_GENERATOR.run();resolve();await run;while(frames.length)frames.shift()();await Promise.resolve();assert.equal(count,2);resolve();await Promise.resolve();
 });
 
-test('new visits default to Bankroll while saved sports remain selected',()=>{assert.equal(setup().ui.getSport(),'bankroll');assert.equal(setup({sport:'bankroll'}).ui.getSport(),'bankroll');assert.equal(setup({sport:'nfl'}).ui.getSport(),'nfl')});
+test('new visits and removed Bankroll preferences open NFL while saved sports remain selected',()=>{assert.equal(setup().ui.getSport(),'nfl');assert.equal(setup({sport:'bankroll'}).ui.getSport(),'nfl');assert.equal(setup({sport:'nfl'}).ui.getSport(),'nfl')});
