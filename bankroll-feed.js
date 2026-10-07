@@ -42,7 +42,7 @@ async function refresh(){
  for(const s of C.sports){const d=data['kalshi-'+s+'.json'],ctx=data[s+'-context.json'];sources[s]=!d?'Unavailable':!G.fresh(d,.5)?'Stale':(['mlb','ncaaf','nhl'].includes(s)&&(!ctx||!G.fresh(ctx,12)))?'Context unavailable':'Fresh';if(sources[s]==='Fresh')next.push(...collect(s,d,ctx));}
  rows=next;loading=false;loadedAt=Date.now();render();
 }
-function pricing(r){const d=C.decision(r,book(r));return '<span class="bankroll-evidence">'+(d.ready?'Validated · Price qualifies':'Paper tracking')+'</span><p class="bankroll-price-state">'+(d.ready?'Verified price meets the conservative threshold':d.offered?'Caesars price verified · Model/lineup validation pending':'Price check needed · Reference price shown')+'</p>'}
+function pricing(r){const d=C.decision(r,book(r));return '<span class="bankroll-evidence">'+(d.ready?'Validated · Price qualifies':'Paper tracking')+'</span><p class="bankroll-price-state">'+(d.ready?'Verified price meets the conservative threshold':d.offered?(d.quality.validated&&!d.quality.warnings.length&&d.minimum!=null?'Caesars price verified · Below the minimum price':'Caesars price verified · Model/lineup validation pending'):'Price check needed · Reference price shown')+'</p>'}
 function render(){
  if(!root||!active())return;const list=available(),r=list[0],stats=C.summary(state.records);
  const options='<option value="all">All sports</option>'+C.sports.map(s=>'<option value="'+s+'"'+(sport===s?' selected':'')+'>'+s.toUpperCase()+'</option>').join('');
@@ -79,9 +79,9 @@ function mount(){
  root.addEventListener('change',e=>{if(e.target.id==='bankrollSport')sport=e.target.value;if(e.target.id==='bankrollDate')date=e.target.value;render()});
  root.addEventListener('keydown',e=>{if(!e.target.matches('.bankroll-swipe-card')||!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();act(e.key==='ArrowRight'?'save':'pass')});
  let pointer=null;
- root.addEventListener('pointerdown',e=>{const card=e.target.closest('.bankroll-swipe-card');if(!card||e.target.closest('button,input,select,summary,details,a')||e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,card};card.setPointerCapture?.(e.pointerId)});
+ root.addEventListener('pointerdown',e=>{const card=e.target.closest('.bankroll-swipe-card');if(!card||e.target.closest('button,input,select,summary,details,a')||e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY,card,pickId:current()&&C.id(current())};card.setPointerCapture?.(e.pointerId)});
  root.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(Math.abs(dx)>Math.abs(dy)*1.4)pointer.card.style.transform='translateX('+Math.max(-150,Math.min(150,dx))+'px) rotate('+(dx/30)+'deg)'});
- root.addEventListener('pointerup',e=>{if(!pointer||pointer.id!==e.pointerId)return;const action=C.gesture(e.clientX-pointer.x,e.clientY-pointer.y);pointer.card.style.transform='';pointer=null;if(action)act(action)});
+ root.addEventListener('pointerup',e=>{if(!pointer||pointer.id!==e.pointerId)return;const unchanged=current()&&C.id(current())===pointer.pickId,action=unchanged?C.gesture(e.clientX-pointer.x,e.clientY-pointer.y):null;pointer.card.style.transform='';pointer=null;if(action)act(action)});
  root.addEventListener('pointercancel',()=>{if(pointer)pointer.card.style.transform='';pointer=null});
  document.addEventListener('caesars-quotes-updated',()=>{if(!active()||view!=='feed')return;const r=current(),node=root.querySelector('#bankrollPricing');if(r&&node){const html=pricing(r);if(node.innerHTML!==html)node.innerHTML=html}});
 }
