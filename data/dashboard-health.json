@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-07T11:31:33.121Z",
-  "status": "warning",
+  "updated_at": "2026-10-07T13:37:03.390Z",
+  "status": "critical",
   "sports": {
     "nfl": {
       "snapshotAt": "2026-10-07T11:31:00.116710+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 126,
       "markets": 2144,
       "quotedMarkets": 2144,
       "playerMarkets": 846,
@@ -144,15 +144,12 @@
         "kalshi-denver-broncos-los-angeles-chargers": 124,
         "kalshi-san-francisco-49ers-seattle-seahawks": 96,
         "kalshi-arizona-cardinals-detroit-lions": 80,
-        "kalshi-atlanta-falcons-baltimore-ravens": 100,
-        "kalshi-new-york-giants-washington-commanders": 3,
-        "kalshi-indianapolis-colts-pittsburgh-steelers": 4,
-        "kalshi-cincinnati-bengals-miami-dolphins": 2
+        "kalshi-atlanta-falcons-baltimore-ravens": 100
       }
     },
     "mlb": {
       "snapshotAt": "2026-10-07T11:31:00.109604+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 126,
       "markets": 147,
       "quotedMarkets": 147,
       "playerMarkets": 30,
@@ -182,14 +179,12 @@
       ],
       "playerCounts": {
         "849822": 16,
-        "849827": 8,
-        "849833": 6,
         "849838": 14
       }
     },
     "ncaaf": {
       "snapshotAt": "2026-10-07T11:31:00.112049+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 126,
       "markets": 4219,
       "quotedMarkets": 4216,
       "playerMarkets": 0,
@@ -479,15 +474,18 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-07T11:31:04.738396+00:00",
+      "snapshotAt": "2026-10-07T13:37:01.706475+00:00",
       "ageMinutes": 0,
-      "markets": 548,
-      "quotedMarkets": 548,
-      "playerMarkets": 0,
+      "markets": 1048,
+      "quotedMarkets": 1048,
+      "playerMarkets": 500,
       "families": {
         "moneyline": 106,
         "spread": 136,
-        "total": 306
+        "total": 306,
+        "goals": 244,
+        "assists": 114,
+        "points": 142
       },
       "futureEvents": [
         {
@@ -703,11 +701,14 @@
           "time": "2026-10-07T23:30Z"
         }
       ],
-      "playerCounts": {}
+      "playerCounts": {
+        "401891830": 254,
+        "401892455": 246
+      }
     },
     "ufc": {
       "snapshotAt": "2026-10-07T11:31:00.132217+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 126,
       "markets": 24,
       "quotedMarkets": 24,
       "playerMarkets": 0,
@@ -769,6 +770,33 @@
   },
   "alerts": [
     {
+      "id": "nfl:stale",
+      "sport": "nfl",
+      "code": "stale",
+      "severity": "critical",
+      "message": "Feed is 126 minutes old.",
+      "firstSeen": "2026-10-07T13:37:03.390Z",
+      "changedAt": "2026-10-07T13:37:03.390Z"
+    },
+    {
+      "id": "mlb:stale",
+      "sport": "mlb",
+      "code": "stale",
+      "severity": "critical",
+      "message": "Feed is 126 minutes old.",
+      "firstSeen": "2026-10-07T13:37:03.390Z",
+      "changedAt": "2026-10-07T13:37:03.390Z"
+    },
+    {
+      "id": "ncaaf:stale",
+      "sport": "ncaaf",
+      "code": "stale",
+      "severity": "critical",
+      "message": "Feed is 126 minutes old.",
+      "firstSeen": "2026-10-07T13:37:03.390Z",
+      "changedAt": "2026-10-07T13:37:03.390Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -776,10 +804,28 @@
       "message": "2464 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "ufc:stale",
+      "sport": "ufc",
+      "code": "stale",
+      "severity": "critical",
+      "message": "Feed is 126 minutes old.",
+      "firstSeen": "2026-10-07T13:37:03.390Z",
+      "changedAt": "2026-10-07T13:37:03.390Z"
+    },
+    {
+      "id": "archive:stale",
+      "sport": null,
+      "code": "archive-stale",
+      "severity": "warning",
+      "message": "Daily recommendation archive has not refreshed successfully.",
+      "firstSeen": "2026-10-07T13:37:03.390Z",
+      "changedAt": "2026-10-07T13:37:03.390Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37580111775",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37629869888",
   "refreshResults": {
     "nfl": {
       "ok": true,
@@ -795,7 +841,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-07T11:31:05.970703+00:00"
+      "at": "2026-10-07T13:37:03.372101+00:00"
     },
     "ufc": {
       "ok": true,
