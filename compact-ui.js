@@ -25,7 +25,7 @@ function moveConsensus(){
 
 function updateHeader(){
   const sport=(window.__ACTIVE_SPORT||'nfl').toUpperCase();
-  const heading=$('.brand-block h1'),headingText=sport==='BANKROLL'?'TODAY':sport;if(heading&&heading.textContent!==headingText)heading.textContent=headingText;
+  const heading=$('.brand-block h1'),headingText=sport==='BANKROLL'?'Bankroll':sport;if(heading&&heading.textContent!==headingText)heading.textContent=headingText;
   const marks={NHL:'https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png',NFL:'https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png',MLB:'https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png',NCAAF:'https://upload.wikimedia.org/wikipedia/commons/d/dd/NCAA_logo.svg',UFC:'assets/ufc-logo.svg'};
   const logo=$('#leagueLogo'),mark=$('#leagueMark');if(logo&&mark){mark.dataset.league=sport;const fallback=mark.querySelector('.league-fallback');if(fallback)fallback.textContent=sport==='BANKROLL'?'$':sport;if(sport==='BANKROLL')mark.classList.remove('logo-loaded');else{const src=marks[sport]||marks.NFL;if(logo.getAttribute('src')!==src){mark.classList.remove('logo-loaded');logo.alt=sport+' logo';logo.src=src}logo.onload=()=>mark.classList.add('logo-loaded');logo.onerror=()=>mark.classList.remove('logo-loaded');if(logo.complete&&logo.naturalWidth)mark.classList.add('logo-loaded')}}
   const source=$('#dataStatus'),label=$('#statusLabel'),wrap=$('.header-status');

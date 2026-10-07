@@ -28,6 +28,7 @@ async function refresh(){
     else if(active==='ncaaf')await window.NCAAF_DASHBOARD?.load?.();
     else if(active==='nhl')await window.NHL_DASHBOARD?.load?.();
     else if(active==='ufc')await window.UFC_DASHBOARD?.load?.();
+    else if(active==='bankroll')await window.BANKROLL_FEED?.refresh?.();
   }finally{button.disabled=false;button.classList.remove('refreshing');update()}
 }
 function mount(){

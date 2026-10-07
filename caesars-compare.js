@@ -57,6 +57,7 @@ function register(s,m){
  if(!token){token='cq'+(++serial);tokens.set(identity,token);records.set(token,{d,status:d?'loading':'unavailable',quote:null})}
  schedule();return token;
 }
+function lookup(token){const r=records.get(token);return key()&&key()===lastKey&&r?.quote&&fresh(r.quote.at)?{...r.quote}:null}
 function paint(){
  for(const node of document.querySelectorAll('[data-caesars-id]')){
   let price=node.querySelector('.caesars-quote');
@@ -69,6 +70,7 @@ function paint(){
   if(price.textContent!==text)price.textContent=text;
   price.title=q?'Exact matching line · Updated '+new Date(q.at).toLocaleTimeString():'No current exact matching Caesars quote';
  }
+ if(typeof CustomEvent==='function')document.dispatchEvent?.(new CustomEvent('caesars-quotes-updated'));
 }
 async function json(url,credential){
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
@@ -81,7 +83,8 @@ async function cached(id,fn){const row=cache.get(id);if(row&&Date.now()-row.at<(
 async function update(){
  const credential=key();if(credential!==lastKey){lastKey=credential;cache.clear();for(const r of records.values()){r.quote=null;r.status=r.d?'loading':'unavailable'}}
  if(!credential){paint();return}
- const s=document.body.dataset.sport||'nfl',active=[...document.querySelectorAll('[data-caesars-id]')].map(n=>records.get(n.dataset.caesarsId)).filter(r=>r?.d?.sport===s);
+ const visible=[...document.querySelectorAll('[data-caesars-id]')].filter(n=>document.body.dataset.sport==='bankroll'?!!n.closest?.('#bankrollFeed'):!n.closest?.('#bankrollFeed')).map(n=>records.get(n.dataset.caesarsId));
+ const view=document.body.dataset.sport||'nfl',s=view==='bankroll'?visible.find(r=>r?.d)?.d.sport:view,active=visible.filter(r=>r?.d?.sport===s);
  if(!active.length||pending.has(s))return;pending.add(s);
  try{
   const events=await cached(credential+':'+s+':events',()=>json(new URL('https://api.the-odds-api.com/v4/sports/'+sports[s]+'/events'),credential));
@@ -100,7 +103,7 @@ async function update(){
  finally{pending.delete(s);if(key()===credential)paint()}
 }
 function schedule(){clearTimeout(timer);timer=setTimeout(()=>{paint();update()},100)}
-window.CAESARS_COMPARE={register,descriptor,eventMatch,matchingQuote,refresh:schedule};
+window.CAESARS_COMPARE={register,descriptor,eventMatch,matchingQuote,lookup,refresh:schedule};
 if(typeof MutationObserver!=='undefined')new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['data-sport']});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
 window.setInterval?.(schedule,60000);

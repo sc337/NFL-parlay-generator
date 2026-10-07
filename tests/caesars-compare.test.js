@@ -9,9 +9,9 @@ function runtime(credential='',failure=false){
  const context=vm.createContext({window,document,URL,Date,AbortController,localStorage:{getItem:()=>key},setTimeout:fn=>{const id=++serial;timers.set(id,fn);return id},clearTimeout:id=>timers.delete(id)});
  vm.runInContext(fs.readFileSync('pick-quality.js','utf8'),context);vm.runInContext(fs.readFileSync('caesars-compare.js','utf8'),context);
  const api=window.CAESARS_COMPARE;
- function mount(token){let price;const tile={classList:{contains:()=>true,add(){},remove(){}},append(p){price=p}},node={dataset:{caesarsId:token},classList:{contains:()=>false},querySelector:s=>s==='.caesars-quote'?price:tile};nodes.push(node);return ()=>price?.textContent}
+ function mount(token){let price;const tile={classList:{contains:()=>true,add(){},remove(){}},append(p){price=p}},node={closest:()=>document.body.dataset.sport==='bankroll'?{}:null,dataset:{caesarsId:token},classList:{contains:()=>false},querySelector:s=>s==='.caesars-quote'?price:tile};nodes.push(node);return ()=>price?.textContent}
  async function flush(){const entry=[...timers.entries()][0];if(entry){timers.delete(entry[0]);entry[1]()}for(let i=0;i<20;i++)await Promise.resolve()}
- return {api,calls,mount,flush,setKey:x=>key=x};
+ return {api,calls,mount,flush,document,setKey:x=>key=x};
 }
 test('exact NHL alternate selection uses the signed line and actual Caesars book',()=>{
  const {api}=runtime('fixture'),d=api.descriptor('nhl',pick);assert.equal(d.line,2.5);assert.equal(d.team,teams[1]);assert.equal(api.matchingQuote(d,event()).price,-125);
@@ -47,3 +47,5 @@ test('initial API-key startup cannot race a paid sportsbook feed against Kalshi'
  const source=fs.readFileSync('app.js','utf8'),context=vm.createContext({window:{},state:{apiKey:'fixture'},setStatus(){},fetch(){throw Error('Bootstrap must not fetch paid odds')}});
  vm.runInContext(source.slice(source.indexOf('async function loadData(){'),source.indexOf('\nfunction normalizeGame')),context);assert.equal(await context.loadData(),false);
 });
+
+test('Bankroll routes the visible card to its sport and exposes only a fresh quote for the current key',async()=>{const app=runtime('fixture');app.document.body.dataset.sport='bankroll';const token=app.api.register('nhl',pick),read=app.mount(token);assert.equal(app.api.lookup(token),null);await app.flush();assert.equal(read(),'Caesars -125');assert.equal(app.api.lookup(token).price,-125);assert.match(app.calls[0].pathname,/icehockey_nhl/);const quote=app.api.lookup(token);quote.price=999;assert.equal(app.api.lookup(token).price,-125);app.setKey('changed');assert.equal(app.api.lookup(token),null);app.setKey('');assert.equal(app.api.lookup(token),null)});
