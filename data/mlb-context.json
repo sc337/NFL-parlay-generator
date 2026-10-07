@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-07T18:26:59.731024+00:00",
+  "updated_at": "2026-10-07T18:36:59.879876+00:00",
   "source": "MLB Stats API",
   "games": [
     {
@@ -111,7 +111,17 @@
       },
       "startersConfirmed": false,
       "lineupsConfirmed": false,
-      "lineupPlayerIds": []
+      "lineupPlayerIds": [
+        605141,
+        518692,
+        669257,
+        660271,
+        606192,
+        571970,
+        571771,
+        663656,
+        681624
+      ]
     },
     {
       "gamePk": 849838,
@@ -203,7 +213,11 @@
       "awayId": 135,
       "homeId": 158,
       "awayProbable": null,
-      "homeProbable": null,
+      "homeProbable": {
+        "id": 694819,
+        "fullName": "Jacob Misiorowski",
+        "link": "/api/v1/people/694819"
+      },
       "startersConfirmed": false,
       "lineupsConfirmed": false,
       "lineupPlayerIds": []
@@ -344,6 +358,22 @@
       "bbRate": 0.1118,
       "kPer9": "9.71",
       "bbPer9": "4.06",
+      "recent30": {}
+    },
+    "694819": {
+      "id": 694819,
+      "name": "Jacob Misiorowski",
+      "throws": "R",
+      "era": "1.80",
+      "whip": "0.80",
+      "innings": 174.2,
+      "strikeouts": 252.0,
+      "walks": 44.0,
+      "battersFaced": 665.0,
+      "kRate": 0.3789,
+      "bbRate": 0.0662,
+      "kPer9": "12.98",
+      "bbPer9": "2.27",
       "recent30": {}
     },
     "682982": {
@@ -540,11 +570,12 @@
     }
   },
   "players": {
-    "Tyler Mahle": 641816,
-    "Nick Martinez": 607259,
-    "Walker Buehler": 621111,
     "Tyler Glasnow": 607192,
-    "Max Fried": 608331
+    "Tyler Mahle": 641816,
+    "Robert Gasser": 688107,
+    "Max Fried": 608331,
+    "Nick Martinez": 607259,
+    "Walker Buehler": 621111
   },
   "hitters": {},
   "scoring": {
@@ -704,6 +735,6 @@
       "games": 293,
       "runs_per_team": 4.422
     },
-    "as_of": "2026-10-07T18:26:59.731024+00:00"
+    "as_of": "2026-10-07T18:36:59.879876+00:00"
   }
 }
