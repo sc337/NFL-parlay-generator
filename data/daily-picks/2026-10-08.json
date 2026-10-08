@@ -2,22 +2,58 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-08",
-  "updated_at": "2026-10-08T09:03:37.914Z",
+  "updated_at": "2026-10-08T09:13:38.015Z",
   "sports": {
     "nfl": {
-      "captured": 18,
+      "captured": 12,
       "passes": [
+        {
+          "mode": "sgp",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "safe",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "long",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "sgp",
           "profile": "safe",
           "requestedLegs": 4,
           "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "long",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T09:03:17.924703+00:00"
+      "snapshotAt": "2026-10-08T09:13:17.925267+00:00"
     },
     "mlb": {
-      "captured": 4,
+      "captured": 0,
       "passes": [
         {
           "mode": "multi",
@@ -44,22 +80,16 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T09:03:17.920569+00:00"
+      "snapshotAt": "2026-10-08T09:13:17.919984+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-08T09:03:17.922611+00:00"
+      "snapshotAt": "2026-10-08T09:13:17.922025+00:00"
     },
     "nhl": {
-      "captured": 6,
+      "captured": 7,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "balanced",
@@ -67,7 +97,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T08:52:27.818437+00:00"
+      "snapshotAt": "2026-10-08T09:02:27.521918+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -97,7 +127,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T09:03:17.935567+00:00"
+      "snapshotAt": "2026-10-08T09:13:17.934309+00:00"
     }
   },
   "records": [
@@ -6354,6 +6384,119 @@
           "projectedMargin": null,
           "projectedAway": null,
           "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-08|nhl|multi|balanced|3||85daaf92088c8295",
+      "day": "2026-10-08",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-08T09:13:38.015Z",
+      "snapshotAt": "2026-10-08T09:02:27.521918+00:00",
+      "sourceVersion": "c38ac97fd1e31d7ab14a0800cfa3a6f37f67864c",
+      "priceEstimate": 395,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT08COLCGY-COL|yes",
+          "ticker": "KXNHLGAME-26OCT08COLCGY-COL",
+          "side": "yes",
+          "eventId": "401892463",
+          "event": "Avalanche vs Flames",
+          "eventTime": "2026-10-09T01:00Z",
+          "closeTime": "2026-10-11T01:00:00Z",
+          "selection": "Avalanche ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.69,
+          "referenceAmericanOdds": null,
+          "marketP": 0.685,
+          "modelP": 0.7849790536907384,
+          "rawModelP": 0.7849790536907384,
+          "coverage": 0.525,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.120967916416334,
+          "projectedMargin": null,
+          "projectedAway": 4.035479364835141,
+          "projectedHome": 2.085488551581193,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLTOTAL-26OCT08VANCAR-6|yes",
+          "ticker": "KXNHLTOTAL-26OCT08VANCAR-6",
+          "side": "yes",
+          "eventId": "401892461",
+          "event": "Canucks vs Hurricanes",
+          "eventTime": "2026-10-08T23:00Z",
+          "closeTime": "2026-10-10T23:00:00Z",
+          "selection": "Over 5.5 goals",
+          "market": "total",
+          "line": 5.5,
+          "player": null,
+          "ask": 0.61,
+          "referenceAmericanOdds": null,
+          "marketP": 0.605,
+          "modelP": 0.7045336521900359,
+          "rawModelP": 0.7045336521900359,
+          "coverage": 0.5333333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 7.167702633126882,
+          "projectedTotal": 7.167702633126882,
+          "projectedMargin": null,
+          "projectedAway": 2.733915173801603,
+          "projectedHome": 4.433787459325279,
+          "isAltLine": true,
+          "altReferenceLine": 6.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT10MINFLA-MIN|yes",
+          "ticker": "KXNHLGAME-26OCT10MINFLA-MIN",
+          "side": "yes",
+          "eventId": "401891805",
+          "event": "Wild vs Panthers",
+          "eventTime": "2026-10-10T22:00Z",
+          "closeTime": "2026-10-12T22:00:00Z",
+          "selection": "Wild ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.48,
+          "referenceAmericanOdds": null,
+          "marketP": 0.455,
+          "modelP": 0.58515066664544,
+          "rawModelP": 0.58515066664544,
+          "coverage": 0.525,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.987395163673267,
+          "projectedMargin": null,
+          "projectedAway": 3.258834006615462,
+          "projectedHome": 2.728561157057805,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
