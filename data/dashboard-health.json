@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-07T23:52:42.811Z",
+  "updated_at": "2026-10-08T00:01:46.495Z",
   "status": "warning",
   "sports": {
     "nfl": {
       "snapshotAt": "2026-10-07T23:51:34.712676+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 4573,
       "quotedMarkets": 4573,
       "playerMarkets": 3187,
@@ -155,85 +155,34 @@
     },
     "mlb": {
       "snapshotAt": "2026-10-07T23:51:37.707442+00:00",
-      "ageMinutes": 1,
-      "markets": 630,
-      "quotedMarkets": 630,
-      "playerMarkets": 516,
+      "ageMinutes": 10,
+      "markets": 315,
+      "quotedMarkets": 315,
+      "playerMarkets": 258,
       "families": {
-        "moneyline": 4,
-        "spread": 12,
-        "total": 98,
-        "strikeouts": 27,
-        "hits": 97,
-        "home_runs": 35,
-        "rbi": 66,
-        "hrr": 165,
-        "total_bases": 126
+        "moneyline": 2,
+        "spread": 6,
+        "total": 49,
+        "strikeouts": 13,
+        "hits": 49,
+        "home_runs": 17,
+        "rbi": 34,
+        "hrr": 83,
+        "total_bases": 62
       },
       "futureEvents": [
         {
           "id": "849827",
           "time": "2026-10-08T02:00:00Z"
-        },
-        {
-          "id": "KXMLBGAME-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBSPREAD-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBTOTAL-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBKS-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBHIT-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBHR-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBRBI-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBHRR-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBTB-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "KXMLBTEAMTOTAL-26OCT072000TBNYY",
-          "time": "2026-10-08T00:00:00.000Z"
-        },
-        {
-          "id": "849838",
-          "time": "2026-10-08T00:00:00Z"
         }
       ],
       "playerCounts": {
-        "849827": 258,
-        "849838": 64,
-        "KXMLBKS-26OCT072000TBNYY": 14,
-        "KXMLBHIT-26OCT072000TBNYY": 48,
-        "KXMLBHR-26OCT072000TBNYY": 18,
-        "KXMLBRBI-26OCT072000TBNYY": 32,
-        "KXMLBHRR-26OCT072000TBNYY": 82,
-        "KXMLBTB-26OCT072000TBNYY": 64
+        "849827": 258
       }
     },
     "ncaaf": {
       "snapshotAt": "2026-10-07T23:51:34.708988+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 4169,
       "quotedMarkets": 4165,
       "playerMarkets": 0,
@@ -519,19 +468,15 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-07T23:51:43.877143+00:00",
-      "ageMinutes": 1,
-      "markets": 816,
-      "quotedMarkets": 816,
-      "playerMarkets": 222,
+      "snapshotAt": "2026-10-08T00:01:44.087284+00:00",
+      "ageMinutes": 0,
+      "markets": 594,
+      "quotedMarkets": 594,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 102,
         "spread": 150,
-        "total": 342,
-        "goals": 104,
-        "assists": 50,
-        "points": 64,
-        "saves": 4
+        "total": 342
       },
       "futureEvents": [
         {
@@ -745,7 +690,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-07T23:51:36.201120+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 108,
       "quotedMarkets": 108,
       "playerMarkets": 0,
@@ -906,10 +851,19 @@
       "message": "2464 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "nhl:props-missing",
+      "sport": "nhl",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-08T00:01:46.495Z",
+      "changedAt": "2026-10-08T00:01:46.495Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37704581903",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/37678875149",
   "refreshResults": {
     "nfl": {
       "ok": true,
@@ -925,7 +879,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-07T23:52:42.795448+00:00"
+      "at": "2026-10-08T00:01:46.473454+00:00"
     },
     "ufc": {
       "ok": true,
