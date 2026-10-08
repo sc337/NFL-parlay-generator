@@ -2,12 +2,31 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-07",
-  "updated_at": "2026-10-08T02:52:57.825Z",
+  "updated_at": "2026-10-08T03:02:58.038Z",
   "sports": {
     "nfl": {
-      "captured": 18,
-      "passes": [],
-      "snapshotAt": "2026-10-08T02:52:30.036362+00:00"
+      "captured": 15,
+      "passes": [
+        {
+          "mode": "sgp",
+          "profile": "safe",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "long",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        }
+      ],
+      "snapshotAt": "2026-10-08T03:02:30.036104+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -37,17 +56,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T02:52:30.029049+00:00"
+      "snapshotAt": "2026-10-08T03:02:30.027195+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-08T02:52:30.035586+00:00"
+      "snapshotAt": "2026-10-08T03:02:30.029610+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-08T02:42:04.487490+00:00"
+      "snapshotAt": "2026-10-08T02:52:04.403317+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -77,7 +96,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-08T02:52:30.052604+00:00"
+      "snapshotAt": "2026-10-08T03:02:30.050780+00:00"
     }
   },
   "records": [
@@ -14715,6 +14734,119 @@
           "isAltLine": false,
           "altReferenceLine": 6.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-07|ncaaf|multi|best|3||0dfd1e3a32529fd2",
+      "day": "2026-10-07",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-08T03:02:58.038Z",
+      "snapshotAt": "2026-10-08T03:02:30.029610+00:00",
+      "sourceVersion": "7cb7d117fad0cad5e130f9f90b7929aafed48f89",
+      "priceEstimate": 454,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT10UNCPITT-PITT|yes",
+          "ticker": "KXNCAAFGAME-26OCT10UNCPITT-PITT",
+          "side": "yes",
+          "eventId": "401858256",
+          "event": "North Carolina Tar Heels at Pittsburgh Panthers",
+          "eventTime": "2026-10-10T16:00Z",
+          "closeTime": "2026-10-12T17:00:00Z",
+          "selection": "Pittsburgh",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.63,
+          "referenceAmericanOdds": null,
+          "marketP": 0.625,
+          "modelP": 0.7177658980746217,
+          "rawModelP": 0.7177658980746217,
+          "coverage": 0.8300000000000001,
+          "confidence": 50,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 50.5,
+          "projectedMargin": 12.1,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT10TULNARMY-ARMY|yes",
+          "ticker": "KXNCAAFGAME-26OCT10TULNARMY-ARMY",
+          "side": "yes",
+          "eventId": "401862795",
+          "event": "Tulane Green Wave at Army Black Knights",
+          "eventTime": "2026-10-10T16:00Z",
+          "closeTime": "2026-10-12T16:00:00Z",
+          "selection": "Army",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.61,
+          "referenceAmericanOdds": null,
+          "marketP": 0.605,
+          "modelP": 0.6944372709485114,
+          "rawModelP": 0.6944372709485114,
+          "coverage": 0.8300000000000001,
+          "confidence": 50,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 50.4,
+          "projectedMargin": 10.7,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT08MOSUWKU-MOSU|yes",
+          "ticker": "KXNCAAFGAME-26OCT08MOSUWKU-MOSU",
+          "side": "yes",
+          "eventId": "401871052",
+          "event": "Missouri State Bears at Western Kentucky Hilltoppers",
+          "eventTime": "2026-10-08T23:00Z",
+          "closeTime": "2026-10-10T23:00:00Z",
+          "selection": "Missouri St.",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.47,
+          "referenceAmericanOdds": null,
+          "marketP": 0.465,
+          "modelP": 0.5357436577813952,
+          "rawModelP": 0.5357436577813952,
+          "coverage": 0.8300000000000001,
+          "confidence": 52,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 56.2,
+          "projectedMargin": -1.9,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
