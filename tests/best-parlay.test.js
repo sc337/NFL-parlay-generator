@@ -14,7 +14,7 @@ test('NFL Generate preserves Conservative, Balanced and Lotto swipe order and re
  for(const mode of ['multi','sgp']){
   const app=nfl(mode);await app.run();await app.run();
   assert.deepEqual([...app.output[0]],[app.builds.safe,app.builds.balanced,app.builds.long]);assert.deepEqual([...app.output[1]],[...app.output[0]]);
-  assert.ok(app.previous.every(p=>p.length===0),'Risk profiles must not penalize overlap with other profiles');
+  if(mode==='sgp')assert.deepEqual(app.previous.slice(0,3).map(p=>p.length),[0,1,2]);
  }
 });
 test('NFL profiles remain separate when one produces a shorter fallback',async()=>{

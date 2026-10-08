@@ -98,3 +98,9 @@
  .more-analysis{margin-top:0!important}
  .dashboard-footer{padding-top:0;font-size:10px}
 }
+
+/* Cards follow their content instead of filling the carousel viewport. */
+#results.nfl-carousel{height:auto!important;min-height:0!important;align-items:flex-start!important;overflow-y:hidden!important}
+#results.nfl-carousel>.parlay-card{height:auto!important;min-height:0!important;align-self:flex-start!important}
+
+#results{height:auto!important;min-height:0!important;grid-template-rows:auto!important;align-items:start!important;overflow-y:visible!important}

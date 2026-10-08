@@ -607,9 +607,25 @@ function marketQuality(m,variant){
   return q;
 }
 
+function profileSelectionScore(q,variant){
+  const p=q.quote.p,likelihood=q.validated?q.conservativeP:Math.min(q.conservativeP,p);
+  if(variant==='safe'&&(p<.55||q.conservativeP<.55))return -999;
+  if(variant==='balanced'&&p<.45)return -999;
+  if(variant==='long'&&p>.70)return -999;
+  const coverage=q.coverage*12,edge=Math.max(0,Math.min(.15,q.conservativeP-p))*100;
+  if(variant==='safe')return likelihood*160+coverage+edge*.15;
+  if(variant==='long')return Math.log(1/p)*48+likelihood*30+coverage+edge*.5;
+  return likelihood*90+coverage+edge*.8-Math.abs(p-.60)*18;
+}
+function distinctProfileBuild(p,previous){
+  const balanced=previous.find(old=>old?.profile==='balanced');
+  if(p.profile==='long'&&balanced&&!(p.odds>balanced.odds))return false;
+  const changes=p.legs.length>=3?2:1;
+  return previous.filter(Boolean).every(old=>overlapCount(old,p)<=p.legs.length-changes&&parlaySignature(old)!==parlaySignature(p));
+}
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
-  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});return x.pass?x.rank:-999;}
+  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});return x.pass?profileSelectionScore(x,variant):-999;}
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
@@ -765,7 +781,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     let beams=[{legs:[],score:0}];
 
     for(let depth=0;depth<count;depth++){
-      const next=[];
+      const next=[],seenLegs=new Set();
       for(const beam of beams){
         for(const m of ranked){
           if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
@@ -784,7 +800,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
           const scriptFit=GAME_SCRIPTS[scriptKey].legFit(m,game);
           if(!window.PICK_QUALITY&&scriptFit<0) continue;
 
-          const diversityPenalty=previous.reduce((pen,p)=>pen + (p?.legs?.some(l=>l.name===m.name)?18:0),0);
+          const diversityPenalty=0;
 
           const s=beam.score
             + scriptMarketScore(m,game,variant,scriptKey,risk)
@@ -792,7 +808,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
             + (window.PICK_QUALITY?0:scriptFit*1.2)
             - diversityPenalty;
 
-          next.push({legs:[...beam.legs,m],score:s});
+          const legs=[...beam.legs,m],signature=parlaySignature({legs});if(seenLegs.has(signature))continue;seenLegs.add(signature);next.push({legs,score:s});
         }
       }
 
@@ -832,8 +848,8 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       .filter(x=>x.parlay);
 
     if(!finals.length) return null;
-    const distinct=finals.find(x=>previous.every(p=>overlapCount(p,x.parlay)<=1)) || finals[0];
-    return {...distinct,distinct:previous.every(p=>overlapCount(p,distinct.parlay)<=1)};
+    const distinct=finals.find(x=>distinctProfileBuild(x.parlay,previous));
+    return distinct?{...distinct,distinct:true}:null;
     }
 
     const selected=search(mixedTarget) || (mixedTarget ? search(0) : null);
@@ -872,7 +888,7 @@ function propFamily(m){
   return m?.type||'other';
 }
 
-function buildMulti(count,risk,variant){
+function buildMulti(count,risk,variant,previous=[]){
   count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
   window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
@@ -888,36 +904,20 @@ function buildMulti(count,risk,variant){
   }
   all.sort((a,b)=>b.score-a.score);
 
-  const legs=[],usedGames=new Set(),familyCounts=new Map();
-  const maxFamily=count>=3?Math.max(1,Math.ceil(count/2)):1;
-
-  // First pass: favor the strongest candidate while preventing one prop family
-  // (especially receptions) from monopolizing a multi-game build.
-  for(const x of all){
-    if(legs.length>=count) break;
-    if(usedGames.has(x.g.id)||x.m.player&&playerCount(legs,x.m.player)) continue;
-    const fam=propFamily(x.m),n=familyCounts.get(fam)||0;
-    if(x.m.player && n>=maxFamily) continue;
-    legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time});
-    usedGames.add(x.g.id);familyCounts.set(fam,n+1);
+  const ranked=all.slice(0,80);let beams=[{legs:[],games:new Set(),score:0}];
+  for(let depth=0;depth<count;depth++){
+    const next=[],seen=new Set();
+    for(const beam of beams)for(const x of ranked){
+      if(beam.games.has(x.g.id)||x.m.player&&playerCount(beam.legs,x.m.player))continue;
+      const legs=[...beam.legs,{...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time}];
+      const signature=parlaySignature({legs});if(seen.has(signature))continue;seen.add(signature);
+      const families=legs.map(propFamily),same=families.filter(f=>f===propFamily(x.m)).length;
+      next.push({legs,games:new Set([...beam.games,x.g.id]),score:beam.score+x.score-(x.m.player&&same>Math.ceil(count/2)?8:0)});
+    }
+    next.sort((a,b)=>b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b)));beams=next.slice(0,160);
   }
-
-  // Diversity is a preference, not a reason to discard an otherwise valid build.
-  // Fill remaining slots from qualified markets on unused games.
-  for(const x of all){
-    if(legs.length>=count) break;
-    if(usedGames.has(x.g.id)||x.m.player&&playerCount(legs,x.m.player)) continue;
-    legs.push({...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time});
-    usedGames.add(x.g.id);
-  }
-
-  // Never fill with unqualified legs. If the requested size is unavailable,
-  // return the strongest qualified build rather than pretending there are zero picks.
-  const minLegs=Math.min(2,count);
-  if(legs.length<(window.PICK_QUALITY?count:minLegs)) return null;
-  const p=packageParlay(legs,variant,false);
-  if(p&&legs.length<count){p.requestedLegs=count;p.summary=`Only ${legs.length} of ${count} requested legs cleared NFLV3. Showing the strongest qualified build instead of forcing weaker legs.`}
-  return p;
+  for(const b of beams){if(b.legs.length!==count)continue;const p=packageParlay(b.legs,variant,false);if(p&&distinctProfileBuild(p,previous))return p;}
+  return null;
 }
 
 function nflQualityForecast(m){return {marketAnchored:m.marketAnchored===true,modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental};}
@@ -937,14 +937,14 @@ function packageParlay(legs,variant,isSgp,meta={}){
   const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'};
   const grades={safe:'CONSERVATIVE',balanced:'BEST FIT',long:'HIGHER PAYOUT'};
   return {
-    name:names[variant],grade:grades[variant],legs,
+    name:names[variant],profile:variant,grade:grades[variant],legs,
     odds:decimalToAmerican(decimal),score:Math.round(avg),
     corr,
     scriptName:meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:isSgp
+    summary:({safe:'Prioritizes estimated likelihood.',balanced:'Balances estimated likelihood and reference price.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
-      : 'Spreads exposure across multiple games and prioritizes independently strong legs.'
+      : 'Spreads exposure across multiple games and prioritizes independently strong legs.')
   };
 }
 
@@ -1107,18 +1107,18 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     }
     parlays=[];
     for(const v of variants){
-      const p=buildSgp(game,count,state.risk,v,[]);
+      const p=buildSgp(game,count,state.risk,v,parlays.filter(Boolean));
       parlays.push(p);
     }
   }else{
     await ensurePropsForMultiGame(6);
     if(!current())return;
     window.NFL_PROJECTIONS?.enrich?.(true);window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
-    parlays=variants.map(v=>buildMulti(count,state.risk,v));
+    parlays=[];for(const v of variants)parlays.push(buildMulti(count,state.risk,v,parlays.filter(Boolean)));
   }
   // Keep the best independent build for each risk profile in swipe order.
   // Repeated generation uses the same inputs; profiles never penalize each other.
-  if(current())render(parlays.filter(Boolean));
+  if(current()){window.NFL_PROFILE_HISTORY?.record?.(parlays.filter(Boolean),state.mode);render(parlays.filter(Boolean));}
 }
 
 window.generate=generate;
