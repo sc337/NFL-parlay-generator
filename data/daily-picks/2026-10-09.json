@@ -2,14 +2,26 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-09",
-  "updated_at": "2026-10-09T17:52:59.001Z",
+  "updated_at": "2026-10-09T18:02:58.331Z",
   "sports": {
     "nfl": {
-      "captured": 11,
+      "captured": 9,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "long",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -50,7 +62,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T17:52:24.321274+00:00"
+      "snapshotAt": "2026-10-09T18:02:24.320213+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -80,17 +92,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T17:52:24.313332+00:00"
+      "snapshotAt": "2026-10-09T18:02:24.312874+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-09T17:52:24.315451+00:00"
+      "snapshotAt": "2026-10-09T18:02:24.315539+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-09T17:42:21.497074+00:00"
+      "snapshotAt": "2026-10-09T17:52:21.220652+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -120,7 +132,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T17:52:24.336861+00:00"
+      "snapshotAt": "2026-10-09T18:02:24.336466+00:00"
     }
   },
   "records": [
@@ -12579,6 +12591,149 @@
           "confidence": 43,
           "forecastType": "model",
           "projectedLine": 18.5,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-09|nfl|multi|Lotto|4||fe7753def706d0db",
+      "day": "2026-10-09",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-09T18:02:58.331Z",
+      "snapshotAt": "2026-10-09T18:02:24.320213+00:00",
+      "sourceVersion": "6bc674d55b0ad31a3c1541b040dc4e7052997700",
+      "priceEstimate": 3828,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT12BUFLAR-LARKMUMPFIELD4-15|yes",
+          "ticker": "KXNFLRECYDS-26OCT12BUFLAR-LARKMUMPFIELD4-15",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Konata Mumpfield Over 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Konata Mumpfield",
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.36,
+          "modelP": 0.5035739106276179,
+          "rawModelP": 0.5035739106276179,
+          "coverage": 0.5,
+          "confidence": 44,
+          "forecastType": "model",
+          "projectedLine": 28,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2",
+          "side": "yes",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Tyler Shough Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Tyler Shough",
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.37,
+          "modelP": 0.4577374896180165,
+          "rawModelP": 0.4577374896180165,
+          "coverage": 0.5,
+          "confidence": 44,
+          "forecastType": "model",
+          "projectedLine": 2.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT11HOUTEN-HOUXHUTCHINSON19-2|yes",
+          "ticker": "KXNFLREC-26OCT11HOUTEN-HOUXHUTCHINSON19-2",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-tennessee-titans",
+          "event": "Houston Texans @ Tennessee Titans",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Xavier Hutchinson Over 1.5 receptions",
+          "market": "player_receptions",
+          "line": 1.5,
+          "player": "Xavier Hutchinson",
+          "ask": 0.41,
+          "referenceAmericanOdds": 144,
+          "marketP": 0.405,
+          "modelP": 0.5072271583960855,
+          "rawModelP": 0.5072271583960855,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": 3,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11INDPIT-INDDJONES17-200|no",
+          "ticker": "KXNFLPASSYDS-26OCT11INDPIT-INDDJONES17-200",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-pittsburgh-steelers",
+          "event": "Indianapolis Colts @ Pittsburgh Steelers",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Daniel Jones Under 199.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 199.5,
+          "player": "Daniel Jones",
+          "ask": 0.43000000000000005,
+          "referenceAmericanOdds": 133,
+          "marketP": 0.42000000000000004,
+          "modelP": 0.5031401940837174,
+          "rawModelP": 0.5031401940837174,
+          "coverage": 0.5,
+          "confidence": 57,
+          "forecastType": "model",
+          "projectedLine": 188.5,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
