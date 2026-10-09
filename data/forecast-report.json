@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-10-09T13:52:13.957Z",
+  "updated_at": "2026-10-09T16:33:15.997Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
     "nfl": {
-      "recorded": 13874,
-      "independentRecorded": 9511,
+      "recorded": 13898,
+      "independentRecorded": 9513,
       "experimentalRecorded": 263,
-      "settled": 4037,
+      "settled": 4115,
       "distinctEvents": 19,
-      "independentSettled": 1914,
+      "independentSettled": 1992,
       "independentEvents": 19,
       "brier": {
-        "model": 0.1977,
-        "market": 0.1932
+        "model": 0.1994,
+        "market": 0.1944
       },
       "logLoss": {
-        "model": 0.5867,
-        "market": 0.5685
+        "model": 0.5946,
+        "market": 0.5725
       },
       "independentComparison": {
-        "brierModel": 0.1651,
-        "brierMarket": 0.1555,
-        "logLossModel": 0.5181,
-        "logLossMarket": 0.4796
+        "brierModel": 0.1699,
+        "brierMarket": 0.1595,
+        "logLossModel": 0.5372,
+        "logLossMarket": 0.4914
       },
       "experimentalComparison": {
         "settled": 6,
@@ -37,9 +37,9 @@
             0,
             0.4
           ],
-          "count": 782,
-          "predicted": 0.1454,
-          "observed": 0.1918
+          "count": 821,
+          "predicted": 0.1438,
+          "observed": 0.1998
         },
         {
           "range": [
@@ -55,18 +55,18 @@
             0.6,
             0.8
           ],
-          "count": 236,
-          "predicted": 0.7002,
-          "observed": 0.678
+          "count": 242,
+          "predicted": 0.7,
+          "observed": 0.6694
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 547,
-          "predicted": 0.9208,
-          "observed": 0.8629
+          "count": 580,
+          "predicted": 0.9211,
+          "observed": 0.8534
         }
       ],
       "ablations": {
@@ -89,32 +89,32 @@
         "meanCLV": null
       },
       "positiveEV": {
-        "settled": 484,
+        "settled": 502,
         "distinctEvents": 14,
-        "grossReturnPerUnit": -0.0266
+        "grossReturnPerUnit": -0.0348
       },
       "groups": {
         "player_prop": {
           "recorded": 6376,
           "independentRecorded": 3050,
           "experimentalRecorded": 0,
-          "settled": 3290,
+          "settled": 3358,
           "distinctEvents": 18,
-          "independentSettled": 1178,
+          "independentSettled": 1246,
           "independentEvents": 14,
           "brier": {
-            "model": 0.2077,
-            "market": 0.202
+            "model": 0.2102,
+            "market": 0.2039
           },
           "logLoss": {
-            "model": 0.6142,
-            "market": 0.5914
+            "model": 0.6248,
+            "market": 0.5973
           },
           "independentComparison": {
-            "brierModel": 0.1709,
-            "brierMarket": 0.155,
-            "logLossModel": 0.5472,
-            "logLossMarket": 0.4836
+            "brierModel": 0.1795,
+            "brierMarket": 0.1626,
+            "logLossModel": 0.5794,
+            "logLossMarket": 0.5054
           },
           "experimentalComparison": {
             "settled": 0,
@@ -128,9 +128,9 @@
                 0,
                 0.4
               ],
-              "count": 539,
-              "predicted": 0.1181,
-              "observed": 0.2115
+              "count": 573,
+              "predicted": 0.1177,
+              "observed": 0.2234
             },
             {
               "range": [
@@ -146,18 +146,18 @@
                 0.6,
                 0.8
               ],
-              "count": 117,
-              "predicted": 0.6985,
-              "observed": 0.6325
+              "count": 123,
+              "predicted": 0.6981,
+              "observed": 0.6179
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 422,
-              "predicted": 0.9327,
-              "observed": 0.8318
+              "count": 450,
+              "predicted": 0.9326,
+              "observed": 0.82
             }
           ],
           "ablations": {},
@@ -167,9 +167,9 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 427,
+            "settled": 445,
             "distinctEvents": 13,
-            "grossReturnPerUnit": -0.0338
+            "grossReturnPerUnit": -0.0427
           }
         },
         "moneyline": {
@@ -345,23 +345,23 @@
           "recorded": 1578,
           "independentRecorded": 1578,
           "experimentalRecorded": 0,
-          "settled": 382,
+          "settled": 392,
           "distinctEvents": 19,
-          "independentSettled": 382,
+          "independentSettled": 392,
           "independentEvents": 19,
           "brier": {
-            "model": 0.1446,
-            "market": 0.1453
+            "model": 0.1411,
+            "market": 0.1419
           },
           "logLoss": {
-            "model": 0.4485,
-            "market": 0.4504
+            "model": 0.4397,
+            "market": 0.4416
           },
           "independentComparison": {
-            "brierModel": 0.1446,
-            "brierMarket": 0.1453,
-            "logLossModel": 0.4485,
-            "logLossMarket": 0.4504
+            "brierModel": 0.1411,
+            "brierMarket": 0.1419,
+            "logLossModel": 0.4397,
+            "logLossMarket": 0.4416
           },
           "experimentalComparison": {
             "settled": 0,
@@ -375,9 +375,9 @@
                 0,
                 0.4
               ],
-              "count": 135,
-              "predicted": 0.2107,
-              "observed": 0.1407
+              "count": 140,
+              "predicted": 0.2067,
+              "observed": 0.1357
             },
             {
               "range": [
@@ -402,9 +402,9 @@
                 0.8,
                 1
               ],
-              "count": 68,
-              "predicted": 0.8698,
-              "observed": 0.9706
+              "count": 73,
+              "predicted": 0.872,
+              "observed": 0.9726
             }
           ],
           "ablations": {},
@@ -576,8 +576,8 @@
           }
         },
         "player_receptions": {
-          "recorded": 263,
-          "independentRecorded": 213,
+          "recorded": 267,
+          "independentRecorded": 215,
           "experimentalRecorded": 0,
           "settled": 0,
           "distinctEvents": 0,
@@ -1122,7 +1122,7 @@
           }
         },
         "player_rush_yds": {
-          "recorded": 140,
+          "recorded": 142,
           "independentRecorded": 114,
           "experimentalRecorded": 0,
           "settled": 0,
@@ -1200,7 +1200,7 @@
           }
         },
         "player_rush_yds_alternate": {
-          "recorded": 1066,
+          "recorded": 1084,
           "independentRecorded": 892,
           "experimentalRecorded": 0,
           "settled": 0,
@@ -1436,9 +1436,9 @@
       }
     },
     "mlb": {
-      "recorded": 4816,
+      "recorded": 4836,
       "independentRecorded": 0,
-      "experimentalRecorded": 836,
+      "experimentalRecorded": 844,
       "settled": 1650,
       "distinctEvents": 21,
       "independentSettled": 0,
@@ -1514,9 +1514,9 @@
       },
       "groups": {
         "total": {
-          "recorded": 956,
+          "recorded": 964,
           "independentRecorded": 0,
-          "experimentalRecorded": 836,
+          "experimentalRecorded": 844,
           "settled": 263,
           "distinctEvents": 12,
           "independentSettled": 0,
@@ -1670,7 +1670,7 @@
           }
         },
         "spread": {
-          "recorded": 149,
+          "recorded": 153,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 71,
@@ -1748,7 +1748,7 @@
           }
         },
         "hits": {
-          "recorded": 796,
+          "recorded": 797,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 287,
@@ -1904,7 +1904,7 @@
           }
         },
         "strikeouts": {
-          "recorded": 315,
+          "recorded": 316,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 133,
@@ -1982,7 +1982,7 @@
           }
         },
         "hrr": {
-          "recorded": 995,
+          "recorded": 997,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 330,
@@ -2060,7 +2060,7 @@
           }
         },
         "total_bases": {
-          "recorded": 732,
+          "recorded": 734,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 248,
@@ -2138,7 +2138,7 @@
           }
         },
         "rbi": {
-          "recorded": 405,
+          "recorded": 407,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 127,
@@ -2218,9 +2218,9 @@
       }
     },
     "ncaaf": {
-      "recorded": 2881,
+      "recorded": 2924,
       "independentRecorded": 0,
-      "experimentalRecorded": 1729,
+      "experimentalRecorded": 1755,
       "settled": 1313,
       "distinctEvents": 110,
       "independentSettled": 0,
@@ -2296,9 +2296,9 @@
       },
       "groups": {
         "moneyline": {
-          "recorded": 302,
+          "recorded": 305,
           "independentRecorded": 0,
-          "experimentalRecorded": 95,
+          "experimentalRecorded": 98,
           "settled": 179,
           "distinctEvents": 93,
           "independentSettled": 0,
@@ -2374,9 +2374,9 @@
           }
         },
         "spread": {
-          "recorded": 1591,
+          "recorded": 1614,
           "independentRecorded": 0,
-          "experimentalRecorded": 1279,
+          "experimentalRecorded": 1302,
           "settled": 726,
           "distinctEvents": 86,
           "independentSettled": 0,
@@ -2452,7 +2452,7 @@
           }
         },
         "total": {
-          "recorded": 988,
+          "recorded": 1005,
           "independentRecorded": 0,
           "experimentalRecorded": 355,
           "settled": 408,
@@ -2532,7 +2532,7 @@
       }
     },
     "ufc": {
-      "recorded": 345,
+      "recorded": 349,
       "independentRecorded": 42,
       "experimentalRecorded": 0,
       "settled": 131,
@@ -2766,7 +2766,7 @@
           }
         },
         "method_victory": {
-          "recorded": 167,
+          "recorded": 170,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 71,
@@ -2844,7 +2844,7 @@
           }
         },
         "round_finish": {
-          "recorded": 37,
+          "recorded": 38,
           "independentRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 6,
@@ -3002,9 +3002,9 @@
       }
     },
     "nhl": {
-      "recorded": 5587,
+      "recorded": 5752,
       "independentRecorded": 0,
-      "experimentalRecorded": 5226,
+      "experimentalRecorded": 5387,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -3080,9 +3080,9 @@
       },
       "groups": {
         "moneyline": {
-          "recorded": 155,
+          "recorded": 156,
           "independentRecorded": 0,
-          "experimentalRecorded": 152,
+          "experimentalRecorded": 153,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3158,9 +3158,9 @@
           }
         },
         "spread": {
-          "recorded": 366,
+          "recorded": 382,
           "independentRecorded": 0,
-          "experimentalRecorded": 348,
+          "experimentalRecorded": 364,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3236,9 +3236,9 @@
           }
         },
         "total": {
-          "recorded": 850,
+          "recorded": 876,
           "independentRecorded": 0,
-          "experimentalRecorded": 806,
+          "experimentalRecorded": 832,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3314,9 +3314,9 @@
           }
         },
         "goals": {
-          "recorded": 2418,
+          "recorded": 2476,
           "independentRecorded": 0,
-          "experimentalRecorded": 2262,
+          "experimentalRecorded": 2316,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3392,9 +3392,9 @@
           }
         },
         "assists": {
-          "recorded": 696,
+          "recorded": 708,
           "independentRecorded": 0,
-          "experimentalRecorded": 660,
+          "experimentalRecorded": 672,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3470,9 +3470,9 @@
           }
         },
         "points": {
-          "recorded": 1042,
+          "recorded": 1094,
           "independentRecorded": 0,
-          "experimentalRecorded": 998,
+          "experimentalRecorded": 1050,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
