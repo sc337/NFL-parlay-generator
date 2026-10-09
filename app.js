@@ -1,7 +1,8 @@
 const state = {
   mode:window.DASHBOARD_UI?.get('nfl','mode','sgp')||'sgp',
   nflWeek:window.DASHBOARD_UI?.get('nfl','week','')||'',
-  lineMode:'standard',
+  lineMode:['standard','alt','both'].includes(window.DASHBOARD_UI?.get('nfl','lines','standard'))?window.DASHBOARD_UI.get('nfl','lines','standard'):'standard',
+  moreCushion:window.DASHBOARD_UI?.get('nfl','cushion','off')==='on',
   risk:50,
   selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
   games:[],
@@ -625,7 +626,7 @@ function distinctProfileBuild(p,previous){
 }
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
-  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});return x.pass?profileSelectionScore(x,variant):-999;}
+  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});const score=x.pass?profileSelectionScore(x,variant):-999;return score>-900?score+(state.moreCushion?(window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
@@ -942,7 +943,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
     corr,
     scriptName:meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:({safe:'Prioritizes estimated likelihood.',balanced:'Balances estimated likelihood and reference price.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(isSgp
+    summary:({safe:'Prioritizes estimated likelihood.',balanced:'Balances estimated likelihood and reference price.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'More cushion: prefers easier quoted thresholds that pass the same quality checks. ':'')+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
       : 'Spreads exposure across multiple games and prioritizes independently strong legs.')
   };
@@ -1029,6 +1030,8 @@ function render(parlays){
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
       if(quality?.pass&&quality.warnings?.length)metrics.push(...quality.warnings);
+      const lineComparison=window.NFL_ALT_LINES?.comparisonText?.(l,state.games.find(g=>g.id===l.gameId)||state.games.find(g=>(g.markets||[]).some(m=>m===l||m.ticker&&m.ticker===l.ticker)));
+      if(lineComparison)metrics.push(lineComparison);
       if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
       if(l.nflV3Tier==='model'&&quality?.tier!=='suggestion'){
         if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
