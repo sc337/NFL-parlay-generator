@@ -105,7 +105,7 @@
 
 #results{height:auto!important;min-height:0!important;grid-template-rows:auto!important;align-items:start!important;overflow-y:visible!important}
 /* NFL quote controls stay inside the collapsed Parlay options panel. */
-#nflLinesWrap{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+#nflLinesWrap{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px 12px;align-items:center;height:auto;min-height:0}
 #nflLinesWrap .nfl-line-toggle{display:flex;align-items:center;gap:8px;min-height:44px;flex:1 1 140px;font-size:13px;text-transform:none;letter-spacing:normal;cursor:pointer}
 #nflLinesWrap input[type="checkbox"]{width:20px;height:20px;margin:0;accent-color:var(--accent,#82adff)}
 #nflLinesWrap>label[for="nflLinesSelect"]{flex:0 0 auto}
