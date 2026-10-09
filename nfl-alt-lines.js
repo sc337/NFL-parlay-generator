@@ -29,7 +29,8 @@ function classify(game){
   if(!reference)continue;
   for(const m of rows){m.isAltLine=point(m)!==point(reference);m.altReference=true}
  }
- for(const m of game.markets||[]){const r=reference(m,game);if(m.isAltLine&&quoted(m)&&r&&easier(m,r))m.cushionPoints=Math.abs(point(m)-point(r))}
+ // Work inside small player/market families, not the entire event for every quote.
+ for(const rows of groups.values())for(const m of rows){if(!m.isAltLine||!quoted(m))continue;const r=reference(m,{markets:rows});if(r&&easier(m,r))m.cushionPoints=Math.abs(point(m)-point(r))}
  return game;
 }
 function matches(m,mode='standard'){
