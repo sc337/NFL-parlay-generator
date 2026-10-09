@@ -2,14 +2,20 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-08",
-  "updated_at": "2026-10-09T02:54:50.423Z",
+  "updated_at": "2026-10-09T03:06:22.105Z",
   "sports": {
     "nfl": {
-      "captured": 10,
+      "captured": 9,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -56,7 +62,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T02:54:17.261776+00:00"
+      "snapshotAt": "2026-10-09T03:04:17.266563+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -86,12 +92,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T02:54:17.254248+00:00"
+      "snapshotAt": "2026-10-09T03:04:17.260761+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-09T02:54:17.257013+00:00"
+      "snapshotAt": "2026-10-09T03:04:17.264330+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -103,7 +109,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T02:43:57.291676+00:00"
+      "snapshotAt": "2026-10-09T02:53:57.297874+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -133,7 +139,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-09T02:54:17.278278+00:00"
+      "snapshotAt": "2026-10-09T03:04:17.285102+00:00"
     }
   },
   "records": [
@@ -30435,6 +30441,149 @@
           "confidence": 48,
           "forecastType": "model",
           "projectedLine": 12,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-08|nfl|multi|Balanced|4||fee3b93c1a550f0d",
+      "day": "2026-10-08",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-09T03:06:22.105Z",
+      "snapshotAt": "2026-10-09T03:04:17.266563+00:00",
+      "sourceVersion": "faf15fb947157a1c0797647d294d4e2d57ceebef",
+      "priceEstimate": 283,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLGAME-26OCT11HOUTEN-HOU|yes",
+          "ticker": "KXNFLGAME-26OCT11HOUTEN-HOU",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-tennessee-titans",
+          "event": "Houston Texans @ Tennessee Titans",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Houston Texans ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.78,
+          "referenceAmericanOdds": -355,
+          "marketP": 0.77,
+          "modelP": 0.7702196078729272,
+          "rawModelP": 0.7702196078729272,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLGAME-26OCT11PHIJAC-JAC|yes",
+          "ticker": "KXNFLGAME-26OCT11PHIJAC-JAC",
+          "side": "yes",
+          "eventId": "kalshi-jacksonville-jaguars-philadelphia-eagles",
+          "event": "Philadelphia Eagles @ Jacksonville Jaguars",
+          "eventTime": "2026-10-11T13:30:00Z",
+          "closeTime": "2026-10-11T13:30:00Z",
+          "selection": "Jacksonville Jaguars ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.77,
+          "referenceAmericanOdds": -335,
+          "marketP": 0.765,
+          "modelP": 0.767842375966412,
+          "rawModelP": 0.767842375966412,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLGAME-26OCT11CINMIA-CIN|yes",
+          "ticker": "KXNFLGAME-26OCT11CINMIA-CIN",
+          "side": "yes",
+          "eventId": "kalshi-cincinnati-bengals-miami-dolphins",
+          "event": "Cincinnati Bengals @ Miami Dolphins",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Cincinnati Bengals ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.75,
+          "referenceAmericanOdds": -300,
+          "marketP": 0.745,
+          "modelP": 0.7480045956224549,
+          "rawModelP": 0.7480045956224549,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11MINNO-MINKMURRAY1-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT11MINNO-MINKMURRAY1-225",
+          "side": "no",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Kyler Murray Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Kyler Murray",
+          "ask": 0.5800000000000001,
+          "referenceAmericanOdds": -138,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.6916292107973976,
+          "rawModelP": 0.6916292107973976,
+          "coverage": 0.5,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": 108.25,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
