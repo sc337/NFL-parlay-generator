@@ -2,20 +2,14 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-10T19:44:31.210Z",
+  "updated_at": "2026-10-10T19:54:35.890Z",
   "sports": {
     "nfl": {
-      "captured": 9,
+      "captured": 10,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "sgp",
-          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -62,7 +56,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T19:44:04.341012+00:00"
+      "snapshotAt": "2026-10-10T19:54:04.333374+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -92,7 +86,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T19:44:04.328538+00:00"
+      "snapshotAt": "2026-10-10T19:54:04.332765+00:00"
     },
     "ncaaf": {
       "captured": 0,
@@ -122,12 +116,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T19:44:04.331036+00:00"
+      "snapshotAt": "2026-10-10T19:54:04.336383+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-10T19:33:39.554246+00:00"
+      "snapshotAt": "2026-10-10T19:43:39.551098+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -157,7 +151,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T19:44:04.353669+00:00"
+      "snapshotAt": "2026-10-10T19:54:04.351260+00:00"
     }
   },
   "records": [
@@ -11110,10 +11104,11 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
-          "result": null
+          "result": "loss",
+          "settledAt": "2026-10-10T19:35:07.105393+00:00"
         }
       ],
-      "result": null
+      "result": "loss"
     },
     {
       "id": "2026-10-10|nfl|multi|Balanced|2||b6cde699c1786b5c",
@@ -20065,6 +20060,149 @@
           "confidence": 57,
           "forecastType": "model",
           "projectedLine": 204.5,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nfl|multi|Balanced|4||a0c47ea1138fbcbd",
+      "day": "2026-10-10",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-10T19:54:35.890Z",
+      "snapshotAt": "2026-10-10T19:54:04.333374+00:00",
+      "sourceVersion": "1a56ffc4353e356604ee2561d9d09f4c3253a05b",
+      "priceEstimate": 432,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT11BALATL-ATLOZACCHEAUS14-15|no",
+          "ticker": "KXNFLRECYDS-26OCT11BALATL-ATLOZACCHEAUS14-15",
+          "side": "no",
+          "eventId": "kalshi-atlanta-falcons-baltimore-ravens",
+          "event": "Baltimore Ravens @ Atlanta Falcons",
+          "eventTime": "2026-10-12T00:20:00Z",
+          "closeTime": "2026-10-12T00:20:00Z",
+          "selection": "Olamide Zaccheaus Under 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Olamide Zaccheaus",
+          "ask": 0.7,
+          "referenceAmericanOdds": -233,
+          "marketP": 0.685,
+          "modelP": 0.8242755941327413,
+          "rawModelP": 0.8242755941327413,
+          "coverage": 0.5,
+          "confidence": 44,
+          "forecastType": "model",
+          "projectedLine": 4.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11SFSEA-SEASDARNOLD14-10|no",
+          "ticker": "KXNFLRSHYDS-26OCT11SFSEA-SEASDARNOLD14-10",
+          "side": "no",
+          "eventId": "kalshi-san-francisco-49ers-seattle-seahawks",
+          "event": "San Francisco 49ers @ Seattle Seahawks",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Sam Darnold Under 9.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 9.5,
+          "player": "Sam Darnold",
+          "ask": 0.7,
+          "referenceAmericanOdds": -233,
+          "marketP": 0.6950000000000001,
+          "modelP": 0.8163084818784143,
+          "rawModelP": 0.8163084818784143,
+          "coverage": 0.5,
+          "confidence": 43,
+          "forecastType": "model",
+          "projectedLine": 2.75,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT11DETARI-ARITALLGEIER22-15|no",
+          "ticker": "KXNFLRECYDS-26OCT11DETARI-ARITALLGEIER22-15",
+          "side": "no",
+          "eventId": "kalshi-arizona-cardinals-detroit-lions",
+          "event": "Detroit Lions @ Arizona Cardinals",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Tyler Allgeier Under 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Tyler Allgeier",
+          "ask": 0.65,
+          "referenceAmericanOdds": -186,
+          "marketP": 0.645,
+          "modelP": 0.7461640174706461,
+          "rawModelP": 0.7461640174706461,
+          "coverage": 0.5,
+          "confidence": 54,
+          "forecastType": "model",
+          "projectedLine": 8.75,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11MINNO-MINKMURRAY1-20|no",
+          "ticker": "KXNFLRSHYDS-26OCT11MINNO-MINKMURRAY1-20",
+          "side": "no",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Kyler Murray Under 19.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 19.5,
+          "player": "Kyler Murray",
+          "ask": 0.5900000000000001,
+          "referenceAmericanOdds": -144,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.7055601111510106,
+          "rawModelP": 0.7055601111510106,
+          "coverage": 0.5,
+          "confidence": 49,
+          "forecastType": "model",
+          "projectedLine": 10.5,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
