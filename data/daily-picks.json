@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-10T23:34:29.107Z",
+  "updated_at": "2026-10-10T23:44:19.426Z",
   "sports": {
     "nfl": {
       "captured": 10,
@@ -56,7 +56,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T23:34:04.337690+00:00"
+      "snapshotAt": "2026-10-10T23:44:04.337754+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -86,7 +86,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T23:34:04.330945+00:00"
+      "snapshotAt": "2026-10-10T23:44:04.330981+00:00"
     },
     "ncaaf": {
       "captured": 0,
@@ -116,17 +116,11 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T23:34:04.332770+00:00"
+      "snapshotAt": "2026-10-10T23:44:04.333178+00:00"
     },
     "nhl": {
-      "captured": 6,
+      "captured": 7,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "balanced",
@@ -134,7 +128,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T23:23:39.406116+00:00"
+      "snapshotAt": "2026-10-10T23:33:40.972948+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -164,7 +158,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T23:34:04.353871+00:00"
+      "snapshotAt": "2026-10-10T23:44:04.354213+00:00"
     }
   },
   "records": [
@@ -27176,6 +27170,119 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nhl|multi|balanced|3||263373a24168c4ed",
+      "day": "2026-10-10",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-10T23:44:19.426Z",
+      "snapshotAt": "2026-10-10T23:33:40.972948+00:00",
+      "sourceVersion": "1a56ffc4353e356604ee2561d9d09f4c3253a05b",
+      "priceEstimate": 268,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT10ANACGY-CGY2|no",
+          "ticker": "KXNHLSPREAD-26OCT10ANACGY-CGY2",
+          "side": "no",
+          "eventId": "401892480",
+          "event": "Ducks vs Flames",
+          "eventTime": "2026-10-11T02:00Z",
+          "closeTime": "2026-10-13T02:00:00Z",
+          "selection": "Ducks +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.73,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.8264973751952145,
+          "rawModelP": 0.8264973751952145,
+          "coverage": 0.5333333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.471446519694324,
+          "projectedMargin": null,
+          "projectedAway": 3.6431510390010344,
+          "projectedHome": 2.82829548069329,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGOAL-26OCT10LAVGK-VGKMMARNER93-1|no",
+          "ticker": "KXNHLGOAL-26OCT10LAVGK-VGKMMARNER93-1",
+          "side": "no",
+          "eventId": "401892481",
+          "event": "Kings vs Golden Knights",
+          "eventTime": "2026-10-11T02:00Z",
+          "closeTime": "2026-10-13T02:00:00Z",
+          "selection": "Mitch Marner Under 0.5 Goals",
+          "market": "goals",
+          "line": 0.5,
+          "player": "Mitch Marner",
+          "ask": 0.69,
+          "referenceAmericanOdds": null,
+          "marketP": 0.685,
+          "modelP": 0.7632627500817495,
+          "rawModelP": 0.7632627500817495,
+          "coverage": 0.525,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.2794846640546914,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT13BOSSJ-BOS|yes",
+          "ticker": "KXNHLGAME-26OCT13BOSSJ-BOS",
+          "side": "yes",
+          "eventId": "401892503",
+          "event": "Bruins vs Sharks",
+          "eventTime": "2026-10-14T03:00Z",
+          "closeTime": "2026-10-16T03:00:00Z",
+          "selection": "Bruins ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.6124592865873164,
+          "rawModelP": 0.6124592865873164,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.5551597887072495,
+          "projectedMargin": null,
+          "projectedAway": 3.6458822473445887,
+          "projectedHome": 2.909277541362661,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
