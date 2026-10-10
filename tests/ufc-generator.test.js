@@ -6,8 +6,8 @@ const now=Date.parse('2026-09-26T05:30:00Z');
 class ClockDate extends Date{static now(){return now}}
 snapshot.updated_at=new Date(now).toISOString();
 // Fixed pre-card fixtures keep this test valid after live snapshots roll forward.
-const strong={slpm:6,sapm:1,str_acc:65,str_def:70,td_avg:4,td_def:85,sub_avg:2,wins:18,losses:2,recent5:{winRate:1}};
-const weak={slpm:2,sapm:5,str_acc:35,str_def:35,td_avg:0,td_def:35,sub_avg:0,wins:5,losses:10,recent5:{winRate:.2}};
+const strong={slpm:6,sapm:1,str_acc:65,str_def:70,td_avg:4,td_def:85,sub_avg:2,wins:18,losses:2,recent5:{winRate:1,wins:5,losses:0}};
+const weak={slpm:2,sapm:5,str_acc:35,str_def:35,td_avg:0,td_def:35,sub_avg:0,wins:5,losses:10,recent5:{winRate:.2,wins:1,losses:4}};
 snapshot.fighter_stats={};
 snapshot.markets=['Alpha','Bravo','Charlie'].map((name,i)=>{
  const opponent='Opponent '+name;snapshot.fighter_stats[name]=strong;snapshot.fighter_stats[opponent]=weak;

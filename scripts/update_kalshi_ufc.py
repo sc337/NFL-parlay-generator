@@ -65,29 +65,51 @@ def fighters(text):
             a,b=s.split(sep,1);return a.strip(),b.strip()
     return None,None
 
+def fighter_key(name):
+    text=html.unescape(re.sub(r'<[^>]+>', '', name or ''))
+    return re.sub(r'[^a-z0-9]', '', unicodedata.normalize('NFKD',text).encode('ascii','ignore').decode().lower())
+
+def search_profile_link(raw, name):
+    matches=set()
+    for row in re.findall(r'<tr\b[^>]*>(.*?)</tr>',raw,re.I|re.S):
+        anchors=re.findall(r'<a\b[^>]*href=["\'](https?://ufcstats\.com/fighter-details/[^"\']+)["\'][^>]*>(.*?)</a>',row,re.I|re.S)
+        if not anchors:continue
+        # Search rows repeat the same profile link for first and last names.
+        url=anchors[0][0]
+        parts=[text for link,text in anchors if link==url]
+        if fighter_key(' '.join(parts))==fighter_key(name):matches.add(url)
+    return next(iter(matches)) if len(matches)==1 else None
+
+def fight_result(raw, name):
+    people=re.findall(r'<i[^>]*class="[^"]*b-fight-details__person-status[^"]*"[^>]*>\s*([WLDNC]+)\s*</i>(.*?)</h3>',raw,re.I|re.S)
+    matches=[]
+    for status,person in people:
+        names=re.findall(r'<a\b[^>]*>(.*?)</a>',person,re.I|re.S)
+        if any(fighter_key(n)==fighter_key(name) for n in names):matches.append(status.upper())
+    return matches[0] if len(matches)==1 else None
+
 def ufcstats_search(name):
     q=urllib.parse.quote(name)
     try:
         raw=urllib.request.urlopen(urllib.request.Request("https://ufcstats.com/statistics/fighters/search?query="+q,headers=UA),timeout=20).read().decode("utf-8","ignore")
-        links=re.findall(r'href=[\"\'](https?://ufcstats\.com/fighter-details/[^\"\']+)',raw,re.I)
-        return links[0] if links else None
+        return search_profile_link(raw,name)
     except Exception as exc:
         print('UFCStats search failed',name,exc);return None
 
-def recent_fights(urls):
+def recent_fights(urls,name):
     out=[]
     for url in urls[:5]:
         try:
             h=urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=20).read().decode("utf-8","ignore")
-            result=re.search(r'<i[^>]*class="[^"]*b-fight-details__person-status[^"]*"[^>]*>\s*([WLNC]+)',h,re.I)
+            result=fight_result(h,name)
             method=re.search(r'METHOD:</i>\s*</i>?\s*<i[^>]*>\s*([^<]+)',h,re.I|re.S)
             rnd=re.search(r'ROUND:</i>\s*</i>?\s*<i[^>]*>\s*([0-9]+)',h,re.I|re.S)
             sig=re.findall(r'<p[^>]*class="[^"]*b-fight-details__table-text[^"]*"[^>]*>\s*([0-9]+)\s+of\s+([0-9]+)',h,re.I)
-            out.append({"url":url,"result":result.group(1).upper() if result else None,"method":method.group(1).strip() if method else None,
-              "round":int(rnd.group(1)) if rnd else None,"sig_strikes":int(sig[0][0]) if sig else None,"sig_attempts":int(sig[0][1]) if sig else None})
+            out.append({"url":url,"result":result,"method":method.group(1).strip() if method else None,
+              "round":int(rnd.group(1)) if rnd else None,"sig_strikes":None,"sig_attempts":None})
         except Exception as e: print("recent fight",url,e)
     wins=sum(1 for x in out if x.get("result")=="W"); losses=sum(1 for x in out if x.get("result")=="L")
-    return {"fights":out,"count":len(out),"wins":wins,"losses":losses,"winRate":round(wins/max(1,wins+losses),3) if out else None}
+    return {"fights":out,"count":len(out),"wins":wins,"losses":losses,"winRate":round(wins/(wins+losses),3) if wins+losses else None}
 
 def fighter_stats(name):
     url=ufcstats_search(name)
@@ -95,14 +117,16 @@ def fighter_stats(name):
     url=url.replace('http://','https://')
     try:
         h=urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=20).read().decode("utf-8","ignore")
+        identity=re.search(r'b-content__title-highlight[^>]*>(.*?)</span>',h,re.I|re.S)
+        if not identity or fighter_key(identity[1])!=fighter_key(name):return None
         def grab(p):
             m=re.search(p,h,re.I|re.S);return float(m.group(1)) if m else None
         rec=re.search(r"Record:\s*([0-9]+)-([0-9]+)-([0-9]+)",h,re.I)
         dob=re.search(r"DOB:</i>\s*([^<]+)",h,re.I);height=re.search(r"HEIGHT:</i>\s*([^<]+)",h,re.I);reach=re.search(r"REACH:</i>\s*([^<]+)",h,re.I);stance=re.search(r"STANCE:</i>\s*([^<]+)",h,re.I)
-        fight_links=re.findall(r'data-link="(http://ufcstats\\.com/fight-details/[^"]+)"',h,re.I)
+        fight_links=re.findall(r'data-link="(https?://ufcstats\.com/fight-details/[^"]+)"',h,re.I)
         return {"name":name,"url":url,"wins":int(rec.group(1)) if rec else None,"losses":int(rec.group(2)) if rec else None,
           "dob":dob.group(1).strip() if dob else None,"height":height.group(1).strip() if height else None,"reach":reach.group(1).strip() if reach else None,"stance":stance.group(1).strip() if stance else None,
-          "fight_count":len(fight_links),"recent_fight_urls":fight_links[:5],"recent5":recent_fights(fight_links),
+          "fight_count":len(fight_links),"recent_fight_urls":fight_links[:5],"recent5":recent_fights(fight_links,name),
           "slpm":grab(r"SLpM:</i>\s*([0-9.]+)"),"sapm":grab(r"SApM:</i>\s*([0-9.]+)"),
           "str_acc":grab(r"Str\. Acc\.:</i>\s*([0-9.]+)%"),"str_def":grab(r"Str\. Def:</i>\s*([0-9.]+)%"),
           "td_avg":grab(r"TD Avg\.:</i>\s*([0-9.]+)"),"td_acc":grab(r"TD Acc\.:</i>\s*([0-9.]+)%"),
@@ -117,12 +141,14 @@ def official_profile(name):
     try:
         html=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=12).read().decode('utf-8','ignore')
         if 'hero-profile__division-body' not in html:return None
+        identity=re.search(r'hero-profile__name[^>]*>(.*?)</(?:h1|div)>',html,re.I|re.S)
+        if not identity or fighter_key(identity[1])!=fighter_key(name):return None
         record=re.search(r'hero-profile__division-body[^>]*>\s*(\d+)-(\d+)-(\d+)\s*\(W-L-D\)',html,re.I)
         metric=dict((label.strip().lower(),float(value.strip())) for value,label in re.findall(
             r'c-stat-compare__number[^>]*>\s*([0-9.]+)\s*</div>\s*<div class="c-stat-compare__label">\s*([^<]+)</div>',html,re.I))
         accuracy=re.search(r'<title>Striking accuracy\s+(\d+)%</title>',html,re.I)
         if not record or 'sig. str. landed' not in metric:return None
-        return {'name':name,'url':url,'source':'UFC.com','fetched_at':now.isoformat(),
+        return {'name':name,'url':url,'source':'UFC.com','identity_verified':True,'fetched_at':now.isoformat(),
                 'wins':int(record[1]),'losses':int(record[2]),'draws':int(record[3]),
                 'slpm':metric.get('sig. str. landed'),'sapm':metric.get('sig. str. absorbed'),
                 'str_acc':float(accuracy[1]) if accuracy else None,
@@ -209,7 +235,7 @@ for n in sorted(names):
     old=previous.get(n) or {}
     try:recent=(now-datetime.fromisoformat(old.get('fetched_at','').replace('Z','+00:00'))).total_seconds()<24*3600
     except ValueError:recent=False
-    if recent:stats[n]=old
+    if recent and old.get('identity_verified') is True:stats[n]=old
     else:pending.append(n)
 with ThreadPoolExecutor(max_workers=6) as pool:
     futures={pool.submit(official_profile,n):n for n in pending}
@@ -228,3 +254,4 @@ rows.sort(key=lambda x:(x.get("close_time") or "9999",x["fight"],x["kind"]))
 Path("data").mkdir(exist_ok=True)
 Path("data/kalshi-ufc.json").write_text(json.dumps({"updated_at":now.isoformat(),"series_counts":counts,"fighter_stats_source":"UFC.com","fighter_stats":stats,"cards":cards,"markets":rows},indent=2))
 print("UFC markets",len(rows),"fighters",len(stats),counts)
+

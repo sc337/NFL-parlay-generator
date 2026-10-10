@@ -24,7 +24,7 @@ function legRecord(sport,entry,snapshot,now){
 }
 function captureRecord(sport,build,snapshot,now,version){
  const at=snapshot.updated_at||snapshot.generated_at,age=now-Date.parse(at);
- if(!Number.isFinite(age)||age< -300000||age>1800000||!build.legs?.length)return null;
+ if(!Number.isFinite(age)||age< -300000||age>1800000||!build.legs?.length||build.legs.length>4||build.requestedLegs>4||build.requestedLegs&&build.legs.length!==build.requestedLegs)return null;
  const legs=build.legs.map(entry=>legRecord(sport,entry,snapshot,now));
  if(legs.some(l=>!l))return null;
  const mode=build.mode||'multi',day=dayKey(now),signature=legs.map(l=>[l.id,l.selection,l.line]).sort().map(x=>JSON.stringify(x)).join('|');
@@ -50,7 +50,7 @@ async function collect(sport,dataDir,now,version){
  const age=now-Date.parse(snapshot.updated_at||snapshot.generated_at);
  if(!Number.isFinite(age)||age< -300000||age>1800000)return {records:[],status:{captured:0,passes:[{reason:'Feed stale or timestamp invalid'}],snapshotAt:snapshot.updated_at||snapshot.generated_at}};
  const capture=(_sport,build)=>{const record=captureRecord(sport,build,snapshot,now,version);if(record)records.push(record);else passes.push({mode:build.mode,profile:build.profile,requestedLegs:build.requestedLegs,reason:build.legs?.length?'Unverified start or stale quote':'No qualifying build'})};
- const r=runtime(sport,{dataDir,capture});
+ const r=runtime(sport,{dataDir,capture,now});
  r.window.PICK_OF_DAY={today:time=>{const at=Date.parse(time);return at>now&&dayKey(at)===dayKey(now)},show:(_sport,pick)=>{if(!pick)return;const market=pick.market;
   const forecast=sport==='nfl'?{modelP:market.modelProbability,rawModelP:market.rawModelProbability,coverage:market.projectionCoverage,confidence:market.modelConfidence,experimental:market.tdExperimental,projectedLine:market.projectedLine}:r.window[sport.toUpperCase()+'_DASHBOARD']?.[sport==='ncaaf'?'projection':'model']?.(market)||{};
   const game=sport==='nfl'?(snapshot.games||[]).find(g=>g.commence_time===pick.eventTime&&(g.markets||[]).some(m=>m.ticker===market.ticker)):null;
@@ -63,15 +63,15 @@ async function collect(sport,dataDir,now,version){
   for(const file of ['nfl-alt-lines.js','nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
   r.window.NFL_PROJECTIONS.enrich(true);r.window.NFL_MODEL_V3.enrich();r.window.NFL_CONFIDENCE.refresh();
   vm.runInContext('renderNflStraight()',r.ctx);
-  for(let n=2;n<=4;n++)for(const profile of ['safe','balanced','long']){
-   const multi=vm.runInContext(`buildMulti(${n},50,${JSON.stringify(profile)})`,r.ctx);
+  for(let n=2;n<=4;n++){r.ctx.previousMulti=[];r.ctx.previousSgp=[];for(const profile of ['safe','balanced','long']){
+   const multi=vm.runInContext(`buildMulti(${n},50,${JSON.stringify(profile)},previousMulti)`,r.ctx);
    const emit=(p,mode,game)=>{capture(sport,{mode,profile:p?.name||profile,requestedLegs:n,gameId:game?.id,legs:(p?.legs||[]).map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,experimental:m.tdExperimental,projectedLine:m.projectedLine},game:game||(snapshot.games||[]).find(g=>g.commence_time===m.kickoff&&(g.markets||[]).some(x=>x.ticker===m.ticker))}))})};
-   emit(multi,'multi');
+   emit(multi,'multi');if(multi)r.ctx.previousMulti.push(multi);
    // The default game chooser selects the next pregame matchup. Capture that
    // default SGP rather than spending each refresh building every future game.
    const game=(snapshot.games||[]).filter(g=>g.game_status==='pre'&&Date.parse(g.commence_time)>now).sort((a,b)=>Date.parse(a.commence_time)-Date.parse(b.commence_time))[0];
-   if(game){r.ctx.captureGame=game;const p=vm.runInContext(`buildSgp(captureGame,${n},50,${JSON.stringify(profile)},[])`,r.ctx);emit(p,'sgp',game)}
-  }
+   if(game){r.ctx.captureGame=game;const p=vm.runInContext(`buildSgp(captureGame,${n},50,${JSON.stringify(profile)},previousSgp)`,r.ctx);emit(p,'sgp',game);if(p)r.ctx.previousSgp.push(p)}
+  }}
  }else{
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
   if(sport==='mlb')r.run('mlb-totals-model.js');if(sport==='ncaaf')r.run('ncaaf-model.js');if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
