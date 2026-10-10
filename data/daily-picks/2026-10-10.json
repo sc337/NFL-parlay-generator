@@ -2,14 +2,20 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-10T18:33:25.668Z",
+  "updated_at": "2026-10-10T18:43:26.849Z",
   "sports": {
     "nfl": {
-      "captured": 10,
+      "captured": 9,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -56,7 +62,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T18:32:54.061676+00:00"
+      "snapshotAt": "2026-10-10T18:42:54.065386+00:00"
     },
     "mlb": {
       "captured": 6,
@@ -74,7 +80,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T18:32:54.056648+00:00"
+      "snapshotAt": "2026-10-10T18:42:54.059113+00:00"
     },
     "ncaaf": {
       "captured": 2,
@@ -92,12 +98,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T18:32:54.057865+00:00"
+      "snapshotAt": "2026-10-10T18:42:54.061529+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-10T18:22:57.561813+00:00"
+      "snapshotAt": "2026-10-10T18:32:57.735384+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -127,7 +133,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T18:32:54.073658+00:00"
+      "snapshotAt": "2026-10-10T18:42:54.079888+00:00"
     }
   },
   "records": [
@@ -18167,6 +18173,119 @@
           "confidence": 54,
           "forecastType": "model",
           "projectedLine": 71,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nfl|multi|Lotto|3||1740fb897571864e",
+      "day": "2026-10-10",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-10T18:43:26.849Z",
+      "snapshotAt": "2026-10-10T18:42:54.065386+00:00",
+      "sourceVersion": "7c449775186d7e5e93112346c5252c909fd2c0d9",
+      "priceEstimate": 1330,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2",
+          "side": "yes",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Tyler Shough Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Tyler Shough",
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.37,
+          "modelP": 0.4577374896180165,
+          "rawModelP": 0.4577374896180165,
+          "coverage": 0.5,
+          "confidence": 44,
+          "forecastType": "model",
+          "projectedLine": 2.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT11HOUTEN-HOUDSCHULTZ86-40|yes",
+          "ticker": "KXNFLRECYDS-26OCT11HOUTEN-HOUDSCHULTZ86-40",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-tennessee-titans",
+          "event": "Houston Texans @ Tennessee Titans",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Dalton Schultz Over 39.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 39.5,
+          "player": "Dalton Schultz",
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.49035378473880586,
+          "rawModelP": 0.49035378473880586,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": 53.5,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11SFSEA-SEASDARNOLD14-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT11SFSEA-SEASDARNOLD14-225",
+          "side": "no",
+          "eventId": "kalshi-san-francisco-49ers-seattle-seahawks",
+          "event": "San Francisco 49ers @ Seattle Seahawks",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Sam Darnold Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Sam Darnold",
+          "ask": 0.45999999999999996,
+          "referenceAmericanOdds": 117,
+          "marketP": 0.45499999999999996,
+          "modelP": 0.5771480380325934,
+          "rawModelP": 0.5771480380325934,
+          "coverage": 0.5,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": 140,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
