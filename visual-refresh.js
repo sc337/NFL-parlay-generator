@@ -144,8 +144,8 @@ function compactParlays(){
   });
 }
 function dockMatchups(){
-  const host=$('#analysisSecondary'),matchups=$('#results>.ufc-matchups');
-  if(host&&matchups)host.append(matchups);
+  const host=$('#analysisSecondary'),matchups=$('#results>.ufc-matchups:not(.pick-rejections)');
+  if(host&&matchups){host.querySelectorAll('.ufc-matchups').forEach(node=>node.remove());host.append(matchups)}
   if(document.body.dataset.sport!=='ufc')host?.querySelectorAll('.ufc-matchups').forEach(node=>node.remove());
 }
 function syncCards(){compactSummaries();compactParlays();dockMatchups()}
