@@ -290,7 +290,8 @@ const STRAIGHT_ONLY_MARKETS = new Set([
 
 function isParlayEligible(m){
   // TD scorer estimates remain experimental until prospective validation.
-  return m?.type!=='td'&&!STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
+  const altUnder=window.PICK_QUALITY?.unsupportedAltUnder?.(m)??((!!m?.player||String(m?.marketKey||'').startsWith('player_'))&&(m?.isAltLine===true||/_alternate$/.test(m?.marketKey||''))&&m?.side==='under');
+  return !altUnder&&m?.type!=='td'&&!STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
 }
 
 const PROP_MARKET_META = {

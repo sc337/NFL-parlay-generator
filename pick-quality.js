@@ -62,6 +62,14 @@ function participation(s,m,f,game,warnings){
  if(s==='ncaaf')warnings.push('College injuries and starters unconfirmed');
  return null;
 }
+function unsupportedAltUnder(m){
+ const key=String(m?.marketKey||'').toLowerCase();
+ const player=!!m?.player||key.startsWith('player_');
+ const alternate=m?.isAltLine===true||/_alternate$/.test(key);
+ const direction=String(m?.side||m?.direction||m?.overUnder||'').toLowerCase();
+ const under=direction==='under'||!['over','under'].includes(direction)&&/\b(?:under|u)\s+\d/i.test([m?.name,m?.label,m?.title].filter(Boolean).join(' '));
+ return player&&alternate&&under;
+}
 function assess(s,m,f={},options={}){
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
@@ -80,7 +88,8 @@ function assess(s,m,f={},options={}){
  const delayedReference=quoteAge>TTL&&quoteAge<=2*3600000;
  if(delayedReference)warnings.push('Delayed reference price; verify current line');
  const g=gameFor(s,m,options.game),start=Date.parse(options.eventTime||m.game_time||m.start_time||m.kickoff||g?.commence_time||'');
- if(Number.isFinite(start)&&start<=Date.now()||['in','post','Live','Final'].includes(m.game_status)||['in','post'].includes(g?.game_status))reason='Event already started';
+ if(unsupportedAltUnder(m))reason='ALT player-prop unders unsupported at your book';
+ else if(Number.isFinite(start)&&start<=Date.now()||['in','post','Live','Final'].includes(m.game_status)||['in','post'].includes(g?.game_status))reason='Event already started';
  else if(!Number.isFinite(start))reason='Event start unverified';
  else if(!q.checkedAt)reason='Quote timestamp unavailable';
  else if(q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL))reason='Quote older than 30 minutes';
@@ -122,5 +131,5 @@ function checkBuild(s,entries,sgp=false,offer=null){
  return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven&&checks.every(x=>x.valueQualified)};
 }
 function note(s,m,f,game){const x=assess(s,m,f,{game});return x.pass?x.warnings.join(' · '):x.reason;}
-window.PICK_QUALITY={note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+window.PICK_QUALITY={unsupportedAltUnder,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

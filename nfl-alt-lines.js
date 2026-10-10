@@ -33,7 +33,9 @@ function classify(game){
  for(const rows of groups.values())for(const m of rows){if(!m.isAltLine||!quoted(m))continue;const r=reference(m,{markets:rows});if(r&&easier(m,r))m.cushionPoints=Math.abs(point(m)-point(r))}
  return game;
 }
+function unsupportedAltUnder(m){return window.PICK_QUALITY?.unsupportedAltUnder?.(m)??((!!m.player||String(m.marketKey||'').startsWith('player_'))&&(m.isAltLine===true||/_alternate$/.test(m.marketKey||''))&&m.side==='under')}
 function matches(m,mode='standard'){
+ if(unsupportedAltUnder(m))return false;
  if(mode==='both')return true;
  return mode==='alt'?supported(m)&&m.isAltLine===true:!m.isAltLine;
 }
@@ -44,16 +46,16 @@ function label(m){
 }
 function cushionBonus(m){
  // Preference only; candidateScore still enforces shared and profile quality gates.
- if(!m.isAltLine||!quoted(m)||!(m.cushionPoints>0))return 0;
+ if(unsupportedAltUnder(m)||!m.isAltLine||!quoted(m)||!(m.cushionPoints>0))return 0;
  const scale=m.type==='passing'?25:m.type==='rushing'||m.type==='receiving'?10:3;
  return Math.min(12,4+4*m.cushionPoints/scale);
 }
 function lineText(m){return m.type==='spreads'?(point(m)>=0?'+':'')+point(m):(m.side==='over'?'O ':'U ')+point(m)}
 function quoteText(m){return String(m.source||'Source')+' '+(Number(m.price)>0?'+':'')+Number(m.price)}
 function comparisonText(m,game){
- if(!game||!supported(m)||!quoted(m))return '';
+ if(unsupportedAltUnder(m)||!game||!supported(m)||!quoted(m))return '';
  const r=reference(m,game);if(!r)return '';
- const alts=(game.markets||[]).filter(x=>x.isAltLine&&quoted(x)&&family(x)===family(m)&&venue(x)===venue(m)&&sameSide(x,m)&&easier(x,r))
+ const alts=(game.markets||[]).filter(x=>matches(x,'both')&&x.isAltLine&&quoted(x)&&family(x)===family(m)&&venue(x)===venue(m)&&sameSide(x,m)&&easier(x,r))
   .sort((a,b)=>Math.abs(point(a)-point(r))-Math.abs(point(b)-point(r))||String(a.ticker||a.name).localeCompare(String(b.ticker||b.name)));
  const alt=m.isAltLine?m:alts[0];if(!alt||point(alt)===point(r))return '';
  const note=m.altReference?'Reference (nearest 50% quote)':'Standard';
@@ -63,7 +65,7 @@ window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonTe
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';
- field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><small id="nflLinesNote">More cushion prefers easier quoted thresholds, not guaranteed value. Compare lines in Details. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small>';
+ field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><small id="nflLinesNote">Player ALT props: overs only. More cushion prefers easier quoted thresholds, not guaranteed value. Compare lines in Details. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small>';
  host.after(field);
  const select=field.querySelector('select'),toggle=field.querySelector('#nflAltToggle'),cushion=field.querySelector('#nflCushionToggle');
  const s=window.NFL_PARLAY_STATE;select.value=s?.lineMode||'standard';toggle.checked=select.value!=='standard';cushion.checked=!!s?.moreCushion;
