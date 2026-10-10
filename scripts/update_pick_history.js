@@ -26,6 +26,8 @@ async function candidates(sport,{all=false}={}){
   const r=runtime(sport),w=r.window;
   if(sport==='nfl'){
     const snapshot=read('kalshi-nfl.json');r.ctx.state.games=snapshot.games||[];w.PICK_QUALITY.prepare('nfl',(snapshot.games||[]).flatMap(g=>g.markets||[]),{},snapshot.games||[],snapshot.updated_at);
+    r.run('nfl-alt-lines.js');
+    for(const game of snapshot.games||[])w.NFL_ALT_LINES.classify(game);
     for(const file of ['nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
     w.NFL_PROJECTIONS.enrich(true);w.NFL_MODEL_V3.enrich();
     const picks=all?(snapshot.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,gameId:g.id}))):w.NFL_SELECTIVITY.historyPicks();

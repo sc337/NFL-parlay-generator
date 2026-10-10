@@ -61,7 +61,9 @@ async function collect(sport,dataDir,now,version){
   vm.runInContext(source.slice(0,boundary),r.ctx,{filename:'app.js'});
   r.window.NFL_PARLAY_STATE.games=snapshot.games||[];r.window.PICK_QUALITY.prepare('nfl',(snapshot.games||[]).flatMap(g=>g.markets||[]),{},snapshot.games||[],snapshot.updated_at);
   for(const file of ['nfl-alt-lines.js','nfl-td-model.js','nfl-projection-engine.js','nfl-model-v3.js','confidence-engine.js','recommendation-engine-v2.js'])r.run(file);
-  r.window.NFL_PROJECTIONS.enrich(true);r.window.NFL_MODEL_V3.enrich();r.window.NFL_CONFIDENCE.refresh();
+  r.window.NFL_PROJECTIONS.enrich(true);r.window.NFL_MODEL_V3.enrich();
+  for(const game of snapshot.games||[])r.window.NFL_ALT_LINES.classify(game);
+  r.window.NFL_CONFIDENCE.refresh();
   vm.runInContext('renderNflStraight()',r.ctx);
   for(let n=2;n<=4;n++){r.ctx.previousMulti=[];r.ctx.previousSgp=[];for(const profile of ['safe','balanced','long']){
    const multi=vm.runInContext(`buildMulti(${n},50,${JSON.stringify(profile)},previousMulti)`,r.ctx);
