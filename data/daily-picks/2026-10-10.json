@@ -2,14 +2,20 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-10T08:53:27.197Z",
+  "updated_at": "2026-10-10T09:03:27.464Z",
   "sports": {
     "nfl": {
-      "captured": 10,
+      "captured": 9,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -56,23 +62,11 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T08:53:05.357248+00:00"
+      "snapshotAt": "2026-10-10T09:03:05.358959+00:00"
     },
     "mlb": {
-      "captured": 0,
+      "captured": 6,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "best",
@@ -86,17 +80,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T08:53:05.351961+00:00"
+      "snapshotAt": "2026-10-10T09:03:05.353938+00:00"
     },
     "ncaaf": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-10T08:53:05.353604+00:00"
+      "snapshotAt": "2026-10-10T09:03:05.355200+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-10T08:42:20.584695+00:00"
+      "snapshotAt": "2026-10-10T08:52:19.564405+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -126,7 +120,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T08:53:05.370115+00:00"
+      "snapshotAt": "2026-10-10T09:03:05.370514+00:00"
     }
   },
   "records": [
@@ -6612,6 +6606,142 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|mlb|straight|featured|1||e3ded05c6c147593",
+      "day": "2026-10-10",
+      "sport": "mlb",
+      "mode": "straight",
+      "profile": "featured",
+      "requestedLegs": 1,
+      "actualLegs": 1,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-10T09:03:27.464Z",
+      "snapshotAt": "2026-10-10T09:03:05.353938+00:00",
+      "sourceVersion": "10f5073f1a9ef7ba5e06aeba9aa3f10156e82fb1",
+      "priceEstimate": -213,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT102000CWSCLE-CLE3|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT102000CWSCLE-CLE3",
+          "side": "yes",
+          "eventId": "849831",
+          "event": "Chicago White Sox at Cleveland Guardians",
+          "eventTime": "2026-10-11T00:00:00Z",
+          "closeTime": "2026-10-14T00:00:00Z",
+          "selection": "Will Cleveland score over 2.5 runs?",
+          "market": "total",
+          "line": 2.5,
+          "player": null,
+          "ask": 0.68,
+          "referenceAmericanOdds": null,
+          "marketP": 0.68,
+          "modelP": 0.81605,
+          "rawModelP": 0.81605,
+          "coverage": 0.6016,
+          "confidence": 59,
+          "forecastType": "experimental",
+          "projectedLine": 4.7,
+          "projectedTotal": 9,
+          "projectedMargin": null,
+          "projectedAway": 4.3,
+          "projectedHome": 4.7,
+          "isAltLine": true,
+          "altReferenceLine": 3.5,
+          "altDistance": 1,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|mlb|multi|best|2||eac20652b8a7a4b8",
+      "day": "2026-10-10",
+      "sport": "mlb",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-10T09:03:27.464Z",
+      "snapshotAt": "2026-10-10T09:03:05.353938+00:00",
+      "sourceVersion": "10f5073f1a9ef7ba5e06aeba9aa3f10156e82fb1",
+      "priceEstimate": -107,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT112000LADMIL-LAD2|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT112000LADMIL-LAD2",
+          "side": "yes",
+          "eventId": "849809",
+          "event": "Los Angeles Dodgers at Milwaukee Brewers",
+          "eventTime": "2026-10-12T00:00:00Z",
+          "closeTime": "2026-10-15T00:00:00Z",
+          "selection": "Will Los Angeles D score over 1.5 runs?",
+          "market": "total",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.76,
+          "referenceAmericanOdds": null,
+          "marketP": 0.76,
+          "modelP": 0.889,
+          "rawModelP": 0.889,
+          "coverage": 0.5216000000000001,
+          "confidence": 49,
+          "forecastType": "experimental",
+          "projectedLine": 4,
+          "projectedTotal": 8.3,
+          "projectedMargin": null,
+          "projectedAway": 4,
+          "projectedHome": 4.2,
+          "isAltLine": true,
+          "altReferenceLine": 2.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT102000CWSCLE-CLE3|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT102000CWSCLE-CLE3",
+          "side": "yes",
+          "eventId": "849831",
+          "event": "Chicago White Sox at Cleveland Guardians",
+          "eventTime": "2026-10-11T00:00:00Z",
+          "closeTime": "2026-10-14T00:00:00Z",
+          "selection": "Will Cleveland score over 2.5 runs?",
+          "market": "total",
+          "line": 2.5,
+          "player": null,
+          "ask": 0.68,
+          "referenceAmericanOdds": null,
+          "marketP": 0.68,
+          "modelP": 0.81605,
+          "rawModelP": 0.81605,
+          "coverage": 0.6016,
+          "confidence": 59,
+          "forecastType": "experimental",
+          "projectedLine": 4.7,
+          "projectedTotal": 9,
+          "projectedMargin": null,
+          "projectedAway": 4.3,
+          "projectedHome": 4.7,
+          "isAltLine": true,
+          "altReferenceLine": 3.5,
+          "altDistance": 1,
           "result": null
         }
       ],
