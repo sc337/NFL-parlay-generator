@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-11T19:55:43.281Z",
-  "status": "critical",
+  "updated_at": "2026-10-11T19:57:59.758Z",
+  "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-11T19:47:39.886885+00:00",
-      "ageMinutes": 8,
-      "markets": 1376,
-      "quotedMarkets": 1376,
-      "playerMarkets": 724,
+      "snapshotAt": "2026-10-11T19:57:39.886100+00:00",
+      "ageMinutes": 0,
+      "markets": 834,
+      "quotedMarkets": 834,
+      "playerMarkets": 182,
       "families": {
         "h2h": 38,
         "totals": 266,
         "spreads": 348,
-        "rushing": 508,
-        "passing": 216
+        "receiving": 108,
+        "rushing": 34,
+        "passing": 40
       },
       "futureEvents": [
         {
@@ -95,25 +96,24 @@
         }
       ],
       "playerCounts": {
-        "kalshi-denver-broncos-los-angeles-chargers": 142,
-        "kalshi-san-francisco-49ers-seattle-seahawks": 146,
-        "kalshi-arizona-cardinals-detroit-lions": 156,
-        "kalshi-atlanta-falcons-baltimore-ravens": 136,
-        "kalshi-buffalo-bills-los-angeles-rams": 144
+        "kalshi-denver-broncos-los-angeles-chargers": 36,
+        "kalshi-san-francisco-49ers-seattle-seahawks": 34,
+        "kalshi-arizona-cardinals-detroit-lions": 36,
+        "kalshi-atlanta-falcons-baltimore-ravens": 36,
+        "kalshi-buffalo-bills-los-angeles-rams": 40
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-11T19:47:39.880367+00:00",
-      "ageMinutes": 8,
-      "markets": 123,
-      "quotedMarkets": 123,
-      "playerMarkets": 53,
+      "snapshotAt": "2026-10-11T19:57:39.880631+00:00",
+      "ageMinutes": 0,
+      "markets": 118,
+      "quotedMarkets": 118,
+      "playerMarkets": 48,
       "families": {
         "moneyline": 16,
         "spread": 12,
         "total": 42,
-        "strikeouts": 27,
-        "rbi": 26
+        "total_bases": 48
       },
       "futureEvents": [
         {
@@ -150,13 +150,13 @@
         }
       ],
       "playerCounts": {
-        "849809": 33,
-        "849820": 20
+        "849809": 25,
+        "849820": 23
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-11T19:47:39.882615+00:00",
-      "ageMinutes": 8,
+      "snapshotAt": "2026-10-11T19:57:39.882473+00:00",
+      "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
       "playerMarkets": 0,
@@ -447,7 +447,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-11T19:55:40.966110+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 1398,
       "quotedMarkets": 1398,
       "playerMarkets": 724,
@@ -673,8 +673,8 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-10-11T19:27:39.905355+00:00",
-      "ageMinutes": 28,
+      "snapshotAt": "2026-10-11T19:57:39.904399+00:00",
+      "ageMinutes": 0,
       "markets": 0,
       "quotedMarkets": 0,
       "playerMarkets": 0,
@@ -685,15 +685,6 @@
   },
   "alerts": [
     {
-      "id": "pipeline:refresh-failed",
-      "sport": null,
-      "code": "refresh-failed",
-      "severity": "critical",
-      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
-      "firstSeen": "2026-10-11T19:38:00.798Z",
-      "changedAt": "2026-10-11T19:38:00.798Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -703,28 +694,33 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "pipeline:refresh-failed",
+      "resolvedAt": "2026-10-11T19:57:59.758Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38152819550",
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-11T19:48:00.897615+00:00"
+      "at": "2026-10-11T19:57:59.736448+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-11T19:48:00.897615+00:00"
+      "at": "2026-10-11T19:57:59.736448+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-11T19:48:00.897615+00:00"
+      "at": "2026-10-11T19:57:59.736448+00:00"
     },
     "nhl": {
       "ok": true,
       "at": "2026-10-11T19:55:43.260528+00:00"
     },
     "ufc": {
-      "ok": false,
-      "at": "2026-10-11T19:48:00.897615+00:00"
+      "ok": true,
+      "at": "2026-10-11T19:57:59.736448+00:00"
     }
   }
 }
