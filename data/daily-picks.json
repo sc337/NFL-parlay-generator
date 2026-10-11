@@ -2,14 +2,38 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-11",
-  "updated_at": "2026-10-11T20:27:56.830Z",
+  "updated_at": "2026-10-11T20:37:55.426Z",
   "sports": {
     "nfl": {
-      "captured": 10,
+      "captured": 1,
       "passes": [
         {
           "mode": "multi",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "long",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "long",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -32,7 +56,19 @@
           "reason": "No qualifying build"
         },
         {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
           "mode": "multi",
+          "profile": "long",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -56,13 +92,25 @@
           "reason": "No qualifying build"
         },
         {
+          "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
           "mode": "multi",
+          "profile": "long",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T20:27:39.887821+00:00"
+      "snapshotAt": "2026-10-11T20:37:39.890339+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -92,17 +140,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T20:27:39.881176+00:00"
+      "snapshotAt": "2026-10-11T20:37:39.880740+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-11T20:27:39.882561+00:00"
+      "snapshotAt": "2026-10-11T20:37:39.883772+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-11T20:15:41.024144+00:00"
+      "snapshotAt": "2026-10-11T20:25:40.993505+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -132,7 +180,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T20:17:39.903539+00:00"
+      "snapshotAt": "2026-10-11T20:37:39.904148+00:00"
     }
   },
   "records": [
@@ -18744,6 +18792,232 @@
           "projectedLine": 4.25,
           "projectedTotal": null,
           "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-11|nfl|multi|Balanced|2||5fc0a6d154422eae",
+      "day": "2026-10-11",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T20:37:55.426Z",
+      "snapshotAt": "2026-10-11T20:37:39.890339+00:00",
+      "sourceVersion": "70c737126411e9f45195fc5f916f8389eaaf5a8c",
+      "priceEstimate": 256,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT11BALATL-ATL4|no",
+          "ticker": "KXNFLSPREAD-26OCT11BALATL-ATL4",
+          "side": "no",
+          "eventId": "kalshi-atlanta-falcons-baltimore-ravens",
+          "event": "Baltimore Ravens @ Atlanta Falcons",
+          "eventTime": "2026-10-12T00:20:00Z",
+          "closeTime": "2026-10-12T00:20:00Z",
+          "selection": "Baltimore Ravens +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT12BUFLAR-LAR4|no",
+          "ticker": "KXNFLSPREAD-26OCT12BUFLAR-LAR4",
+          "side": "no",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Buffalo Bills +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-11|ncaaf|multi|best|4||f1a26fa0874d8e00",
+      "day": "2026-10-11",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T20:37:55.426Z",
+      "snapshotAt": "2026-10-11T20:37:39.883772+00:00",
+      "sourceVersion": "70c737126411e9f45195fc5f916f8389eaaf5a8c",
+      "priceEstimate": 2417,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17UNCDUKE-DUKE|yes",
+          "ticker": "KXNCAAFGAME-26OCT17UNCDUKE-DUKE",
+          "side": "yes",
+          "eventId": "401858266",
+          "event": "North Carolina Tar Heels at Duke Blue Devils",
+          "eventTime": "2026-10-17T19:30Z",
+          "closeTime": "2026-10-19T19:30:00Z",
+          "selection": "Duke",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.61,
+          "referenceAmericanOdds": null,
+          "marketP": 0.605,
+          "modelP": 0.6973049650869239,
+          "rawModelP": 0.6973049650869239,
+          "coverage": 0.85,
+          "confidence": 43,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": 10.8,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT13DELMTU-MTU|yes",
+          "ticker": "KXNCAAFGAME-26OCT13DELMTU-MTU",
+          "side": "yes",
+          "eventId": "401871067",
+          "event": "Delaware Blue Hens at Middle Tennessee Blue Raiders",
+          "eventTime": "2026-10-13T23:00Z",
+          "closeTime": "2026-10-15T23:00:00Z",
+          "selection": "Middle Tennessee",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.44,
+          "referenceAmericanOdds": null,
+          "marketP": 0.435,
+          "modelP": 0.5091705691071471,
+          "rawModelP": 0.5091705691071471,
+          "coverage": 0.85,
+          "confidence": 47,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 50.1,
+          "projectedMargin": 0.5,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT16WASHPUR-WASH|yes",
+          "ticker": "KXNCAAFGAME-26OCT16WASHPUR-WASH",
+          "side": "yes",
+          "eventId": "401858493",
+          "event": "Washington Huskies at Purdue Boilermakers",
+          "eventTime": "2026-10-17T00:00Z",
+          "closeTime": "2026-10-19T00:00:00Z",
+          "selection": "Washington",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.4,
+          "referenceAmericanOdds": null,
+          "marketP": 0.395,
+          "modelP": 0.48443579927495634,
+          "rawModelP": 0.48443579927495634,
+          "coverage": 0.85,
+          "confidence": 47,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 55.2,
+          "projectedMargin": 0.8,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT15ECUUAB-UAB|yes",
+          "ticker": "KXNCAAFGAME-26OCT15ECUUAB-UAB",
+          "side": "yes",
+          "eventId": "401862800",
+          "event": "East Carolina Pirates at UAB Blazers",
+          "eventTime": "2026-10-15T23:30Z",
+          "closeTime": "2026-10-17T23:30:00Z",
+          "selection": "UAB",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.37,
+          "referenceAmericanOdds": null,
+          "marketP": 0.36,
+          "modelP": 0.49897300440284054,
+          "rawModelP": 0.49897300440284054,
+          "coverage": 0.85,
+          "confidence": 43,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 50,
+          "projectedMargin": -0.1,
           "projectedAway": null,
           "projectedHome": null,
           "isAltLine": false,
