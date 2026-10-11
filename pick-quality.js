@@ -36,7 +36,7 @@ function forecast(s,m,f={}){
  const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
  return {...f,modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
 }
-function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(q.source==='Kalshi'?'Kalshi':'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
+function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
 function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
 function participation(s,m,f,game,warnings){
  const ctx=data.get(s)?.context||{},g=gameFor(s,m,game);

@@ -102,3 +102,4 @@ test('mobile cards cannot squeeze tile rows and all NHL market buttons remain re
  assert.equal(leg.querySelector('.leg-title').parentElement.className,'sport-visual-copy');
  assert.equal(leg.querySelector('.market-tile').parentElement,leg);
  });
+test('FanDuel quote tiles keep venue and odds on separate readable rows',()=>{const card=slip(),quote=card.querySelector('.leg-quote');quote.textContent='FanDuel -144';const app=display([card],'nfl');app.run();const price=card.querySelector('.market-tile-price');assert.equal(price.querySelector('.quote-source').textContent.trim(),'FanDuel');assert.equal(price.querySelector('.quote-price').textContent,'-144');assert.equal(price.textContent,'FanDuel -144');app.run();assert.equal(card.querySelectorAll('.quote-source').length,1)});

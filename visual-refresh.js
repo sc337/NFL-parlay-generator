@@ -117,6 +117,8 @@ function compactParlays(){
         const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
         const ask=subText.match(/\bKalshi ask\s+(\d+)¢/i);
         price.textContent=quote?.textContent.trim()|| (ask?'Kalshi '+ask[1]+'¢':market?'Mkt '+market[1]+'%':'Check price');
+        const parts=price.textContent.match(/^(FanDuel|Kalshi|Caesars|Reference)\s+([+−-]?\d+¢?)$/);
+        if(parts){const source=document.createElement('span'),odds=document.createElement('span');source.className='quote-source';source.textContent=parts[1]+' ';odds.className='quote-price';odds.textContent=parts[2];price.textContent='';price.append(source,odds);}
         tile.setAttribute('aria-label',(leg.dataset.altLine==='true'?'ALT ':'')+selection.market+' '+line.textContent+', '+price.textContent);
         tile.append(heading,line,price);quote?.remove();leg.append(tile);leg.classList.add('has-market-tile');
       }

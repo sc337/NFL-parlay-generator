@@ -997,6 +997,13 @@ function nflKickoff(value,full=false){
 }
 window.NFL_DISPLAY={matchup:nflMatchup,team:nflTeamShort,kickoff:nflKickoff};
 
+function updateNflProfileAvailability(parlays){
+  const note=$('#profileAvailability');if(!note)return;
+  const missing=parlays.length===3?parlays.map((p,i)=>p?'':['Conservative','Balanced','Lotto'][i]).filter(Boolean):[];
+  note.hidden=!parlays.some(Boolean)||!missing.length;
+  note.textContent=missing.length?missing.join(' / ')+': no qualifying '+($('#legsSelect')?.value||2)+'-leg build. Try fewer legs.':'';
+}
+
 function render(parlays){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
   const featured=renderNflStraight();renderTdMarkets();renderNflExtras(parlays,featured);
@@ -1004,6 +1011,7 @@ function render(parlays){
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const valid=parlays.filter(Boolean);
+  updateNflProfileAvailability(parlays);
   if(!valid.length&&state.lineMode==='alt'){wrap.innerHTML='<div class="empty">No qualifying ALT build. Try fewer legs, another game, or Both.</div>';return;}
   if(!valid.length){
     const count=Number($('#legsSelect')?.value)||2;
@@ -1021,7 +1029,9 @@ function render(parlays){
     node.querySelector('.parlay-name').textContent=p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
-    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Reference est.';
+    const sources=new Set(p.legs.map(m=>window.PICK_QUALITY?.quote('nfl',m)?.source||m.source));
+    const estimateLabel=sources.size===1&&['FanDuel','Kalshi'].includes([...sources][0])?[...sources][0]+' est.':'Reference est.';
+    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':estimateLabel;
     node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
     node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
@@ -1057,12 +1067,6 @@ function render(parlays){
     });
     
     wrap.appendChild(node);
-  }
-  if(parlays.length===3&&parlays.some(p=>!p)){
-    const names=['Conservative','Balanced','Lotto'],note=document.createElement('p');note.className='profile-passes';
-    note.textContent=parlays.map((p,i)=>p?'':names[i]).filter(Boolean).join(' / ')+': no distinct qualified build within profile price rules. Try fewer legs or other markets.';
-    // Keep pass information inside the first real card, not as a swipe item.
-    wrap.querySelector('.parlay-card')?.appendChild(note);
   }
 }
 
