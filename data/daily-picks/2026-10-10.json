@@ -2,20 +2,14 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-11T03:15:19.659Z",
+  "updated_at": "2026-10-11T03:25:15.415Z",
   "sports": {
     "nfl": {
-      "captured": 9,
+      "captured": 10,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "sgp",
-          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -62,7 +56,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T03:14:49.576524+00:00"
+      "snapshotAt": "2026-10-11T03:24:49.576932+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -92,7 +86,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T03:14:49.572826+00:00"
+      "snapshotAt": "2026-10-11T03:24:49.573084+00:00"
     },
     "ncaaf": {
       "captured": 0,
@@ -122,7 +116,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T03:14:49.574143+00:00"
+      "snapshotAt": "2026-10-11T03:24:49.574754+00:00"
     },
     "nhl": {
       "captured": 0,
@@ -152,7 +146,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T03:04:12.306905+00:00"
+      "snapshotAt": "2026-10-11T03:14:12.110715+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -29613,6 +29607,149 @@
           "confidence": 47,
           "forecastType": "model",
           "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nfl|multi|Balanced|4||287f7499ef1b9ee2",
+      "day": "2026-10-10",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T03:25:15.415Z",
+      "snapshotAt": "2026-10-11T03:24:49.576932+00:00",
+      "sourceVersion": "c1643a870f7b3d8edf2a240fefc99d3899ccca32",
+      "priceEstimate": 729,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11SFSEA-SEASDARNOLD14-10|no",
+          "ticker": "KXNFLRSHYDS-26OCT11SFSEA-SEASDARNOLD14-10",
+          "side": "no",
+          "eventId": "kalshi-san-francisco-49ers-seattle-seahawks",
+          "event": "San Francisco 49ers @ Seattle Seahawks",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Sam Darnold Under 9.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 9.5,
+          "player": "Sam Darnold",
+          "ask": 0.7,
+          "referenceAmericanOdds": -233,
+          "marketP": 0.6950000000000001,
+          "modelP": 0.8163084818784143,
+          "rawModelP": 0.8163084818784143,
+          "coverage": 0.5,
+          "confidence": 43,
+          "forecastType": "model",
+          "projectedLine": 2.75,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11MINNO-NOTSHOUGH6-225|yes",
+          "ticker": "KXNFLPASSYDS-26OCT11MINNO-NOTSHOUGH6-225",
+          "side": "yes",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Tyler Shough Over 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Tyler Shough",
+          "ask": 0.57,
+          "referenceAmericanOdds": -133,
+          "marketP": 0.565,
+          "modelP": 0.6939880144640385,
+          "rawModelP": 0.6939880144640385,
+          "coverage": 0.5,
+          "confidence": 61,
+          "forecastType": "model",
+          "projectedLine": 300.75,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11CHIGB-GBMLLOYD32-30|no",
+          "ticker": "KXNFLRSHYDS-26OCT11CHIGB-GBMLLOYD32-30",
+          "side": "no",
+          "eventId": "kalshi-chicago-bears-green-bay-packers",
+          "event": "Chicago Bears @ Green Bay Packers",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "MarShawn Lloyd Under 29.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 29.5,
+          "player": "MarShawn Lloyd",
+          "ask": 0.55,
+          "referenceAmericanOdds": -122,
+          "marketP": 0.5449999999999999,
+          "modelP": 0.6805835365187656,
+          "rawModelP": 0.6805835365187656,
+          "coverage": 0.5,
+          "confidence": 50,
+          "forecastType": "model",
+          "projectedLine": 20.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11DETARI-ARIJBRISSETT7-275|no",
+          "ticker": "KXNFLPASSYDS-26OCT11DETARI-ARIJBRISSETT7-275",
+          "side": "no",
+          "eventId": "kalshi-arizona-cardinals-detroit-lions",
+          "event": "Detroit Lions @ Arizona Cardinals",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Jacoby Brissett Under 274.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 274.5,
+          "player": "Jacoby Brissett",
+          "ask": 0.55,
+          "referenceAmericanOdds": -122,
+          "marketP": 0.5449999999999999,
+          "modelP": 0.6492216966321724,
+          "rawModelP": 0.6492216966321724,
+          "coverage": 0.5,
+          "confidence": 57,
+          "forecastType": "model",
+          "projectedLine": 204.5,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
