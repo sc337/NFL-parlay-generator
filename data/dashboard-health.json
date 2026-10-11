@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-11T19:35:42.689Z",
-  "status": "warning",
+  "updated_at": "2026-10-11T19:38:00.798Z",
+  "status": "critical",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-11T19:27:39.887373+00:00",
-      "ageMinutes": 8,
-      "markets": 706,
-      "quotedMarkets": 706,
-      "playerMarkets": 54,
+      "snapshotAt": "2026-10-11T19:37:39.886696+00:00",
+      "ageMinutes": 0,
+      "markets": 1484,
+      "quotedMarkets": 1484,
+      "playerMarkets": 832,
       "families": {
         "h2h": 38,
         "totals": 266,
         "spreads": 348,
-        "rushing": 34,
-        "passing": 20
+        "rushing": 508,
+        "passing": 216,
+        "receiving": 108
       },
       "futureEvents": [
         {
@@ -95,24 +96,23 @@
         }
       ],
       "playerCounts": {
-        "kalshi-denver-broncos-los-angeles-chargers": 14,
-        "kalshi-san-francisco-49ers-seattle-seahawks": 10,
-        "kalshi-arizona-cardinals-detroit-lions": 10,
-        "kalshi-atlanta-falcons-baltimore-ravens": 10,
-        "kalshi-buffalo-bills-los-angeles-rams": 10
+        "kalshi-denver-broncos-los-angeles-chargers": 160,
+        "kalshi-san-francisco-49ers-seattle-seahawks": 166,
+        "kalshi-arizona-cardinals-detroit-lions": 178,
+        "kalshi-atlanta-falcons-baltimore-ravens": 158,
+        "kalshi-buffalo-bills-los-angeles-rams": 170
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-11T19:27:39.879228+00:00",
-      "ageMinutes": 8,
-      "markets": 118,
-      "quotedMarkets": 118,
-      "playerMarkets": 48,
+      "snapshotAt": "2026-10-11T19:37:39.879927+00:00",
+      "ageMinutes": 0,
+      "markets": 70,
+      "quotedMarkets": 70,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 16,
         "spread": 12,
-        "total": 42,
-        "total_bases": 48
+        "total": 42
       },
       "futureEvents": [
         {
@@ -154,8 +154,8 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-11T19:27:39.881780+00:00",
-      "ageMinutes": 8,
+      "snapshotAt": "2026-10-11T19:37:39.881829+00:00",
+      "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
       "playerMarkets": 0,
@@ -446,7 +446,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-11T19:35:41.066122+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 1396,
       "quotedMarkets": 1396,
       "playerMarkets": 722,
@@ -673,7 +673,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-11T19:27:39.905355+00:00",
-      "ageMinutes": 8,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "playerMarkets": 0,
@@ -683,6 +683,24 @@
     }
   },
   "alerts": [
+    {
+      "id": "pipeline:refresh-failed",
+      "sport": null,
+      "code": "refresh-failed",
+      "severity": "critical",
+      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
+      "firstSeen": "2026-10-11T19:38:00.798Z",
+      "changedAt": "2026-10-11T19:38:00.798Z"
+    },
+    {
+      "id": "mlb:props-missing",
+      "sport": "mlb",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-11T19:38:00.798Z",
+      "changedAt": "2026-10-11T19:38:00.798Z"
+    },
     {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
@@ -698,23 +716,23 @@
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-11T19:28:00.264012+00:00"
+      "at": "2026-10-11T19:38:00.775825+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-11T19:28:00.264012+00:00"
+      "at": "2026-10-11T19:38:00.775825+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-11T19:28:00.264012+00:00"
+      "at": "2026-10-11T19:38:00.775825+00:00"
     },
     "nhl": {
       "ok": true,
       "at": "2026-10-11T19:35:42.668012+00:00"
     },
     "ufc": {
-      "ok": true,
-      "at": "2026-10-11T19:28:00.264012+00:00"
+      "ok": false,
+      "at": "2026-10-11T19:38:00.775825+00:00"
     }
   }
 }
