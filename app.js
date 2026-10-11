@@ -337,7 +337,7 @@ function normalizePropOutcome(marketKey,out,quotedAt=new Date().toISOString()){
   };
 }
 
-async function discoverCaesarsMarkets(game){
+async function discoverFanDuelMarkets(game){
   const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/markets`);
   url.searchParams.set('apiKey',state.apiKey);
   url.searchParams.set('regions','us');
@@ -345,7 +345,7 @@ async function discoverCaesarsMarkets(game){
   trackApiUsage(res);
   if(!res.ok) throw new Error('Event markets API '+res.status);
   const raw=await res.json();
-  const book=(raw.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
+  const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
   return new Set((book?.markets||[]).map(m=>typeof m==='string'?m:m.key).filter(Boolean));
 }
 
@@ -363,20 +363,20 @@ async function ensurePropsForGame(game){
 
   const task=(async()=>{
     try{
-      setStatus(`Checking Caesars props: ${game.away} @ ${game.home}…`);
-      const available=await discoverCaesarsMarkets(game);
+      setStatus(`Checking FanDuel props: ${game.away} @ ${game.home}…`);
+      const available=await discoverFanDuelMarkets(game);
       const requested=PROP_MARKETS.filter(k=>available.has(k));
 
       if(!requested.length){
         game.propStatus='none';
         game.availablePropMarkets=[];
         state.propsLoaded.add(game.id);
-        setStatus('Caesars has not posted supported player props for this game yet');
+        setStatus('FanDuel has not posted supported player props for this game yet');
         return;
       }
 
       game.availablePropMarkets=requested;
-      setStatus(`Loading ${requested.length} Caesars prop markets…`);
+      setStatus(`Loading ${requested.length} FanDuel prop markets…`);
 
       const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/odds`);
       url.searchParams.set('apiKey',state.apiKey);
@@ -413,8 +413,8 @@ async function ensurePropsForGame(game){
 
       setStatus(
         cleaned.length
-          ? `Live Caesars markets • ${cleaned.length} player props loaded`
-          : 'Caesars prop markets were listed, but no usable outcomes were returned'
+          ? `Live FanDuel markets • ${cleaned.length} player props loaded`
+          : 'FanDuel prop markets were listed, but no usable outcomes were returned'
       );
     }catch(err){
       console.error(err);
@@ -457,7 +457,7 @@ function normalizeGame(g){
       }
     }
   }
-  for(const market of markets){market.source='Caesars';market.quotedAt=book?.markets?.find(m=>m.key===(market.marketKey||market.type))?.last_update||book?.last_update||new Date().toISOString();}
+  for(const market of markets){market.source='FanDuel';market.quotedAt=book?.markets?.find(m=>m.key===(market.marketKey||market.type))?.last_update||book?.last_update||new Date().toISOString();}
   return {id:g.id,away:g.away_team,home:g.home_team,commence_time:g.commence_time,markets};
 }
 
@@ -1110,7 +1110,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     window.NFL_PROJECTIONS?.enrich?.(true);window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
     const propCount=countPlayerProps(game);
     if(state.apiKey && propCount===0 && game?.propStatus==='none'){
-      $('#resultsTitle').textContent='No Caesars player props posted yet';
+      $('#resultsTitle').textContent='No FanDuel player props posted yet';
     }else{
       $('#resultsTitle').textContent=propCount
         ? `Logical correlated SGPs • ${propCount} live props`
@@ -1118,7 +1118,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     }
     if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
       render([]);
-      $('#results').innerHTML='<div class="empty">No live Caesars player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
+      $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
       return;
     }
     parlays=[];
