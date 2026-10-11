@@ -20,10 +20,12 @@
     const failure=window.NFL_KALSHI?.lastResult?.();clearLiveState(failure?.message||'NFL feed temporarily unavailable. Retrying automatically.');
     return false;
   }
-  // Keep Kalshi as the recommendation source when a comparison API key is set.
+  // Prefer the saved Odds API key; use Kalshi when quota, key, or live feed is unavailable.
   const caesarsLoad=async()=>{
     if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return false;
-    const ok=await kalshiFallback();
+    let ok=false;
+    if(state.apiKey)ok=await window.NFL_ODDS_PRIMARY?.load?.();
+    if(!ok)ok=await kalshiFallback();
     window.CAESARS_COMPARE?.refresh?.();
     return ok;
   };
