@@ -2,20 +2,14 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-11T00:35:12.173Z",
+  "updated_at": "2026-10-11T00:45:11.761Z",
   "sports": {
     "nfl": {
-      "captured": 9,
+      "captured": 10,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "sgp",
-          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -62,7 +56,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T00:34:49.576046+00:00"
+      "snapshotAt": "2026-10-11T00:44:49.573906+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -92,7 +86,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T00:34:49.575811+00:00"
+      "snapshotAt": "2026-10-11T00:44:49.570192+00:00"
     },
     "ncaaf": {
       "captured": 0,
@@ -122,16 +116,25 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T00:34:49.576942+00:00"
+      "snapshotAt": "2026-10-11T00:44:49.571791+00:00"
     },
     "nhl": {
-      "captured": 0,
+      "captured": 2,
       "passes": [
         {
-          "reason": "Feed stale or timestamp invalid"
+          "mode": "multi",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-10T22:33:41.237752+00:00"
+      "snapshotAt": "2026-10-11T00:34:14.504823+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -161,7 +164,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T00:34:49.596771+00:00"
+      "snapshotAt": "2026-10-11T00:44:49.583214+00:00"
     }
   },
   "records": [
@@ -26190,6 +26193,232 @@
           "projectedMargin": null,
           "projectedAway": null,
           "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nfl|multi|Lotto|4||4c2fcbf96074382e",
+      "day": "2026-10-10",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T00:45:11.761Z",
+      "snapshotAt": "2026-10-11T00:44:49.573906+00:00",
+      "sourceVersion": "c1643a870f7b3d8edf2a240fefc99d3899ccca32",
+      "priceEstimate": 2939,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT11MINNO-NOTSHOUGH6-2",
+          "side": "yes",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Tyler Shough Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Tyler Shough",
+          "ask": 0.37,
+          "referenceAmericanOdds": 170,
+          "marketP": 0.365,
+          "modelP": 0.4552374896180165,
+          "rawModelP": 0.4552374896180165,
+          "coverage": 0.5,
+          "confidence": 44,
+          "forecastType": "model",
+          "projectedLine": 2.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11CHIGB-GBKJOHNSON26-30|no",
+          "ticker": "KXNFLRSHYDS-26OCT11CHIGB-GBKJOHNSON26-30",
+          "side": "no",
+          "eventId": "kalshi-chicago-bears-green-bay-packers",
+          "event": "Chicago Bears @ Green Bay Packers",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Kaleb Johnson Under 29.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 29.5,
+          "player": "Kaleb Johnson",
+          "ask": 0.43999999999999995,
+          "referenceAmericanOdds": 127,
+          "marketP": 0.43500000000000005,
+          "modelP": 0.57446844700519,
+          "rawModelP": 0.57446844700519,
+          "coverage": 0.5,
+          "confidence": 43,
+          "forecastType": "model",
+          "projectedLine": 20,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT11HOUTEN-HOUXHUTCHINSON19-2|yes",
+          "ticker": "KXNFLREC-26OCT11HOUTEN-HOUXHUTCHINSON19-2",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-tennessee-titans",
+          "event": "Houston Texans @ Tennessee Titans",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Xavier Hutchinson Over 1.5 receptions",
+          "market": "player_receptions",
+          "line": 1.5,
+          "player": "Xavier Hutchinson",
+          "ask": 0.43,
+          "referenceAmericanOdds": 133,
+          "marketP": 0.425,
+          "modelP": 0.5172271583960854,
+          "rawModelP": 0.5172271583960854,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": 3,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT11DENLAC-DENJDOBBINS27-50|no",
+          "ticker": "KXNFLRSHYDS-26OCT11DENLAC-DENJDOBBINS27-50",
+          "side": "no",
+          "eventId": "kalshi-denver-broncos-los-angeles-chargers",
+          "event": "Denver Broncos @ Los Angeles Chargers",
+          "eventTime": "2026-10-11T20:05:00Z",
+          "closeTime": "2026-10-11T20:05:00Z",
+          "selection": "J.K. Dobbins Under 49.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 49.5,
+          "player": "J.K. Dobbins",
+          "ask": 0.47,
+          "referenceAmericanOdds": 113,
+          "marketP": 0.46499999999999997,
+          "modelP": 0.5918341398373412,
+          "rawModelP": 0.5918341398373412,
+          "coverage": 0.5,
+          "confidence": 59,
+          "forecastType": "model",
+          "projectedLine": 40.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nhl|multi|balanced|2||39d9eab206dbbe76",
+      "day": "2026-10-10",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T00:45:11.761Z",
+      "snapshotAt": "2026-10-11T00:34:14.504823+00:00",
+      "sourceVersion": "c1643a870f7b3d8edf2a240fefc99d3899ccca32",
+      "priceEstimate": 263,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT13BOSSJ-BOS|yes",
+          "ticker": "KXNHLGAME-26OCT13BOSSJ-BOS",
+          "side": "yes",
+          "eventId": "401892503",
+          "event": "Bruins vs Sharks",
+          "eventTime": "2026-10-14T03:00Z",
+          "closeTime": "2026-10-16T03:00:00Z",
+          "selection": "Bruins ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.6124592865873164,
+          "rawModelP": 0.6124592865873164,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.5551597887072495,
+          "projectedMargin": null,
+          "projectedAway": 3.6458822473445887,
+          "projectedHome": 2.909277541362661,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT12FLABUF-BUF|yes",
+          "ticker": "KXNHLGAME-26OCT12FLABUF-BUF",
+          "side": "yes",
+          "eventId": "401892485",
+          "event": "Panthers vs Sabres",
+          "eventTime": "2026-10-12T17:00Z",
+          "closeTime": "2026-10-14T17:00:00Z",
+          "selection": "Sabres ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.51,
+          "referenceAmericanOdds": null,
+          "marketP": 0.49,
+          "modelP": 0.6055592688183415,
+          "rawModelP": 0.6055592688183415,
+          "coverage": 0.5333333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.357241367829631,
+          "projectedMargin": null,
+          "projectedAway": 2.838667754511401,
+          "projectedHome": 3.5185736133182295,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
