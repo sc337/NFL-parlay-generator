@@ -2,11 +2,17 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-11",
-  "updated_at": "2026-10-11T19:57:55.977Z",
+  "updated_at": "2026-10-11T20:07:55.577Z",
   "sports": {
     "nfl": {
-      "captured": 6,
+      "captured": 4,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "sgp",
           "profile": "safe",
@@ -64,6 +70,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -86,7 +98,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T19:57:39.886100+00:00"
+      "snapshotAt": "2026-10-11T20:07:39.888194+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -116,17 +128,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T19:57:39.880631+00:00"
+      "snapshotAt": "2026-10-11T20:07:39.881148+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-11T19:57:39.882473+00:00"
+      "snapshotAt": "2026-10-11T20:07:39.883162+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-11T19:45:42.607679+00:00"
+      "snapshotAt": "2026-10-11T19:55:40.966110+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -17353,6 +17365,119 @@
           "marketP": 0.635,
           "modelP": 0.6366874088045685,
           "rawModelP": 0.6366874088045685,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT11BALATL-ATL4|no",
+          "ticker": "KXNFLSPREAD-26OCT11BALATL-ATL4",
+          "side": "no",
+          "eventId": "kalshi-atlanta-falcons-baltimore-ravens",
+          "event": "Baltimore Ravens @ Atlanta Falcons",
+          "eventTime": "2026-10-12T00:20:00Z",
+          "closeTime": "2026-10-12T00:20:00Z",
+          "selection": "Baltimore Ravens +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT12BUFLAR-LAR4|no",
+          "ticker": "KXNFLSPREAD-26OCT12BUFLAR-LAR4",
+          "side": "no",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Buffalo Bills +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-11|nfl|multi|Balanced|3||206b9c827040dc8c",
+      "day": "2026-10-11",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T20:07:55.577Z",
+      "snapshotAt": "2026-10-11T20:07:39.888194+00:00",
+      "sourceVersion": "70c737126411e9f45195fc5f916f8389eaaf5a8c",
+      "priceEstimate": 409,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLGAME-26OCT11DETARI-DET|yes",
+          "ticker": "KXNFLGAME-26OCT11DETARI-DET",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-detroit-lions",
+          "event": "Detroit Lions @ Arizona Cardinals",
+          "eventTime": "2026-10-11T20:25:00Z",
+          "closeTime": "2026-10-11T20:25:00Z",
+          "selection": "Detroit Lions ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.7,
+          "referenceAmericanOdds": -233,
+          "marketP": 0.695,
+          "modelP": 0.696771953034966,
+          "rawModelP": 0.696771953034966,
           "coverage": 0.296,
           "confidence": 47,
           "forecastType": "model",
