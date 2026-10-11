@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-11T13:35:12.432Z",
-  "status": "critical",
+  "updated_at": "2026-10-11T13:37:09.070Z",
+  "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-11T13:26:43.151663+00:00",
-      "ageMinutes": 8,
-      "markets": 5729,
-      "quotedMarkets": 5729,
-      "playerMarkets": 4441,
+      "snapshotAt": "2026-10-11T13:36:43.156222+00:00",
+      "ageMinutes": 0,
+      "markets": 3807,
+      "quotedMarkets": 3807,
+      "playerMarkets": 2519,
       "families": {
         "h2h": 54,
         "td": 271,
         "totals": 532,
         "spreads": 702,
-        "receiving": 2192,
         "rushing": 1298,
-        "passing": 680
+        "passing": 680,
+        "receiving": 270
       },
       "futureEvents": [
         {
@@ -129,37 +129,33 @@
         }
       ],
       "playerCounts": {
-        "kalshi-chicago-bears-green-bay-packers": 393,
-        "kalshi-new-york-giants-washington-commanders": 343,
-        "kalshi-indianapolis-colts-pittsburgh-steelers": 324,
-        "kalshi-cleveland-browns-new-york-jets": 271,
-        "kalshi-las-vegas-raiders-new-england-patriots": 378,
-        "kalshi-cincinnati-bengals-miami-dolphins": 313,
-        "kalshi-houston-texans-tennessee-titans": 401,
-        "kalshi-minnesota-vikings-new-orleans-saints": 273,
-        "kalshi-denver-broncos-los-angeles-chargers": 322,
-        "kalshi-san-francisco-49ers-seattle-seahawks": 264,
-        "kalshi-arizona-cardinals-detroit-lions": 403,
-        "kalshi-atlanta-falcons-baltimore-ravens": 345,
-        "kalshi-buffalo-bills-los-angeles-rams": 411
+        "kalshi-chicago-bears-green-bay-packers": 209,
+        "kalshi-new-york-giants-washington-commanders": 213,
+        "kalshi-indianapolis-colts-pittsburgh-steelers": 170,
+        "kalshi-cleveland-browns-new-york-jets": 189,
+        "kalshi-las-vegas-raiders-new-england-patriots": 194,
+        "kalshi-cincinnati-bengals-miami-dolphins": 199,
+        "kalshi-houston-texans-tennessee-titans": 205,
+        "kalshi-minnesota-vikings-new-orleans-saints": 163,
+        "kalshi-denver-broncos-los-angeles-chargers": 190,
+        "kalshi-san-francisco-49ers-seattle-seahawks": 196,
+        "kalshi-arizona-cardinals-detroit-lions": 207,
+        "kalshi-atlanta-falcons-baltimore-ravens": 183,
+        "kalshi-buffalo-bills-los-angeles-rams": 201
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-11T13:26:43.144738+00:00",
-      "ageMinutes": 8,
-      "markets": 333,
-      "quotedMarkets": 333,
-      "playerMarkets": 207,
+      "snapshotAt": "2026-10-11T13:36:43.148410+00:00",
+      "ageMinutes": 0,
+      "markets": 158,
+      "quotedMarkets": 158,
+      "playerMarkets": 32,
       "families": {
         "moneyline": 16,
         "spread": 12,
         "total": 98,
         "strikeouts": 19,
-        "hits": 38,
-        "home_runs": 13,
-        "rbi": 26,
-        "hrr": 63,
-        "total_bases": 48
+        "home_runs": 13
       },
       "futureEvents": [
         {
@@ -196,13 +192,13 @@
         }
       ],
       "playerCounts": {
-        "849809": 119,
-        "849820": 88
+        "849809": 26,
+        "849820": 6
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-11T13:26:43.146651+00:00",
-      "ageMinutes": 8,
+      "snapshotAt": "2026-10-11T13:36:43.151455+00:00",
+      "ageMinutes": 0,
       "markets": 1906,
       "quotedMarkets": 1904,
       "playerMarkets": 0,
@@ -489,7 +485,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-11T13:35:10.199808+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 1298,
       "quotedMarkets": 1298,
       "playerMarkets": 624,
@@ -714,8 +710,8 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-10-11T13:16:43.168405+00:00",
-      "ageMinutes": 18,
+      "snapshotAt": "2026-10-11T13:36:43.174675+00:00",
+      "ageMinutes": 0,
       "markets": 0,
       "quotedMarkets": 0,
       "playerMarkets": 0,
@@ -726,15 +722,6 @@
   },
   "alerts": [
     {
-      "id": "pipeline:refresh-failed",
-      "sport": null,
-      "code": "refresh-failed",
-      "severity": "critical",
-      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
-      "firstSeen": "2026-10-11T13:27:14.987Z",
-      "changedAt": "2026-10-11T13:27:14.987Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -744,28 +731,33 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "pipeline:refresh-failed",
+      "resolvedAt": "2026-10-11T13:37:09.070Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38126995403",
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-11T13:27:14.961738+00:00"
+      "at": "2026-10-11T13:37:09.048038+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-11T13:27:14.961738+00:00"
+      "at": "2026-10-11T13:37:09.048038+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-11T13:27:14.961738+00:00"
+      "at": "2026-10-11T13:37:09.048038+00:00"
     },
     "nhl": {
       "ok": true,
       "at": "2026-10-11T13:35:12.411212+00:00"
     },
     "ufc": {
-      "ok": false,
-      "at": "2026-10-11T13:27:14.961738+00:00"
+      "ok": true,
+      "at": "2026-10-11T13:37:09.048038+00:00"
     }
   }
 }
