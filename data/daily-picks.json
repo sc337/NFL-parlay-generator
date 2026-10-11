@@ -2,14 +2,20 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-10",
-  "updated_at": "2026-10-11T04:45:10.121Z",
+  "updated_at": "2026-10-11T04:55:12.075Z",
   "sports": {
     "nfl": {
-      "captured": 10,
+      "captured": 9,
       "passes": [
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
+          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -56,7 +62,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T04:44:49.578552+00:00"
+      "snapshotAt": "2026-10-11T04:54:49.578663+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -86,7 +92,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T04:44:49.574814+00:00"
+      "snapshotAt": "2026-10-11T04:54:49.575347+00:00"
     },
     "ncaaf": {
       "captured": 0,
@@ -116,7 +122,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T04:44:49.576210+00:00"
+      "snapshotAt": "2026-10-11T04:54:49.576545+00:00"
     },
     "nhl": {
       "captured": 2,
@@ -134,7 +140,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-11T04:34:12.323462+00:00"
+      "snapshotAt": "2026-10-11T04:44:14.042401+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -30815,6 +30821,89 @@
           "confidence": 43,
           "forecastType": "model",
           "projectedLine": 20,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-10|nfl|multi|Lotto|2||ea7b55d3ad294721",
+      "day": "2026-10-10",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-11T04:55:12.075Z",
+      "snapshotAt": "2026-10-11T04:54:49.578663+00:00",
+      "sourceVersion": "c1643a870f7b3d8edf2a240fefc99d3899ccca32",
+      "priceEstimate": 395,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT11HOUTEN-HOUCSTROUD7-250|yes",
+          "ticker": "KXNFLPASSYDS-26OCT11HOUTEN-HOUCSTROUD7-250",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-tennessee-titans",
+          "event": "Houston Texans @ Tennessee Titans",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "C.J. Stroud Over 249.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 249.5,
+          "player": "C.J. Stroud",
+          "ask": 0.43,
+          "referenceAmericanOdds": 133,
+          "marketP": 0.425,
+          "modelP": 0.5383127450400463,
+          "rawModelP": 0.5383127450400463,
+          "coverage": 0.5,
+          "confidence": 60,
+          "forecastType": "model",
+          "projectedLine": 285.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT11MINNO-NOCOLAVE12-7|yes",
+          "ticker": "KXNFLREC-26OCT11MINNO-NOCOLAVE12-7",
+          "side": "yes",
+          "eventId": "kalshi-minnesota-vikings-new-orleans-saints",
+          "event": "Minnesota Vikings @ New Orleans Saints",
+          "eventTime": "2026-10-11T17:00:00Z",
+          "closeTime": "2026-10-11T17:00:00Z",
+          "selection": "Chris Olave Over 6.5 receptions",
+          "market": "player_receptions",
+          "line": 6.5,
+          "player": "Chris Olave",
+          "ask": 0.47,
+          "referenceAmericanOdds": 113,
+          "marketP": 0.46499999999999997,
+          "modelP": 0.562250991919971,
+          "rawModelP": 0.562250991919971,
+          "coverage": 0.5,
+          "confidence": 54,
+          "forecastType": "model",
+          "projectedLine": 8.75,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
