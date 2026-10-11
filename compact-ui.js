@@ -38,6 +38,7 @@ function updateHeader(){
   const loading=/loading|refreshing|initializing|waiting|checking/i.test(raw);
   let short=unavailable?'Feed unavailable':loading?'Loading…':delayed?'Delayed':'Updated';
   if(!loading&&!unavailable){if(age)short+=delayed?' · '+age[1]+'m ago':' '+age[1]+'m ago';else if(time)short+=' · '+time[1]+' '+time[2].toUpperCase()}
+  if(!loading&&!unavailable&&/FanDuel/i.test(raw))short='FanDuel';
   if(label.textContent!==short)label.textContent=short;
   wrap.title=raw;
   wrap.classList.toggle('is-delayed',delayed);

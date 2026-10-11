@@ -452,3 +452,7 @@ html[data-theme="light"] body[data-sport="nhl"]{--league:#12668a;--league-bg:#e0
 
 /* League logos sit directly on the page in every theme and viewport. */
 .league-mark,html[data-theme="light"] .league-mark{border:0;border-radius:0;background:transparent;box-shadow:none}
+
+/* Keep full diagnostics available to screen readers without print overflow. */
+.header-status #dataStatus{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+@media print{.header-status #dataStatus{display:none!important}#nflMarketFilters{break-inside:avoid}}

@@ -21,10 +21,13 @@
     return false;
   }
   // Prefer the saved Odds API key; use Kalshi when quota, key, or live feed is unavailable.
+  let loadSequence=0;
   const caesarsLoad=async()=>{
     if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return false;
+    const request=++loadSequence,token=window.__SPORT_TOKEN;
     let ok=false;
     if(state.apiKey)ok=await window.NFL_ODDS_PRIMARY?.load?.();
+    if(request!==loadSequence||(window.__ACTIVE_SPORT||'nfl')!=='nfl'||token!==window.__SPORT_TOKEN)return false;
     if(!ok)ok=await kalshiFallback();
     window.CAESARS_COMPARE?.refresh?.();
     return ok;

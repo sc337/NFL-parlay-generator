@@ -82,8 +82,9 @@ function trackApiUsage(res){
   const used=res.headers.get('x-requests-used');
   const last=res.headers.get('x-requests-last');
 
-  if(remaining!==null) state.apiUsage.remaining=Number(remaining);
-  if(used!==null) state.apiUsage.used=Number(used);
+  const cached=res.headers.get('x-nfl-parlay-cache')==='HIT';
+  if(!cached&&remaining!==null) state.apiUsage.remaining=Number(remaining);
+  if(!cached&&used!==null) state.apiUsage.used=Number(used);
   if(last!==null) state.apiUsage.last=Number(last);
 
   renderApiUsage();
@@ -342,7 +343,7 @@ async function discoverFanDuelMarkets(game){
   url.searchParams.set('apiKey',state.apiKey);
   url.searchParams.set('regions','us');
   url.searchParams.set('bookmakers','fanduel');
-  const res=await fetch(url);
+  const res=await fetch(url,{signal:AbortSignal.timeout(15000)});
   trackApiUsage(res);
   if(!res.ok) throw new Error('Event markets API '+res.status);
   const raw=await res.json();
@@ -386,11 +387,11 @@ async function ensurePropsForGame(game){
       url.searchParams.set('oddsFormat','american');
       url.searchParams.set('bookmakers','fanduel');
 
-      const res=await fetch(url);
+      const res=await fetch(url,{signal:AbortSignal.timeout(15000)});
       trackApiUsage(res);
       if(!res.ok) throw new Error('Prop odds API '+res.status);
       const raw=await res.json();
-      const book=(raw.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
+      const book=(raw.bookmakers||[]).find(b=>b.key==='fanduel');
       const props=[];
 
       for(const m of book?.markets||[]){
@@ -409,6 +410,7 @@ async function ensurePropsForGame(game){
       const cleaned=[...unique.values()];
       game.markets.push(...cleaned);
       await enrichGameContext(game);
+      window.NFL_ODDS_PRIMARY?.enrichProps?.(game);
       game.propStatus=cleaned.length?'loaded':'empty';
       state.propsLoaded.add(game.id);
 
@@ -444,7 +446,7 @@ async function loadData(){
 
 function normalizeGame(g){
   const markets=[];
-  const book=(g.bookmakers||[]).find(b=>b.dashboardBookSource==='Caesars'||b.key==='williamhill_us');
+  const book=(g.bookmakers||[]).find(b=>b.key==='fanduel');
   for(const m of book?.markets||[]){
     for(const out of m.outcomes||[]){
       if(m.key==='h2h'){

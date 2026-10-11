@@ -13,8 +13,8 @@
 
   const TTL={
     full:{slate:10*60e3,props:15*60e3,markets:60*60e3,context:12*60*60e3,nflverse:24*60*60e3,multi:6},
-    saver:{slate:30*60e3,props:45*60e3,markets:2*60*60e3,context:12*60*60e3,nflverse:24*60*60e3,multi:3},
-    ultra:{slate:60*60e3,props:90*60e3,markets:4*60*60e3,context:24*60*60e3,nflverse:24*60*60e3,multi:1}
+    saver:{slate:25*60e3,props:25*60e3,markets:2*60*60e3,context:12*60*60e3,nflverse:24*60*60e3,multi:3},
+    ultra:{slate:25*60e3,props:25*60e3,markets:4*60*60e3,context:24*60*60e3,nflverse:24*60*60e3,multi:1}
   };
 
   function mode(){
@@ -127,7 +127,7 @@
   }
 
   window.fetch=async function(input,init){
-    const raw=typeof input==='string'?input:input?.url;
+    const raw=typeof input==='string'?input:input instanceof URL?input.toString():input?.url;
     if(!raw) return originalFetch(input,init);
 
     const selective=rewriteSelectiveMarkets(raw);
@@ -145,7 +145,7 @@
 
     s.misses=(s.misses||0)+1; saveStats(s);
     let request=selective;
-    if(typeof input!=='string') request=new Request(selective,input);
+    if(typeof input!=='string'&&!(input instanceof URL)) request=new Request(selective,input);
     const res=await originalFetch(request,init);
 
     if(res.ok){
