@@ -1,22 +1,21 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-11T21:58:01.099Z",
+  "updated_at": "2026-10-11T21:58:49.476Z",
   "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-11T21:57:39.888035+00:00",
+      "snapshotAt": "2026-10-11T21:58:26.935960+00:00",
       "ageMinutes": 0,
-      "markets": 1115,
-      "quotedMarkets": 1115,
-      "playerMarkets": 733,
+      "markets": 706,
+      "quotedMarkets": 706,
+      "playerMarkets": 324,
       "families": {
         "h2h": 32,
-        "td": 41,
         "totals": 152,
         "spreads": 198,
-        "receiving": 420,
-        "rushing": 194,
-        "passing": 78
+        "rushing": 182,
+        "passing": 94,
+        "receiving": 48
       },
       "futureEvents": [
         {
@@ -85,20 +84,21 @@
         }
       ],
       "playerCounts": {
-        "kalshi-atlanta-falcons-baltimore-ravens": 334,
-        "kalshi-buffalo-bills-los-angeles-rams": 399
+        "kalshi-atlanta-falcons-baltimore-ravens": 156,
+        "kalshi-buffalo-bills-los-angeles-rams": 168
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-11T21:57:39.881442+00:00",
+      "snapshotAt": "2026-10-11T21:58:26.935217+00:00",
       "ageMinutes": 0,
-      "markets": 70,
-      "quotedMarkets": 70,
-      "playerMarkets": 0,
+      "markets": 97,
+      "quotedMarkets": 97,
+      "playerMarkets": 27,
       "families": {
         "moneyline": 16,
         "spread": 12,
-        "total": 42
+        "total": 42,
+        "strikeouts": 27
       },
       "futureEvents": [
         {
@@ -135,12 +135,12 @@
         }
       ],
       "playerCounts": {
-        "849809": 102,
-        "849820": 37
+        "849809": 19,
+        "849820": 8
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-11T21:57:39.884214+00:00",
+      "snapshotAt": "2026-10-11T21:58:26.937794+00:00",
       "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
@@ -432,7 +432,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-11T21:56:14.946965+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "markets": 1088,
       "quotedMarkets": 1088,
       "playerMarkets": 442,
@@ -653,13 +653,14 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-10-11T21:57:39.905615+00:00",
+      "snapshotAt": "2026-10-11T21:58:26.968367+00:00",
       "ageMinutes": 0,
-      "markets": 76,
-      "quotedMarkets": 76,
+      "markets": 80,
+      "quotedMarkets": 80,
       "playerMarkets": 0,
       "families": {
         "moneyline": 24,
+        "distance": 4,
         "method_finish": 16,
         "method_victory": 28,
         "round_finish": 8
@@ -719,15 +720,6 @@
   },
   "alerts": [
     {
-      "id": "mlb:props-missing",
-      "sport": "mlb",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-11T21:47:58.938Z",
-      "changedAt": "2026-10-11T21:47:58.938Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -737,20 +729,25 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38152819550",
+  "resolved": [
+    {
+      "id": "mlb:props-missing",
+      "resolvedAt": "2026-10-11T21:58:49.476Z"
+    }
+  ],
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38171975747",
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-11T21:58:01.077136+00:00"
+      "at": "2026-10-11T21:58:49.454074+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-11T21:58:01.077136+00:00"
+      "at": "2026-10-11T21:58:49.454074+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-11T21:58:01.077136+00:00"
+      "at": "2026-10-11T21:58:49.454074+00:00"
     },
     "nhl": {
       "ok": true,
@@ -758,7 +755,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-11T21:58:01.077136+00:00"
+      "at": "2026-10-11T21:58:49.454074+00:00"
     }
   }
 }
