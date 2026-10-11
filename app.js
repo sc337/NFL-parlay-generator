@@ -326,7 +326,7 @@ function normalizePropOutcome(marketKey,out,quotedAt=new Date().toISOString()){
   return {
     type:meta.type,
     marketKey,
-    source:'Caesars',quotedAt,
+    source:'FanDuel',quotedAt,
     player,
     name,
     price:out.price,
@@ -341,6 +341,7 @@ async function discoverFanDuelMarkets(game){
   const url=new URL(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events/${game.id}/markets`);
   url.searchParams.set('apiKey',state.apiKey);
   url.searchParams.set('regions','us');
+  url.searchParams.set('bookmakers','fanduel');
   const res=await fetch(url);
   trackApiUsage(res);
   if(!res.ok) throw new Error('Event markets API '+res.status);
