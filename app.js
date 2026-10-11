@@ -612,22 +612,28 @@ function marketQuality(m,variant){
 function profileSelectionScore(q,variant){
   const p=q.quote.p,likelihood=q.validated?q.conservativeP:Math.min(q.conservativeP,p);
   if(variant==='safe'&&(p<.55||q.conservativeP<.55))return -999;
-  if(variant==='balanced'&&p<.45)return -999;
+  // Price discipline is a profile policy, not a measured confidence limit.
+  if(variant==='balanced'&&(p<.45||p>.78))return -999;
   if(variant==='long'&&p>.70)return -999;
   const coverage=q.coverage*12,edge=Math.max(0,Math.min(.15,q.conservativeP-p))*100;
-  if(variant==='safe')return likelihood*160+coverage+edge*.15;
+  if(variant==='safe')return likelihood*160+coverage+edge*.15-Math.max(0,p-.78)*100;
   if(variant==='long')return Math.log(1/p)*48+likelihood*30+coverage+edge*.5;
-  return likelihood*90+coverage+edge*.8-Math.abs(p-.60)*18;
+  return likelihood*70+coverage+edge*.8-Math.abs(p-.60)*35-Math.max(0,p-.70)*150;
 }
 function distinctProfileBuild(p,previous){
+  // Compare quote-implied aggressiveness, never call this joint model confidence.
+  const meanQuote=build=>Number.isFinite(build?.odds)&&build?.legs?.length?
+    Math.pow(1/(build.odds>0?1+build.odds/100:1+100/Math.abs(build.odds)),1/build.legs.length):null;
+  const current=meanQuote(p),safe=previous.find(old=>old?.profile==='safe');
   const balanced=previous.find(old=>old?.profile==='balanced');
-  if(p.profile==='long'&&balanced&&!(p.odds>balanced.odds))return false;
+  const prior=p.profile==='balanced'?safe:p.profile==='long'?(balanced||safe):null;
+  if(prior){const before=meanQuote(prior);if(current==null||before==null||before-current<(p.profile==='long'?.06:.04))return false;}
   const changes=p.legs.length>=3?2:1;
   return previous.filter(Boolean).every(old=>overlapCount(old,p)<=p.legs.length-changes&&parlaySignature(old)!==parlaySignature(p));
 }
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
-  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});const score=x.pass?profileSelectionScore(x,variant):-999;return score>-900?score+(state.moreCushion?(window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
+  if(window.PICK_QUALITY){const x=window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true});const score=x.pass?profileSelectionScore(x,variant):-999;return score>-900?score+(state.moreCushion?Math.min(3,window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
@@ -944,9 +950,9 @@ function packageParlay(legs,variant,isSgp,meta={}){
     corr,
     scriptName:meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:({safe:'Prioritizes estimated likelihood.',balanced:'Balances estimated likelihood and reference price.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'More cushion: prefers easier quoted thresholds that pass the same quality checks. ':'')+(isSgp
+    summary:({safe:'Prioritizes buffered likelihood with a penalty for excessive juice.',balanced:'Balances evidence, buffered likelihood and price discipline; rejects legs above 78% quote-implied probability.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'Cushion is a small preference, not evidence of value. ':'')+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
-      : 'Spreads exposure across multiple games and prioritizes independently strong legs.')
+      : 'One leg per game. Combined model probability remains unvalidated; separate games do not guarantee independence.')
   };
 }
 
@@ -1012,7 +1018,7 @@ function render(parlays){
     node.querySelector('.parlay-name').textContent=p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
-    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Price est.';
+    node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':'Reference est.';
     node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
     node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
@@ -1048,6 +1054,12 @@ function render(parlays){
     });
     
     wrap.appendChild(node);
+  }
+  if(parlays.length===3&&parlays.some(p=>!p)){
+    const names=['Conservative','Balanced','Lotto'],note=document.createElement('p');note.className='profile-passes';
+    note.textContent=parlays.map((p,i)=>p?'':names[i]).filter(Boolean).join(' / ')+': no distinct qualified build within profile price rules. Try fewer legs or other markets.';
+    // Keep pass information inside the first real card, not as a swipe item.
+    wrap.querySelector('.parlay-card')?.appendChild(note);
   }
 }
 
@@ -1122,7 +1134,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   }
   // Keep the best independent build for each risk profile in swipe order.
   // Repeated generation uses the same inputs; profiles never penalize each other.
-  if(current()){window.NFL_PROFILE_HISTORY?.record?.(parlays.filter(Boolean),state.mode);render(parlays.filter(Boolean));}
+  if(current()){window.NFL_PROFILE_HISTORY?.record?.(parlays.filter(Boolean),state.mode);render(parlays);}
 }
 
 window.generate=generate;

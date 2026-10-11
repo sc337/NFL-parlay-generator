@@ -114,7 +114,11 @@ function assess(s,m,f={},options={}){
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(m.marketKey))reason='Caesars straight only';
  const valueQualified=validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
  const rankingP=validated?conservativeP:Math.min(conservativeP,q.p);
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,evidence:validated?'Calibrated estimate':'Unvalidated model',rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10:-999};
+ // Ranking preference only: don't reject good evidence simply because the price
+ // is short, but don't let extreme juice masquerade as better pick quality.
+ const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
+ if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.conservativeP??l.modelP??l.modelProbability));

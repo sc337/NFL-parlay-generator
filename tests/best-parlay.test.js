@@ -21,6 +21,6 @@ test('NFL profiles remain separate when one produces a shorter fallback',async()
  const app=nfl();app.builds.balanced.legs=[1,2];app.builds.balanced.score=99;
   await app.run();assert.deepEqual([...app.output[0]],[app.builds.safe,app.builds.balanced,app.builds.long]);assert.equal(app.output[0][1].legs.length,2);
 });
-test('NFL unavailable profiles are omitted without replacing them with another risk profile',async()=>{
- const app=nfl();app.builds.safe=null;await app.run();assert.deepEqual([...app.output[0]],[app.builds.balanced,app.builds.long]);
+test('NFL unavailable profile slots reach the renderer for honest pass labels, never replacements',async()=>{
+ const app=nfl();app.builds.safe=null;await app.run();assert.deepEqual([...app.output[0]],[null,app.builds.balanced,app.builds.long]);
 });

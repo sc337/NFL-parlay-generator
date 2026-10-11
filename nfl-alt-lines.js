@@ -48,7 +48,7 @@ function cushionBonus(m){
  // Preference only; candidateScore still enforces shared and profile quality gates.
  if(unsupportedAltUnder(m)||!m.isAltLine||!quoted(m)||!(m.cushionPoints>0))return 0;
  const scale=m.type==='passing'?25:m.type==='rushing'||m.type==='receiving'?10:3;
- return Math.min(12,4+4*m.cushionPoints/scale);
+ return Math.min(3,1+m.cushionPoints/scale);
 }
 function lineText(m){return m.type==='spreads'?(point(m)>=0?'+':'')+point(m):(m.side==='over'?'O ':'U ')+point(m)}
 function quoteText(m){return String(m.source||'Source')+' '+(Number(m.price)>0?'+':'')+Number(m.price)}
@@ -65,7 +65,7 @@ window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonTe
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';
- field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><small id="nflLinesNote">Player ALT props: overs only. More cushion prefers easier quoted thresholds, not guaranteed value. Compare lines in Details. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small>';
+ field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><small id="nflLinesNote">Player ALT props: overs only. Cushion is a small preference, not guaranteed value. ALT · Check book means Caesars availability is unverified. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small>';
  host.after(field);
  const select=field.querySelector('select'),toggle=field.querySelector('#nflAltToggle'),cushion=field.querySelector('#nflCushionToggle');
  const s=window.NFL_PARLAY_STATE;select.value=s?.lineMode||'standard';toggle.checked=select.value!=='standard';cushion.checked=!!s?.moreCushion;

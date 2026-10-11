@@ -3,6 +3,8 @@ const request=window.fetch.bind(window),sports={nfl:'americanfootball_nfl',mlb:'
 const normalize=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 const props={goals:'player_goals',assists:'player_assists',points:'player_points',shots:'player_shots_on_goal',saves:'player_total_saves',hits:'batter_hits',hrr:'batter_hits_runs_rbis',home_runs:'batter_home_runs',rbi:'batter_rbis',total_bases:'batter_total_bases',strikeouts:'pitcher_strikeouts'};
 const records=new Map(),tokens=new Map(),cache=new Map(),pending=new Set();let serial=0,timer,lastKey='';
+const quoteNodes=()=>document.querySelectorAll('[data-caesars-id], [data-caesars-extra-id]');
+const nodeToken=node=>node.dataset.caesarsId||node.dataset.caesarsExtraId;
 const key=()=>{try{return localStorage.getItem('nflParlayOddsApiKey')||''}catch{return ''}};
 const fresh=at=>Number.isFinite(Date.parse(at))&&Date.parse(at)<=Date.now()+300000&&Date.now()-Date.parse(at)<15*60000;
 function descriptor(s,m,g){
@@ -55,20 +57,29 @@ function register(s,m){
  const d=descriptor(s,m,window.PICK_QUALITY?.gameFor(s,m));
  const identity=d?JSON.stringify(d):JSON.stringify([s,window.PICK_QUALITY?.id(s,m)||m.ticker||m.name||m.label]);let token=tokens.get(identity);
  if(!token){token='cq'+(++serial);tokens.set(identity,token);records.set(token,{d,status:d?'loading':'unavailable',quote:null})}
+ const r=records.get(token);r.alt=m.isAltLine===true||/_alternate$/.test(m.marketKey||'');
+ const q=window.PICK_QUALITY?.quote(s,m);
+ r.direct=q?.source==='Caesars'&&Number.isFinite(q.odds)&&Math.abs(q.odds)>=100&&fresh(q.checkedAt)?{price:q.odds,at:q.checkedAt}:null;
  schedule();return token;
 }
 function lookup(token){const r=records.get(token);return key()&&key()===lastKey&&r?.quote&&fresh(r.quote.at)?{...r.quote}:null}
+function availability(token){
+ const r=records.get(token),q=r?.direct&&fresh(r.direct.at)?r.direct:lookup(token);
+ return {verified:!!q,quote:q?{...q}:null,status:q?'verified':key()&&r?.status==='loading'?'checking':'unverified'};
+}
 function paint(){
- for(const node of document.querySelectorAll('[data-caesars-id]')){
+ for(const node of quoteNodes()){
   let price=node.querySelector('.caesars-quote');
-  if(!key()){price?.remove();node.querySelector('.market-tile')?.classList.remove('has-caesars-price');continue}
-  const record=records.get(node.dataset.caesarsId),tile=node.classList.contains('market-tile')?node:node.querySelector('.market-tile');
+  const record=records.get(nodeToken(node)),tile=node.classList.contains('market-tile')||node.classList.contains('extra-pick-price')?node:node.querySelector('.market-tile');
   if(!record||!tile)continue;
+  const available=availability(nodeToken(node));
+  if(node.dataset.bookAvailability!==available.status)node.dataset.bookAvailability=available.status;
+  if(!key()&&!record.alt&&!available.verified){price?.remove();tile.classList.remove('has-caesars-price');continue}
   if(!price){price=document.createElement('small');price.className='caesars-quote';tile.append(price);tile.classList.add('has-caesars-price')}
-  const q=record.quote&&fresh(record.quote.at)?record.quote:null;
-  const text=q?'Caesars '+(q.price>0?'+':'')+q.price:record.status==='loading'?'Caesars checking…':'Caesars unavailable';
+  const q=available.quote;
+  const text=q?'Caesars '+(q.price>0?'+':'')+q.price:record.alt?(available.status==='checking'?'ALT · Checking book…':'ALT · Check book'):available.status==='checking'?'Caesars checking…':'Caesars unavailable';
   if(price.textContent!==text)price.textContent=text;
-  price.title=q?'Exact matching line · Updated '+new Date(q.at).toLocaleTimeString():'No current exact matching Caesars quote';
+  price.title=q?'Exact matching Caesars line · Updated '+new Date(q.at).toLocaleTimeString():'Exact Caesars availability is unverified. Kalshi thresholds and prices are references, not sportsbook offers.';
  }
  if(typeof CustomEvent==='function')document.dispatchEvent?.(new CustomEvent('caesars-quotes-updated'));
 }
@@ -83,7 +94,7 @@ async function cached(id,fn){const row=cache.get(id);if(row&&Date.now()-row.at<(
 async function update(){
  const credential=key();if(credential!==lastKey){lastKey=credential;cache.clear();for(const r of records.values()){r.quote=null;r.status=r.d?'loading':'unavailable'}}
  if(!credential){paint();return}
- const visible=[...document.querySelectorAll('[data-caesars-id]')].filter(n=>document.body.dataset.sport==='bankroll'?!!n.closest?.('#bankrollFeed'):!n.closest?.('#bankrollFeed')).map(n=>records.get(n.dataset.caesarsId));
+ const visible=[...quoteNodes()].filter(n=>document.body.dataset.sport==='bankroll'?!!n.closest?.('#bankrollFeed'):!n.closest?.('#bankrollFeed')).map(n=>records.get(nodeToken(n)));
  const view=document.body.dataset.sport||'nfl',s=view==='bankroll'?visible.find(r=>r?.d)?.d.sport:view,active=visible.filter(r=>r?.d?.sport===s);
  if(!active.length||pending.has(s))return;pending.add(s);
  try{
@@ -103,7 +114,7 @@ async function update(){
  finally{pending.delete(s);if(key()===credential)paint()}
 }
 function schedule(){clearTimeout(timer);timer=setTimeout(()=>{paint();update()},100)}
-window.CAESARS_COMPARE={register,descriptor,eventMatch,matchingQuote,lookup,refresh:schedule};
+window.CAESARS_COMPARE={register,descriptor,eventMatch,matchingQuote,lookup,availability,refresh:schedule};
 if(typeof MutationObserver!=='undefined')new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['data-sport']});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
 window.setInterval?.(schedule,60000);
