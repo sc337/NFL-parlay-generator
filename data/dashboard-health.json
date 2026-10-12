@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-12T02:06:15.100Z",
+  "updated_at": "2026-10-12T02:08:47.825Z",
   "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-12T01:58:26.940885+00:00",
-      "ageMinutes": 8,
-      "markets": 1387,
-      "quotedMarkets": 1387,
-      "playerMarkets": 287,
+      "snapshotAt": "2026-10-12T02:08:26.940441+00:00",
+      "ageMinutes": 0,
+      "markets": 1347,
+      "quotedMarkets": 1347,
+      "playerMarkets": 247,
       "families": {
         "h2h": 30,
         "td": 23,
         "totals": 456,
         "spreads": 614,
         "receiving": 210,
-        "passing": 48,
-        "rushing": 6
+        "rushing": 6,
+        "passing": 8
       },
       "futureEvents": [
         {
@@ -81,19 +81,21 @@
         }
       ],
       "playerCounts": {
-        "kalshi-buffalo-bills-los-angeles-rams": 287
+        "kalshi-buffalo-bills-los-angeles-rams": 247
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-12T01:58:26.932578+00:00",
-      "ageMinutes": 8,
-      "markets": 42,
-      "quotedMarkets": 42,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-10-12T02:08:26.933372+00:00",
+      "ageMinutes": 0,
+      "markets": 86,
+      "quotedMarkets": 86,
+      "playerMarkets": 44,
       "families": {
         "moneyline": 14,
         "spread": 6,
-        "total": 22
+        "total": 22,
+        "strikeouts": 15,
+        "hrr": 29
       },
       "futureEvents": [
         {
@@ -126,12 +128,12 @@
         }
       ],
       "playerCounts": {
-        "849820": 15
+        "849820": 44
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-12T01:58:26.936067+00:00",
-      "ageMinutes": 8,
+      "snapshotAt": "2026-10-12T02:08:26.936292+00:00",
+      "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
       "playerMarkets": 0,
@@ -422,7 +424,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-12T02:06:12.435581+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "markets": 646,
       "quotedMarkets": 646,
       "playerMarkets": 0,
@@ -636,16 +638,15 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-12T01:58:26.956146+00:00",
-      "ageMinutes": 8,
-      "markets": 82,
-      "quotedMarkets": 82,
+      "snapshotAt": "2026-10-12T02:08:26.958076+00:00",
+      "ageMinutes": 0,
+      "markets": 74,
+      "quotedMarkets": 74,
       "playerMarkets": 0,
       "families": {
         "moneyline": 30,
         "method_finish": 16,
-        "method_victory": 28,
-        "round_finish": 8
+        "method_victory": 28
       },
       "futureEvents": [
         {
@@ -714,15 +715,6 @@
   },
   "alerts": [
     {
-      "id": "mlb:props-missing",
-      "sport": "mlb",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-12T01:58:48.370Z",
-      "changedAt": "2026-10-12T01:58:48.370Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -732,20 +724,25 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "mlb:props-missing",
+      "resolvedAt": "2026-10-12T02:08:47.825Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38171975747",
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-12T01:58:48.347630+00:00"
+      "at": "2026-10-12T02:08:47.802911+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-12T01:58:48.347630+00:00"
+      "at": "2026-10-12T02:08:47.802911+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-12T01:58:48.347630+00:00"
+      "at": "2026-10-12T02:08:47.802911+00:00"
     },
     "nhl": {
       "ok": true,
@@ -753,7 +750,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-12T01:58:48.347630+00:00"
+      "at": "2026-10-12T02:08:47.802911+00:00"
     }
   }
 }
