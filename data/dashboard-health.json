@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-12T03:36:44.369Z",
+  "updated_at": "2026-10-12T03:39:35.184Z",
   "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-12T03:29:16.317042+00:00",
-      "ageMinutes": 7,
-      "markets": 1150,
-      "quotedMarkets": 1150,
-      "playerMarkets": 50,
+      "snapshotAt": "2026-10-12T03:39:16.315748+00:00",
+      "ageMinutes": 0,
+      "markets": 1330,
+      "quotedMarkets": 1330,
+      "playerMarkets": 230,
       "families": {
         "h2h": 30,
-        "td": 42,
         "totals": 456,
         "spreads": 614,
-        "passing": 8
+        "rushing": 200,
+        "receiving": 26,
+        "passing": 4
       },
       "futureEvents": [
         {
@@ -79,22 +80,20 @@
         }
       ],
       "playerCounts": {
-        "kalshi-buffalo-bills-los-angeles-rams": 31,
-        "kalshi-denver-broncos-seattle-seahawks": 19
+        "kalshi-buffalo-bills-los-angeles-rams": 130,
+        "kalshi-denver-broncos-seattle-seahawks": 100
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-12T03:29:16.310392+00:00",
-      "ageMinutes": 7,
-      "markets": 86,
-      "quotedMarkets": 86,
-      "playerMarkets": 44,
+      "snapshotAt": "2026-10-12T03:39:16.308775+00:00",
+      "ageMinutes": 0,
+      "markets": 69,
+      "quotedMarkets": 69,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 14,
-        "spread": 6,
-        "total": 22,
-        "strikeouts": 15,
-        "hrr": 29
+        "spread": 12,
+        "total": 43
       },
       "futureEvents": [
         {
@@ -131,8 +130,8 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-12T03:29:16.311528+00:00",
-      "ageMinutes": 7,
+      "snapshotAt": "2026-10-12T03:39:16.311621+00:00",
+      "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
       "playerMarkets": 0,
@@ -423,7 +422,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-12T03:36:41.715069+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "markets": 646,
       "quotedMarkets": 646,
       "playerMarkets": 0,
@@ -637,15 +636,16 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-12T03:29:16.333139+00:00",
-      "ageMinutes": 7,
-      "markets": 74,
-      "quotedMarkets": 74,
+      "snapshotAt": "2026-10-12T03:39:16.332914+00:00",
+      "ageMinutes": 0,
+      "markets": 82,
+      "quotedMarkets": 82,
       "playerMarkets": 0,
       "families": {
         "moneyline": 30,
         "method_finish": 16,
-        "method_victory": 28
+        "method_victory": 28,
+        "round_finish": 8
       },
       "futureEvents": [
         {
@@ -714,6 +714,15 @@
   },
   "alerts": [
     {
+      "id": "mlb:props-missing",
+      "sport": "mlb",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-12T03:39:35.184Z",
+      "changedAt": "2026-10-12T03:39:35.184Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -728,15 +737,15 @@
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-12T03:29:34.511342+00:00"
+      "at": "2026-10-12T03:39:35.162541+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-12T03:29:34.511342+00:00"
+      "at": "2026-10-12T03:39:35.162541+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-12T03:29:34.511342+00:00"
+      "at": "2026-10-12T03:39:35.162541+00:00"
     },
     "nhl": {
       "ok": true,
@@ -744,7 +753,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-12T03:29:34.511342+00:00"
+      "at": "2026-10-12T03:39:35.162541+00:00"
     }
   }
 }
