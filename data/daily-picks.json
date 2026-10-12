@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-11",
-  "updated_at": "2026-10-12T03:18:44.030Z",
+  "updated_at": "2026-10-12T03:19:38.177Z",
   "sports": {
     "nfl": {
-      "captured": 2,
+      "captured": 0,
       "passes": [
         {
           "mode": "multi",
@@ -21,6 +21,12 @@
         },
         {
           "mode": "multi",
+          "profile": "balanced",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
@@ -51,6 +57,12 @@
         },
         {
           "mode": "multi",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -104,7 +116,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:18:26.937918+00:00"
+      "snapshotAt": "2026-10-12T03:19:16.316515+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -134,17 +146,21 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:18:26.931234+00:00"
+      "snapshotAt": "2026-10-12T03:19:16.316655+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-12T03:18:26.933249+00:00"
+      "snapshotAt": "2026-10-12T03:19:16.318424+00:00"
     },
     "nhl": {
-      "captured": 8,
-      "passes": [],
-      "snapshotAt": "2026-10-12T03:06:12.390091+00:00"
+      "captured": 0,
+      "passes": [
+        {
+          "reason": "Feed stale or timestamp invalid"
+        }
+      ],
+      "snapshotAt": "2026-10-12T00:36:12.759294+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -174,7 +190,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:18:26.954146+00:00"
+      "snapshotAt": "2026-10-12T03:19:16.351505+00:00"
     }
   },
   "records": [
@@ -21124,149 +21140,6 @@
           "projectedMargin": null,
           "projectedAway": null,
           "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-11|nhl|multi|balanced|4||c4694f20f50a8395",
-      "day": "2026-10-11",
-      "sport": "nhl",
-      "mode": "multi",
-      "profile": "balanced",
-      "requestedLegs": 4,
-      "actualLegs": 4,
-      "filters": {
-        "lines": "both",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-12T01:38:44.238Z",
-      "snapshotAt": "2026-10-12T01:26:12.596206+00:00",
-      "sourceVersion": "da5c70087ae4c747aba7d99579d98c129aa1d315",
-      "priceEstimate": 827,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "legs": [
-        {
-          "id": "nhl|KXNHLSPREAD-26OCT12FLABUF-FLA2|no",
-          "ticker": "KXNHLSPREAD-26OCT12FLABUF-FLA2",
-          "side": "no",
-          "eventId": "401892485",
-          "event": "Panthers vs Sabres",
-          "eventTime": "2026-10-12T17:00Z",
-          "closeTime": "2026-10-14T17:00:00Z",
-          "selection": "Sabres +1.5 Puck line",
-          "market": "spread",
-          "line": 1.5,
-          "player": null,
-          "ask": 0.71,
-          "referenceAmericanOdds": null,
-          "marketP": 0.705,
-          "modelP": 0.8142570267966239,
-          "rawModelP": 0.8142570267966239,
-          "coverage": 0.5416666666666666,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 6.2777303494765775,
-          "projectedMargin": null,
-          "projectedAway": 2.8072263407793696,
-          "projectedHome": 3.4705040086972074,
-          "isAltLine": false,
-          "altReferenceLine": 1.5,
-          "altDistance": 0,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLGAME-26OCT13PITCHI-PIT|yes",
-          "ticker": "KXNHLGAME-26OCT13PITCHI-PIT",
-          "side": "yes",
-          "eventId": "401892496",
-          "event": "Penguins vs Blackhawks",
-          "eventTime": "2026-10-14T00:00Z",
-          "closeTime": "2026-10-16T00:00:00Z",
-          "selection": "Penguins ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "ask": 0.62,
-          "referenceAmericanOdds": null,
-          "marketP": 0.605,
-          "modelP": 0.69032320232785,
-          "rawModelP": 0.69032320232785,
-          "coverage": 0.55,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 6.506188082173277,
-          "projectedMargin": null,
-          "projectedAway": 3.8895696407756613,
-          "projectedHome": 2.6166184413976157,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLGAME-26OCT13BOSSJ-BOS|yes",
-          "ticker": "KXNHLGAME-26OCT13BOSSJ-BOS",
-          "side": "yes",
-          "eventId": "401892503",
-          "event": "Bruins vs Sharks",
-          "eventTime": "2026-10-14T03:00Z",
-          "closeTime": "2026-10-16T03:00:00Z",
-          "selection": "Bruins ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "ask": 0.5,
-          "referenceAmericanOdds": null,
-          "marketP": 0.48,
-          "modelP": 0.6124592865873164,
-          "rawModelP": 0.6124592865873164,
-          "coverage": 0.5416666666666666,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 6.5551597887072495,
-          "projectedMargin": null,
-          "projectedAway": 3.6458822473445887,
-          "projectedHome": 2.909277541362661,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLGAME-26OCT13SEAPHI-SEA|yes",
-          "ticker": "KXNHLGAME-26OCT13SEAPHI-SEA",
-          "side": "yes",
-          "eventId": "401892492",
-          "event": "Kraken vs Flyers",
-          "eventTime": "2026-10-13T23:00Z",
-          "closeTime": "2026-10-15T23:00:00Z",
-          "selection": "Kraken ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "ask": 0.49,
-          "referenceAmericanOdds": null,
-          "marketP": 0.475,
-          "modelP": 0.5597536389120407,
-          "rawModelP": 0.5597536389120407,
-          "coverage": 0.55,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 5.87418807993653,
-          "projectedMargin": null,
-          "projectedAway": 3.1207303824853825,
-          "projectedHome": 2.7534576974511475,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
