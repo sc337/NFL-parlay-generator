@@ -89,6 +89,7 @@ function assess(s,m,f={},options={}){
  if(delayedReference)warnings.push('Delayed reference price; verify current line');
  const g=gameFor(s,m,options.game),start=Date.parse(options.eventTime||m.game_time||m.start_time||m.kickoff||g?.commence_time||'');
  if(unsupportedAltUnder(m))reason='ALT player-prop unders unsupported at your book';
+ else if(s==='nfl'&&window.NFL_ALT_LINES?.unsupportedIncrement?.(m))reason='ALT yardage requires a quoted 10-yard milestone';
  else if(Number.isFinite(start)&&start<=Date.now()||['in','post','Live','Final'].includes(m.game_status)||['in','post'].includes(g?.game_status))reason='Event already started';
  else if(!Number.isFinite(start))reason='Event start unverified';
  else if(!q.checkedAt)reason='Quote timestamp unavailable';

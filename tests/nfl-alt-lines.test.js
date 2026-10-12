@@ -14,10 +14,20 @@ test('explicit sportsbook ALT labels win and unsupported markets stay out of ALT
  const {api}=setup();const rows=[{type:'passing',marketKey:'player_pass_yds',point:224.5},{type:'passing',marketKey:'player_pass_yds_alternate',point:174.5,player:'QB',side:'over'},{type:'h2h',price:-150}];api.classify({markets:rows});
  assert.equal(rows[0].isAltLine,false);assert.equal(rows[1].isAltLine,true);
  assert.equal(api.matches(rows[2],'alt'),false);assert.equal(api.matches(rows[2],'standard'),true);
- assert.equal(api.label(rows[1]),'175+');assert.equal(api.label({...rows[1],point:175}),null);
+ assert.equal(api.label(rows[1]),null);assert.equal(api.matches(rows[1],'both'),false);assert.equal(api.label({...rows[1],point:179.5}),'180+');assert.equal(api.label({...rows[1],point:175}),null);
 });
 test('single exchange threshold is never invented into an ALT',()=>{
  const {api}=setup();const market={source:'Kalshi',type:'totals',marketKey:'totals',point:44.5,price:-110};api.classify({markets:[market]});assert.equal(market.isAltLine,false);assert.equal(api.matches(market,'alt'),false);
+});
+test('ALT yardage only uses genuinely quoted 10-yard milestones without rounding prices or thresholds',()=>{
+ const {api}=setup();
+ for(const marketKey of ['player_pass_yds_alternate','player_rush_yds_alternate','player_reception_yds_alternate']){
+  for(const point of [19.5,29.5,39.5,249.5,279.5]){const m={marketKey,player:'Player',side:'over',isAltLine:true,point,price:-194};const before=JSON.stringify(m);assert.equal(api.matches(m,'both'),true);assert.equal(api.matches(m,'alt'),true);assert.equal(JSON.stringify(m),before)}
+  for(const point of [14.5,24.5,44.5,224.5,250,null]){const m={marketKey,player:'Player',side:'over',isAltLine:true,point,price:-194};for(const mode of ['standard','alt','both'])assert.equal(api.matches(m,mode),false);assert.equal(api.cushionBonus(m),0);assert.equal(api.label(m),null)}
+ }
+ assert.equal(api.matches({marketKey:'player_receptions',player:'Player',point:2.5,isAltLine:true,side:'over'},'both'),true);
+ assert.equal(api.matches({marketKey:'spreads',type:'spreads',point:3.5,isAltLine:true},'both'),true);
+ assert.equal(api.matches({marketKey:'player_pass_yds',point:274.5,isAltLine:false},'standard'),true);
 });
 test('unsupported player ALT unders cannot bypass any line filter or cushion comparison',()=>{
  const {api}=setup(),standard={source:'Caesars',type:'rushing',marketKey:'player_rush_yds',player:'RB',point:49.5,side:'under',price:-110},alt={...standard,marketKey:'player_rush_yds_alternate',point:69.5};

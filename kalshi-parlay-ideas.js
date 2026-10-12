@@ -16,6 +16,7 @@ function assess(m,game,state){
  else if(m.type==='td')reason='TD estimates remain straight only';
  else if(straightOnly.has(key))reason='Caesars straight only';
  else if(window.PICK_QUALITY.unsupportedAltUnder(m))reason='ALT player-prop unders unsupported at your book';
+ else if(window.NFL_ALT_LINES?.unsupportedIncrement?.(m))reason='ALT yardage requires a quoted 10-yard milestone';
  else if(m.spread!=null&&(!Number.isFinite(Number(m.spread))||Number(m.spread)<0||Number(m.spread)>.10))reason='Quote spread too wide';
  else if(!Number.isFinite(contextAt)||contextAt>now+60000||now-contextAt>4*3600000)reason='Matchup context stale or unavailable';
  else if(m.player){

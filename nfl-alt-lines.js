@@ -34,26 +34,33 @@ function classify(game){
  return game;
 }
 function unsupportedAltUnder(m){return window.PICK_QUALITY?.unsupportedAltUnder?.(m)??((!!m.player||String(m.marketKey||'').startsWith('player_'))&&(m.isAltLine===true||/_alternate$/.test(m.marketKey||''))&&m.side==='under')}
+function unsupportedIncrement(m){
+ const key=String(m?.marketKey||'').replace(/_alternate$/,'');
+ if(!(m?.isAltLine===true||/_alternate$/.test(m?.marketKey||''))||!['player_pass_yds','player_rush_yds','player_reception_yds'].includes(key))return false;
+ const n=point(m);
+ // O 29.5 is 30+. Keep the original threshold and price; never round a quote.
+ return n===null||n%1!==.5||(n+.5)%10!==0;
+}
 function matches(m,mode='standard'){
- if(unsupportedAltUnder(m))return false;
+ if(unsupportedAltUnder(m)||unsupportedIncrement(m))return false;
  if(mode==='both')return true;
  return mode==='alt'?supported(m)&&m.isAltLine===true:!m.isAltLine;
 }
 function label(m){
  const n=point(m);
  // Integer yardage: O 39.5 and 40+ represent the same threshold.
- return m.isAltLine&&m.player&&m.side==='over'&&n!==null&&n%1===.5?String(Math.floor(n)+1)+'+':null;
+ return m.isAltLine&&!unsupportedIncrement(m)&&m.player&&m.side==='over'&&n!==null&&n%1===.5?String(Math.floor(n)+1)+'+':null;
 }
 function cushionBonus(m){
  // Preference only; candidateScore still enforces shared and profile quality gates.
- if(unsupportedAltUnder(m)||!m.isAltLine||!quoted(m)||!(m.cushionPoints>0))return 0;
+ if(unsupportedAltUnder(m)||unsupportedIncrement(m)||!m.isAltLine||!quoted(m)||!(m.cushionPoints>0))return 0;
  const scale=m.type==='passing'?25:m.type==='rushing'||m.type==='receiving'?10:3;
  return Math.min(3,1+m.cushionPoints/scale);
 }
 function lineText(m){return m.type==='spreads'?(point(m)>=0?'+':'')+point(m):(m.side==='over'?'O ':'U ')+point(m)}
 function quoteText(m){return String(m.source||'Source')+' '+(Number(m.price)>0?'+':'')+Number(m.price)}
 function comparisonText(m,game){
- if(unsupportedAltUnder(m)||!game||!supported(m)||!quoted(m))return '';
+ if(unsupportedAltUnder(m)||unsupportedIncrement(m)||!game||!supported(m)||!quoted(m))return '';
  const r=reference(m,game);if(!r)return '';
  const alts=(game.markets||[]).filter(x=>matches(x,'both')&&x.isAltLine&&quoted(x)&&family(x)===family(m)&&venue(x)===venue(m)&&sameSide(x,m)&&easier(x,r))
   .sort((a,b)=>Math.abs(point(a)-point(r))-Math.abs(point(b)-point(r))||String(a.ticker||a.name).localeCompare(String(b.ticker||b.name)));
@@ -61,11 +68,11 @@ function comparisonText(m,game){
  const note=m.altReference?'Reference (nearest 50% quote)':'Standard';
  return note+' '+lineText(r)+' · '+quoteText(r)+' / ALT '+lineText(alt)+' · '+quoteText(alt)+' · '+(easier(alt,r)?'More cushion; compare payout':'Harder threshold')+'. Quotes are source references, not verified Caesars offers.';
 }
-window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonText};
+window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonText,unsupportedIncrement};
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';
- field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><details class="nfl-line-policy"><summary>ALT rules</summary><small id="nflLinesNote">Player ALT props: overs only. Cushion is a small preference, not guaranteed value. ALT · Check book means Caesars availability is unverified. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small></details>';
+ field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><details class="nfl-line-policy"><summary>ALT rules</summary><small id="nflLinesNote">Player ALT props: overs only; yardage in 10-yard milestones. Cushion is a small preference, not guaranteed value. ALT · Check book means Caesars availability is unverified. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small></details>';
  host.after(field);
  const select=field.querySelector('select'),toggle=field.querySelector('#nflAltToggle'),cushion=field.querySelector('#nflCushionToggle');
  const s=window.NFL_PARLAY_STATE;select.value=s?.lineMode||'standard';toggle.checked=select.value!=='standard';cushion.checked=!!s?.moreCushion;
