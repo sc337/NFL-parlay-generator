@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-11",
-  "updated_at": "2026-10-12T03:49:31.310Z",
+  "updated_at": "2026-10-12T03:59:32.360Z",
   "sports": {
     "nfl": {
-      "captured": 0,
+      "captured": 1,
       "passes": [
         {
           "mode": "multi",
@@ -21,12 +21,6 @@
         },
         {
           "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
@@ -116,23 +110,11 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:49:16.316461+00:00"
+      "snapshotAt": "2026-10-12T03:59:16.317928+00:00"
     },
     "mlb": {
-      "captured": 0,
+      "captured": 2,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "best",
@@ -146,17 +128,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:49:16.309653+00:00"
+      "snapshotAt": "2026-10-12T03:59:16.310676+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-12T03:49:16.313121+00:00"
+      "snapshotAt": "2026-10-12T03:59:16.312846+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-12T03:36:41.715069+00:00"
+      "snapshotAt": "2026-10-12T03:46:41.685958+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -186,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T03:49:16.334102+00:00"
+      "snapshotAt": "2026-10-12T03:59:16.334550+00:00"
     }
   },
   "records": [
@@ -21282,6 +21264,172 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-11|nfl|sgp|Balanced|2|kalshi-buffalo-bills-los-angeles-rams|dca95b653913d6e2",
+      "day": "2026-10-11",
+      "sport": "nfl",
+      "mode": "sgp",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": "kalshi-buffalo-bills-los-angeles-rams"
+      },
+      "capturedAt": "2026-10-12T03:59:32.360Z",
+      "snapshotAt": "2026-10-12T03:59:16.317928+00:00",
+      "sourceVersion": "9a58140b3a0953a41c8318a3dbefd8bcab3b0371",
+      "priceEstimate": null,
+      "priceNote": "Same-game price unavailable; verify sportsbook quote.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT12BUFLAR-LARTHIGBEE89-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT12BUFLAR-LARTHIGBEE89-25",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Tyler Higbee Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Tyler Higbee",
+          "ask": 0.48,
+          "referenceAmericanOdds": 108,
+          "marketP": 0.475,
+          "modelP": 0.5620003973420917,
+          "rawModelP": 0.5620003973420917,
+          "coverage": 0.5,
+          "confidence": 43,
+          "forecastType": "model",
+          "projectedLine": 35.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT12BUFLAR-LAR4|no",
+          "ticker": "KXNFLSPREAD-26OCT12BUFLAR-LAR4",
+          "side": "no",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Buffalo Bills +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-11|mlb|multi|best|2||4679cdf942a845f7",
+      "day": "2026-10-11",
+      "sport": "mlb",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-12T03:59:32.360Z",
+      "snapshotAt": "2026-10-12T03:59:16.310676+00:00",
+      "sourceVersion": "9a58140b3a0953a41c8318a3dbefd8bcab3b0371",
+      "priceEstimate": 189,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "mlb|KXMLBTOTAL-26OCT121700LADMIL-6|yes",
+          "ticker": "KXMLBTOTAL-26OCT121700LADMIL-6",
+          "side": "yes",
+          "eventId": "849812",
+          "event": "Los Angeles Dodgers at Milwaukee Brewers",
+          "eventTime": "2026-10-12T21:00:00Z",
+          "closeTime": "2026-10-15T21:00:00Z",
+          "selection": "Over 5.5 runs scored",
+          "market": "total",
+          "line": 5.5,
+          "player": null,
+          "ask": 0.64,
+          "referenceAmericanOdds": null,
+          "marketP": 0.64,
+          "modelP": 0.7385,
+          "rawModelP": 0.7385,
+          "coverage": 0.6016,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 7.7,
+          "projectedTotal": 7.7,
+          "projectedMargin": null,
+          "projectedAway": 3.8,
+          "projectedHome": 3.9,
+          "isAltLine": true,
+          "altReferenceLine": 6.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "mlb|KXMLBTOTAL-26OCT122000CLETB-7|yes",
+          "ticker": "KXMLBTOTAL-26OCT122000CLETB-7",
+          "side": "yes",
+          "eventId": "849820",
+          "event": "Cleveland Guardians at Tampa Bay Rays",
+          "eventTime": "2026-10-13T00:00:00Z",
+          "closeTime": "2026-10-16T00:00:00Z",
+          "selection": "Over 6.5 runs scored",
+          "market": "total",
+          "line": 6.5,
+          "player": null,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.54,
+          "modelP": 0.6778,
+          "rawModelP": 0.6778,
+          "coverage": 0.5952,
+          "confidence": 60,
+          "forecastType": "experimental",
+          "projectedLine": 8.2,
+          "projectedTotal": 8.2,
+          "projectedMargin": null,
+          "projectedAway": 4,
+          "projectedHome": 4.2,
+          "isAltLine": false,
+          "altReferenceLine": 6.5,
+          "altDistance": 0,
           "result": null
         }
       ],
