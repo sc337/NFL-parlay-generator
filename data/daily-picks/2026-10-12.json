@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-12",
-  "updated_at": "2026-10-12T10:00:27.262Z",
+  "updated_at": "2026-10-12T10:10:27.810Z",
   "sports": {
     "nfl": {
-      "captured": 2,
+      "captured": 1,
       "passes": [
         {
           "mode": "multi",
@@ -51,6 +51,12 @@
         },
         {
           "mode": "multi",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -104,7 +110,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T10:00:11.314704+00:00"
+      "snapshotAt": "2026-10-12T10:10:11.314849+00:00"
     },
     "mlb": {
       "captured": 6,
@@ -122,17 +128,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T10:00:11.307111+00:00"
+      "snapshotAt": "2026-10-12T10:10:11.308072+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-12T10:00:11.310082+00:00"
+      "snapshotAt": "2026-10-12T10:10:11.309732+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-12T09:47:12.205783+00:00"
+      "snapshotAt": "2026-10-12T09:57:11.351815+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -162,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T10:00:11.331098+00:00"
+      "snapshotAt": "2026-10-12T10:10:11.331753+00:00"
     }
   },
   "records": [
@@ -1187,6 +1193,89 @@
           "confidence": 43,
           "forecastType": "model",
           "projectedLine": 35.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT12BUFLAR-LAR4|no",
+          "ticker": "KXNFLSPREAD-26OCT12BUFLAR-LAR4",
+          "side": "no",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Buffalo Bills +3.5",
+          "market": "spreads",
+          "line": 3.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.530564675716134,
+          "rawModelP": 0.530564675716134,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-12|nfl|sgp|Balanced|2|kalshi-buffalo-bills-los-angeles-rams|0ae068fc52886404",
+      "day": "2026-10-12",
+      "sport": "nfl",
+      "mode": "sgp",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": "kalshi-buffalo-bills-los-angeles-rams"
+      },
+      "capturedAt": "2026-10-12T10:10:27.810Z",
+      "snapshotAt": "2026-10-12T10:10:11.314849+00:00",
+      "sourceVersion": "52c6af2e94172d8340897e2160acea6a4ac5a979",
+      "priceEstimate": null,
+      "priceNote": "Same-game price unavailable; verify sportsbook quote.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT12BUFLAR-LARDADAMS17-60|yes",
+          "ticker": "KXNFLRECYDS-26OCT12BUFLAR-LARDADAMS17-60",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-los-angeles-rams",
+          "event": "Buffalo Bills @ Los Angeles Rams",
+          "eventTime": "2026-10-13T00:15:00Z",
+          "closeTime": "2026-10-13T00:15:00Z",
+          "selection": "Davante Adams Over 59.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 59.5,
+          "player": "Davante Adams",
+          "ask": 0.54,
+          "referenceAmericanOdds": -117,
+          "marketP": 0.535,
+          "modelP": 0.6189282154053891,
+          "rawModelP": 0.6189282154053891,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": 97.5,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
