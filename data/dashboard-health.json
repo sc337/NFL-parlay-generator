@@ -1,22 +1,20 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-12T07:59:07.827Z",
+  "updated_at": "2026-10-12T07:59:37.242Z",
   "status": "warning",
   "sports": {
     "nfl": {
-      "snapshotAt": "2026-10-12T07:57:34.207087+00:00",
-      "ageMinutes": 2,
-      "markets": 2016,
-      "quotedMarkets": 2016,
-      "playerMarkets": 740,
+      "snapshotAt": "2026-10-12T07:59:16.318161+00:00",
+      "ageMinutes": 0,
+      "markets": 1736,
+      "quotedMarkets": 1736,
+      "playerMarkets": 460,
       "families": {
         "h2h": 30,
-        "td": 42,
         "totals": 532,
         "spreads": 714,
-        "receiving": 408,
-        "rushing": 200,
-        "passing": 90
+        "receiving": 382,
+        "passing": 78
       },
       "futureEvents": [
         {
@@ -81,26 +79,20 @@
         }
       ],
       "playerCounts": {
-        "kalshi-buffalo-bills-los-angeles-rams": 411,
-        "kalshi-denver-broncos-seattle-seahawks": 329
+        "kalshi-buffalo-bills-los-angeles-rams": 254,
+        "kalshi-denver-broncos-seattle-seahawks": 206
       }
     },
     "mlb": {
-      "snapshotAt": "2026-10-12T07:57:49.576354+00:00",
-      "ageMinutes": 1,
-      "markets": 351,
-      "quotedMarkets": 351,
-      "playerMarkets": 226,
+      "snapshotAt": "2026-10-12T07:59:16.313144+00:00",
+      "ageMinutes": 0,
+      "markets": 69,
+      "quotedMarkets": 69,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 14,
         "spread": 12,
-        "total": 99,
-        "strikeouts": 31,
-        "hits": 39,
-        "home_runs": 14,
-        "rbi": 27,
-        "hrr": 64,
-        "total_bases": 51
+        "total": 43
       },
       "futureEvents": [
         {
@@ -138,8 +130,8 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-12T07:57:37.091494+00:00",
-      "ageMinutes": 2,
+      "snapshotAt": "2026-10-12T07:59:16.315477+00:00",
+      "ageMinutes": 0,
       "markets": 2930,
       "quotedMarkets": 2928,
       "playerMarkets": 0,
@@ -430,7 +422,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-12T07:57:57.527380+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 646,
       "quotedMarkets": 646,
       "playerMarkets": 0,
@@ -644,14 +636,13 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-12T07:57:46.974019+00:00",
-      "ageMinutes": 1,
-      "markets": 86,
-      "quotedMarkets": 86,
+      "snapshotAt": "2026-10-12T07:59:16.336955+00:00",
+      "ageMinutes": 0,
+      "markets": 82,
+      "quotedMarkets": 82,
       "playerMarkets": 0,
       "families": {
         "moneyline": 30,
-        "distance": 4,
         "method_finish": 16,
         "method_victory": 28,
         "round_finish": 8
@@ -723,6 +714,15 @@
   },
   "alerts": [
     {
+      "id": "mlb:props-missing",
+      "sport": "mlb",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-12T07:59:37.242Z",
+      "changedAt": "2026-10-12T07:59:37.242Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -733,19 +733,19 @@
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38220646018",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38188727193",
   "refreshResults": {
     "nfl": {
       "ok": true,
-      "at": "2026-10-12T07:59:07.805100+00:00"
+      "at": "2026-10-12T07:59:37.220426+00:00"
     },
     "mlb": {
       "ok": true,
-      "at": "2026-10-12T07:59:07.805100+00:00"
+      "at": "2026-10-12T07:59:37.220426+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-12T07:59:07.805100+00:00"
+      "at": "2026-10-12T07:59:37.220426+00:00"
     },
     "nhl": {
       "ok": true,
@@ -753,7 +753,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-12T07:59:07.805100+00:00"
+      "at": "2026-10-12T07:59:37.220426+00:00"
     }
   }
 }
