@@ -1,0 +1,37 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const {runtime}=require('../scripts/update_pick_history');
+const app=fs.readFileSync('app.js','utf8');
+function setup(){
+ const now=Date.parse('2026-10-12T05:00:00Z'),r=runtime('nfl',{now});
+ const m={ticker:'runner',type:'rushing',marketKey:'player_rush_yds',player:'Runner',team:'Home',point:49.5,side:'over',price:-150,source:'Kalshi',sourceQuality:80,_rosterVerified:true,contextSignals:{injury_checked:true,injury_status:'none_reported'},propHistory:{source:'nflverse completed plays',games:4,played:4,latest_game:'2026-10-04',metrics:{player_rush_yds:[55,45,72,60]}}};
+ const g={id:'fixture',away:'Away',home:'Home',dataSource:'Kalshi',game_status:'pre',commence_time:'2026-10-13T00:15:00Z',context:{updated_at:'2026-10-12T04:59:00Z',recent_form:{Away:{available:true,games:4},Home:{available:true,games:4}}},markets:[m]};
+ Object.assign(r.ctx.state,{apiKey:'',recommendationTier:'ideas',mode:'sgp',lineMode:'both',selectedMarkets:new Set(['rushing','passing','receiving','receptions','spreads','h2h','totals']),games:[g]});
+ r.window.PICK_QUALITY.prepare('nfl',[m],{},[g],'2026-10-12T04:59:00Z');r.run('nfl-alt-lines.js');r.run('kalshi-parlay-ideas.js');
+ return {...r,m,g,assess:()=>r.window.NFL_PARLAY_IDEAS.assess(m,g,r.ctx.state)};
+}
+test('ideas do not claim model probability, EV, calibrated confidence or verified sportsbook availability',()=>{const r=setup(),q=r.assess();assert.equal(q.pass,true);assert.equal(q.modelP,null);assert.equal(q.ev,null);assert.equal(q.valueQualified,false);assert.equal(q.validated,false);assert.match(q.warnings.join(' '),/unverified/);assert.match(q.warnings.join(' '),/Caesars/);assert.equal(r.window.PICK_QUALITY.assess('nfl',r.m,{}, {game:r.g}).pass,false)});
+test('ideas are exclusive to explicit Kalshi-only use and screened mode retains strict gates',()=>{const r=setup();r.ctx.state.apiKey='placeholder';assert.equal(r.assess().pass,false);r.ctx.state.apiKey='';r.ctx.state.recommendationTier='screened';assert.equal(r.assess().pass,false);r.ctx.state.recommendationTier='ideas';r.m.source='FanDuel';assert.equal(r.assess().pass,false)});
+test('ideas reject stale quotes, started games, unverified roles, uncertain injury and thin history',()=>{
+ const changes=[r=>r.m.quotedAt='2026-10-12T04:00:00Z',r=>r.g.commence_time='2026-10-12T01:00:00Z',r=>r.m._rosterVerified=false,r=>r.m.team='Other',r=>r.m.contextSignals.injury_status='questionable',r=>r.m.contextSignals.injury_checked=false,r=>r.m.propHistory.played=2,r=>r.m.propHistory.metrics.player_rush_yds=[1,2],r=>r.m.propHistory.latest_game='2026-10-12',r=>r.g.context.updated_at='2026-10-11T01:00:00Z',r=>r.m.price=-1000,r=>r.m.propHistory.source='market breadth'];
+ for(const change of changes){const r=setup();change(r);assert.equal(r.assess().pass,false,r.assess().reason)}
+});
+test('TDs, attempts and ALT player unders cannot enter ideas; a supported nearby ALT over can',()=>{for(const patch of [{type:'td',marketKey:'player_anytime_td'},{marketKey:'player_rush_attempts'},{marketKey:'player_pass_completions'},{marketKey:'player_rush_yds_alternate',side:'under',isAltLine:true}]){const r=setup();Object.assign(r.m,patch);assert.equal(r.assess().pass,false)}const r=setup();r.g.markets.push({...r.m,ticker:'reference',isAltLine:false,point:59.5});Object.assign(r.m,{marketKey:'player_rush_yds_alternate',isAltLine:true});assert.equal(r.assess().pass,true);r.m.point=19.5;assert.equal(r.assess().reason,'ALT threshold too far from reference')});
+test('scoping and reports never import another game into SGP selection',()=>{const r=setup(),other={...r.g,id:'other',markets:[{...r.m,ticker:'other'}]},api=r.window.NFL_PARLAY_IDEAS;const scoped=api.scopedGames([r.g,other],r.ctx.state,'fixture');assert.equal(scoped.length,1);assert.equal(api.report(scoped,r.ctx.state).eligible.length,1);r.ctx.state.mode='multi';assert.equal(api.scopedGames([r.g,other],r.ctx.state,'fixture').length,2)});
+function snapshotBuilder(lines='both',tier='ideas'){
+ const snapshot=JSON.parse(fs.readFileSync('data/kalshi-nfl.json','utf8')),now=Date.parse(snapshot.updated_at)+60000,r=runtime('nfl',{now});
+ Object.assign(r.ctx.state,{apiKey:'',recommendationTier:tier,mode:'sgp',nflWeek:'all',lineMode:lines,moreCushion:false,selectedMarkets:new Set(['h2h','spreads','totals','passing','rushing','receiving','receptions']),games:snapshot.games});
+ r.ctx.nflSlate=()=>snapshot.games;r.ctx.americanToDecimal=o=>o>0?1+o/100:1+100/Math.abs(o);r.ctx.decimalToAmerican=d=>Math.round(d>=2?(d-1)*100:-100/(d-1));r.ctx.STRAIGHT_ONLY_MARKETS=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
+ r.run('nfl-alt-lines.js');r.run('kalshi-parlay-ideas.js');r.run('nfl-projection-engine.js');r.run('nfl-model-v3.js');r.window.NFL_PROJECTIONS.enrich(true);r.window.NFL_MODEL_V3.enrich();r.window.PICK_QUALITY.prepare('nfl',snapshot.games.flatMap(g=>g.markets),{},snapshot.games,snapshot.updated_at);
+ vm.runInContext(app.slice(app.indexOf('function isParlayEligible('),app.indexOf('const PROP_MARKET_META')),r.ctx);
+ vm.runInContext(app.slice(app.indexOf('function correlation('),app.indexOf('function renderNflStraight(')),r.ctx);
+ return {...r,snapshot,build:n=>{const out=[];for(const profile of ['safe','balanced','long'])out.push(r.ctx.buildSgp(snapshot.games[0],n,50,profile,out.filter(Boolean)));return out}};
+}
+test('current Bills-Rams snapshot produces deterministic ideas with actual quotes and preserves eligibility safeguards',()=>{
+ const r=snapshotBuilder(),parlays=r.build(3);assert.ok(parlays.some(Boolean),'at least one genuine three-leg idea');
+ for(const p of parlays.filter(Boolean)){assert.equal(p.ideaTier,true);assert.equal(p.legs.length,3);assert.equal(new Set(p.legs.filter(m=>m.player).map(m=>m.player)).size,p.legs.filter(m=>m.player).length);assert.match(p.summary,/not a proven edge/);for(const m of p.legs){assert(r.snapshot.games[0].markets.some(x=>x.ticker===m.ticker&&x.quoteSide===m.quoteSide&&x.price===m.price));assert.equal(r.window.NFL_PARLAY_IDEAS.assess(m,r.snapshot.games[0],r.ctx.state).pass,true)}}
+ assert.deepEqual(parlays.map(p=>r.ctx.parlaySignature(p)),r.build(3).map(p=>r.ctx.parlaySignature(p)));
+ const screened=snapshotBuilder('standard','screened');assert.equal(screened.window.NFL_PARLAY_IDEAS.active(screened.ctx.state),false);
+});
+test('TD drawer respects selected game and selected week even with no TD parlay chip',()=>{
+ const r=setup(),td={type:'td',tdExperimental:true,_rosterVerified:true,modelProbability:.6,marketProbability:.55,name:'Selected TD',tdOpportunity:{games:4,ten_rush:3,ten_target:1}};r.g.markets=[td];const other={...r.g,id:'other',markets:[{...td,name:'Wrong game TD',modelProbability:.9}]};let selected='fixture';const host={innerHTML:''};r.ctx.$=s=>s==='#tdMarketOptions'?host:s==='#gameSelect'?{value:selected}:null;r.ctx.nflSlate=()=>[r.g,other];r.window.MARKET_GUARDS={esc:x=>x};vm.runInContext(app.slice(app.indexOf('function renderTdMarkets(){'),app.indexOf('function countPlayerProps(')),r.ctx);r.ctx.renderTdMarkets();assert.match(host.innerHTML,/Selected TD/);assert.doesNotMatch(host.innerHTML,/Wrong game TD/);r.ctx.nflSlate=()=>[other];r.ctx.renderTdMarkets();assert.doesNotMatch(host.innerHTML,/Selected TD|Wrong game TD/);
+});

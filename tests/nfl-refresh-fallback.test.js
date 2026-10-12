@@ -15,7 +15,7 @@ test('older overlapping NFL requests cannot overwrite a newer refresh',async()=>
 });
 test('an unavailable NFL profile displays the requested count instead of an eight-market watchlist',()=>{
  const source=fs.readFileSync('app.js','utf8'),nodes=new Map();
- const ctx=vm.createContext({window:{__ACTIVE_SPORT:'nfl'},document:{body:{classList:{contains:()=>false}}},state:{lineMode:'both'},renderNflStraight:()=>{},renderTdMarkets:()=>{},$:s=>{if(!nodes.has(s))nodes.set(s,{value:'2',innerHTML:''});return nodes.get(s)}});
+ const ctx=vm.createContext({window:{__ACTIVE_SPORT:'nfl',MARKET_GUARDS:{esc:x=>x}},document:{body:{classList:{contains:()=>false}}},state:{lineMode:'both'},nflSlate:()=>[],renderNflStraight:()=>{},renderTdMarkets:()=>{},$:s=>{if(!nodes.has(s))nodes.set(s,{value:'2',innerHTML:''});return nodes.get(s)}});
  vm.runInContext(source.slice(source.indexOf('function updateNflProfileAvailability('),source.indexOf('function renderTdMarkets(){')),ctx);ctx.render([]);assert.match(nodes.get('#results').innerHTML,/No qualifying NFL 2-leg parlay/);assert.doesNotMatch(nodes.get('#results').innerHTML,/markets to review/);
 });
 test('live recovery replaces an expired scheduled feed without relaxing quote age',async()=>{const app=runtime({age:257,cacheAge:257});app.ctx.window.NFL_LIVE_RECOVERY={load:async()=>({updated_at:new Date().toISOString(),games:[{id:'recovered',game_status:'pre',commence_time:new Date(Date.now()+86400000).toISOString(),markets:[]}]})};assert.equal(await app.load(),true);assert.equal(app.ctx.state.games[0].id,'recovered');assert.equal(app.ctx.window.NFL_KALSHI.lastResult().source,'Kalshi live recovery')});
