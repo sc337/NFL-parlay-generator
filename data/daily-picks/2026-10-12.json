@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-12",
-  "updated_at": "2026-10-12T23:22:42.882Z",
+  "updated_at": "2026-10-12T23:45:03.537Z",
   "sports": {
     "nfl": {
-      "captured": 1,
+      "captured": 2,
       "passes": [
         {
           "mode": "multi",
@@ -26,13 +26,13 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "sgp",
-          "profile": "balanced",
+          "mode": "multi",
+          "profile": "long",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 2,
           "reason": "No qualifying build"
@@ -51,12 +51,6 @@
         },
         {
           "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -110,7 +104,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T23:22:19.600159+00:00"
+      "snapshotAt": "2026-10-12T23:43:56.439131+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -140,17 +134,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T23:22:19.593671+00:00"
+      "snapshotAt": "2026-10-12T23:44:05.918450+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-12T23:22:19.596368+00:00"
+      "snapshotAt": "2026-10-12T23:43:58.528379+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-12T23:12:21.177798+00:00"
+      "snapshotAt": "2026-10-12T23:44:10.957947+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -180,7 +174,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-12T23:22:19.616945+00:00"
+      "snapshotAt": "2026-10-12T23:44:03.582654+00:00"
     }
   },
   "records": [
@@ -5000,6 +4994,149 @@
           "projectedMargin": null,
           "projectedAway": 3.355272837328591,
           "projectedHome": 3.4522724676632253,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-12|nhl|multi|balanced|4||ece411313c00a298",
+      "day": "2026-10-12",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-12T23:45:03.537Z",
+      "snapshotAt": "2026-10-12T23:44:10.957947+00:00",
+      "sourceVersion": "40f3a03c46d29111cb6565fd48b4f45e93560578",
+      "priceEstimate": 288,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nhl|KXNHLGOAL-26OCT12VGKMIN-MINJERIKSSONEK14-1|no",
+          "ticker": "KXNHLGOAL-26OCT12VGKMIN-MINJERIKSSONEK14-1",
+          "side": "no",
+          "eventId": "401892487",
+          "event": "Golden Knights vs Wild",
+          "eventTime": "2026-10-13T00:00Z",
+          "closeTime": "2026-10-15T00:00:00Z",
+          "selection": "Joel Eriksson Ek Under 0.5 Goals",
+          "market": "goals",
+          "line": 0.5,
+          "player": "Joel Eriksson Ek",
+          "ask": 0.73,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.825319390996506,
+          "rawModelP": 0.825319390996506,
+          "coverage": 0.54,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.19666670222522922,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT13BOSSJ-SJ2|no",
+          "ticker": "KXNHLSPREAD-26OCT13BOSSJ-SJ2",
+          "side": "no",
+          "eventId": "401892503",
+          "event": "Bruins vs Sharks",
+          "eventTime": "2026-10-14T03:00Z",
+          "closeTime": "2026-10-16T03:00:00Z",
+          "selection": "Bruins +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.71,
+          "referenceAmericanOdds": null,
+          "marketP": 0.705,
+          "modelP": 0.8165740528036427,
+          "rawModelP": 0.8165740528036427,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.5551597887072495,
+          "projectedMargin": null,
+          "projectedAway": 3.6458822473445887,
+          "projectedHome": 2.909277541362661,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT13NJDET-NJ2|no",
+          "ticker": "KXNHLSPREAD-26OCT13NJDET-NJ2",
+          "side": "no",
+          "eventId": "401892488",
+          "event": "Devils vs Red Wings",
+          "eventTime": "2026-10-13T22:00Z",
+          "closeTime": "2026-10-15T22:00:00Z",
+          "selection": "Red Wings +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.71,
+          "referenceAmericanOdds": null,
+          "marketP": 0.705,
+          "modelP": 0.7805881141424443,
+          "rawModelP": 0.7805881141424443,
+          "coverage": 0.5333333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.727782377782594,
+          "projectedMargin": null,
+          "projectedAway": 2.7246202504050663,
+          "projectedHome": 3.003162127377528,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT13SEAPHI-PHI2|no",
+          "ticker": "KXNHLSPREAD-26OCT13SEAPHI-PHI2",
+          "side": "no",
+          "eventId": "401892492",
+          "event": "Kraken vs Flyers",
+          "eventTime": "2026-10-13T23:00Z",
+          "closeTime": "2026-10-15T23:00:00Z",
+          "selection": "Kraken +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.7,
+          "referenceAmericanOdds": null,
+          "marketP": 0.695,
+          "modelP": 0.7983663277431153,
+          "rawModelP": 0.7983663277431153,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.848419291820731,
+          "projectedMargin": null,
+          "projectedAway": 3.1465114528948224,
+          "projectedHome": 2.7019078389259086,
           "isAltLine": false,
           "altReferenceLine": 1.5,
           "altDistance": 0,
