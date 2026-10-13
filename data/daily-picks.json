@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-13",
-  "updated_at": "2026-10-13T08:09:39.771Z",
+  "updated_at": "2026-10-13T08:19:39.822Z",
   "sports": {
     "nfl": {
-      "captured": 12,
+      "captured": 10,
       "passes": [
         {
           "mode": "sgp",
@@ -27,6 +27,12 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -39,12 +45,18 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T08:09:23.728419+00:00"
+      "snapshotAt": "2026-10-13T08:19:23.729985+00:00"
     },
     "mlb": {
       "captured": 4,
@@ -74,17 +86,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T08:09:23.720764+00:00"
+      "snapshotAt": "2026-10-13T08:19:23.722111+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-13T08:09:23.725880+00:00"
+      "snapshotAt": "2026-10-13T08:19:23.725326+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-13T07:59:27.724628+00:00"
+      "snapshotAt": "2026-10-13T08:09:27.611868+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -114,7 +126,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T08:09:23.751088+00:00"
+      "snapshotAt": "2026-10-13T08:19:23.748503+00:00"
     }
   },
   "records": [
@@ -3116,6 +3128,89 @@
           "marketP": 0.595,
           "modelP": 0.599355556514179,
           "rawModelP": 0.599355556514179,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-13|nfl|multi|Lotto|2||2b9a750c1cf951db",
+      "day": "2026-10-13",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-13T08:19:39.822Z",
+      "snapshotAt": "2026-10-13T08:19:23.729985+00:00",
+      "sourceVersion": "f43e020358bef0a280633020cba97a6985a3adbd",
+      "priceEstimate": 277,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT15SEADEN-DENRHARVEY12-15|no",
+          "ticker": "KXNFLRSHYDS-26OCT15SEADEN-DENRHARVEY12-15",
+          "side": "no",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "RJ Harvey Under 14.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 14.5,
+          "player": "RJ Harvey",
+          "ask": 0.5,
+          "referenceAmericanOdds": -100,
+          "marketP": 0.49,
+          "modelP": 0.5746313894449465,
+          "rawModelP": 0.5746313894449465,
+          "coverage": 0.55,
+          "confidence": 45,
+          "forecastType": "model",
+          "projectedLine": 11.2,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT18HOUJAC-JAC3|yes",
+          "ticker": "KXNFLSPREAD-26OCT18HOUJAC-JAC3",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-jacksonville-jaguars",
+          "event": "Houston Texans @ Jacksonville Jaguars",
+          "eventTime": "2026-10-18T13:30:00Z",
+          "closeTime": "2026-10-18T13:30:00Z",
+          "selection": "Jacksonville Jaguars -2.5",
+          "market": "spreads",
+          "line": -2.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.5305969455241414,
+          "rawModelP": 0.5305969455241414,
           "coverage": 0.34,
           "confidence": 48,
           "forecastType": "model",
