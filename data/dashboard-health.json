@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-13T06:11:05.712Z",
+  "updated_at": "2026-10-13T07:49:34.094Z",
   "status": "warning",
   "sports": {
     "nfl": {
       "snapshotAt": "2026-10-13T06:10:36.949652+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 99,
       "markets": 1645,
       "quotedMarkets": 1645,
       "playerMarkets": 339,
@@ -138,7 +138,7 @@
     },
     "mlb": {
       "snapshotAt": "2026-10-13T06:10:36.941658+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 99,
       "markets": 250,
       "quotedMarkets": 250,
       "playerMarkets": 130,
@@ -180,7 +180,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-13T06:10:36.944496+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 99,
       "markets": 2934,
       "quotedMarkets": 2932,
       "playerMarkets": 0,
@@ -494,7 +494,7 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-13T06:10:40.968150+00:00",
+      "snapshotAt": "2026-10-13T07:49:31.308385+00:00",
       "ageMinutes": 0,
       "markets": 856,
       "quotedMarkets": 856,
@@ -714,7 +714,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-13T06:10:36.967710+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 99,
       "markets": 119,
       "quotedMarkets": 119,
       "playerMarkets": 0,
@@ -835,6 +835,33 @@
   },
   "alerts": [
     {
+      "id": "nfl:stale",
+      "sport": "nfl",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 99 minutes old.",
+      "firstSeen": "2026-10-13T07:49:34.094Z",
+      "changedAt": "2026-10-13T07:49:34.094Z"
+    },
+    {
+      "id": "mlb:stale",
+      "sport": "mlb",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 99 minutes old.",
+      "firstSeen": "2026-10-13T07:49:34.094Z",
+      "changedAt": "2026-10-13T07:49:34.094Z"
+    },
+    {
+      "id": "ncaaf:stale",
+      "sport": "ncaaf",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 99 minutes old.",
+      "firstSeen": "2026-10-13T07:49:34.094Z",
+      "changedAt": "2026-10-13T07:49:34.094Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -842,10 +869,28 @@
       "message": "1980 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "ufc:stale",
+      "sport": "ufc",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 99 minutes old.",
+      "firstSeen": "2026-10-13T07:49:34.094Z",
+      "changedAt": "2026-10-13T07:49:34.094Z"
+    },
+    {
+      "id": "archive:stale",
+      "sport": null,
+      "code": "archive-stale",
+      "severity": "warning",
+      "message": "Daily recommendation archive has not refreshed successfully.",
+      "firstSeen": "2026-10-13T07:49:34.094Z",
+      "changedAt": "2026-10-13T07:49:34.094Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38329193673",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38365093093",
   "refreshResults": {
     "nfl": {
       "ok": true,
@@ -861,7 +906,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-13T06:10:42.589635+00:00"
+      "at": "2026-10-13T07:49:34.071204+00:00"
     },
     "ufc": {
       "ok": true,
