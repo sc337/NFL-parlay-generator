@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-12",
-  "updated_at": "2026-10-13T03:50:57.755Z",
+  "updated_at": "2026-10-13T03:57:52.776Z",
   "sports": {
     "nfl": {
       "captured": 12,
@@ -44,7 +44,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T03:50:36.946123+00:00"
+      "snapshotAt": "2026-10-13T03:56:52.416428+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -74,17 +74,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T03:50:36.939690+00:00"
+      "snapshotAt": "2026-10-13T03:57:01.636061+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-13T03:50:36.942745+00:00"
+      "snapshotAt": "2026-10-13T03:56:54.576431+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-13T03:40:40.877180+00:00"
+      "snapshotAt": "2026-10-13T03:57:06.039781+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -114,7 +114,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T03:50:36.962619+00:00"
+      "snapshotAt": "2026-10-13T03:56:59.811678+00:00"
     }
   },
   "records": [
@@ -7924,6 +7924,89 @@
           "marketP": 0.525,
           "modelP": 0.5266798076378778,
           "rawModelP": 0.5266798076378778,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-12|nfl|multi|Balanced|2||a170600681da6a7b",
+      "day": "2026-10-12",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-13T03:57:52.776Z",
+      "snapshotAt": "2026-10-13T03:56:52.416428+00:00",
+      "sourceVersion": "be4ab5e42d479631c8fcafd1602880dcb74a058c",
+      "priceEstimate": 155,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT15SEADEN-DENCSUTTON14-35|no",
+          "ticker": "KXNFLRECYDS-26OCT15SEADEN-DENCSUTTON14-35",
+          "side": "no",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Courtland Sutton Under 34.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 34.5,
+          "player": "Courtland Sutton",
+          "ask": 0.56,
+          "referenceAmericanOdds": -127,
+          "marketP": 0.54,
+          "modelP": 0.6869481175728024,
+          "rawModelP": 0.6869481175728024,
+          "coverage": 0.55,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": 20.8,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLGAME-26OCT18BUFLV-BUF|yes",
+          "ticker": "KXNFLGAME-26OCT18BUFLV-BUF",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Buffalo Bills ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.7,
+          "referenceAmericanOdds": -233,
+          "marketP": 0.695,
+          "modelP": 0.6967822183232133,
+          "rawModelP": 0.6967822183232133,
           "coverage": 0.34,
           "confidence": 48,
           "forecastType": "model",
