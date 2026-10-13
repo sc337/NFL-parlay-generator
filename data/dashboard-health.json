@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-13T14:53:06.423Z",
+  "updated_at": "2026-10-13T16:07:38.938Z",
   "status": "warning",
   "sports": {
     "nfl": {
       "snapshotAt": "2026-10-13T14:51:24.831851+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 76,
       "markets": 2007,
       "quotedMarkets": 2007,
       "playerMarkets": 701,
@@ -139,7 +139,7 @@
     },
     "mlb": {
       "snapshotAt": "2026-10-13T14:51:40.096400+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 76,
       "markets": 305,
       "quotedMarkets": 305,
       "playerMarkets": 185,
@@ -183,7 +183,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-13T14:51:28.636011+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 76,
       "markets": 2934,
       "quotedMarkets": 2932,
       "playerMarkets": 0,
@@ -465,15 +465,19 @@
       "playerCounts": {}
     },
     "nhl": {
-      "snapshotAt": "2026-10-13T14:51:48.322219+00:00",
-      "ageMinutes": 1,
-      "markets": 856,
-      "quotedMarkets": 856,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-10-13T16:07:35.717938+00:00",
+      "ageMinutes": 0,
+      "markets": 4874,
+      "quotedMarkets": 4874,
+      "playerMarkets": 4018,
       "families": {
         "moneyline": 102,
         "spread": 232,
-        "total": 522
+        "total": 522,
+        "goals": 1840,
+        "assists": 926,
+        "points": 1224,
+        "saves": 28
       },
       "futureEvents": [
         {
@@ -681,11 +685,28 @@
           "time": "2026-10-13T22:00Z"
         }
       ],
-      "playerCounts": {}
+      "playerCounts": {
+        "401892488": 250,
+        "401892489": 238,
+        "401892490": 234,
+        "401892491": 298,
+        "401892492": 264,
+        "401892493": 272,
+        "401892494": 264,
+        "401892495": 260,
+        "401892496": 240,
+        "401892497": 212,
+        "401892498": 240,
+        "401892499": 250,
+        "401892500": 260,
+        "401892501": 232,
+        "401892502": 248,
+        "401892503": 256
+      }
     },
     "ufc": {
       "snapshotAt": "2026-10-13T14:51:34.758347+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 76,
       "markets": 124,
       "quotedMarkets": 124,
       "playerMarkets": 0,
@@ -807,6 +828,33 @@
   },
   "alerts": [
     {
+      "id": "nfl:stale",
+      "sport": "nfl",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 76 minutes old.",
+      "firstSeen": "2026-10-13T16:07:38.938Z",
+      "changedAt": "2026-10-13T16:07:38.938Z"
+    },
+    {
+      "id": "mlb:stale",
+      "sport": "mlb",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 76 minutes old.",
+      "firstSeen": "2026-10-13T16:07:38.938Z",
+      "changedAt": "2026-10-13T16:07:38.938Z"
+    },
+    {
+      "id": "ncaaf:stale",
+      "sport": "ncaaf",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 76 minutes old.",
+      "firstSeen": "2026-10-13T16:07:38.938Z",
+      "changedAt": "2026-10-13T16:07:38.938Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -814,10 +862,28 @@
       "message": "1980 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "ufc:stale",
+      "sport": "ufc",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 76 minutes old.",
+      "firstSeen": "2026-10-13T16:07:38.938Z",
+      "changedAt": "2026-10-13T16:07:38.938Z"
+    },
+    {
+      "id": "archive:stale",
+      "sport": null,
+      "code": "archive-stale",
+      "severity": "warning",
+      "message": "Daily recommendation archive has not refreshed successfully.",
+      "firstSeen": "2026-10-13T16:07:38.938Z",
+      "changedAt": "2026-10-13T16:07:38.938Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38390479461",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/38427811202",
   "refreshResults": {
     "nfl": {
       "ok": true,
@@ -833,7 +899,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-13T14:53:06.404585+00:00"
+      "at": "2026-10-13T16:07:38.916068+00:00"
     },
     "ufc": {
       "ok": true,
