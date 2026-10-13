@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-13",
-  "updated_at": "2026-10-13T21:28:48.944Z",
+  "updated_at": "2026-10-13T21:38:50.686Z",
   "sports": {
     "nfl": {
       "captured": 12,
@@ -44,7 +44,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T21:28:30.436975+00:00"
+      "snapshotAt": "2026-10-13T21:38:30.366556+00:00"
     },
     "mlb": {
       "captured": 0,
@@ -74,17 +74,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T21:28:30.437687+00:00"
+      "snapshotAt": "2026-10-13T21:38:30.362735+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-13T21:28:30.438431+00:00"
+      "snapshotAt": "2026-10-13T21:38:30.363438+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-13T21:17:33.441150+00:00"
+      "snapshotAt": "2026-10-13T21:28:09.480029+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -114,7 +114,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T21:28:30.492544+00:00"
+      "snapshotAt": "2026-10-13T21:38:30.380504+00:00"
     }
   },
   "records": [
@@ -14051,6 +14051,149 @@
           "confidence": null,
           "forecastType": "experimental",
           "projectedLine": 0.1362904387491828,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-13|nhl|multi|balanced|4||52bd904a3e1564aa",
+      "day": "2026-10-13",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-13T21:38:50.686Z",
+      "snapshotAt": "2026-10-13T21:28:09.480029+00:00",
+      "sourceVersion": "7cb742ef43cf236af180dc76153a30bbde25e8e9",
+      "priceEstimate": 181,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nhl|KXNHLAST-26OCT13CGYANA-CGYZPAREKH19-1|no",
+          "ticker": "KXNHLAST-26OCT13CGYANA-CGYZPAREKH19-1",
+          "side": "no",
+          "eventId": "401892501",
+          "event": "Flames vs Ducks",
+          "eventTime": "2026-10-14T01:45Z",
+          "closeTime": "2026-10-16T01:45:00Z",
+          "selection": "Zayne Parekh Under 0.5 Assists",
+          "market": "assists",
+          "line": 0.5,
+          "player": "Zayne Parekh",
+          "ask": 0.74,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.8349227940143183,
+          "rawModelP": 0.8349227940143183,
+          "coverage": 0.54,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.18454663147092,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT13PITCHI-CHI2|no",
+          "ticker": "KXNHLSPREAD-26OCT13PITCHI-CHI2",
+          "side": "no",
+          "eventId": "401892496",
+          "event": "Penguins vs Blackhawks",
+          "eventTime": "2026-10-14T00:00Z",
+          "closeTime": "2026-10-16T00:00:00Z",
+          "selection": "Penguins +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.78,
+          "referenceAmericanOdds": null,
+          "marketP": 0.775,
+          "modelP": 0.8695301928181678,
+          "rawModelP": 0.8695301928181678,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.506188082173277,
+          "projectedMargin": null,
+          "projectedAway": 3.8895696407756613,
+          "projectedHome": 2.6166184413976157,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGOAL-26OCT13COLDAL-COLNKADRI91-1|no",
+          "ticker": "KXNHLGOAL-26OCT13COLDAL-COLNKADRI91-1",
+          "side": "no",
+          "eventId": "401892498",
+          "event": "Avalanche vs Stars",
+          "eventTime": "2026-10-14T00:30Z",
+          "closeTime": "2026-10-16T00:30:00Z",
+          "selection": "Nazem Kadri Under 0.5 Goals",
+          "market": "goals",
+          "line": 0.5,
+          "player": "Nazem Kadri",
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.785,
+          "modelP": 0.8745725878254726,
+          "rawModelP": 0.8745725878254726,
+          "coverage": 0.54,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.1362904387491828,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLPTS-26OCT13TBNYR-NYRMPETTERSSON26-1|no",
+          "ticker": "KXNHLPTS-26OCT13TBNYR-NYRMPETTERSSON26-1",
+          "side": "no",
+          "eventId": "401892493",
+          "event": "Lightning vs Rangers",
+          "eventTime": "2026-10-13T23:15Z",
+          "closeTime": "2026-10-15T23:15:00Z",
+          "selection": "Marcus Pettersson Under 0.5 Points",
+          "market": "points",
+          "line": 0.5,
+          "player": "Marcus Pettersson",
+          "ask": 0.78,
+          "referenceAmericanOdds": null,
+          "marketP": 0.765,
+          "modelP": 0.8607963375107383,
+          "rawModelP": 0.8607963375107383,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.15274141135110073,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
