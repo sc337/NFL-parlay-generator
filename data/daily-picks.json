@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-13",
-  "updated_at": "2026-10-13T09:19:39.021Z",
+  "updated_at": "2026-10-13T09:29:39.824Z",
   "sports": {
     "nfl": {
-      "captured": 12,
+      "captured": 11,
       "passes": [
         {
           "mode": "sgp",
@@ -39,12 +39,18 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T09:19:23.729524+00:00"
+      "snapshotAt": "2026-10-13T09:29:23.731056+00:00"
     },
     "mlb": {
       "captured": 4,
@@ -74,17 +80,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T09:19:23.722273+00:00"
+      "snapshotAt": "2026-10-13T09:29:23.723738+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-13T09:19:23.725065+00:00"
+      "snapshotAt": "2026-10-13T09:29:23.726283+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-13T09:09:27.698895+00:00"
+      "snapshotAt": "2026-10-13T09:19:27.649989+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -114,7 +120,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T09:19:23.747944+00:00"
+      "snapshotAt": "2026-10-13T09:29:23.750856+00:00"
     }
   },
   "records": [
@@ -4661,6 +4667,149 @@
           "marketP": 0.52,
           "modelP": 0.5275620931011037,
           "rawModelP": 0.5275620931011037,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-13|nfl|multi|Lotto|4||183097cb87514210",
+      "day": "2026-10-13",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-13T09:29:39.824Z",
+      "snapshotAt": "2026-10-13T09:29:23.731056+00:00",
+      "sourceVersion": "f43e020358bef0a280633020cba97a6985a3adbd",
+      "priceEstimate": 1192,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT15SEADEN-SEAJSMITHNJIGBA11-90|yes",
+          "ticker": "KXNFLRECYDS-26OCT15SEADEN-SEAJSMITHNJIGBA11-90",
+          "side": "yes",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Jaxon Smith-Njigba Over 89.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 89.5,
+          "player": "Jaxon Smith-Njigba",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.515,
+          "modelP": 0.6301362414372474,
+          "rawModelP": 0.6301362414372474,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "model",
+          "projectedLine": 116.6,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT18BUFLV-BUF7|no",
+          "ticker": "KXNFLSPREAD-26OCT18BUFLV-BUF7",
+          "side": "no",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Las Vegas Raiders +6.5",
+          "market": "spreads",
+          "line": 6.5,
+          "player": null,
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.515,
+          "modelP": 0.5225685415641343,
+          "rawModelP": 0.5225685415641343,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT18HOUJAC-JAC3|yes",
+          "ticker": "KXNFLSPREAD-26OCT18HOUJAC-JAC3",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-jacksonville-jaguars",
+          "event": "Houston Texans @ Jacksonville Jaguars",
+          "eventTime": "2026-10-18T13:30:00Z",
+          "closeTime": "2026-10-18T13:30:00Z",
+          "selection": "Jacksonville Jaguars -2.5",
+          "market": "spreads",
+          "line": -2.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.5305969455241414,
+          "rawModelP": 0.5305969455241414,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT18DALGB-GB2|no",
+          "ticker": "KXNFLSPREAD-26OCT18DALGB-GB2",
+          "side": "no",
+          "eventId": "kalshi-dallas-cowboys-green-bay-packers",
+          "event": "Dallas Cowboys @ Green Bay Packers",
+          "eventTime": "2026-10-19T00:20:00Z",
+          "closeTime": "2026-10-19T00:20:00Z",
+          "selection": "Dallas Cowboys +1.5",
+          "market": "spreads",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.5296646173530501,
+          "rawModelP": 0.5296646173530501,
           "coverage": 0.34,
           "confidence": 48,
           "forecastType": "model",
