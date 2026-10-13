@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-13",
-  "updated_at": "2026-10-13T18:28:41.169Z",
+  "updated_at": "2026-10-13T18:37:44.920Z",
   "sports": {
     "nfl": {
       "captured": 12,
@@ -44,11 +44,23 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T18:27:22.809393+00:00"
+      "snapshotAt": "2026-10-13T18:37:24.402747+00:00"
     },
     "mlb": {
-      "captured": 6,
+      "captured": 0,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "best",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "best",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "multi",
           "profile": "best",
@@ -62,17 +74,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T18:27:37.352957+00:00"
+      "snapshotAt": "2026-10-13T18:37:24.396010+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-13T18:27:25.170914+00:00"
+      "snapshotAt": "2026-10-13T18:37:24.397837+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-13T18:27:48.612856+00:00"
+      "snapshotAt": "2026-10-13T18:27:33.272438+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -102,7 +114,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-13T18:27:35.041142+00:00"
+      "snapshotAt": "2026-10-13T18:37:24.419446+00:00"
     }
   },
   "records": [
@@ -10382,9 +10394,9 @@
         "card": null,
         "gameId": "kalshi-denver-broncos-seattle-seahawks"
       },
-      "capturedAt": "2026-10-13T18:28:41.169Z",
-      "snapshotAt": "2026-10-13T18:27:22.809393+00:00",
-      "sourceVersion": "be0d88d065160b462a8aae1bd77c8c89428c41df",
+      "capturedAt": "2026-10-13T18:27:43.472Z",
+      "snapshotAt": "2026-10-13T18:27:24.404083+00:00",
+      "sourceVersion": "b19245dd9f683daf2cf6461db5fe51f4e61c97fb",
       "priceEstimate": null,
       "priceNote": "Same-game price unavailable; verify sportsbook quote.",
       "legs": [
@@ -10499,6 +10511,149 @@
           "confidence": 45,
           "forecastType": "model",
           "projectedLine": 151,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-13|nfl|multi|Lotto|4||a28793c456f6d15c",
+      "day": "2026-10-13",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-13T18:37:44.920Z",
+      "snapshotAt": "2026-10-13T18:37:24.402747+00:00",
+      "sourceVersion": "b19245dd9f683daf2cf6461db5fe51f4e61c97fb",
+      "priceEstimate": 1298,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18HOUJAC-HOUNCOLLINS12-70|no",
+          "ticker": "KXNFLRECYDS-26OCT18HOUJAC-HOUNCOLLINS12-70",
+          "side": "no",
+          "eventId": "kalshi-houston-texans-jacksonville-jaguars",
+          "event": "Houston Texans @ Jacksonville Jaguars",
+          "eventTime": "2026-10-18T13:30:00Z",
+          "closeTime": "2026-10-18T13:30:00Z",
+          "selection": "Nico Collins Under 69.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 69.5,
+          "player": "Nico Collins",
+          "ask": 0.49,
+          "referenceAmericanOdds": 104,
+          "marketP": 0.47,
+          "modelP": 0.5830361859388836,
+          "rawModelP": 0.5830361859388836,
+          "coverage": 0.55,
+          "confidence": 43,
+          "forecastType": "model",
+          "projectedLine": 49.8,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT15SEADEN-SEAJSMITHNJIGBA11-90|yes",
+          "ticker": "KXNFLRECYDS-26OCT15SEADEN-SEAJSMITHNJIGBA11-90",
+          "side": "yes",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Jaxon Smith-Njigba Over 89.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 89.5,
+          "player": "Jaxon Smith-Njigba",
+          "ask": 0.54,
+          "referenceAmericanOdds": -117,
+          "marketP": 0.535,
+          "modelP": 0.6390251303261364,
+          "rawModelP": 0.6390251303261364,
+          "coverage": 0.55,
+          "confidence": 59,
+          "forecastType": "model",
+          "projectedLine": 116.6,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLTOTAL-26OCT18BALCLE-41|yes",
+          "ticker": "KXNFLTOTAL-26OCT18BALCLE-41",
+          "side": "yes",
+          "eventId": "kalshi-baltimore-ravens-cleveland-browns",
+          "event": "Baltimore Ravens @ Cleveland Browns",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Over 40.5",
+          "market": "totals",
+          "line": 40.5,
+          "player": null,
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.515,
+          "modelP": 0.523408914959018,
+          "rawModelP": 0.523408914959018,
+          "coverage": 0.34,
+          "confidence": 45,
+          "forecastType": "model",
+          "projectedLine": 43,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLSPREAD-26OCT18CARPHI-PHI2|no",
+          "ticker": "KXNFLSPREAD-26OCT18CARPHI-PHI2",
+          "side": "no",
+          "eventId": "kalshi-carolina-panthers-philadelphia-eagles",
+          "event": "Carolina Panthers @ Philadelphia Eagles",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Carolina Panthers +1.5",
+          "market": "spreads",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.515,
+          "modelP": 0.5205748455100618,
+          "rawModelP": 0.5205748455100618,
+          "coverage": 0.296,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": null,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
