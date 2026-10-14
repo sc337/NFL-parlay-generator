@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-14",
-  "updated_at": "2026-10-14T09:30:35.903Z",
+  "updated_at": "2026-10-14T09:40:35.960Z",
   "sports": {
     "nfl": {
-      "captured": 12,
+      "captured": 10,
       "passes": [
         {
           "mode": "sgp",
@@ -27,6 +27,12 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
@@ -39,28 +45,22 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T09:30:19.639940+00:00"
+      "snapshotAt": "2026-10-14T09:40:19.640120+00:00"
     },
     "mlb": {
-      "captured": 0,
+      "captured": 6,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "best",
@@ -74,12 +74,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T09:30:19.636074+00:00"
+      "snapshotAt": "2026-10-14T09:40:19.636481+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-14T09:30:19.636990+00:00"
+      "snapshotAt": "2026-10-14T09:40:19.637955+00:00"
     },
     "nhl": {
       "captured": 2,
@@ -97,7 +97,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T09:19:27.512282+00:00"
+      "snapshotAt": "2026-10-14T09:29:26.838720+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -127,7 +127,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T09:30:19.651277+00:00"
+      "snapshotAt": "2026-10-14T09:40:19.650166+00:00"
     }
   },
   "records": [
@@ -3170,6 +3170,142 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-14|mlb|straight|featured|1||a4bfeae4105fe90f",
+      "day": "2026-10-14",
+      "sport": "mlb",
+      "mode": "straight",
+      "profile": "featured",
+      "requestedLegs": 1,
+      "actualLegs": 1,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-14T09:40:35.960Z",
+      "snapshotAt": "2026-10-14T09:40:19.636481+00:00",
+      "sourceVersion": "bf5de7d0fec3b196681810d0bb1e993e45767e3d",
+      "priceEstimate": -317,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT142000MILLAD-MIL2|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT142000MILLAD-MIL2",
+          "side": "yes",
+          "eventId": "849811",
+          "event": "Milwaukee Brewers at Los Angeles Dodgers",
+          "eventTime": "2026-10-15T00:00:00Z",
+          "closeTime": "2026-10-18T00:00:00Z",
+          "selection": "Will Milwaukee score over 1.5 runs?",
+          "market": "total",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.76,
+          "referenceAmericanOdds": null,
+          "marketP": 0.76,
+          "modelP": 0.8509,
+          "rawModelP": 0.8509,
+          "coverage": 0.5952,
+          "confidence": 56,
+          "forecastType": "experimental",
+          "projectedLine": 3.6,
+          "projectedTotal": 7.5,
+          "projectedMargin": null,
+          "projectedAway": 3.6,
+          "projectedHome": 3.9,
+          "isAltLine": true,
+          "altReferenceLine": 2.5,
+          "altDistance": 1,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-14|mlb|multi|best|2||2f8310fb405fe97c",
+      "day": "2026-10-14",
+      "sport": "mlb",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-14T09:40:35.960Z",
+      "snapshotAt": "2026-10-14T09:40:19.636481+00:00",
+      "sourceVersion": "bf5de7d0fec3b196681810d0bb1e993e45767e3d",
+      "priceEstimate": 153,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT142000MILLAD-MIL2|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT142000MILLAD-MIL2",
+          "side": "yes",
+          "eventId": "849811",
+          "event": "Milwaukee Brewers at Los Angeles Dodgers",
+          "eventTime": "2026-10-15T00:00:00Z",
+          "closeTime": "2026-10-18T00:00:00Z",
+          "selection": "Will Milwaukee score over 1.5 runs?",
+          "market": "total",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.76,
+          "referenceAmericanOdds": null,
+          "marketP": 0.76,
+          "modelP": 0.8509,
+          "rawModelP": 0.8509,
+          "coverage": 0.5952,
+          "confidence": 56,
+          "forecastType": "experimental",
+          "projectedLine": 3.6,
+          "projectedTotal": 7.5,
+          "projectedMargin": null,
+          "projectedAway": 3.6,
+          "projectedHome": 3.9,
+          "isAltLine": true,
+          "altReferenceLine": 2.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "mlb|KXMLBTOTAL-26OCT151800TBCLE-7|yes",
+          "ticker": "KXMLBTOTAL-26OCT151800TBCLE-7",
+          "side": "yes",
+          "eventId": "849818",
+          "event": "Tampa Bay Rays at Cleveland Guardians",
+          "eventTime": "2026-10-15T22:00:00Z",
+          "closeTime": "2026-10-18T22:00:00Z",
+          "selection": "Over 6.5 runs scored",
+          "market": "total",
+          "line": 6.5,
+          "player": null,
+          "ask": 0.52,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.65765,
+          "rawModelP": 0.65765,
+          "coverage": 0.5152,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 8.1,
+          "projectedTotal": 8.1,
+          "projectedMargin": null,
+          "projectedAway": 3.9,
+          "projectedHome": 4.2,
+          "isAltLine": false,
+          "altReferenceLine": 6.5,
+          "altDistance": 0,
           "result": null
         }
       ],
