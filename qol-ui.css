@@ -66,3 +66,17 @@ html[data-theme] .slate-date input{position:absolute;inset:0;z-index:1;display:b
  #results .shared-quote-source .market-tile-price{margin-top:2px!important}
 }
 @media(max-width:360px){.slate-date{width:110px}.parlay-options-row{grid-template-columns:minmax(0,1fr) 94px}}
+
+/* Keep sport and date controls together below Safari's visible top edge. */
+.sport-date-dock{display:flex;flex-direction:column;gap:6px;flex:none;min-width:0}
+.sport-date-dock .sport-switch{position:static!important;margin:0!important;flex:none}
+.sport-date-dock .slate-controls{margin:0!important}
+.parlay-options-row .quality-settings .field{position:relative}
+.parlay-options-row #legsSelect{appearance:none!important;-webkit-appearance:none!important;padding-right:28px!important;background-image:none!important}
+.parlay-options-row .quality-settings .field:after{content:'';position:absolute;right:13px;top:calc(50% - 5px);width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);pointer-events:none}
+html[data-theme="dark"] #legsSelect{color-scheme:dark}html[data-theme="light"] #legsSelect{color-scheme:light}
+@media (max-width:600px), (max-width:940px) and (pointer:coarse) and (orientation:landscape){
+ .sport-date-dock{position:sticky;top:calc(max(env(safe-area-inset-top,0px),var(--iphone-visible-top,0px)) + 4px);z-index:40;padding:4px 0 6px;background:var(--bg);border-radius:14px;isolation:isolate}
+ .sport-date-dock .sport-switch{top:auto!important;z-index:auto;overflow:visible}
+ html{scroll-padding-top:calc(max(env(safe-area-inset-top,0px),var(--iphone-visible-top,0px)) + 116px)}
+}

@@ -7,6 +7,7 @@ function mount(){
   const v=window.visualViewport;
   // Pinch zoom must keep its native viewport behavior.
   if(v&&v.scale!==1)return;
+  root.style.setProperty('--iphone-visible-top',Math.max(0,Math.round(v?.offsetTop||0))+'px');
   root.style.setProperty('--iphone-visible-height',Math.round(v?.height||window.innerHeight)+'px');
   root.style.setProperty('--iphone-keyboard-inset',Math.max(0,Math.round(window.innerHeight-(v?v.height+v.offsetTop:window.innerHeight)))+'px');
  }
