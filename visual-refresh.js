@@ -10,6 +10,7 @@ function compactDate(value,dateOnly=false){
   const date=d.toLocaleDateString(undefined,{month:'short',day:'numeric',...(dateOnly?{timeZone:'UTC'}:{})});
   return dateOnly?date:date+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(':00','').replace(/\s/g,'');
 }
+function sharedSource(sources){const first=sources[0];return sources.length>1&&['Kalshi','FanDuel','Caesars'].includes(first)&&sources.every(source=>source===first)?first:null}
 function shortMarket(value){
  const names={'receiving yards':'Rec Yds','reception yards':'Rec Yds','rushing yards':'Rush Yds','passing yards':'Pass Yds','shots on goal':'SOG','shots':'SOG','receptions':'Rec','passing touchdowns':'Pass TD','rushing touchdowns':'Rush TD','receiving touchdowns':'Rec TD','passing attempts':'Pass Att','rushing attempts':'Rush Att','passing completions':'Completions','pitcher strikeouts':'Ks','strikeouts':'Ks','total bases':'Total Bases','home runs':'HR','hits + runs + rbi':'H+R+RBI'};
  return names[String(value||'').trim().toLowerCase()]||value;
@@ -122,7 +123,7 @@ function compactParlays(){
         const ask=subText.match(/\bKalshi ask\s+(\d+)¢/i);
         price.textContent=quote?.textContent.trim()|| (ask?'Kalshi '+ask[1]+'¢':market?'Mkt '+market[1]+'%':'Check price');
         const parts=price.textContent.match(/^(FanDuel|Kalshi|Caesars|Reference)\s+([+−-]?\d+(?:\.\d+)?¢?)$/);
-        if(parts){const source=document.createElement('span'),odds=document.createElement('span');source.className='quote-source';source.textContent=parts[1]+' ';odds.className='quote-price';odds.textContent=parts[2];price.textContent='';price.append(source,odds);}
+        if(parts){tile.dataset.quoteSource=parts[1];const source=document.createElement('span'),odds=document.createElement('span');source.className='quote-source';source.textContent=parts[1]+' ';odds.className='quote-price';odds.textContent=parts[2];price.textContent='';price.append(source,odds);}
         tile.setAttribute('aria-label',(leg.dataset.altLine==='true'?'ALT ':'')+selection.market+' '+line.textContent+', '+price.textContent);
         tile.append(heading,line,price);quote?.remove();leg.append(tile);leg.classList.add('has-market-tile');
       }
@@ -146,7 +147,7 @@ function compactParlays(){
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
     if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating').replace(/^Rating/,'Model rating');
     if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.append(score);const note=document.createElement('small');note.textContent=['ncaaf','nhl'].includes(sport)?'Selection quality, not win probability.':'Model rating, not win probability.';definition.append(note);details.append(definition)}
-    if(footer&&!footer.children.length)footer.remove();
+    if(footer&&!footer.children.length)footer.remove();const common=sharedSource(legs.map(leg=>leg.querySelector('.market-tile')?.dataset.quoteSource));if(common){const bar=document.createElement('div'),source=document.createElement('small');bar.className='card-quote-footer';source.className='shared-source-label';source.textContent='Prices: '+common;details.before(bar);bar.append(source,details);card.classList.add('shared-quote-source');}
   });
 }
 function dockMatchups(){
@@ -174,6 +175,6 @@ function mount(){
   syncCards();
   sync();
 }
-window.DISPLAY_COPY={shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
+window.DISPLAY_COPY={sharedSource,shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();

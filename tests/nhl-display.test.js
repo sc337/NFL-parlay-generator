@@ -103,3 +103,13 @@ test('mobile cards cannot squeeze tile rows and all NHL market buttons remain re
  assert.equal(leg.querySelector('.market-tile').parentElement,leg);
  });
 test('FanDuel quote tiles keep venue and odds on separate readable rows',()=>{const card=slip(),quote=card.querySelector('.leg-quote');quote.textContent='FanDuel -144';const app=display([card],'nfl');app.run();const price=card.querySelector('.market-tile-price');assert.equal(price.querySelector('.quote-source').textContent.trim(),'FanDuel');assert.equal(price.querySelector('.quote-price').textContent,'-144');assert.equal(price.textContent,'FanDuel -144');app.run();assert.equal(card.querySelectorAll('.quote-source').length,1)});
+
+test('source labels consolidate only when every leg has the same verified venue, retaining accessible prices and Details',()=>{
+ for(const source of ['Kalshi','FanDuel','Reference',null]){
+  const card=slip(),first=card.querySelector('.leg'),second=first.cloneNode();second.querySelector('.leg-quote').textContent=source?source+' -110':'Quote unavailable';card.querySelector('.legs').append(second);
+  const app=display([card]);app.run();const shared=card.querySelector('.shared-source-label'),details=card.querySelector('.card-explanation');
+  if(source==='Kalshi'){assert.equal(shared.textContent,'Prices: Kalshi');assert.equal(details.parentElement.className,'card-quote-footer');assert.equal(card.classList.contains('shared-quote-source'),true);for(const tile of card.querySelectorAll('.market-tile'))assert.match(tile.attributes['aria-label'],/Kalshi/);app.run();assert.equal(card.querySelectorAll('.shared-source-label').length,1)}
+  else{assert.equal(shared,null);assert.equal(card.classList.contains('shared-quote-source'),false);assert.equal(details.parentElement,card)}
+  assert.match(details.textContent,/Andrew Copp Under 0.5 Goals/);
+ }
+});

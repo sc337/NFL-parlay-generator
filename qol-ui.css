@@ -45,3 +45,24 @@ body:not(.explore-expanded) #parlayControls,body:not(.explore-expanded) #sportLe
 }
 @media(max-width:360px){.slate-controls button{padding:8px 7px;font-size:12px}.slate-date input{max-width:140px}.header-status{font-size:11px!important}.pick-row{gap:6px}.pick-market-tile{width:72px!important}}
 @media(prefers-reduced-transparency:reduce){.carousel-dot.active{background:var(--surface2)!important}.sport-switch{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+/* Bound the native Safari picker to an accessible, short visible date. */
+.slate-date{position:relative;display:flex;align-items:center;justify-content:center;justify-self:end;width:125px;max-width:100%;min-width:0;min-height:44px;overflow:hidden;border:1px solid var(--border2);border-radius:10px;background:var(--surface2);color:var(--text);padding:6px 12px;box-sizing:border-box}
+.slate-date-display{font-size:16px;line-height:1.3;white-space:nowrap;pointer-events:none}.slate-date:after{content:'⌄';margin-left:8px;font-size:14px;pointer-events:none}
+html[data-theme] .slate-date input{position:absolute;inset:0;z-index:1;display:block;width:100%!important;max-width:100%!important;min-width:0!important;height:100%;min-height:44px;box-sizing:border-box;margin:0;padding:0!important;opacity:0;cursor:pointer}
+.slate-date:focus-within{outline:2px solid var(--blue);outline-offset:2px}
+.parlay-options-row{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:8px;align-items:center;flex:none}
+.parlay-options-row #explorePanelToggle{width:100%;min-height:44px!important;margin:0!important;box-sizing:border-box}
+.parlay-options-row .quality-settings{display:block!important;margin:0!important;padding:0;min-width:0}.parlay-options-row .field{margin:0!important;min-width:0}
+.parlay-options-row label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.parlay-options-row #legsSelect{display:block;width:100%;min-height:44px;margin:0;font-size:16px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);padding:6px 8px}
+.card-quote-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;border-top:1px solid var(--border);margin-top:4px;flex:none}
+.shared-source-label{color:var(--muted);font-size:12px;line-height:1.35}.card-quote-footer .card-explanation{border:0!important;flex:none;margin:0!important;padding:0!important}.card-quote-footer .card-explanation>summary{min-height:44px!important;min-width:64px;justify-content:center;font-size:13px;padding:0 6px}
+.shared-quote-source .market-tile .quote-source{display:none!important}
+@media(max-width:600px){
+ .slate-date{width:125px;margin:0!important}.parlay-options-row{gap:6px;grid-template-columns:minmax(0,1fr) 100px}
+ #results .shared-quote-source .leg.has-market-tile{min-height:50px!important;padding:2px 0!important}
+ #results .shared-quote-source .market-tile{min-height:48px!important;padding:3px 4px!important}
+ #results .shared-quote-source .market-tile-price{margin-top:2px!important}
+}
+@media(max-width:360px){.slate-date{width:110px}.parlay-options-row{grid-template-columns:minmax(0,1fr) 94px}}
