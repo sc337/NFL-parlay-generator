@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-14T20:23:32.733116+00:00",
+  "updated_at": "2026-10-14T20:32:32.509341+00:00",
   "source": "MLB Stats API",
   "games": [
     {
@@ -46,7 +46,17 @@
       },
       "startersConfirmed": false,
       "lineupsConfirmed": false,
-      "lineupPlayerIds": []
+      "lineupPlayerIds": [
+        605141,
+        518692,
+        606192,
+        663656,
+        681624,
+        660271,
+        669257,
+        500743,
+        669242
+      ]
     },
     {
       "gamePk": 849818,
@@ -62,7 +72,11 @@
         "fullName": "Griffin Jax",
         "link": "/api/v1/people/643377"
       },
-      "homeProbable": null,
+      "homeProbable": {
+        "id": 668909,
+        "fullName": "Gavin Williams",
+        "link": "/api/v1/people/668909"
+      },
       "startersConfirmed": false,
       "lineupsConfirmed": false,
       "lineupPlayerIds": []
@@ -225,6 +239,22 @@
       "bbPer9": "2.88",
       "recent30": {}
     },
+    "668909": {
+      "id": 668909,
+      "name": "Gavin Williams",
+      "throws": "R",
+      "era": "3.76",
+      "whip": "1.11",
+      "innings": 184.1,
+      "strikeouts": 248.0,
+      "walks": 61.0,
+      "battersFaced": 746.0,
+      "kRate": 0.3324,
+      "bbRate": 0.0818,
+      "kPer9": "12.11",
+      "bbPer9": "2.98",
+      "recent30": {}
+    },
     "800048": {
       "id": 800048,
       "name": "Parker Messick",
@@ -291,19 +321,23 @@
     }
   },
   "players": {
-    "Freddie Freeman": 518692,
-    "Shohei Ohtani": 660271,
-    "Jackson Chourio": 694192,
-    "Junior Caminero": 691406,
-    "Yandy D\u00edaz": 650490,
-    "Andy Pages": 681624,
-    "Mookie Betts": 605141,
     "Jos\u00e9 Ram\u00edrez": 608070,
+    "Mookie Betts": 605141,
+    "Yandy D\u00edaz": 650490,
+    "Griffin Jax": 643377,
+    "Jackson Chourio": 694192,
+    "Gavin Williams": 668909,
+    "Andy Pages": 681624,
+    "Blake Snell": 605483,
+    "Brayan Rocchio": 677587,
     "William Contreras": 661388,
     "Brice Turang": 668930,
-    "Jonathan Aranda": 666018,
-    "Brayan Rocchio": 677587,
-    "Jo Adell": 666176
+    "Freddie Freeman": 518692,
+    "Junior Caminero": 691406,
+    "Jo Adell": 666176,
+    "Robert Gasser": 688107,
+    "Shohei Ohtani": 660271,
+    "Jonathan Aranda": 666018
   },
   "hitters": {
     "518692": {
@@ -555,6 +589,6 @@
       "games": 212,
       "runs_per_team": 4.198
     },
-    "as_of": "2026-10-14T20:23:32.733116+00:00"
+    "as_of": "2026-10-14T20:32:32.509341+00:00"
   }
 }

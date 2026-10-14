@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-14",
-  "updated_at": "2026-10-14T20:24:36.622Z",
+  "updated_at": "2026-10-14T20:32:55.664Z",
   "sports": {
     "nfl": {
-      "captured": 12,
+      "captured": 11,
       "passes": [
         {
           "mode": "sgp",
@@ -39,28 +39,22 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T20:23:20.552346+00:00"
+      "snapshotAt": "2026-10-14T20:32:29.800167+00:00"
     },
     "mlb": {
-      "captured": 0,
+      "captured": 6,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "best",
@@ -74,17 +68,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T20:23:28.068500+00:00"
+      "snapshotAt": "2026-10-14T20:32:29.794693+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-14T20:23:23.035581+00:00"
+      "snapshotAt": "2026-10-14T20:32:29.796669+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-14T20:23:31.683573+00:00"
+      "snapshotAt": "2026-10-14T20:20:44.821925+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -114,7 +108,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T20:23:27.050725+00:00"
+      "snapshotAt": "2026-10-14T20:32:29.812490+00:00"
     }
   },
   "records": [
@@ -13263,9 +13257,9 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-14T20:24:36.622Z",
-      "snapshotAt": "2026-10-14T20:23:20.552346+00:00",
-      "sourceVersion": "cdeee73139f2d8ecf9db86b7110ded0aa50889f8",
+      "capturedAt": "2026-10-14T20:22:56.671Z",
+      "snapshotAt": "2026-10-14T20:22:29.805870+00:00",
+      "sourceVersion": "7fe2e9f270bd5ebe09552be1448a02e6de484995",
       "priceEstimate": 300,
       "priceNote": "Combined reference asks; excludes fees.",
       "legs": [
@@ -13376,9 +13370,9 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-14T20:24:36.622Z",
-      "snapshotAt": "2026-10-14T20:23:20.552346+00:00",
-      "sourceVersion": "cdeee73139f2d8ecf9db86b7110ded0aa50889f8",
+      "capturedAt": "2026-10-14T20:22:56.671Z",
+      "snapshotAt": "2026-10-14T20:22:29.805870+00:00",
+      "sourceVersion": "7fe2e9f270bd5ebe09552be1448a02e6de484995",
       "priceEstimate": 628,
       "priceNote": "Combined reference asks; excludes fees.",
       "legs": [
@@ -13493,6 +13487,119 @@
           "confidence": 50,
           "forecastType": "model",
           "projectedLine": 20.8,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-14|nfl|multi|Balanced|3||0b833f7483c0534f",
+      "day": "2026-10-14",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-14T20:32:55.664Z",
+      "snapshotAt": "2026-10-14T20:32:29.800167+00:00",
+      "sourceVersion": "7fe2e9f270bd5ebe09552be1448a02e6de484995",
+      "priceEstimate": 313,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18CHIATL-ATLZBRANCH17-15|no",
+          "ticker": "KXNFLRECYDS-26OCT18CHIATL-ATLZBRANCH17-15",
+          "side": "no",
+          "eventId": "kalshi-atlanta-falcons-chicago-bears",
+          "event": "Chicago Bears @ Atlanta Falcons",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Zachariah Branch Under 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Zachariah Branch",
+          "ask": 0.62,
+          "referenceAmericanOdds": -163,
+          "marketP": 0.595,
+          "modelP": 0.7176488115744972,
+          "rawModelP": 0.7176488115744972,
+          "coverage": 0.55,
+          "confidence": 49,
+          "forecastType": "model",
+          "projectedLine": 9.2,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDDJONES17-10|no",
+          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDDJONES17-10",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Daniel Jones Under 9.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 9.5,
+          "player": "Daniel Jones",
+          "ask": 0.62,
+          "referenceAmericanOdds": -163,
+          "marketP": 0.605,
+          "modelP": 0.717420340857899,
+          "rawModelP": 0.717420340857899,
+          "coverage": 0.55,
+          "confidence": 45,
+          "forecastType": "model",
+          "projectedLine": 5,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
+          "side": "yes",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cade Otton Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Cade Otton",
+          "ask": 0.63,
+          "referenceAmericanOdds": -170,
+          "marketP": 0.6,
+          "modelP": 0.7068094338831667,
+          "rawModelP": 0.7068094338831667,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "model",
+          "projectedLine": 36.4,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
