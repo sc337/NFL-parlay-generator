@@ -1,0 +1,31 @@
+/* Neutral reading surfaces; blue interactions; color only for status and logos. */
+:root{--bg:#101318;--surface:#1b2028;--surface2:#242c36;--surface3:#151a21;--border:#303a46;--border2:#435163;--text:#f3f5f7;--muted:#aab4c0;--subtle:#aab4c0;--blue:#8ab4ff;--blue-bg:#243651;--green:#74c69d;--green-bg:#19372a;--amber:#e9b949;--amber-bg:#3a301b;--red:#f58c8c;--red-bg:#402528}
+html[data-theme="dark"] body{--bg:#101318;--surface:#1b2028;--surface2:#242c36;--surface3:#151a21;--border:#303a46;--border2:#435163;--text:#f3f5f7;--muted:#aab4c0;--subtle:#aab4c0;--blue:#8ab4ff;--blue-bg:#243651;--green:#74c69d;--green-bg:#19372a;--amber:#e9b949;--amber-bg:#3a301b;--red:#f58c8c;--red-bg:#402528}
+html[data-theme="light"] body{--bg:#f2f4f7;--surface:#fff;--surface2:#edf1f6;--surface3:#f7f9fc;--border:#d9e0e8;--border2:#b8c4d2;--text:#17202a;--muted:#596574;--subtle:#596574;--blue:#2563eb;--blue-bg:#eaf0ff;--green:#166534;--green-bg:#eaf6ee;--amber:#895908;--amber-bg:#fff4d8;--red:#b42318;--red-bg:#ffebe9}
+html body[data-sport]{--sport-accent:var(--blue)!important;--sport-glow:transparent!important;background:var(--bg)!important;color:var(--text)}
+body[data-sport="nfl"]{--league-accent:#74adff}body[data-sport="mlb"]{--league-accent:#52d8e7}body[data-sport="ncaaf"]{--league-accent:#ffcc75}body[data-sport="ufc"]{--league-accent:#ff7d83}body[data-sport="nhl"]{--league-accent:#79c9f0}
+html[data-theme="light"] body[data-sport="nfl"]{--league-accent:#145daf}html[data-theme="light"] body[data-sport="mlb"]{--league-accent:#08788b}html[data-theme="light"] body[data-sport="ncaaf"]{--league-accent:#946109}html[data-theme="light"] body[data-sport="ufc"]{--league-accent:#bd334a}html[data-theme="light"] body[data-sport="nhl"]{--league-accent:#12668a}
+html[data-theme] :is(.sport-switch,.pick-of-day,.control-card,.parlay-card,.more-analysis,.explore-panel-toggle,.extra-picks-details>summary,#settingsDialog,.settings-sheet,.details-sheet,.details-sheet-header){background:var(--surface)!important;border-color:var(--border)!important;color:var(--text);box-shadow:0 3px 12px #0000000a!important}
+html[data-theme] .pick-of-day{border-top:1px solid var(--border)!important}
+html[data-theme] .league-mark{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:2px solid var(--league-accent,var(--blue))!important}
+html[data-theme] .sport-switch button{color:var(--muted)!important}
+html[data-theme] :is(.sport-switch button.active,.carousel-dot.active,.theme-options button[aria-pressed="true"],.chip.active,.slate-controls button[aria-pressed="true"]){background:var(--blue-bg)!important;color:var(--blue)!important;border-color:var(--blue)!important;box-shadow:inset 0 -2px var(--blue)!important}
+html[data-theme] :is(.carousel-dot,.slate-controls button,.slate-date input,.odds-format-setting select,.theme-options,.settings-key-row input,.settings-actions button,.settings-key-row button,.details-sheet-close){background:var(--surface2);border-color:var(--border2);color:var(--text)}
+html[data-theme] .carousel-dot:not(.active){background:var(--surface)!important;color:var(--muted)!important}
+html[data-theme] :is(.primary-btn,#saveKeyBtn){background:var(--blue)!important;border-color:var(--blue)!important;color:#101318!important;box-shadow:none!important}
+html[data-theme="light"] :is(.primary-btn,#saveKeyBtn){color:#fff!important}
+html[data-theme] :is(.market-tile,.pick-market-tile){background:var(--surface2)!important;border-color:var(--border2)!important;box-shadow:none!important}
+html[data-theme] :is(.market-tile-heading,.market-tile-price,.leg-brief,.leg-sub,.leg-reason,.card-thesis,.pick-meta,.pick-foot,.pick-pass,.empty,.card-footer,.settings-section-head p,.extra-pick p,.odds-label){color:var(--muted)!important}
+html[data-theme] :is(.market-tile-line,.odds,.parlay-name,.leg-title,.pick-name){color:var(--text)!important}
+html[data-theme] :is(.parlay-card .grade,.parlay-card .card-status,.script-badge,.alt-tag){background:var(--surface2)!important;color:var(--muted)!important;border-color:var(--border2)!important}
+html[data-theme] :is(.header-status,.feed-refresh,.topbar>.icon-btn){background:var(--surface)!important;border-color:var(--border2)!important;color:var(--muted)!important}
+html[data-theme] .header-status.is-loading{background:var(--blue-bg)!important;color:var(--blue)!important}
+html[data-theme] .header-status.is-delayed{background:var(--amber-bg)!important;color:var(--amber)!important;border-color:var(--amber)!important}
+html[data-theme] .header-status.is-unavailable{background:var(--red-bg)!important;color:var(--red)!important;border-color:var(--red)!important}
+.header-status .live-dot{background:var(--green)}.header-status.is-loading .live-dot{background:var(--blue)}.header-status.is-delayed .live-dot{background:var(--amber)}.header-status.is-unavailable .live-dot{background:var(--red)}
+html[data-theme] .positive{color:var(--green)!important}html[data-theme] .negative{color:var(--red)!important}
+html[data-theme] :is(.card-explanation>summary,.leg-details>summary,.pick-reference,.settings-eyebrow,.feed-refresh){color:var(--blue)!important}
+html[data-theme] :is(button,input,select,summary,a):focus-visible{outline:2px solid var(--blue)!important;outline-offset:3px}
+@media(prefers-reduced-transparency:reduce){html[data-theme] .sport-switch{background:var(--surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+html[data-theme] body.feed-delayed :is(#results>.parlay-card,.pick-row){opacity:1}

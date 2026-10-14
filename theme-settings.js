@@ -6,7 +6,7 @@ function apply(choice=preference()){
   const selected=['system','light','dark'].includes(choice)?choice:'system';
   const resolved=selected==='system'?(system?.matches?'light':'dark'):selected;
   root.dataset.themePreference=selected;root.dataset.theme=resolved;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',resolved==='light'?'#f5f7fa':'#0a121c');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',resolved==='light'?'#f2f4f7':'#101318');
   document.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.themeChoice===selected)));
 }
 function mount(){
