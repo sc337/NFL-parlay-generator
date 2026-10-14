@@ -10,6 +10,10 @@ function compactDate(value,dateOnly=false){
   const date=d.toLocaleDateString(undefined,{month:'short',day:'numeric',...(dateOnly?{timeZone:'UTC'}:{})});
   return dateOnly?date:date+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(':00','').replace(/\s/g,'');
 }
+function shortMarket(value){
+ const names={'receiving yards':'Rec Yds','reception yards':'Rec Yds','rushing yards':'Rush Yds','passing yards':'Pass Yds','shots on goal':'SOG','shots':'SOG','receptions':'Rec','passing touchdowns':'Pass TD','rushing touchdowns':'Rush TD','receiving touchdowns':'Rec TD','passing attempts':'Pass Att','rushing attempts':'Rush Att','passing completions':'Completions','pitcher strikeouts':'Ks','strikeouts':'Ks','total bases':'Total Bases','home runs':'HR','hits + runs + rbi':'H+R+RBI'};
+ return names[String(value||'').trim().toLowerCase()]||value;
+}
 function shortMatchup(value){return String(value||'').replace(/\s+(?:at|@)\s+/gi,' vs ')}
 function shortMlbTeam(value){return String(value||'').replace(/^(?:Los Angeles|New York|Chicago|San Diego|San Francisco|Kansas City|Tampa Bay|St\. Louis|Arizona|Atlanta|Baltimore|Boston|Cincinnati|Cleveland|Colorado|Detroit|Houston|Miami|Milwaukee|Minnesota|Oakland|Philadelphia|Pittsburgh|Seattle|Texas|Toronto|Washington)\s+/,'')}
 function compactTitle(value,sport,sub){
@@ -112,7 +116,7 @@ function compactParlays(){
       if(selection.line){
         const tile=document.createElement('div'),heading=document.createElement('span'),line=document.createElement('strong'),price=document.createElement('small');
         tile.className='market-tile';heading.className='market-tile-heading';line.className='market-tile-line';price.className='market-tile-price';
-        heading.textContent=selection.market;line.textContent=selection.line;
+        heading.textContent=shortMarket(selection.market);heading.title=selection.market;line.textContent=selection.line;
         if(leg.dataset.altLine==='true'){const badge=document.createElement('span');badge.className='alt-tag';badge.textContent='ALT';tile.append(badge);if(leg.dataset.altLabel)line.textContent=leg.dataset.altLabel;}
         const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
         const ask=subText.match(/\bKalshi ask\s+(\d+)¢/i);
@@ -170,6 +174,6 @@ function mount(){
   syncCards();
   sync();
 }
-window.DISPLAY_COPY={date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
+window.DISPLAY_COPY={shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();
