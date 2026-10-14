@@ -7,7 +7,8 @@ function assess(m,game,state){
  const q=window.PICK_QUALITY.quote('nfl',m),now=Date.now(),start=Date.parse(game?.commence_time||''),at=Date.parse(q.checkedAt||''),contextAt=Date.parse(game?.context?.updated_at||'');
  const key=String(m.marketKey||m.type).replace(/_alternate$/,''),injury=String(m.contextSignals?.injury_status||'').toLowerCase();
  let reason=null,coverage=0;
- if(!active(state))reason='Parlay ideas require Kalshi-only mode';
+ if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game?.commence_time))reason='Outside selected date';
+ else if(!active(state))reason='Parlay ideas require Kalshi-only mode';
  else if(q.source!=='Kalshi'||game?.dataSource!=='Kalshi')reason='Kalshi reference required';
  else if(!Number.isFinite(start)||start<=now||game.game_status!=='pre')reason='Verified upcoming game required';
  else if(!Number.isFinite(at)||at>now+60000||now-at>30*60000)reason='Quote older than 30 minutes';

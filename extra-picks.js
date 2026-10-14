@@ -16,7 +16,7 @@ function show(s,options={}){
  if(document.body.classList.contains('prediction-only')){clear();return}
  const rows=choose(s,options.rows,options.selected);
  if(!host){host=document.createElement('section');host.id='extraPicks';host.className='extra-picks';document.querySelector('#results')?.after(host)}
- clear();host.hidden=false;
+ clear();if(!rows.length)return;host.hidden=false;
  const html=rows.map(({market:m,quality:q,game})=>{
   const time=m.game_time||m.start_time||m.kickoff||game?.commence_time;
   const when=time?new Date(time).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'';

@@ -134,11 +134,11 @@ test('NHL filter markup uses dedicated kinds and accessible pressed states',()=>
  assert.match(html,/id="nhlMarketFilters"[^>]+hidden/);assert.match(fs.readFileSync('app.js','utf8'),/#marketChips \.chip/);
 });
 
-test('NHL controls live outside the collapsed parlay panel',()=>{
+test('NHL controls live inside the collapsed parlay panel',()=>{
  const app=runtime(),main={insertBefore(host,pick){this.moved=host;this.before=pick}},pick={parentElement:null};pick.parentElement=main;
  const host={style:{},querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}};
- app.nodes.set('main',main);app.nodes.set('#pickOfDay',pick);app.nodes.set('#nhlMarketFilters',host);app.start();
- assert.equal(main.moved,host);assert.equal(main.before,pick);assert.equal(host.hidden,false);
+ app.nodes.set('main',main);app.nodes.set('#parlayControls',{prepend(node){main.moved=node}});app.nodes.set('#pickOfDay',pick);app.nodes.set('#nhlMarketFilters',host);app.start();
+ assert.equal(main.moved,host);assert.equal(main.before,undefined);assert.equal(host.hidden,false);
  assert.match(fs.readFileSync('ufc-dashboard.js','utf8'),/show\('#nflMarketFilters',nfl\)/);
  app.window.__ACTIVE_SPORT='mlb';app.window.NHL_DASHBOARD.controls();assert.equal(host.hidden,true);
 });

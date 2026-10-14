@@ -37,6 +37,6 @@ function open(details,button){
  document.documentElement.style.setProperty('--details-scroll-offset',-position+'px');document.body.classList.add('details-sheet-open');
  dialog.showModal();dialog.querySelector('.details-sheet-scroll').scrollTop=0;dialog.querySelector('button').focus({preventScroll:true});
 }
-document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(!summary)return;const details=summary.parentElement;if(!details?.matches(selector)||!details.closest('#results,#analysisSecondary,#qolV3,#extraPicks'))return;e.preventDefault();open(details,summary)});
+document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(!summary)return;const details=summary.parentElement;if(!details?.matches(selector)||!details.closest('#results,#analysisSecondary,#qolV3,#extraPicks,#pickOfDay'))return;e.preventDefault();open(details,summary)});
 window.PICK_DETAILS_SHEET={close};
 })();

@@ -94,7 +94,7 @@ function compactParlays(){
   document.querySelectorAll(':is(#results,#analysisSecondary)>.parlay-card:not(.td-watch):not([data-compact])').forEach(card=>{
     const sport=document.body.dataset.sport||'nfl',legs=[...card.querySelectorAll(':scope>.legs>.leg')],details=card.querySelector('.card-explanation');
     if(!details)return;
-    card.dataset.compact='1';
+    card.dataset.compact='1';const estimate=card.querySelector('.odds');if(estimate&&/^[+−-]\d+$/.test(estimate.textContent.trim())&&window.ODDS_DISPLAY)estimate.textContent=window.ODDS_DISPLAY.number(estimate.textContent.trim().replace('−','-'));
     const title=card.querySelector('.parlay-name');
     if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/\s+\d+-Leg$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(card.classList.contains('player-props-card')?(legs.length===1?'pick':'picks'):(legs.length===1?'leg':'legs'))}
     if(sport==='nfl'){
@@ -117,7 +117,7 @@ function compactParlays(){
         const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
         const ask=subText.match(/\bKalshi ask\s+(\d+)¢/i);
         price.textContent=quote?.textContent.trim()|| (ask?'Kalshi '+ask[1]+'¢':market?'Mkt '+market[1]+'%':'Check price');
-        const parts=price.textContent.match(/^(FanDuel|Kalshi|Caesars|Reference)\s+([+−-]?\d+¢?)$/);
+        const parts=price.textContent.match(/^(FanDuel|Kalshi|Caesars|Reference)\s+([+−-]?\d+(?:\.\d+)?¢?)$/);
         if(parts){const source=document.createElement('span'),odds=document.createElement('span');source.className='quote-source';source.textContent=parts[1]+' ';odds.className='quote-price';odds.textContent=parts[2];price.textContent='';price.append(source,odds);}
         tile.setAttribute('aria-label',(leg.dataset.altLine==='true'?'ALT ':'')+selection.market+' '+line.textContent+', '+price.textContent);
         tile.append(heading,line,price);quote?.remove();leg.append(tile);leg.classList.add('has-market-tile');
@@ -158,7 +158,7 @@ function mount(){
   toggle.type='button';toggle.id='explorePanelToggle';toggle.className='explore-panel-toggle';
   toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','parlayControls');
   toggle.textContent='Parlay options';
-  main.prepend(toggle);
+  $('#pickOfDay')?.after(toggle);const modes=$('.mode-tabs');if(modes)$('#parlayControls')?.prepend(modes);
   toggle.addEventListener('click',()=>{
     const open=document.body.classList.toggle('explore-expanded');
     toggle.setAttribute('aria-expanded',String(open));

@@ -77,7 +77,7 @@ function paint(){
   if(!key()&&!record.alt&&!available.verified){price?.remove();tile.classList.remove('has-caesars-price');continue}
   if(!price){price=document.createElement('small');price.className='caesars-quote';tile.append(price);tile.classList.add('has-caesars-price')}
   const q=available.quote;
-  const text=q?'Caesars '+(q.price>0?'+':'')+q.price:record.alt?(available.status==='checking'?'ALT · Checking book…':'ALT · Check book'):available.status==='checking'?'Caesars checking…':'Caesars unavailable';
+  const text=q?'Caesars '+(window.ODDS_DISPLAY?.number(q.price)||((q.price>0?'+':'')+q.price)):record.alt?(available.status==='checking'?'ALT · Checking book…':'ALT · Check book'):available.status==='checking'?'Caesars checking…':'Caesars unavailable';
   if(price.textContent!==text)price.textContent=text;
   price.title=q?'Exact matching Caesars line · Updated '+new Date(q.at).toLocaleTimeString():'Exact Caesars availability is unverified. Kalshi thresholds and prices are references, not sportsbook offers.';
  }

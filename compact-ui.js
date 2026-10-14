@@ -107,6 +107,7 @@ function tidy(){
     moveNflCard();
     compactSportResults();
     tidyExtraPicks();
+    window.SLATE_UI?.tidyEmpty?.();
     updateHeader();
     const sgp=$('#nflSgpSection');if(sgp)sgp.style.display='none';
   }finally{busy=false}

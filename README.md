@@ -4,6 +4,8 @@ A static dashboard for NFL, MLB, NCAAF, UFC, and NHL picks and parlay ideas. [Op
 
 ## What it shows
 
+Each sport opens with a shared Today / Next slate / Choose date filter and Pick of the Day. The same date applies to straights and parlays. Parlay controls are grouped in Parlay options, with labeled Conservative / Balanced / Lotto buttons where multiple profiles are supported. Settings offers American, decimal, or Kalshi-cent odds display while preserving source labels. Empty Extra Picks sections are hidden.
+
 - A featured pick, sport-specific recommendations, and a parlay builder for the selected sport. NFL also has same-game and multi-game modes.
 - Moneyline, spread, total, and supported player-prop markets when those markets are available. Picks show their game or fight, and team or player imagery where available.
 - **More Analysis** for secondary picks, market consensus, and the pick-history report.

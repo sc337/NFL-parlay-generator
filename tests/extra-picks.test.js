@@ -16,7 +16,7 @@ test('all sports screen extras, omit main picks and duplicates, and rank indepen
 test('extra picks include straight-only markets, escape labels, and clear stale output during navigation',()=>{
  const a=setup();a.api.show('nfl',{rows:[{market:{marketKey:'player_pass_attempts',name:'<Player>',rank:80}}]});
  assert.match(a.host.innerHTML,/Straight only/);assert.match(a.host.innerHTML,/&lt;Player>/);a.api.clear();assert.equal(a.host.hidden,true);assert.equal(a.host.innerHTML,'');
- a.window.__ACTIVE_SPORT='nhl';a.api.show('nfl',{rows:[]});assert.equal(a.host.hidden,true);a.api.show('nhl',{rows:[]});assert.match(a.host.innerHTML,/No additional picks/);assert.ok(a.closed()>0);
+ a.window.__ACTIVE_SPORT='nhl';a.api.show('nfl',{rows:[]});assert.equal(a.host.hidden,true);a.api.show('nhl',{rows:[]});assert.equal(a.host.hidden,true);assert.equal(a.host.innerHTML,'');assert.ok(a.closed()>0);
 });
 test('opposing outcomes and different lines remain distinct and output is bounded',()=>{
  const a=setup(),base={ticker:'shared',name:'Player prop'};

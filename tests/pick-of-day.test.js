@@ -59,3 +59,10 @@ test('featured MLB and college team markets retain their actual line rather than
   assert.equal(tile.children[0].textContent,heading);assert.equal(tile.children[1].textContent,value);assert.equal(tile.children[2].textContent,'Kalshi 60¢');
  }
 });
+
+test('shared date selection gives NFL a future straight with analysis, source timestamp and actual venue',()=>{
+ const a=runtime(),future=new Date(Date.now()+2*86400000),key=future.getFullYear()+'-'+String(future.getMonth()+1).padStart(2,'0')+'-'+String(future.getDate()).padStart(2,'0');
+ a.window.SLATE_UI={date:()=>key,empty:()=> 'No qualifying straight for this date · Pass'};a.window.PICK_QUALITY={quoteLabel:()=> 'FanDuel -110',quote:()=>({source:'FanDuel',checkedAt:new Date().toISOString()})};
+ a.window.PICK_OF_DAY.show('nfl',{market:{price:-110},eventTime:future,label:'Team ML',note:'Confirm lineup/status. Model unvalidated.'});assert.equal(a.host.children.length,3);assert.equal(a.title.textContent,'Pick of the Day');const details=a.host.children[2];assert.equal(details.children[0].textContent,'Details');assert.match(details.children[1].textContent,/Confirm lineup/);assert.match(details.children[2].textContent,/FanDuel/);assert.doesNotMatch(details.children[2].textContent,/Caesars/);
+ a.window.PICK_OF_DAY.show('nfl',null);assert.match(a.host.children[0].textContent,/No qualifying straight/);
+});

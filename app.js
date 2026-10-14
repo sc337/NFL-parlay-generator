@@ -476,7 +476,7 @@ function nflWeeks(){return [...new Set((state.games||[]).map(g=>nflWeekKey(g.com
 function nflSlate(){
   const weeks=nflWeeks();
   if(state.nflWeek!=='all'&&!weeks.includes(state.nflWeek))state.nflWeek=weeks[0]||'';
-  return (state.games||[]).filter(g=>state.nflWeek==='all'||!state.nflWeek||nflWeekKey(g.commence_time)===state.nflWeek);
+  return (state.games||[]).filter(g=>window.SLATE_UI?window.SLATE_UI.matches('nfl',{},g.commence_time):state.nflWeek==='all'||!state.nflWeek||nflWeekKey(g.commence_time)===state.nflWeek);
 }
 function nflWeekLabel(key){
   const start=new Date(key+'T12:00:00Z'),end=new Date(start);end.setUTCDate(end.getUTCDate()+6);
@@ -976,7 +976,7 @@ function reasonFor(leg,isSgp){
 }
 
 function renderNflStraight(){
-  const choices=(state.games||[]).filter(g=>g.game_status==='pre'&&window.PICK_OF_DAY?.today?.(g.commence_time))
+  const choices=(state.games||[]).filter(g=>g.game_status==='pre'&&(window.SLATE_UI?window.SLATE_UI.matches('nfl',{},g.commence_time):window.PICK_OF_DAY?.today?.(g.commence_time)))
     .flatMap(g=>(g.markets||[]).filter(m=>m.type!=='td'&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))&&(!m.player||m._rosterVerified)&&Number.isFinite(Number(m.price))&&m.price!==0)
       .map(m=>({g,m,x:window.NFL_MODEL_V3?.evaluate?.(g,m)})))
     .filter(row=>window.PICK_QUALITY?window.PICK_QUALITY.assess('nfl',row.m,row.x||{},{game:row.g,featured:true}).pass:row.x?.actionable&&Number(row.x.coverage)>=.2&&Number(row.x.confidence)>=55)

@@ -17,7 +17,7 @@ test('quiet refresh preserves cards and reserves height until the newest request
  const second=a.ui.begin('nfl');a.ui.end(first);a.flush();assert.equal(a.ui.isUpdating(),true);a.ui.end(second);a.flush();assert.equal(a.node.style.minHeight,'');assert.equal(a.node.attrs['aria-busy'],undefined);
 });
 test('sport switching invalidates earlier refresh completion and uses league-specific loading',()=>{
- const a=setup(),old=a.ui.begin('nfl');a.window.__ACTIVE_SPORT='nhl';a.window.__SPORT_TOKEN++;a.ui.selectSport('nhl');a.node.cards=false;a.ui.placeholder('nhl');assert.match(a.node.innerHTML,/NHL recommendations/);const current=a.ui.begin('nhl');a.ui.end(old);a.flush();assert.equal(a.ui.isUpdating(),true);a.ui.end(current);a.flush();assert.equal(a.ui.isUpdating(),false);
+ const a=setup(),old=a.ui.begin('nfl');a.window.__ACTIVE_SPORT='nhl';a.window.__SPORT_TOKEN++;a.ui.selectSport('nhl');assert.equal(a.node.innerHTML,'');a.node.cards=false;a.ui.placeholder('nhl');assert.match(a.node.innerHTML,/NHL recommendations/);const current=a.ui.begin('nhl');a.ui.end(old);a.flush();assert.equal(a.ui.isUpdating(),true);a.ui.end(current);a.flush();assert.equal(a.ui.isUpdating(),false);
 });
 test('blocked storage does not break controls or loading',()=>{const a=setup({},true);a.ui.put('nfl','legs',4);assert.equal(a.ui.get('nfl','legs',2),4);a.ui.end(a.ui.begin('nfl'));a.flush()});
 test('Generate ignores repeated clicks and regenerates once for a changed leg count',async()=>{
