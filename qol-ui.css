@@ -80,3 +80,10 @@ html[data-theme="dark"] #legsSelect{color-scheme:dark}html[data-theme="light"] #
  .sport-date-dock .sport-switch{top:auto!important;z-index:auto;overflow:visible}
  html{scroll-padding-top:calc(max(env(safe-area-inset-top,0px),var(--iphone-visible-top,0px)) + 116px)}
 }
+
+/* Opaque, non-filtered navigation keeps Safari tab text on its normal paint layer. */
+.sport-date-dock,.sport-date-dock .sport-switch{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;transform:none!important}
+.sport-date-dock{isolation:auto!important}
+.sport-switch button{position:relative;opacity:1!important;transform:none!important;filter:none!important;transition:none!important;-webkit-text-fill-color:currentColor}
+.sport-tab-label{display:block;position:relative;z-index:1;opacity:1;color:inherit;-webkit-text-fill-color:currentColor;line-height:1.35;white-space:nowrap;pointer-events:none}
+.compact-college-status{font-size:12px!important;line-height:1.4!important;margin:4px 0 8px!important;color:var(--muted)!important}

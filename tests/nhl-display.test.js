@@ -113,3 +113,9 @@ test('source labels consolidate only when every leg has the same verified venue,
   assert.match(details.textContent,/Andrew Copp Under 0.5 Goals/);
  }
 });
+
+test('college warning stays compact while full uncertainty and starter checks remain in Details',()=>{
+ const card=slip(),warning=el('p','quality-market-row','Model unvalidated; value unverified · College injuries and starters unconfirmed');card.querySelector('.legs').before(warning);const app=display([card],'ncaaf');app.run();
+ assert.equal(card.querySelector('.compact-college-status').textContent,'Experimental · Confirm starters');assert.equal(warning.parentElement,card.querySelector('.card-explanation'));assert.match(warning.textContent,/value unverified/);assert.match(warning.textContent,/starters unconfirmed/);
+ app.run();assert.equal(card.querySelectorAll('.compact-college-status').length,1);
+});

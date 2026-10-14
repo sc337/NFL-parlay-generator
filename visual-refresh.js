@@ -130,6 +130,7 @@ function compactParlays(){
       if(leg.classList.contains('has-market-tile')&&title.parentElement===leg){const copy=document.createElement('div');copy.className='sport-visual-copy';title.before(copy);copy.append(title);const brief=leg.querySelector('.leg-brief');if(brief)copy.append(brief);}
       if(subText||reasonText){const row=document.createElement('div');row.className='card-detail-row';const heading=document.createElement('strong');heading.textContent=original;row.append(heading);if(sub)row.append(sub);if(reason)row.append(reason);details.append(row)}
     });
+    if(sport==='ncaaf'){const warning=card.querySelector('.quality-market-row');if(warning){const brief=document.createElement('p');brief.className='quality-market-row compact-college-status';const experimental=/experimental/i.test(details.textContent);brief.textContent=[experimental?'Experimental':'Value unverified',/starters|lineups|injur/i.test(warning.textContent)?'Confirm starters':null].filter(Boolean).join(' · ');warning.before(brief);details.append(warning);}}
     const footer=card.querySelector('.card-footer'),pairing=footer?.querySelector('.correlation');
     if(pairing){const note=document.createElement('div');note.className='card-detail-row';note.append(pairing);if(sport==='nfl'&&/Pairing score/i.test(note.textContent)){const small=document.createElement('small');small.textContent='Internal pairing heuristic, not a probability.';note.append(small)}details.append(note)}
     footer?.querySelector('.corr-map')?.remove();
