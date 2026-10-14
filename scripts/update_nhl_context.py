@@ -40,6 +40,10 @@ def team_stats(rows, metadata):
                   'shots_against': 'shotsAgainstPerGame'}
         stats = {key: finite(row.get(source)) for key, source in fields.items()}
         if abbr and all(value is not None for value in stats.values()) and stats['games'] > 0:
+            for key_, source in [('powerplay_pct', 'powerPlayPct'), ('penaltykill_pct', 'penaltyKillPct')]:
+                value = finite(row.get(source))
+                if value is not None and 0 <= value <= 100:
+                    stats[key_] = value*100 if value <= 1 else value
             out[code(abbr)] = stats
     return out
 
@@ -86,7 +90,7 @@ def collect(now, old=None):
     year = now.year if now.month >= 7 else now.year-1
     season, previous = year*10000+year+1, (year-1)*10000+year
     # Refresh schedules every run; bulk stats and rosters at most hourly.
-    tasks = {f'schedule_{offset}': WEB+'/schedule/'+(now+timedelta(days=offset)).strftime('%Y-%m-%d') for offset in (0, 7)}
+    tasks = {f'schedule_{offset}': WEB+'/schedule/'+(now+timedelta(days=offset)).strftime('%Y-%m-%d') for offset in (-7, 0, 7)}
     reused = False
     if old and old.get('season') == season:
         try:
@@ -110,6 +114,22 @@ def collect(now, old=None):
             raise RuntimeError('Invalid official NHL schedule')
         games.update(schedule_games(results[key], now))
     clubs = {g[side] for g in games.values() for side in ('away', 'home')}
+    latest = {}
+    for payload in (results['schedule_-7'], results['schedule_0']):
+        for week in payload.get('gameWeek', []):
+            for g in week.get('games', []):
+                try:
+                    started = datetime.fromisoformat(g['startTimeUTC'].replace('Z', '+00:00'))
+                except (KeyError, ValueError):
+                    continue
+                if g.get('gameState') not in ('OFF', 'FINAL') or started >= now:
+                    continue
+                for side in ('awayTeam', 'homeTeam'):
+                    club = code(g.get(side, {}).get('abbrev'))
+                    latest[club] = max(latest.get(club, started), started)
+    for g in games.values():
+        start = datetime.fromisoformat(g['start'])
+        g['rest_hours'] = {side: (start-latest[g[side]]).total_seconds()/3600 for side in ('away', 'home') if g[side] in latest}
     if reused and clubs.issubset(set(old.get('roster_teams', []))):
         teams, players, rosters, league, stats_at = (old[k] for k in ('teams', 'players', 'rosters', 'league', 'stats_at'))
     else:

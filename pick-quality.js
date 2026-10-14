@@ -60,6 +60,17 @@ function participation(s,m,f,game,warnings){
   warnings.push(m.player?'Conditional on participation and role':'Team-average goalies; starters unconfirmed');
  }
  if(s==='ncaaf')warnings.push('College injuries and starters unconfirmed');
+ if(s==='nba'){
+  const event=ctx.games?.[String(m.game_id)];
+  if(!event||![2,3].includes(event.season_type))return 'NBA preseason or unverified rotation';
+  if(m.player){
+   const player=ctx.players?.[String(m.player_id)];
+   if(!m.player_verified||!player||player.team!==m.team_code)return 'Roster unverified';
+   if(/questionable|unknown/i.test(player.injury_status||''))return 'Player availability uncertain';
+   if(!(num(f.roleStability)>=.6))return 'Playing time uncertain';
+   warnings.push('Confirm participation and projected minutes');
+  }else warnings.push('Starting lineups unconfirmed');
+ }
  return null;
 }
 function unsupportedAltUnder(m){
@@ -136,6 +147,10 @@ function checkBuild(s,entries,sgp=false,offer=null){
  const bounds=joint(checks),breakEven=implied(offer);
  return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven&&checks.every(x=>x.valueQualified)};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});return x.pass?x.warnings.join(' · '):x.reason;}
-window.PICK_QUALITY={unsupportedAltUnder,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketAnchored===true;
+ const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
+ return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
+}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',...x.warnings].join(' · ');}
+window.PICK_QUALITY={unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

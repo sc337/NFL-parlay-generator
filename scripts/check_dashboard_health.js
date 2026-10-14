@@ -45,7 +45,7 @@ function checkSport(sport,snapshot,previous,now,context){
 function build(data,previous={},now=Date.now(),refreshStatus='success'){
  const sports={},alerts=[];
  if(refreshStatus!=='success')alerts.push({id:'pipeline:refresh-failed',sport:null,code:'refresh-failed',severity:'critical',message:'The scheduled refresh pipeline failed. Check the GitHub Actions run.'});
- for(const sport of ['nfl','mlb','ncaaf','nhl','ufc']){
+ for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
   try{const snapshot=data['kalshi-'+sport+'.json'];if(!snapshot)throw Error('Snapshot missing or unreadable');const checked=checkSport(sport,snapshot,previous.sports?.[sport],now,data[sport+'-context.json']);sports[sport]=checked.summary;alerts.push(...checked.alerts)}
   catch(error){sports[sport]={error:error.message};alerts.push({id:sport+':unavailable',sport,code:'unavailable',severity:'critical',message:error.message})}
  }
@@ -59,7 +59,7 @@ function build(data,previous={},now=Date.now(),refreshStatus='success'){
 }
 function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data'),now=Date.now(),refreshStatus=process.env.REFRESH_STATUS||'success'}={}){
  const file=path.join(dataDir,'dashboard-health.json'),data={};let previous={};try{previous=read(dataDir,'dashboard-health.json')}catch{}
- for(const sport of ['nfl','mlb','ncaaf','nhl','ufc'])for(const name of ['kalshi-'+sport+'.json',sport+'-context.json'])try{data[name]=read(dataDir,name)}catch{}
+ for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc'])for(const name of ['kalshi-'+sport+'.json',sport+'-context.json'])try{data[name]=read(dataDir,name)}catch{}
  try{data['daily-picks.json']=read(dataDir,'daily-picks.json')}catch{}
  const report=build(data,previous,now,refreshStatus);fs.writeFileSync(file,JSON.stringify(report,null,2)+'\n');
  for(const alert of report.alerts)console.log('::'+(alert.severity==='critical'?'error':'warning')+' title=Dashboard health::'+alert.sport+' '+alert.message.replace(/\r?\n/g,' '));

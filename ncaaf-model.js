@@ -22,7 +22,7 @@ function estimate(m,context){
   const coverage=clamp(.35+.04*Math.min(h.games,a.games)+.08*Math.min(h.box_games,a.box_games),0,.85);
   const shrink=Math.min(h.games,a.games)/(Math.min(h.games,a.games)+3);
   const yardDiff=((h.yards_for-h.yards_against)-(a.yards_for-a.yards_against))/65;
-  const margin=clamp((game.neutral_site?0:2.5)+shrink*(.68*(h.margin-a.margin)+clamp(yardDiff,-4,4)),-28,28);
+  const margin=clamp((game.neutral_site?0:2.5)+shrink*(.68*((h.opponent_adjusted_margin??h.margin)-(a.opponent_adjusted_margin??a.margin))+clamp(yardDiff,-4,4)),-28,28);
   const leagueTotal=Number(context.league_points_per_team)*2;
   if(!Number.isFinite(leagueTotal)||leagueTotal<25||leagueTotal>90)return null;
   const formTotal=(h.points_for+a.points_against+a.points_for+h.points_against)/2;

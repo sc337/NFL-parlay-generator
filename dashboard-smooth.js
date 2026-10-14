@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const KEY='sportsDashboardUIV2',sports=['nfl','mlb','ncaaf','ufc','nhl'];
+const KEY='sportsDashboardUIV2',sports=['mlb','nba','ncaaf','nfl','nhl','ufc'];
 let preferences={};try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))preferences=saved}catch{}
 const initialSport=sports.includes(preferences.sport)?preferences.sport:'nfl';
 const active=()=>window.__ACTIVE_SPORT||'nfl',results=()=>document.querySelector('#results');

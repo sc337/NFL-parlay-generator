@@ -3,7 +3,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const file=path.join(root,'data/forecast-audit.json');
 const output=path.join(root,'data/forecast-report.json');
-const sportNames=['nfl','mlb','ncaaf','ufc','nhl'];
+const sportNames=['mlb','nba','ncaaf','nfl','nhl','ufc'];
 const round=x=>+x.toFixed(4);
 function metrics(rows){
   const settled=rows.filter(r=>['win','loss'].includes(r.result)&&r.marketP>0&&r.marketP<1&&r.modelP>0&&r.modelP<1);
@@ -28,6 +28,7 @@ function metrics(rows){
   }
   const modelScore=(key,fn)=>model.length?round(model.reduce((sum,r)=>sum+fn(r[key],r.result==='win'?1:0),0)/model.length):null;
   return {recorded:rows.length,independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+    marketSupportedRecorded:rows.filter(r=>r.forecastType==='market_supported').length,
     experimentalRecorded:rows.filter(r=>r.forecastType==='experimental').length,
     settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
     independentSettled:model.length,independentEvents:new Set(model.map(eventKey)).size,

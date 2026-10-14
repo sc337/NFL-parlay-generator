@@ -38,6 +38,31 @@ jobs:
           REFRESH_STATUS: success
         run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nfl mlb ncaaf ufc
 
+  nba-prices:
+    concurrency:
+      group: rolling-nba-price-worker
+      cancel-in-progress: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check NBA mapping and model safeguards
+        run: |
+          python -m unittest discover -s tests -p 'test_nba*.py'
+          node --test tests/nba*.test.js
+      - name: Publish NBA independently of slower sports
+        env:
+          TZ: America/Los_Angeles
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nba
+
   nhl-prices:
     concurrency:
       group: rolling-nhl-price-worker

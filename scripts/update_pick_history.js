@@ -18,7 +18,7 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
   const ctx=vm.createContext({Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 
@@ -37,14 +37,15 @@ async function candidates(sport,{all=false}={}){
         noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
         noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
       }:null;
-      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental,ablations},game};
+      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations},game};
     })};
   }
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
+  if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js')}
   if(sport==='ncaaf')r.run('ncaaf-model.js');
   if(sport==='mlb')r.run('mlb-totals-model.js');
   if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
-  r.run(sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':sport==='nhl'?'nhl-dashboard.js':'ufc-dashboard.js');
+  r.run(sport==='nba'?'nba-dashboard.js':sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':sport==='nhl'?'nhl-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');
   const model=sport==='ncaaf'?api.projection:api.model;
@@ -64,20 +65,21 @@ function record(sport,entry,now){
   const modelP=Number(f.modelP),rawModelP=Number(f.rawModelP??f.modelP);
   if(!ticker||!Number.isFinite(Date.parse(close))||Date.parse(close)<=now||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!(marketP>0&&marketP<1))return null;
   const independent=sport==='nfl'?(Number(f.coverage)>=.2&&Number.isFinite(modelP)):sport==='mlb'?m.kind==='moneyline'&&Number(f.context?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:sport==='ufc'?Number(f.match?.coverage)>=.45&&Number.isFinite(f.betEV)&&f.betEV>0:false;
-  const experimental=(sport==='nhl'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP))||sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
+  const experimental=(sport==='nba'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP))||(sport==='ncaaf'&&f.experimental===true&&Number(f.coverage)>=.6&&Number.isFinite(modelP))||(sport==='nfl'&&f.experimental===true&&!!m.player&&Number(f.coverage)>=(m.type==='td'?.3:.45)&&Number.isFinite(modelP))||(sport==='nhl'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP))||sport==='mlb'&&m.kind==='total'&&f.experimental===true&&Number(f.coverage)>=.45&&Number.isFinite(modelP);
   const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
     isAltLine:m.isAltLine===true,altReferenceLine:m.altReferenceLine??null,altDistance:m.altDistance??null,
     marketGroup:sport==='nfl'?(m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
-    forecastType:experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
-    ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent?Number(f.betEV):null,result:null};
+    eventId:g.context?.event_id||m.game_id||null,marketAnchored:f.marketAnchored===true,
+    forecastType:f.marketAnchored===true?'market_supported':experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
+    ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent&&!experimental&&!f.marketAnchored?Number(f.betEV):null,result:null};
 }
 
 async function main(){
   const now=Date.now(),old=fs.existsSync(outFile)?JSON.parse(fs.readFileSync(outFile,'utf8')):{records:[]};
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id));
-  for(const sport of ['nfl','mlb','ncaaf','ufc','nhl']){
+  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
     try{const {rows:choices,snapshot}=await candidates(sport);track(rows,snapshot,sport,now);for(const choice of choices){const r=record(sport,choice,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id)}}}
     catch(error){console.warn('History candidates unavailable for',sport,error)}
   }

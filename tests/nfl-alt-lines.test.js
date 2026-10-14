@@ -44,8 +44,9 @@ test('alternate yard thresholds share a projection and probabilities change with
  env.document={readyState:'loading',addEventListener(){}};
  vm.runInContext(fs.readFileSync('nfl-projection-engine.js','utf8'),env);
  vm.runInContext(fs.readFileSync('nfl-model-v3.js','utf8'),env);
- const main={type:'rushing',marketKey:'player_rush_yds',player:'RB',point:49.5,side:'over',price:-110};
- const alt={...main,marketKey:'player_rush_yds_alternate',point:29.5};const game={markets:[main,alt,{...main,marketKey:'player_rush_attempts',point:14.5}]};
+ const kickoff=Date.now()+86400000,latest=new Date(Date.now()-86400000).toISOString().slice(0,10);
+ const main={type:'rushing',marketKey:'player_rush_yds',player:'RB',point:49.5,side:'over',price:-110,propHistory:{source:'nflverse completed plays',games:3,played:3,latest_game:latest,metrics:{player_rush_yds:[60,55,65]}}};
+ const alt={...main,marketKey:'player_rush_yds_alternate',point:29.5};const game={commence_time:new Date(kickoff).toISOString(),markets:[main,alt]};
  const a=window.NFL_MODEL_V3.evaluate(game,main),b=window.NFL_MODEL_V3.evaluate(game,alt);
  assert.equal(a.projection,b.projection);assert.ok(b.modelP>a.modelP);
 });

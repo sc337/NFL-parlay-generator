@@ -63,7 +63,7 @@ function render(){if(window.__ACTIVE_SPORT&&window.__ACTIVE_SPORT!=='nhl')return
  window.PICK_OF_DAY?.show?.('nhl',today&&{market:today,eventTime:today.game_time,label:today.label,event:today.game_label,media:media(today),note:note(today)+' · '+(window.PICK_QUALITY?.note('nhl',today,model(today)||{})||'')},{date:selectedDate});
  const games=G.unique(ranked,Infinity),covered=ranked.filter(m=>model(m)).length;
  lastStatus='Kalshi NHL · '+games.length+' qualified games · '+(covered?'Experimental NHL model':'Market only');$('#dataStatus').textContent=lastStatus;
- const selected=games.slice(0,legs);
+ const selected=G.bestBuild&&window.PICK_QUALITY?.assess?G.bestBuild(ranked,legs,m=>window.PICK_QUALITY.assess('nhl',m,model(m)||{},{parlay:true})):games.slice(0,legs);
  window.RECOMMENDATION_CAPTURE?.('nhl',{requestedLegs:legs,mode:'multi',profile:'balanced',legs:selected.length===legs&&G.independent(selected)?selected.map(m=>({market:m,forecast:model(m)||{}})):[]});
  $('#resultsTitle').textContent='NHL Recommendations';
  $('#results').innerHTML=(selected.length===legs&&G.independent(selected)?card(selected):'<div class="empty">'+G.esc(emptyReason(games))+'</div>')+(PROPS.some(kind=>selectedMarkets.has(kind))?propsCard():'');

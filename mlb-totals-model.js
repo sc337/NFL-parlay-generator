@@ -12,7 +12,7 @@ function scoring(g,context){
  const avgFor=t=>(Number(t.runs_for)+12*avg)/(Number(t.games)+12);
  const avgAgainst=t=>(Number(t.runs_against)+12*avg)/(Number(t.games)+12);
  if(![away,home].every(t=>Number.isFinite(+t.runs_for)&&Number.isFinite(+t.runs_against)&&Number.isFinite(+t.games)&&t.games>=8))return null;
- const pitcher=side=>{const id=g[side+'Probable']?.id,p=context.pitchers?.[String(id)],era=Number(p?.era),ip=Number(p?.innings);return Number.isFinite(era)&&era>=1&&era<=9&&ip>=20?clamp(era/avg,.65,1.45):1};
+ const pitcher=side=>{const id=g[side+'Probable']?.id,p=context.pitchers?.[String(id)],era=Number(p?.era),ip=Number(p?.innings);if(!Number.isFinite(era)||era<1||era>9||ip<20)return 1;const k=p?.kRate,bb=p?.bbRate;const skill=typeof k==='number'&&typeof bb==='number'&&p.battersFaced>=80?clamp(1-((k-bb)-.14)*1.5,.8,1.2):1;return clamp(Math.pow(era/avg,.7)*Math.pow(skill,.3),.65,1.45)};
  const awayMean=clamp(avg*Math.pow(avgFor(away)/avg,.6)*Math.pow(avgAgainst(home)/avg,.3)*Math.pow(pitcher('home'),.1)*.98,1.2,9);
  const homeMean=clamp(avg*Math.pow(avgFor(home)/avg,.6)*Math.pow(avgAgainst(away)/avg,.3)*Math.pow(pitcher('away'),.1)*1.02,1.2,9);
  const hasPitchers=pitcher('home')!==1&&pitcher('away')!==1;

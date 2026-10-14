@@ -99,4 +99,9 @@ main,#parlayControls{min-width:0;max-width:100%}
 .sport-date-dock{isolation:auto!important}
 .sport-switch button{position:relative;opacity:1!important;transform:none!important;filter:none!important;transition:none!important;-webkit-text-fill-color:currentColor}
 .sport-tab-label{display:block;position:relative;z-index:1;opacity:1;color:inherit;-webkit-text-fill-color:currentColor;line-height:1.35;white-space:nowrap;pointer-events:none}
+.sport-switch{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important}
+#nbaMarketFilters{grid-column:1/-1;min-width:0;max-width:100%}
+#nbaMarketFilters .chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:100%}
+#nbaMarketFilters .chip{min-width:0;white-space:normal;min-height:44px!important}
+@media(max-width:600px){.sport-switch button{font-size:11px!important;padding-inline:1px!important}}
 .compact-college-status{font-size:12px!important;line-height:1.4!important;margin:4px 0 8px!important;color:var(--muted)!important}

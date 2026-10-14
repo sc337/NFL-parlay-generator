@@ -13,8 +13,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
-SPORTS = ('nfl', 'mlb', 'ncaaf', 'nhl', 'ufc')
+SPORTS = ('mlb', 'nba', 'ncaaf', 'nfl', 'nhl', 'ufc')
 STEPS = {
+    'nba': ['update_kalshi_nba.py'],
     'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py',
             'enrich_snapshot_context.py', 'update_nfl_td_context.py'],
     'mlb': ['update_kalshi_mlb.py', 'update_mlb_context.py', 'attach_game_context.py'],
@@ -23,7 +24,7 @@ STEPS = {
     'ufc': ['update_kalshi_ufc.py'],
 }
 FILES = {sport: ['data/kalshi-' + sport + '.json'] +
-         (['data/' + sport + '-context.json'] if sport in ('mlb', 'ncaaf', 'nhl') else [])
+         (['data/' + sport + '-context.json'] if sport in ('mlb', 'nba', 'ncaaf', 'nhl') else [])
          for sport in SPORTS}
 
 def stamp(payload):
@@ -65,7 +66,7 @@ def refresh(sport):
     try:
         for step in STEPS[sport]:
             parts = step.split()
-            run(['python', 'scripts/' + parts[0], *parts[1:]], timeout=180)
+            run(['python', 'scripts/' + parts[0], *parts[1:]], timeout=600 if sport == 'nba' else 180)
         name = FILES[sport][0]
         valid_snapshot(json.loads(Path(name).read_text()), sport,
                        json.loads(saved[name]) if name in saved else None)

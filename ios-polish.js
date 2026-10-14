@@ -24,6 +24,7 @@ async function refresh(){
     const status=document.querySelector('#dataStatus');if(status)status.textContent='Refreshing '+active.toUpperCase()+' markets…';
     update();
     if(active==='nfl')await window.NFL_NO_DEMO?.load?.();
+    else if(active==='nba')await window.NBA_DASHBOARD?.load?.();
     else if(active==='mlb')await window.MLB_DASHBOARD?.load?.();
     else if(active==='ncaaf')await window.NCAAF_DASHBOARD?.load?.();
     else if(active==='nhl')await window.NHL_DASHBOARD?.load?.();

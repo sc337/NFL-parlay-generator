@@ -58,16 +58,9 @@
       if(line>0){const variance=values.reduce((s,v)=>s+(v-line)**2,0)/(values.length-1);
         return {line,coverage:clamp(.3+.05*values.length,.45,.55),sd:Math.sqrt(variance),experimental:true,roleStability:history.played/history.games};}
     }
-    const same=(game.markets||[]).filter(x=>x.player===m.player);
-    const get=k=>same.find(x=>x.marketKey===k&&x.side==='over'&&num(x.point)!=null);
-    const attempts=get('player_pass_attempts'),comps=get('player_pass_completions'),rush=get('player_rush_attempts'),rec=get('player_receptions');
-    let line=null,coverage=0;
-    const marketKey=String(m.marketKey||'').replace(/_alternate$/,'');
-    if(marketKey==='player_pass_yds'&&attempts){line=num(attempts.point)*7.05;coverage=.32;}
-    if(marketKey==='player_rush_yds'&&rush){line=num(rush.point)*4.15;coverage=.32;}
-    if(marketKey==='player_reception_yds'&&rec){line=num(rec.point)*11.3;coverage=.32;}
-    if(m.marketKey==='player_receptions'&&comps){line=num(comps.point)*.24;coverage=.18;}
-    return line==null?null:{line,coverage};
+    // Another offered line is not observed player usage. Never manufacture
+    // yardage by multiplying an attempts/receptions quote by a generic rate.
+    return null;
   }
   function marketProjection(game,m){
     // Use the quoted midpoint as the forecast baseline; the offered ask/price

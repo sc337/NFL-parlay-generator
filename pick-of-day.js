@@ -15,6 +15,8 @@ function selection(label){
   if(m)return {subject:m[1],market:'Spread',line:'−'+m[2]};
   m=label.match(/^(.+?)\s+([+−-][\d.]+)\s+(Puck line)$/i);
   if(m)return {subject:m[1],market:'Puck line',line:m[2]};
+  m=label.match(/^(.+?)\s+([+−-][\d.]+)\s+Spread$/i);
+  if(m)return {subject:m[1],market:'Spread',line:m[2]};
   m=label.match(/^(.+?)\s+(?:ML|moneyline)$/i);
   if(m)return {subject:m[1],market:'Winner',line:'ML'};
   return {subject:label,market:'Winner',line:'ML'};

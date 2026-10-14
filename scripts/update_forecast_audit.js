@@ -22,7 +22,7 @@ function mlbStart(ticker){
 function start(sport,m,g,snapshot){
   if(sport==='nfl')return g.commence_time;
   if(sport==='mlb')return m.game_time||mlbStart(m.event_ticker);
-  if(sport==='ncaaf'||sport==='nhl')return m.game_time;
+  if(sport==='nba'||sport==='ncaaf'||sport==='nhl')return m.game_time;
   if(sport==='ufc'){
     const x=String(m.event_ticker||'').match(/-(\d{2})([A-Z]{3})(\d{2})/);
     const day=x&&months[x[2]]!=null?new Date(Date.UTC(2000+Number(x[1]),months[x[2]],Number(x[3]))).toISOString().slice(0,10):'';
@@ -49,25 +49,26 @@ function record(sport,entry,snapshot,now){
   const independent=sport==='nfl'?coverage>=.2&&(!m.player||projectedLine!=null):
     sport==='mlb'?m.kind==='moneyline'&&coverage>=.45:
     sport==='ufc'?m.kind==='moneyline'&&coverage>0:false;
-  const experimental=(sport==='nhl'&&f.experimental===true&&coverage>=.45)||
+  const experimental=(sport==='nba'&&f.experimental===true&&coverage>=.45)||(sport==='nhl'&&f.experimental===true&&coverage>=.45)||
     (sport==='ncaaf'&&f.experimental===true&&coverage>=.6)||
     (sport==='mlb'&&m.kind==='total'&&f.experimental===true&&coverage>=.45)||
-    (sport==='nfl'&&m.type==='td'&&f.experimental===true&&coverage>=.3);
+    (sport==='nfl'&&f.experimental===true&&(m.type==='td'?coverage>=.3:!!m.player&&coverage>=.45&&projectedLine!=null));
+  const anchored=f.marketAnchored===true;
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   return {id:[sport,ticker,side].join('|'),sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
     market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
     marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
-    forecastType:hasModel?(experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
-    quotedEV:hasModel&&!experimental?modelP/ask-1:null,
+    forecastType:hasModel?(anchored?'market_supported':experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
+    quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
     snapshotAt:snapshot.updated_at||snapshot.generated_at||null,result:null};
 }
 async function main(){
   const now=Date.now(),old=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{records:[]};
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id)),added={};
-  for(const sport of ['nfl','mlb','ncaaf','ufc','nhl']){
+  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
     try{
       const {snapshot,rows:choices}=await candidates(sport,{all:true});
       const updated=Date.parse(snapshot.updated_at||snapshot.generated_at);

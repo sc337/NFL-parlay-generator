@@ -19,7 +19,7 @@ function legRecord(sport,entry,snapshot,now){
   selection:m.name||m.label||m.title,market:m.marketKey||m.kind||m.type,line:finite(m.point??m.line??String(m.title||m.label||'').match(/(?:over|under)\s+(\d+(?:\.\d+)?)/i)?.[1]),player:m.player||null,
   ask,referenceAmericanOdds:finite(m.price),marketP:finite(m.prob??m.probability??m.marketProbability),
   modelP:hasModel?estimate:null,rawModelP:hasModel?finite(f.rawModelP??estimate):null,coverage,confidence:finite(f.confidence),
-  forecastType:hasModel?(f.experimental?'experimental':'model'):'market_only',projectedLine:finite(f.projectedLine),projectedTotal:finite(f.projectedTotal),projectedMargin:finite(f.projectedMargin),projectedAway:finite(f.projectedAway),projectedHome:finite(f.projectedHome),
+  forecastType:hasModel?(f.marketAnchored?'market_supported':f.experimental?'experimental':'model'):'market_only',projectedLine:finite(f.projectedLine),projectedTotal:finite(f.projectedTotal),projectedMargin:finite(f.projectedMargin),projectedAway:finite(f.projectedAway),projectedHome:finite(f.projectedHome),
   isAltLine:m.isAltLine===true,altReferenceLine:finite(m.altReferenceLine),altDistance:finite(m.altDistance),result:null};
 }
 function captureRecord(sport,build,snapshot,now,version){
@@ -32,7 +32,7 @@ function captureRecord(sport,build,snapshot,now,version){
  const independent=mode!=='sgp'&&new Set(legs.map(l=>l.eventId||l.event)).size===legs.length;
  const decimal=independent?legs.reduce((value,l)=>value/l.ask,1):null;
  return {id,day,sport,mode,profile:build.profile||'best',requestedLegs:build.requestedLegs||legs.length,actualLegs:legs.length,
-  filters:{lines:sport==='nfl'?'standard':'both',date:'all',card:build.card||null,gameId:build.gameId||null},
+  filters:{lines:['nfl','nba'].includes(sport)?'standard':'both',date:'all',card:build.card||null,gameId:build.gameId||null},
   capturedAt:new Date(now).toISOString(),snapshotAt:at,sourceVersion:version,
   priceEstimate:decimal===null?null:Math.round(decimal>=2?(decimal-1)*100:-100/(decimal-1)),
   priceNote:independent?'Combined reference asks; excludes fees.':'Same-game price unavailable; verify sportsbook quote.',legs,result:null};
@@ -52,7 +52,7 @@ async function collect(sport,dataDir,now,version){
  const capture=(_sport,build)=>{const record=captureRecord(sport,build,snapshot,now,version);if(record)records.push(record);else passes.push({mode:build.mode,profile:build.profile,requestedLegs:build.requestedLegs,reason:build.legs?.length?'Unverified start or stale quote':'No qualifying build'})};
  const r=runtime(sport,{dataDir,capture,now});
  r.window.PICK_OF_DAY={today:time=>{const at=Date.parse(time);return at>now&&dayKey(at)===dayKey(now)},show:(_sport,pick)=>{if(!pick)return;const market=pick.market;
-  const forecast=sport==='nfl'?{modelP:market.modelProbability,rawModelP:market.rawModelProbability,coverage:market.projectionCoverage,confidence:market.modelConfidence,experimental:market.tdExperimental,projectedLine:market.projectedLine}:r.window[sport.toUpperCase()+'_DASHBOARD']?.[sport==='ncaaf'?'projection':'model']?.(market)||{};
+  const forecast=sport==='nfl'?{modelP:market.modelProbability,rawModelP:market.rawModelProbability,coverage:market.projectionCoverage,confidence:market.modelConfidence,experimental:market.tdExperimental||market.nflPropExperimental,marketAnchored:market.marketAnchored,projectedLine:market.projectedLine}:r.window[sport.toUpperCase()+'_DASHBOARD']?.[sport==='ncaaf'?'projection':'model']?.(market)||{};
   const game=sport==='nfl'?(snapshot.games||[]).find(g=>g.commence_time===pick.eventTime&&(g.markets||[]).some(m=>m.ticker===market.ticker)):null;
   capture(sport,{mode:'straight',profile:'featured',requestedLegs:1,legs:[{market,forecast,game}]});}};
  if(sport==='nfl'){
@@ -67,7 +67,7 @@ async function collect(sport,dataDir,now,version){
   vm.runInContext('renderNflStraight()',r.ctx);
   for(let n=2;n<=4;n++){r.ctx.previousMulti=[];r.ctx.previousSgp=[];for(const profile of ['safe','balanced','long']){
    const multi=vm.runInContext(`buildMulti(${n},50,${JSON.stringify(profile)},previousMulti)`,r.ctx);
-   const emit=(p,mode,game)=>{capture(sport,{mode,profile:p?.name||profile,requestedLegs:n,gameId:game?.id,legs:(p?.legs||[]).map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,experimental:m.tdExperimental,projectedLine:m.projectedLine},game:game||(snapshot.games||[]).find(g=>g.commence_time===m.kickoff&&(g.markets||[]).some(x=>x.ticker===m.ticker))}))})};
+   const emit=(p,mode,game)=>{capture(sport,{mode,profile:p?.name||profile,requestedLegs:n,gameId:game?.id,legs:(p?.legs||[]).map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,projectedLine:m.projectedLine},game:game||(snapshot.games||[]).find(g=>g.commence_time===m.kickoff&&(g.markets||[]).some(x=>x.ticker===m.ticker))}))})};
    emit(multi,'multi');if(multi)r.ctx.previousMulti.push(multi);
    // The default game chooser selects the next pregame matchup. Capture that
    // default SGP rather than spending each refresh building every future game.
@@ -76,7 +76,7 @@ async function collect(sport,dataDir,now,version){
   }}
  }else{
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
-  if(sport==='mlb')r.run('mlb-totals-model.js');if(sport==='ncaaf')r.run('ncaaf-model.js');if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
+  if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js')}if(sport==='mlb')r.run('mlb-totals-model.js');if(sport==='ncaaf')r.run('ncaaf-model.js');if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
   r.run(sport+'-dashboard.js');const api=r.window[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   for(let n=2;n<=4;n++)api.setLegs(n);
  }
@@ -87,7 +87,7 @@ async function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data
  const file=path.join(dataDir,'daily-picks.json'),archiveDir=path.join(dataDir,'daily-picks'),day=dayKey(now);
  fs.mkdirSync(archiveDir,{recursive:true});
  const dailyFile=path.join(archiveDir,day+'.json'),old=fs.existsSync(dailyFile)?JSON.parse(fs.readFileSync(dailyFile,'utf8')):{records:[]},records=[],sports={};
- for(const sport of ['nfl','mlb','ncaaf','nhl','ufc']){try{const started=Date.now();const result=await collect(sport,dataDir,now,version);records.push(...result.records);sports[sport]=result.status;console.log(sport+':',result.records.length,'captures in',Math.round((Date.now()-started)/1000),'seconds')}catch(error){sports[sport]={error:error.message};console.warn('Daily snapshot unavailable:',sport,error.message)}}
+ for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){try{const started=Date.now();const result=await collect(sport,dataDir,now,version);records.push(...result.records);sports[sport]=result.status;console.log(sport+':',result.records.length,'captures in',Math.round((Date.now()-started)/1000),'seconds')}catch(error){sports[sport]={error:error.message};console.warn('Daily snapshot unavailable:',sport,error.message)}}
  const merged=mergeRecords(old.records||[],records),auditFile=path.join(dataDir,'forecast-audit.json');
  const audit=fs.existsSync(auditFile)?JSON.parse(fs.readFileSync(auditFile,'utf8')):{records:[]};settle(merged,audit);
  // Preserve every captured forecast. Settlement may update outcomes, never prices.

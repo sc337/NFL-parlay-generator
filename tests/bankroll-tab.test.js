@@ -18,13 +18,13 @@ test('NFL is the landing sport and bankroll/stake UI is absent',()=>{
  element('.topbar').insertAdjacentElement=(_where,node)=>{nav=node};
  const window={__SPORT_TOKEN:1,setInterval(){},PICK_OF_DAY:{loading(){}},COMPACT_UI:{refresh(){}},PREDICTION_MODEL:{activate(){}},PARLAY_GENERATOR:{syncLabel(){}},PICK_HISTORY_REPORT:{refresh(){}},NFL_SELECTIVITY:{refresh(){}},generate(){generated++}};
  vm.runInNewContext(fs.readFileSync('ufc-dashboard.js','utf8'),{window,document,console,Date});
- assert.deepEqual(nav.buttons.map(x=>x.dataset.sport),['nfl','mlb','ncaaf','ufc','nhl']);
+ assert.deepEqual(nav.buttons.map(x=>x.dataset.sport),['mlb','nba','ncaaf','nfl','nhl','ufc']);
  assert.equal(window.__ACTIVE_SPORT,'nfl');
  assert.equal(body.dataset.sport,'nfl');
  assert.equal(generated,1);
- nav.click({target:{closest:()=>nav.buttons[1]}});
+ nav.click({target:{closest:()=>nav.buttons.find(b=>b.dataset.sport==='mlb')}});
  assert.equal(window.__ACTIVE_SPORT,'mlb');
- nav.click({target:{closest:()=>nav.buttons[0]}});
+ nav.click({target:{closest:()=>nav.buttons.find(b=>b.dataset.sport==='nfl')}});
  assert.equal(window.__ACTIVE_SPORT,'nfl');
  assert.equal(generated,2);
 });

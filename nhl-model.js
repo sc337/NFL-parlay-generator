@@ -33,7 +33,9 @@ function matchup(m,context){
   if(!off||!def||!sf||!sa)return null;
   rates[side]={off:off.rate,def:def.rate,shotsFor:sf.rate,shotsAgainst:sa.rate,games:off.games};
  }
- const away=clamp(rates.away.off*rates.home.def/avg*(g.neutral?1:.97),1,6),home=clamp(rates.home.off*rates.away.def/avg*(g.neutral?1:1.03),1,6);
+ const rest=side=>num(g.rest_hours?.[side])!==null&&g.rest_hours[side]<36?.98:1;
+ const special=side=>{const opposite=side==='home'?'away':'home',a=context.teams?.[g[side]],b=context.teams?.[g[opposite]],ap=a?.current?.games>=15?a.current:a?.prior,bp=b?.current?.games>=15?b.current:b?.prior;const pp=num(ap?.powerplay_pct),pk=num(bp?.penaltykill_pct);return pp!==null&&pk!==null?clamp(1+(pp-20+(80-pk))*.0015,.97,1.03):1};
+ const away=clamp(rates.away.off*rates.home.def/avg*(g.neutral?1:.97)*rest('away')*special('away'),1,6),home=clamp(rates.home.off*rates.away.def/avg*(g.neutral?1:1.03)*rest('home')*special('home'),1,6);
  return {g,away,home,rates,league:avg,leagueShots:shots,coverage:clamp(.5+.25*Math.min(rates.away.games,rates.home.games)/30,.5,.75)};
 }
 function scoreForecast(m,match){

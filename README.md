@@ -52,3 +52,39 @@ node tests/model-calibration.test.js
 node tests/forecast-audit.test.js
 python -m unittest discover -s tests -p 'test_settle_history.py'
 ```
+# October 14: shared evidence upgrades and NBA
+
+Sport tabs are alphabetized: MLB, NBA, NCAAF, NFL, NHL, UFC. NFL remains the
+default landing sport, and saved sport/leg/market preferences remain separate.
+
+- Details distinguish estimated likelihood, input coverage and unresolved
+  availability. These are not measured confidence percentages.
+- First-observed forecasts remain immutable. Market-anchored NFL suggestions
+  are recorded as `market_supported`, not independent model/EV evidence. NBA,
+  player-history and other experimental estimates keep separate cohorts.
+- Multi-game builds search complete combinations, reject repeated games or
+  players, penalize the weakest input coverage and pass when a full build cannot
+  qualify. This objective is not a validated joint win-probability model.
+- NFL no longer derives player yardage from another offered attempts/receptions
+  threshold using generic rates. Completed-play history is required instead.
+- MLB uses available pitcher strikeout/walk rates alongside ERA. College
+  margins use leave-one-game-out opponent strength. NHL uses observed rest and
+  available special-teams percentages with bounded adjustments. UFC adds a
+  grappling-style interaction and rejects stale timestamped fighter profiles.
+
+NBA uses schedule-verified Kalshi quotes, ESPN completed box scores and current
+rosters. Team projections use estimated possessions, shrunk offensive/defensive
+efficiency, pace, home court and rest. Props use same-team per-minute production,
+projected minutes, paired combination-stat variance and discrete count tails.
+Supported menus: moneyline, spread, total, points, rebounds, assists, threes,
+PRA, points/rebounds, points/assists, rebounds/assists, steals and blocks. Menus
+are disabled when real quotes are unavailable; unsupported/ambiguous identities
+are excluded. Reference lines are the nearest-to-50% exchange threshold, not a
+verified sportsbook main. Nearby ALT props support overs only.
+
+NBA refreshes in an isolated worker. Preseason, thin history, uncertain player
+availability, unstable minutes, stale prices and unmatched schedules yield a
+pass. No model is promoted to validated without the existing later-event
+holdout test. Confirmed NBA/NHL starters, advanced shot-quality data and richer
+NFL route/snap data are not fabricated when the current feeds cannot establish
+them. Prices remain source quotes, not a guarantee of Caesars availability.

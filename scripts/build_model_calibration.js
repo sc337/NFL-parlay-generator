@@ -29,7 +29,7 @@ function fit(rows,previous={},cohort='model'){
     evaluatedCount:clean.length,cohort,trainingThrough:train.at(-1).eventTime,validationFrom:validation[0].eventTime,validationThrough:validation.at(-1).eventTime,validationPriced:priced.length,validationGrossReturnPerUnit:returnPerUnit==null?null:+returnPerUnit.toFixed(4),rawBrier:+raw.toFixed(4),marketBrier:+market.toFixed(4),adjustedBrier:+adjusted.toFixed(4),
     reason:active?'Improved later outcomes':'Validation did not improve enough'};
 }
-function build(payload,previous={sports:{}}){const sports={};for(const sport of ['nfl','mlb','ncaaf','ufc','nhl']){
+function build(payload,previous={sports:{}}){const sports={};for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
   sports[sport]={};const rows=(payload.records||[]).filter(r=>r.sport===sport);
   for(const group of new Set(rows.map(r=>r.marketGroup||r.market).filter(Boolean)))for(const cohort of ['model','experimental']){
     const key=cohort==='model'?group:group+':experimental';const chosen=rows.filter(r=>(r.marketGroup||r.market)===group&&r.forecastType===cohort);if(!chosen.length)continue;

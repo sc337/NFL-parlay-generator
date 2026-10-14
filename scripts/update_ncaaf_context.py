@@ -78,6 +78,16 @@ def summary(team_id, games):
     result = {'available': True, 'games': len(rows), 'points_for': avg('points'),
               'points_against': avg('allowed'), 'margin': avg('margin'),
               'last_game': rows[-1]['date'], 'box_games': len(boxes)}
+    # Leave the matched game out of each opponent's strength estimate. The
+    # caller already supplies only games completed before the upcoming kickoff.
+    adjustments = []
+    for row in rows:
+        opponent_rows = [g for g in games.get(row.get('opponent', ''), []) if g['date'] != row['date']]
+        if len(opponent_rows) >= 2:
+            adjustments.append(max(-14, min(14, sum(g['margin'] for g in opponent_rows)/len(opponent_rows))))
+    if len(adjustments) >= 2:
+        result['opponent_strength'] = round(sum(adjustments)/len(adjustments), 2)
+        result['opponent_adjusted_margin'] = round(result['margin'] + .35*result['opponent_strength'], 2)
     if len(boxes) >= 2:
         result['yards_for'] = round(sum(g['yards'] for g in boxes) / len(boxes), 1)
         result['yards_against'] = round(sum(g['allowed_yards'] for g in boxes) / len(boxes), 1)
@@ -99,7 +109,7 @@ def read_games(events, boxes, now):
             other = boxes.get((str(event['id']), opponent), {})
             yards, against = number(box.get('totalYards')), number(other.get('totalYards'))
             games.setdefault(team, []).append({'date': start.isoformat(), 'points': scores[team],
-                'allowed': scores[opponent], 'margin': scores[team] - scores[opponent],
+                'allowed': scores[opponent], 'margin': scores[team] - scores[opponent], 'opponent': opponent,
                 'yards': yards, 'allowed_yards': against, 'turnovers': number(box.get('turnovers')) or 0})
     return games
 

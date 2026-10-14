@@ -25,7 +25,7 @@ test('settlement attaches actual contract outcomes without rewriting captured fo
  settle([record],{records:[{id:record.legs[0].id,result:'win'},{id:record.legs[1].id,result:'void'}]});assert.equal(record.result,'win');assert.equal(record.legs[0].ask,.6);
  settle([record],{records:[{id:record.legs[0].id,result:'loss'}]});assert.equal(record.result,'loss');
 });
-function feeds(){return Object.fromEntries(['nfl','mlb','ncaaf','nhl','ufc'].map(s=>['kalshi-'+s+'.json',{updated_at:at,...(s==='nfl'?{games:[]}:{markets:[]})}]).concat([['daily-picks.json',{updated_at:at,sports:{}}]]))}
+function feeds(){return Object.fromEntries(['mlb','nba','ncaaf','nfl','nhl','ufc'].map(s=>['kalshi-'+s+'.json',{updated_at:at,...(s==='nfl'?{games:[]}:{markets:[]})}]).concat([['daily-picks.json',{updated_at:at,sports:{}}]]))}
 test('empty offseason feeds are healthy but stale feeds and failed refreshes alert',()=>{
  const data=feeds();assert.equal(build(data,{},now).status,'healthy');
  data['kalshi-mlb.json'].updated_at=new Date(now-31*60000).toISOString();const warning=build(data,{},now);assert.equal(warning.alerts[0].id,'mlb:stale');
