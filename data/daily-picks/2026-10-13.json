@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-13",
-  "updated_at": "2026-10-14T06:49:43.558Z",
+  "updated_at": "2026-10-14T06:59:45.166Z",
   "sports": {
     "nfl": {
-      "captured": 12,
+      "captured": 11,
       "passes": [
         {
           "mode": "sgp",
@@ -39,12 +39,18 @@
         },
         {
           "mode": "sgp",
+          "profile": "balanced",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "sgp",
           "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T06:49:22.124996+00:00"
+      "snapshotAt": "2026-10-14T06:59:22.125201+00:00"
     },
     "mlb": {
       "captured": 2,
@@ -62,12 +68,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T06:49:22.121264+00:00"
+      "snapshotAt": "2026-10-14T06:59:22.121191+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-14T06:49:22.122869+00:00"
+      "snapshotAt": "2026-10-14T06:59:22.122841+00:00"
     },
     "nhl": {
       "captured": 2,
@@ -85,7 +91,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T06:38:46.419312+00:00"
+      "snapshotAt": "2026-10-14T06:48:46.714727+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -115,7 +121,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-14T06:49:22.134731+00:00"
+      "snapshotAt": "2026-10-14T06:59:22.134333+00:00"
     }
   },
   "records": [
@@ -21434,6 +21440,119 @@
           "confidence": 48,
           "forecastType": "model",
           "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-13|nfl|sgp|Balanced|3|kalshi-denver-broncos-seattle-seahawks|69775121c46035f5",
+      "day": "2026-10-13",
+      "sport": "nfl",
+      "mode": "sgp",
+      "profile": "Balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": "kalshi-denver-broncos-seattle-seahawks"
+      },
+      "capturedAt": "2026-10-14T06:59:45.166Z",
+      "snapshotAt": "2026-10-14T06:59:22.125201+00:00",
+      "sourceVersion": "e525b27081115fda6c536d01dd5224807c589a30",
+      "priceEstimate": null,
+      "priceNote": "Same-game price unavailable; verify sportsbook quote.",
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT15SEADEN-DENCSUTTON14-35|no",
+          "ticker": "KXNFLRECYDS-26OCT15SEADEN-DENCSUTTON14-35",
+          "side": "no",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Courtland Sutton Under 34.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 34.5,
+          "player": "Courtland Sutton",
+          "ask": 0.5800000000000001,
+          "referenceAmericanOdds": -138,
+          "marketP": 0.575,
+          "modelP": 0.7025036731283579,
+          "rawModelP": 0.7025036731283579,
+          "coverage": 0.55,
+          "confidence": 50,
+          "forecastType": "model",
+          "projectedLine": 20.8,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLGAME-26OCT15SEADEN-SEA|yes",
+          "ticker": "KXNFLGAME-26OCT15SEADEN-SEA",
+          "side": "yes",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Seattle Seahawks ML",
+          "market": "h2h",
+          "line": null,
+          "player": null,
+          "ask": 0.57,
+          "referenceAmericanOdds": -133,
+          "marketP": 0.565,
+          "modelP": 0.5694447253027897,
+          "rawModelP": 0.5694447253027897,
+          "coverage": 0.34,
+          "confidence": 48,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT15SEADEN-SEAEWILSON23-65|no",
+          "ticker": "KXNFLRSHYDS-26OCT15SEADEN-SEAEWILSON23-65",
+          "side": "no",
+          "eventId": "kalshi-denver-broncos-seattle-seahawks",
+          "event": "Seattle Seahawks @ Denver Broncos",
+          "eventTime": "2026-10-16T00:15:00Z",
+          "closeTime": "2026-10-16T00:15:00Z",
+          "selection": "Emanuel Wilson Under 64.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 64.5,
+          "player": "Emanuel Wilson",
+          "ask": 0.48,
+          "referenceAmericanOdds": 108,
+          "marketP": 0.475,
+          "modelP": 0.5604120711842582,
+          "rawModelP": 0.5604120711842582,
+          "coverage": 0.55,
+          "confidence": 47,
+          "forecastType": "model",
+          "projectedLine": 50.2,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
