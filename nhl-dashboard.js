@@ -42,7 +42,7 @@ function ranked(rows){return rows.sort((a,b)=>score(b)-score(a)||(+b.volume||0)-
 function altQualified(m,f){if(m.isAltLine&&!G.fresh({updated_at:snapshotAt},(window.NHL_ALT_LINES?.policy?.maxQuoteAgeMinutes||30)/60))return false;return window.NHL_ALT_LINES?.qualifies?.(m,f)??!m.isAltLine}
 function emptyReason(games){
  if(lineMode==='alt'&&!G.fresh({updated_at:snapshotAt},(window.NHL_ALT_LINES?.policy?.maxQuoteAgeMinutes||30)/60))return 'ALT prices expired · Waiting for fresh NHL quotes. Refresh reloads the latest published prices.';
- if(games.length)return 'Only '+games.length+' of '+legs+' games qualify · '+(games.length===1?'Qualifying straight pick shown above.':'Try fewer legs.');
+ if(games.length)return 'Only '+games.length+' of '+legs+' games qualify · '+(games.length===1?'Check Extra Picks for individual suggestions.':'Try fewer legs.');
  const available=markets.some(m=>enabled(m)&&m.game_status==='pre'&&G.pregame(m));
  return lineMode==='alt'?(available?'No ALT lines meet quality checks for these markets and date · Pass.':'No ALT lines available for these markets and date · Pass.'):'No qualifying NHL picks in selected markets · Pass.';
 }

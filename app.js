@@ -1112,6 +1112,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   const current=()=>((window.__ACTIVE_SPORT||'nfl')==='nfl'&&window.__SPORT_TOKEN===token&&request===window.__NFL_GENERATION_SEQUENCE);
   window.NFL_PROJECTIONS?.enrich?.();
   window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
+  if(window.SLATE_UI)hydrateGames();
   const count=Math.max(2,Math.min(4,Math.floor(Number($('#legsSelect').value))||2));
   $('#legsSelect').value=String(count);
   const variants=['safe','balanced','long'];

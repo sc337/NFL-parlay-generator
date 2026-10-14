@@ -220,7 +220,7 @@ test('one qualifying future NHL ALT remains a straight pick without filling a pa
  app.data.markets=[base];app.window.NHL_MODEL={estimate:m=>m.forecast};app.window.PICK_OF_DAY.today=()=>false;
  await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
  assert.equal(app.daily().market.game_id,'1');assert.match(app.nodes.get('#results').innerHTML,/Only 1 of 2 games qualify/);
- assert.match(app.nodes.get('#results').innerHTML,/straight pick shown above/);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
+ assert.match(app.nodes.get('#results').innerHTML,/Extra Picks for individual suggestions/);assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
  app.window.NHL_MODEL.estimate=()=>null;app.advance(30000);app.window.NHL_DASHBOARD.render();
  assert.equal(app.daily(),undefined);assert.match(app.nodes.get('#results').innerHTML,/No ALT lines meet quality checks/);
 });
