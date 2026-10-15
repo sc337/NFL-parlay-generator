@@ -116,6 +116,30 @@ def bullpen_workload(schedule, cutoff, fetch=None):
  for tid in failed:out[tid]['available']=False
  return out
 
+def player_log(raw, now):
+ rows=[]
+ for group in raw.get('stats',[]):
+  for split in group.get('splits',[]):
+   try:
+    at=datetime.fromisoformat(split['date']+'T00:00:00+00:00')
+    if not now-timedelta(days=45)<at<now.replace(hour=0,minute=0,second=0,microsecond=0):continue
+    stats=split['stat'];row={'date':at.isoformat(),'teamId':(split.get('team') or {}).get('id')}
+    for key in ('plateAppearances','battersFaced','hits','homeRuns','rbi','totalBases','strikeOuts'):
+     if key in stats:row[key]=float(stats[key])
+    rows.append(row)
+   except (KeyError,ValueError,TypeError):continue
+ return sorted(rows,key=lambda r:r['date'])[-12:]
+
+def attach_player_logs(payload, now):
+ logs={};ids=sorted(set(payload.get('players',{}).values()))[:32]
+ def load(pid):
+  group='pitching' if str(pid) in payload.get('pitchers',{}) else 'hitting'
+  try:return str(pid),player_log(get(f'{BASE}/people/{pid}/stats?stats=gameLog&group={group}&season={now.year}',timeout=8),now)
+  except Exception:return str(pid),[]
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  for pid,rows in pool.map(load,ids):logs[pid]=rows
+ payload['playerLogs']=logs
+
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
  d=get(f'{BASE}/schedule?sportId=1&startDate={start}&endDate={end}&hydrate=probablePitcher(note),team')
@@ -191,7 +215,9 @@ def main():
   game['bullpen']={'available':all(x and x['available'] for x in sides.values()),**sides,
       'source':'MLB completed box scores; relief pitchers only','as_of':now.isoformat()}
  Path('data').mkdir(exist_ok=True)
- Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters,'scoring':form},indent=2))
+ payload={'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters,'scoring':form}
+ attach_player_logs(payload,now)
+ Path('data/mlb-context.json').write_text(json.dumps(payload,indent=2))
  print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props',len(hitters),'hitter samples')
 if __name__=='__main__':main()
 

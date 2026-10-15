@@ -56,7 +56,12 @@
        Number.isFinite(latest)&&latest<Date.now()&&latest<kickoff&&kickoff-latest<=28*86400000){
       const line=values.reduce((a,b)=>a+b,0)/values.length;
       if(line>0){const variance=values.reduce((s,v)=>s+(v-line)**2,0)/(values.length-1);
-        return {line,coverage:clamp(.3+.05*values.length,.45,.55),sd:Math.sqrt(variance),experimental:true,roleStability:history.played/history.games};}
+        const opportunities=history.opportunities||{},attempts=key==='player_rush_yds'?opportunities.player_rush_attempts:
+          ['player_reception_yds','player_receptions'].includes(key)?opportunities.targets:opportunities.player_pass_attempts;
+        const conversion=key==='player_reception_yds'?history.metrics?.player_receptions:key==='player_pass_yds'?history.metrics?.player_pass_completions:null;
+        const opportunity=window.MODEL_LEARNING?.opportunity(values,attempts,{conversion});
+        if(opportunity&&key==='player_pass_yds'&&conversion)opportunity.method='Projected attempts × completion rate × yards per completion';
+        return {line:opportunity?.projection??line,simpleLine:line,opportunity,roleChange:opportunity?.role||window.MODEL_LEARNING?.roleChange(attempts),coverage:clamp(.3+.05*values.length,.45,.55),sd:Math.sqrt(variance),experimental:true,roleStability:history.played/history.games};}
     }
     // Another offered line is not observed player usage. Never manufacture
     // yardage by multiplying an attempts/receptions quote by a generic rate.
@@ -111,7 +116,7 @@
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {experimental:upFinal?.experimental===true,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
+    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){

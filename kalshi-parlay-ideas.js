@@ -36,6 +36,11 @@ function assess(m,game,state){
   if([game.away,game.home].some(t=>!form?.[t]?.available||form[t].games<3))reason='Insufficient recent team context';
   else coverage=.3;
  }
+ if(!reason&&m.player&&window.MODEL_LEARNING){
+  const h=m.propHistory,key=m.type==='rushing'?'player_rush_attempts':['receiving','receptions'].includes(m.type)?'targets':'player_pass_attempts';
+  const change=window.MODEL_LEARNING.roleChange(h?.opportunities?.[key]||h?.metrics?.[key]);
+  if(['falling','rising'].includes(change.status))reason='Recent opportunity changed; waiting for a stable role';
+ }
  if(!reason&&m.isAltLine){
   const reference=(game.markets||[]).filter(x=>!x.isAltLine&&x.source===m.source&&x.type===m.type&&String(x.marketKey||x.type).replace(/_alternate$/,'')===key&&x.player===m.player&&(m.type!=='spreads'||x.team===m.team)&&x.side===m.side&&x.point!=null&&Number.isFinite(Number(x.point)))
    .sort((a,b)=>Math.abs(window.PICK_QUALITY.quote('nfl',a).p-.5)-Math.abs(window.PICK_QUALITY.quote('nfl',b).p-.5))[0];

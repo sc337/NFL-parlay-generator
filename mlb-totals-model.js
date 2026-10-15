@@ -28,15 +28,18 @@ function samples(g,context){
  if(context!==cachedContext){cachedContext=context;draws=new Map()}
  const key=String(g.gamePk);if(draws.has(key))return draws.get(key);
  const means=scoring(g,context);if(!means)return null;
- const rng=random(hash(key+'|'+context.updated_at+'|'+context.scoring.as_of)),totals=[],away=[],home=[];
+ const baseline=scoring({...g,weather:{},bullpen:{}},context);
+ const seed=hash(key+'|'+context.updated_at+'|'+context.scoring.as_of),rng=random(seed),baselineRng=random(seed),totals=[],away=[],home=[],baselineTotals=[],baselineAway=[],baselineHome=[];
  for(let i=0;i<TRIALS;i++){
   const shared=Math.exp(.18*normal(rng)-.0162);
   const a=poisson(means.awayMean*shared*Math.exp(.12*normal(rng)-.0072),rng);
   const h=poisson(means.homeMean*shared*Math.exp(.12*normal(rng)-.0072),rng);
   away.push(a);home.push(h);totals.push(a+h);
+  const baseShared=Math.exp(.18*normal(baselineRng)-.0162),ba=poisson(baseline.awayMean*baseShared*Math.exp(.12*normal(baselineRng)-.0072),baselineRng),bh=poisson(baseline.homeMean*baseShared*Math.exp(.12*normal(baselineRng)-.0072),baselineRng);
+  baselineAway.push(ba);baselineHome.push(bh);baselineTotals.push(ba+bh);
  }
  const mean=x=>x.reduce((sum,n)=>sum+n,0)/x.length,ordered=[...totals].sort((a,b)=>a-b);
- const result={totals,away,home,projectedTotal:mean(totals),awayRuns:mean(away),homeRuns:mean(home),range:[ordered[Math.floor(TRIALS*.10)],ordered[Math.floor(TRIALS*.90)]],coverage:means.coverage,trials:TRIALS};
+ const result={totals,away,home,baselineTotals,baselineAway,baselineHome,projectedTotal:mean(totals),awayRuns:mean(away),homeRuns:mean(home),range:[ordered[Math.floor(TRIALS*.10)],ordered[Math.floor(TRIALS*.90)]],coverage:means.coverage,trials:TRIALS};
  draws.set(key,result);return result;
 }
 function selection(m,g){
@@ -63,7 +66,10 @@ function estimate(m,context){
  const sim=samples(g,context);if(!sim)return null;
  const arr=target.team?sim[target.team]:sim.totals;
  const wins=arr.reduce((n,runs)=>n+(target.side==='over'?runs>target.line:runs<target.line),0);
- return {modelP:clamp(wins/TRIALS,.01,.99),coverage:sim.coverage,projectedTotal:+sim.projectedTotal.toFixed(1),projectedAway:+sim.awayRuns.toFixed(1),projectedHome:+sim.homeRuns.toFixed(1),projectedTeam:target.team?+(target.team==='home'?sim.homeRuns:sim.awayRuns).toFixed(1):null,
+ const baseline=target.team?sim[target.team==='home'?'baselineHome':'baselineAway']:sim.baselineTotals;
+ const noWeatherBullpen=baseline.reduce((n,runs)=>n+(target.side==='over'?runs>target.line:runs<target.line),0)/TRIALS;
+ const leagueMean=Number(context.scoring.league.runs_per_team)*(target.team?1:2);let mass=Math.exp(-leagueMean),under=mass;for(let k=1;k<target.line;k++){mass*=leagueMean/k;under+=mass}
+ return {modelP:clamp(wins/TRIALS,.01,.99),baselines:{market:m.probability,noWeatherBullpen,simpleLeague:target.side==='over'?1-under:under},coverage:sim.coverage,projectedTotal:+sim.projectedTotal.toFixed(1),projectedAway:+sim.awayRuns.toFixed(1),projectedHome:+sim.homeRuns.toFixed(1),projectedTeam:target.team?+(target.team==='home'?sim.homeRuns:sim.awayRuns).toFixed(1):null,
   range:sim.range,trials:sim.trials,experimental:true,kind:target.team?'team':'game'};
 }
 window.MLB_TOTALS_MODEL={estimate,scoring,selection,TRIALS};

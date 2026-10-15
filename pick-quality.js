@@ -27,6 +27,7 @@ function quote(s,m){
  return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):'Kalshi',checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
 function validatedRule(s,m,f={}){
+ if(window.MODEL_LEARNING&&!window.MODEL_LEARNING.baselineApproved(s,group(s,m)))return false;
  return window.MODEL_CALIBRATION?.validated?.(s,group(s,m)+(f.experimental?':experimental':''))===true;
 }
 function forecast(s,m,f={}){
@@ -34,7 +35,7 @@ function forecast(s,m,f={}){
  const active=validatedRule(s,m,f);
  const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):raw??num(f.modelP);
  const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
- return {...f,modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
+ return {...f,modelVersion:window.MODEL_LEARNING?.VERSION,baselines:{market:market,...(f.baselines||{})},modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:ev,ev:f.experimental?null:ev,calibrationValidated:active};
 }
 function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);if(window.ODDS_DISPLAY)return window.ODDS_DISPLAY.label(q);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
 function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
@@ -53,7 +54,7 @@ function participation(s,m,f,game,warnings){
   const event=(ctx.games||[]).find(x=>String(x.gamePk)===String(m.game_id));
   if(!event?.startersConfirmed||!event?.lineupsConfirmed)warnings.push('Pitchers and lineups unconfirmed');
   const at=Date.parse(ctx.updated_at||'');if(Number.isFinite(at)&&Date.now()-at>90*60000)warnings.push('Lineup status unconfirmed after context expired');
-  if(m.player&&event?.lineupsConfirmed&&!event?.lineupPlayerIds?.includes(Number(m.player_id||m.playerId)))return 'Player not in confirmed lineup';
+  if((m.player||f.player)&&m.kind!=='strikeouts'&&event?.lineupsConfirmed&&!event?.lineupPlayerIds?.includes(Number(m.player_id||m.playerId||f.playerId)))return 'Player not in confirmed lineup';
  }
  if(s==='nhl'){
   if(m.player&&m.player_verified!==true)return 'Roster unverified';
@@ -121,7 +122,8 @@ function assess(s,m,f={},options={}){
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
- const buffer=(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015+context.penalty;
+ const learned=window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
+ const buffer=learned?learned.buffer+context.penalty:(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015+context.penalty;
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
  if(window.SLATE_UI&&!window.SLATE_UI.matches(s,m,gameFor(s,m,options.game)?.commence_time))return {pass:false,rank:-Infinity,reason:'Outside selected date',warnings:[],quote:q};
@@ -144,6 +146,8 @@ function assess(s,m,f={},options={}){
  else if(!(p>0&&p<1)||coverage<minCoverage)reason='Independent projection too thin';
  else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
  else reason=participation(s,m,f,g,warnings);
+ const roleChange=f.roleChange??m.roleChange;
+ if(!reason&&['falling','rising'].includes(roleChange?.status))reason='Recent opportunity changed; waiting for a stable role';
  const clearsValue=ev>0&&conservativeEV>0;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
  if(!reason&&!clearsValue)reason='Edge does not clear uncertainty buffer';
@@ -168,7 +172,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
@@ -193,6 +197,6 @@ function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketA
  const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
 window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
