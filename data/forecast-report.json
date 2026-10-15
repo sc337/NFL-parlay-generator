@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-10-15T16:59:14.622Z",
+  "updated_at": "2026-10-15T17:21:43.830Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
     "mlb": {
-      "recorded": 6771,
+      "recorded": 6779,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 3,
@@ -93,7 +93,7 @@
       ],
       "rejectionReasons": {
         "Independent projection too thin": 42,
-        "Event start unverified": 242,
+        "Event start unverified": 250,
         "Edge does not clear uncertainty buffer": 69,
         "Unvalidated longshot; insufficient reliability": 9
       },
@@ -1353,7 +1353,7 @@
           }
         },
         "total_bases": {
-          "recorded": 1015,
+          "recorded": 1023,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 1,
@@ -1442,7 +1442,7 @@
           ],
           "rejectionReasons": {
             "Independent projection too thin": 2,
-            "Event start unverified": 34,
+            "Event start unverified": 42,
             "Edge does not clear uncertainty buffer": 12,
             "Unvalidated longshot; insufficient reliability": 3
           },
@@ -1694,7 +1694,7 @@
       }
     },
     "nba": {
-      "recorded": 549,
+      "recorded": 551,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 2,
@@ -1782,7 +1782,7 @@
         }
       ],
       "rejectionReasons": {
-        "Independent projection too thin": 4,
+        "Independent projection too thin": 6,
         "Edge does not clear uncertainty buffer": 15,
         "Unvalidated longshot; insufficient reliability": 1
       },
@@ -2031,7 +2031,7 @@
           }
         },
         "spread": {
-          "recorded": 280,
+          "recorded": 282,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -2119,7 +2119,7 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 4
+            "Independent projection too thin": 6
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
@@ -2365,7 +2365,7 @@
       }
     },
     "ncaaf": {
-      "recorded": 4299,
+      "recorded": 4303,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 2,
@@ -2455,11 +2455,11 @@
       "rejectionReasons": {
         "Model disagrees too strongly with market": 7,
         "Edge does not clear uncertainty buffer": 228,
-        "Unvalidated longshot; insufficient reliability": 76,
-        "Independent projection too thin": 139
+        "Unvalidated longshot; insufficient reliability": 78,
+        "Independent projection too thin": 141
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 2617,
+      "experimentalRecorded": 2619,
       "settled": 1441,
       "distinctEvents": 146,
       "independentSettled": 0,
@@ -2705,7 +2705,7 @@
           }
         },
         "spread": {
-          "recorded": 2324,
+          "recorded": 2326,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 2,
@@ -2793,13 +2793,13 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 52,
+            "Unvalidated longshot; insufficient reliability": 54,
             "Edge does not clear uncertainty buffer": 159,
             "Model disagrees too strongly with market": 4,
             "Independent projection too thin": 4
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1993,
+          "experimentalRecorded": 1995,
           "settled": 757,
           "distinctEvents": 94,
           "independentSettled": 0,
@@ -2875,7 +2875,7 @@
           }
         },
         "total": {
-          "recorded": 1489,
+          "recorded": 1491,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -2963,7 +2963,7 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 132
+            "Independent projection too thin": 134
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 355,
@@ -3044,7 +3044,7 @@
       }
     },
     "nfl": {
-      "recorded": 24475,
+      "recorded": 24742,
       "independentRecorded": 13766,
       "qualified": {
         "recorded": 27,
@@ -3132,36 +3132,36 @@
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 2060,
-        "Playing time uncertain": 471,
-        "Independent projection too thin": 218,
-        "ALT yardage requires a quoted 10-yard milestone": 284,
-        "ALT player-prop unders unsupported at your book": 1438,
-        "Recent opportunity changed; waiting for a stable role": 351,
+        "Edge does not clear uncertainty buffer": 2152,
+        "Playing time uncertain": 501,
+        "Independent projection too thin": 237,
+        "ALT yardage requires a quoted 10-yard milestone": 294,
+        "ALT player-prop unders unsupported at your book": 1490,
+        "Recent opportunity changed; waiting for a stable role": 415,
         "Model disagrees too strongly with market": 8,
         "Confirm current injury status": 88,
         "Market-only estimate": 3,
         "Unvalidated longshot; insufficient reliability": 32
       },
       "marketSupportedRecorded": 1306,
-      "experimentalRecorded": 4380,
-      "settled": 6896,
+      "experimentalRecorded": 4622,
+      "settled": 6940,
       "distinctEvents": 32,
-      "independentSettled": 4210,
+      "independentSettled": 4222,
       "independentEvents": 32,
       "brier": {
-        "model": 0.1882,
-        "market": 0.1812
+        "model": 0.1876,
+        "market": 0.1806
       },
       "logLoss": {
-        "model": 0.5748,
-        "market": 0.5416
+        "model": 0.5731,
+        "market": 0.5401
       },
       "independentComparison": {
-        "brierModel": 0.1755,
-        "brierMarket": 0.164,
-        "logLossModel": 0.5568,
-        "logLossMarket": 0.5026
+        "brierModel": 0.1752,
+        "brierMarket": 0.1636,
+        "logLossModel": 0.5558,
+        "logLossMarket": 0.5015
       },
       "experimentalComparison": {
         "settled": 7,
@@ -3175,9 +3175,9 @@
             0,
             0.4
           ],
-          "count": 1833,
-          "predicted": 0.1407,
-          "observed": 0.2155
+          "count": 1839,
+          "predicted": 0.1406,
+          "observed": 0.2153
         },
         {
           "range": [
@@ -3193,18 +3193,18 @@
             0.6,
             0.8
           ],
-          "count": 524,
-          "predicted": 0.7037,
-          "observed": 0.6469
+          "count": 525,
+          "predicted": 0.7035,
+          "observed": 0.6457
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 1310,
-          "predicted": 0.9214,
-          "observed": 0.8389
+          "count": 1315,
+          "predicted": 0.9215,
+          "observed": 0.8395
         }
       ],
       "ablations": {
@@ -3227,9 +3227,9 @@
         "meanCLV": null
       },
       "positiveEV": {
-        "settled": 1089,
+        "settled": 1091,
         "distinctEvents": 18,
-        "grossReturnPerUnit": -0.0352
+        "grossReturnPerUnit": -0.037
       },
       "groups": {
         "player_prop": {
@@ -3323,23 +3323,23 @@
           "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 5374,
+          "settled": 5418,
           "distinctEvents": 18,
-          "independentSettled": 2702,
+          "independentSettled": 2714,
           "independentEvents": 17,
           "brier": {
-            "model": 0.1952,
-            "market": 0.1861
+            "model": 0.1944,
+            "market": 0.1853
           },
           "logLoss": {
-            "model": 0.5984,
-            "market": 0.5557
+            "model": 0.5961,
+            "market": 0.5536
           },
           "independentComparison": {
-            "brierModel": 0.1813,
-            "brierMarket": 0.1633,
-            "logLossModel": 0.5912,
-            "logLossMarket": 0.5062
+            "brierModel": 0.1808,
+            "brierMarket": 0.1627,
+            "logLossModel": 0.5895,
+            "logLossMarket": 0.5046
           },
           "experimentalComparison": {
             "settled": 0,
@@ -3353,9 +3353,9 @@
                 0,
                 0.4
               ],
-              "count": 1269,
-              "predicted": 0.1148,
-              "observed": 0.2262
+              "count": 1275,
+              "predicted": 0.1147,
+              "observed": 0.2259
             },
             {
               "range": [
@@ -3371,18 +3371,18 @@
                 0.6,
                 0.8
               ],
-              "count": 260,
-              "predicted": 0.7049,
-              "observed": 0.6077
+              "count": 261,
+              "predicted": 0.7046,
+              "observed": 0.6054
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1009,
-              "predicted": 0.9317,
-              "observed": 0.8167
+              "count": 1014,
+              "predicted": 0.9318,
+              "observed": 0.8176
             }
           ],
           "ablations": {},
@@ -3392,9 +3392,9 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 965,
+            "settled": 967,
             "distinctEvents": 17,
-            "grossReturnPerUnit": -0.0274
+            "grossReturnPerUnit": -0.0294
           }
         },
         "moneyline": {
@@ -3913,7 +3913,7 @@
           }
         },
         "touchdown_scorer": {
-          "recorded": 888,
+          "recorded": 889,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -4003,7 +4003,7 @@
           "rejectionReasons": {
             "Playing time uncertain": 185,
             "Edge does not clear uncertainty buffer": 20,
-            "Independent projection too thin": 42,
+            "Independent projection too thin": 43,
             "Confirm current injury status": 13
           },
           "marketSupportedRecorded": 0,
@@ -4083,7 +4083,7 @@
           }
         },
         "player_pass_tds": {
-          "recorded": 172,
+          "recorded": 174,
           "independentRecorded": 98,
           "qualified": {
             "recorded": 3,
@@ -4174,11 +4174,11 @@
             "Edge does not clear uncertainty buffer": 33,
             "Playing time uncertain": 6,
             "Unvalidated longshot; insufficient reliability": 2,
-            "Recent opportunity changed; waiting for a stable role": 10,
+            "Recent opportunity changed; waiting for a stable role": 12,
             "Independent projection too thin": 2
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 60,
+          "experimentalRecorded": 62,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -4254,7 +4254,7 @@
           }
         },
         "player_receptions": {
-          "recorded": 485,
+          "recorded": 565,
           "independentRecorded": 319,
           "qualified": {
             "recorded": 0,
@@ -4342,13 +4342,13 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 10,
-            "Recent opportunity changed; waiting for a stable role": 12,
-            "Edge does not clear uncertainty buffer": 20,
-            "Playing time uncertain": 10
+            "Independent projection too thin": 18,
+            "Recent opportunity changed; waiting for a stable role": 28,
+            "Edge does not clear uncertainty buffer": 62,
+            "Playing time uncertain": 24
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 66,
+          "experimentalRecorded": 138,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -4424,7 +4424,7 @@
           }
         },
         "player_reception_yds": {
-          "recorded": 758,
+          "recorded": 762,
           "independentRecorded": 434,
           "qualified": {
             "recorded": 9,
@@ -4513,17 +4513,17 @@
           ],
           "rejectionReasons": {
             "Independent projection too thin": 26,
-            "Recent opportunity changed; waiting for a stable role": 40,
+            "Recent opportunity changed; waiting for a stable role": 42,
             "Edge does not clear uncertainty buffer": 84,
             "Playing time uncertain": 40,
             "Confirm current injury status": 18,
             "Unvalidated longshot; insufficient reliability": 2,
-            "ALT yardage requires a quoted 10-yard milestone": 1,
-            "ALT player-prop unders unsupported at your book": 1,
+            "ALT yardage requires a quoted 10-yard milestone": 2,
+            "ALT player-prop unders unsupported at your book": 2,
             "Model disagrees too strongly with market": 1
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 224,
+          "experimentalRecorded": 228,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -4599,7 +4599,7 @@
           }
         },
         "player_reception_yds_alternate": {
-          "recorded": 5204,
+          "recorded": 5222,
           "independentRecorded": 2988,
           "qualified": {
             "recorded": 5,
@@ -4687,18 +4687,18 @@
             }
           ],
           "rejectionReasons": {
-            "ALT yardage requires a quoted 10-yard milestone": 118,
-            "ALT player-prop unders unsupported at your book": 789,
+            "ALT yardage requires a quoted 10-yard milestone": 121,
+            "ALT player-prop unders unsupported at your book": 798,
             "Independent projection too thin": 59,
-            "Edge does not clear uncertainty buffer": 283,
-            "Recent opportunity changed; waiting for a stable role": 151,
+            "Edge does not clear uncertainty buffer": 287,
+            "Recent opportunity changed; waiting for a stable role": 153,
             "Playing time uncertain": 111,
             "Confirm current injury status": 41,
             "Unvalidated longshot; insufficient reliability": 20,
             "Model disagrees too strongly with market": 1
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1624,
+          "experimentalRecorded": 1642,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -4774,7 +4774,7 @@
           }
         },
         "player_rush_attempts": {
-          "recorded": 174,
+          "recorded": 192,
           "independentRecorded": 127,
           "qualified": {
             "recorded": 1,
@@ -4863,11 +4863,12 @@
           ],
           "rejectionReasons": {
             "Playing time uncertain": 4,
-            "Edge does not clear uncertainty buffer": 14,
-            "Model disagrees too strongly with market": 1
+            "Edge does not clear uncertainty buffer": 30,
+            "Model disagrees too strongly with market": 1,
+            "Independent projection too thin": 2
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 29,
+          "experimentalRecorded": 45,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -4943,7 +4944,7 @@
           }
         },
         "player_pass_attempts": {
-          "recorded": 86,
+          "recorded": 106,
           "independentRecorded": 62,
           "qualified": {
             "recorded": 0,
@@ -5031,11 +5032,13 @@
             }
           ],
           "rejectionReasons": {
-            "Playing time uncertain": 2,
-            "Edge does not clear uncertainty buffer": 6
+            "Playing time uncertain": 4,
+            "Edge does not clear uncertainty buffer": 16,
+            "Recent opportunity changed; waiting for a stable role": 6,
+            "Independent projection too thin": 2
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 12,
+          "experimentalRecorded": 30,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -5111,7 +5114,7 @@
           }
         },
         "player_pass_completions": {
-          "recorded": 84,
+          "recorded": 104,
           "independentRecorded": 60,
           "qualified": {
             "recorded": 0,
@@ -5199,11 +5202,13 @@
             }
           ],
           "rejectionReasons": {
-            "Playing time uncertain": 2,
-            "Edge does not clear uncertainty buffer": 6
+            "Playing time uncertain": 4,
+            "Edge does not clear uncertainty buffer": 16,
+            "Recent opportunity changed; waiting for a stable role": 6,
+            "Independent projection too thin": 2
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 12,
+          "experimentalRecorded": 30,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -5279,7 +5284,7 @@
           }
         },
         "player_pass_interceptions": {
-          "recorded": 84,
+          "recorded": 102,
           "independentRecorded": 52,
           "qualified": {
             "recorded": 0,
@@ -5367,12 +5372,13 @@
             }
           ],
           "rejectionReasons": {
-            "Playing time uncertain": 2,
-            "Edge does not clear uncertainty buffer": 4,
-            "Independent projection too thin": 2
+            "Playing time uncertain": 4,
+            "Edge does not clear uncertainty buffer": 14,
+            "Independent projection too thin": 4,
+            "Recent opportunity changed; waiting for a stable role": 4
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 8,
+          "experimentalRecorded": 24,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -5448,7 +5454,7 @@
           }
         },
         "player_rush_yds": {
-          "recorded": 388,
+          "recorded": 398,
           "independentRecorded": 192,
           "qualified": {
             "recorded": 2,
@@ -5536,15 +5542,17 @@
             }
           ],
           "rejectionReasons": {
-            "Playing time uncertain": 28,
+            "Playing time uncertain": 30,
             "Edge does not clear uncertainty buffer": 36,
             "Model disagrees too strongly with market": 4,
             "Independent projection too thin": 16,
-            "Recent opportunity changed; waiting for a stable role": 24,
-            "Confirm current injury status": 4
+            "Recent opportunity changed; waiting for a stable role": 27,
+            "Confirm current injury status": 4,
+            "ALT player-prop unders unsupported at your book": 4,
+            "ALT yardage requires a quoted 10-yard milestone": 1
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 126,
+          "experimentalRecorded": 134,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -5620,7 +5628,7 @@
           }
         },
         "player_rush_yds_alternate": {
-          "recorded": 2982,
+          "recorded": 3058,
           "independentRecorded": 1544,
           "qualified": {
             "recorded": 3,
@@ -5708,17 +5716,17 @@
             }
           ],
           "rejectionReasons": {
-            "ALT yardage requires a quoted 10-yard milestone": 62,
-            "ALT player-prop unders unsupported at your book": 442,
-            "Playing time uncertain": 64,
+            "ALT yardage requires a quoted 10-yard milestone": 67,
+            "ALT player-prop unders unsupported at your book": 480,
+            "Playing time uncertain": 72,
             "Edge does not clear uncertainty buffer": 160,
-            "Independent projection too thin": 55,
-            "Recent opportunity changed; waiting for a stable role": 82,
+            "Independent projection too thin": 57,
+            "Recent opportunity changed; waiting for a stable role": 105,
             "Confirm current injury status": 12,
             "Unvalidated longshot; insufficient reliability": 4
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 938,
+          "experimentalRecorded": 1008,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -6140,10 +6148,10 @@
       }
     },
     "nhl": {
-      "recorded": 11746,
+      "recorded": 11854,
       "independentRecorded": 0,
       "qualified": {
-        "recorded": 13,
+        "recorded": 14,
         "settled": 0,
         "distinctEvents": 0,
         "winRate": null,
@@ -6228,13 +6236,13 @@
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 634,
-        "Independent projection too thin": 18,
+        "Edge does not clear uncertainty buffer": 717,
+        "Independent projection too thin": 42,
         "Model disagrees too strongly with market": 2,
         "Unvalidated longshot; insufficient reliability": 3
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 10939,
+      "experimentalRecorded": 11023,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -6815,10 +6823,10 @@
           }
         },
         "goals": {
-          "recorded": 4738,
+          "recorded": 4792,
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 1,
+            "recorded": 2,
             "settled": 0,
             "distinctEvents": 0,
             "winRate": null,
@@ -6903,11 +6911,11 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 181,
-            "Independent projection too thin": 6
+            "Edge does not clear uncertainty buffer": 220,
+            "Independent projection too thin": 20
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 4396,
+          "experimentalRecorded": 4436,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -6983,7 +6991,7 @@
           }
         },
         "assists": {
-          "recorded": 1466,
+          "recorded": 1484,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 3,
@@ -7071,11 +7079,11 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 55,
-            "Independent projection too thin": 4
+            "Edge does not clear uncertainty buffer": 71,
+            "Independent projection too thin": 6
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1378,
+          "experimentalRecorded": 1394,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -7151,7 +7159,7 @@
           }
         },
         "points": {
-          "recorded": 2634,
+          "recorded": 2664,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -7239,12 +7247,12 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 143,
-            "Independent projection too thin": 4,
+            "Edge does not clear uncertainty buffer": 171,
+            "Independent projection too thin": 6,
             "Model disagrees too strongly with market": 1
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 2516,
+          "experimentalRecorded": 2544,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -7320,7 +7328,7 @@
           }
         },
         "saves": {
-          "recorded": 178,
+          "recorded": 184,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -7408,7 +7416,7 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 4
+            "Independent projection too thin": 10
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
@@ -7489,7 +7497,7 @@
       }
     },
     "ufc": {
-      "recorded": 562,
+      "recorded": 564,
       "independentRecorded": 94,
       "qualified": {
         "recorded": 0,
@@ -7577,9 +7585,9 @@
         }
       ],
       "rejectionReasons": {
-        "Independent projection too thin": 45,
+        "Independent projection too thin": 46,
         "Edge does not clear uncertainty buffer": 25,
-        "Event start unverified": 17,
+        "Event start unverified": 18,
         "Market-only estimate": 1
       },
       "marketSupportedRecorded": 0,
@@ -7996,7 +8004,7 @@
           }
         },
         "method_victory": {
-          "recorded": 246,
+          "recorded": 248,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -8084,8 +8092,8 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 28,
-            "Event start unverified": 6
+            "Independent projection too thin": 29,
+            "Event start unverified": 7
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
@@ -8526,7 +8534,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|multi|Balanced": {
-      "recorded": 450,
+      "recorded": 457,
       "settled": 124,
       "winRate": 0.1048,
       "referenceReturnPerUnit": -0.7265,
@@ -8534,7 +8542,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|sgp|Balanced": {
-      "recorded": 291,
+      "recorded": 293,
       "settled": 138,
       "winRate": 0.0362,
       "referenceReturnPerUnit": null,
@@ -8542,7 +8550,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|multi|Lotto": {
-      "recorded": 728,
+      "recorded": 730,
       "settled": 86,
       "winRate": 0,
       "referenceReturnPerUnit": -1,
@@ -8550,7 +8558,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|sgp|Lotto": {
-      "recorded": 223,
+      "recorded": 224,
       "settled": 139,
       "winRate": 0.0216,
       "referenceReturnPerUnit": null,
@@ -8590,7 +8598,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nhl|straight|featured": {
-      "recorded": 65,
+      "recorded": 66,
       "settled": 0,
       "winRate": null,
       "referenceReturnPerUnit": null,
@@ -8598,7 +8606,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nhl|multi|balanced": {
-      "recorded": 446,
+      "recorded": 449,
       "settled": 0,
       "winRate": null,
       "referenceReturnPerUnit": null,
