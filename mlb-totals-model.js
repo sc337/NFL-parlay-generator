@@ -13,8 +13,13 @@ function scoring(g,context){
  const avgAgainst=t=>(Number(t.runs_against)+12*avg)/(Number(t.games)+12);
  if(![away,home].every(t=>Number.isFinite(+t.runs_for)&&Number.isFinite(+t.runs_against)&&Number.isFinite(+t.games)&&t.games>=8))return null;
  const pitcher=side=>{const id=g[side+'Probable']?.id,p=context.pitchers?.[String(id)],era=Number(p?.era),ip=Number(p?.innings);if(!Number.isFinite(era)||era<1||era>9||ip<20)return 1;const k=p?.kRate,bb=p?.bbRate;const skill=typeof k==='number'&&typeof bb==='number'&&p.battersFaced>=80?clamp(1-((k-bb)-.14)*1.5,.8,1.2):1;return clamp(Math.pow(era/avg,.7)*Math.pow(skill,.3),.65,1.45)};
- const awayMean=clamp(avg*Math.pow(avgFor(away)/avg,.6)*Math.pow(avgAgainst(home)/avg,.3)*Math.pow(pitcher('home'),.1)*.98,1.2,9);
- const homeMean=clamp(avg*Math.pow(avgFor(home)/avg,.6)*Math.pow(avgAgainst(away)/avg,.3)*Math.pow(pitcher('away'),.1)*1.02,1.2,9);
+ const weather=g.weather||{},temp=Number(weather.temperature_f),wind=Number(weather.wind_mph);
+ const tempFactor=weather.available&&weather.temperature_f!=null&&Number.isFinite(temp)?clamp(1+(temp-72)*.0015,.96,1.04):1;
+ const windText=String(weather.wind||''),windDirection=/out to/i.test(windText)?1:/in from/i.test(windText)?-1:0;
+ const parkFactor=tempFactor*(weather.available&&Number.isFinite(wind)?1+windDirection*clamp(wind*.0015,0,.025):1);
+ const relief=side=>{const b=g.bullpen?.[side];return g.bullpen?.available&&b?.available?1+clamp(Math.max(0,b.pitches24h-50)*.0003+Math.max(0,b.pitches3d-150)*.0001,0,.04):1};
+ const awayMean=clamp(parkFactor*relief('home')*avg*Math.pow(avgFor(away)/avg,.6)*Math.pow(avgAgainst(home)/avg,.3)*Math.pow(pitcher('home'),.1)*.98,1.2,9);
+ const homeMean=clamp(parkFactor*relief('away')*avg*Math.pow(avgFor(home)/avg,.6)*Math.pow(avgAgainst(away)/avg,.3)*Math.pow(pitcher('away'),.1)*1.02,1.2,9);
  const hasPitchers=pitcher('home')!==1&&pitcher('away')!==1;
  const coverage=clamp(.40+.16*Math.min(away.games,home.games)/25+(hasPitchers?.08:0),.40,.64);
  return {awayMean,homeMean,coverage};

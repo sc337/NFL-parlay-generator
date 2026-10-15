@@ -1,7 +1,17 @@
 (()=>{'use strict';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),num=x=>x==null||x===''?null:Number.isFinite(+x)?+x:null;
 const family=m=>m.marketKey||m.type||'other';
-function role(m){const history=m.propHistory;if(history?.source==='nflverse completed plays'&&history.games>=3&&history.played>=3)return clamp(history.played/history.games,.05,.9);const b=num(m?.contextSignals?.market_breadth)||1,inj=String(m?.contextSignals?.injury_status||'none').toLowerCase();let s=clamp(.48+b*.06,.48,.82);if(/questionable/.test(inj))s-=.16;if(/doubtful|out|ir/.test(inj))s-=.4;return clamp(s,.05,.9)}
+function role(m){
+ const h=m.propHistory,inj=String(m?.contextSignals?.injury_status||'').toLowerCase();
+ if(/out|doubtful|inactive|injured reserve/.test(inj))return .05;
+ if(h?.source!=='nflverse completed plays'||h.games<3||h.played<3)return .25;
+ const key=m.type==='rushing'?'player_rush_attempts':['receiving','receptions'].includes(m.type)?'targets':'player_pass_attempts';
+ const values=h.opportunities?.[key]||h.metrics?.[key];
+ if(!Array.isArray(values)||values.length<3||values.some(v=>!Number.isFinite(v)))return clamp(h.played/h.games*.7,.05,.65);
+ const mean=values.reduce((s,v)=>s+v,0)/values.length;if(!(mean>0))return .1;
+ const sd=Math.sqrt(values.reduce((s,v)=>s+(v-mean)**2,0)/values.length),recent=values.slice(-2).reduce((s,v)=>s+v,0)/2;
+ return clamp(h.played/h.games*(1-Math.min(.5,sd/mean*.35))*Math.min(1,recent/mean),.05,/questionable/.test(inj)?.4:.9);
+}
 function opp(game,m){const f=game?.context?.recent_form||{},me=m.team,fo=Object.entries(f).filter(([t])=>t!==me).map(([,v])=>v).find(v=>v?.available);if(!fo)return 0;const pa=num(fo.avg_points_against);return pa==null?0:clamp((pa-22)/18,-.3,.3)}
 function script(game,m){const p=window.NFL_PROJECTIONS?.marketProjection?.(game,m);const margin=p?.team?.homeMargin,total=p?.team?.total;if(!Number.isFinite(margin)&&!Number.isFinite(total))return 0;let z=0;if(m.type==='rushing'&&m.team){const fav=m.team===game.home?margin:-margin;if(Number.isFinite(fav))z+=clamp(fav/24,-.25,.25)}if(['passing','receiving','receptions'].includes(m.type)&&Number.isFinite(total))z+=clamp((total-44)/35,-.16,.16);return z}
 function distribution(m,projection){const base={passing:.24,rushing:.34,receiving:.38,receptions:.29,td:.65,h2h:.22,spreads:.28,totals:.25}[m.type]||.32;return clamp(base+(1-role(m))*.18+(m.type==='td'?.12:0),.16,.82)}

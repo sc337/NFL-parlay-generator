@@ -52,6 +52,7 @@ function participation(s,m,f,game,warnings){
  if(s==='mlb'){
   const event=(ctx.games||[]).find(x=>String(x.gamePk)===String(m.game_id));
   if(!event?.startersConfirmed||!event?.lineupsConfirmed)warnings.push('Pitchers and lineups unconfirmed');
+  const at=Date.parse(ctx.updated_at||'');if(Number.isFinite(at)&&Date.now()-at>90*60000)warnings.push('Lineup status unconfirmed after context expired');
   if(m.player&&event?.lineupsConfirmed&&!event?.lineupPlayerIds?.includes(Number(m.player_id||m.playerId)))return 'Player not in confirmed lineup';
  }
  if(s==='nhl'){
@@ -73,6 +74,36 @@ function participation(s,m,f,game,warnings){
  }
  return null;
 }
+// Missing features widen the selection buffer. They never create a favorable
+// adjustment, and a confirmed exclusion always blocks a pick.
+function contextEvidence(s,m,f={},game){
+ const ctx=data.get(s)?.context||{},g=gameFor(s,m,game),missing=[];
+ const add=(ok,label)=>{if(!ok)missing.push(label)};
+ if(s==='mlb'){
+  const event=(ctx.games||[]).find(x=>String(x.gamePk)===String(m.game_id));
+  add(event?.startersConfirmed,'Starting pitchers');add(event?.lineupsConfirmed,'Batting lineups');
+  add(event?.bullpen?.available,'Bullpen workload');add(event?.weather?.available,'Park/weather');
+ }else if(s==='nba'){
+  const event=ctx.games?.[String(m.game_id)],p=ctx.players?.[String(m.player_id)];
+  add(event?.lineupsConfirmed,'Starting lineups');
+  if(m.player){add(p?.availability_checked===true,'Availability check');add(Number.isFinite(f.projectedMinutes),'Projected minutes');add(Number.isFinite(f.usageRate),'Recent usage');}
+ }else if(s==='nfl'){
+  add(g?.context?.weather?.available||g?.context?.weather?.indoor===true,'Weather');
+  if(m.player){add(m.contextSignals?.injury_checked===true,'Availability check');add(m.propHistory?.played>=3,'Recent opportunities');add(m.propHistory?.roleStable===true,'Stable recent role');}
+ }else if(s==='ncaaf'){
+  const event=ctx.games?.[String(m.game_id)];
+  add(event?.home?.form?.opponent_adjusted_margin!=null&&event?.away?.form?.opponent_adjusted_margin!=null,'Opponent strength');
+  add(event?.quarterbacksConfirmed===true,'Starting quarterbacks');add(event?.weather?.available||event?.weather?.indoor===true,'Weather');
+ }else if(s==='nhl'){
+  const event=ctx.games?.[String(m.context_game_id||m.game_id)];
+  add(event?.goaliesConfirmed===true,'Starting goalies');
+  if(m.player){const p=ctx.players?.[String(m.player_id)];add(p?.lineConfirmed===true,'Line assignment');add(p?.powerplayConfirmed===true,'Power-play role');}
+ }else if(s==='ufc'){
+  add(f.match?.opponentAdjusted===true,'Opponent-adjusted record');add(f.match?.weightClassVerified===true,'Weight class');
+  add(f.match?.sample>=5,'Recent fight sample');
+ }
+ return {missing,penalty:Math.min(.04,missing.length*.008)};
+}
 function unsupportedAltUnder(m){
  const key=String(m?.marketKey||'').toLowerCase();
  const player=!!m?.player||key.startsWith('player_');
@@ -89,7 +120,8 @@ function assess(s,m,f={},options={}){
  const uncertainty=clamp(num(f.uncertainty??m.modelUncertainty)??.5,0,1);
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
- const buffer=(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015;
+ const context=contextEvidence(s,m,f,options.game);
+ const buffer=(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015+context.penalty;
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
  if(window.SLATE_UI&&!window.SLATE_UI.matches(s,m,gameFor(s,m,options.game)?.commence_time))return {pass:false,rank:-Infinity,reason:'Outside selected date',warnings:[],quote:q};
@@ -114,14 +146,19 @@ function assess(s,m,f={},options={}){
  else reason=participation(s,m,f,g,warnings);
  const clearsValue=ev>0&&conservativeEV>0;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
- const logicalSuggestion=anchored&&coverage>=.2&&p>=.52&&p<=.85&&q.p<=.85&&market>0&&p>market;
- if(!reason&&!clearsValue&&!logicalSuggestion)reason='Edge does not clear uncertainty buffer';
+ if(!reason&&!clearsValue)reason='Edge does not clear uncertainty buffer';
  // Policy safeguards for provisional estimates, not measured confidence limits.
  if(!reason&&!validated&&(q.p<.35||p<.45))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
  if(!reason&&!validated&&Math.abs(p-referenceP)>.15)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
  if(!reason&&options.featured&&(q.p<.55||conservativeP<.55))reason='Featured pick needs stronger likelihood';
+ // Near kickoff there is no time to treat missing availability as a minor caveat.
+ const nearStart=Number.isFinite(start)&&start-Date.now()<=90*60000;
+ if(!reason&&nearStart&&(options.featured||options.parlay)){
+  const availability=warnings.some(w=>/unconfirmed|confirm participation|conditional on participation/i.test(w));
+  if(availability)reason='Confirm starters, availability and role before kickoff';
+ }
  const tier=anchored?'suggestion':warnings.length?'conditional':'value';
  if(anchored)warnings.push('Context-supported suggestion; value unverified');
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(m.marketKey))reason='Caesars straight only';
@@ -131,10 +168,10 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
- const ps=legs.map(l=>num(l.conservativeP??l.modelP??l.modelProbability));
+ const ps=legs.map(l=>num(l.modelP??l.modelProbability));
  if(!ps.length||ps.some(p=>!(p>0&&p<1)))return null;
  // Frechet bounds hold without inventing dependence from pairing scores.
  return {lower:Math.max(0,ps.reduce((a,b)=>a+b,0)-(ps.length-1)),upper:Math.min(...ps),method:'Dependence bounds; joint model unvalidated'};
@@ -143,14 +180,19 @@ function checkBuild(s,entries,sgp=false,offer=null){
  if(!entries?.length)return {pass:false,reason:'No qualifying legs',checks:[]};
  const checks=entries.map(e=>assess(s,e.market,e.forecast,{game:e.game,parlay:true}));
  if(checks.some(x=>!x.pass))return {pass:false,reason:checks.find(x=>!x.pass).reason,checks};
- if(!sgp)return {pass:true,checks};
+ const keys=entries.map(e=>String(e.game?.id||gameFor(s,e.market)?.id||e.market.gameId||e.market.game_id||e.market.event_ticker?.replace(/^[^-]+-/, '')||''));
+ if(!sgp){
+  if(keys.some(k=>!k)||new Set(keys).size!==keys.length)return {pass:false,reason:'One leg per verified game required',checks};
+  return {pass:true,checks};
+ }
+ if(keys.some(k=>!k)||new Set(keys).size!==1)return {pass:false,reason:'SGP requires one verified matchup',checks};
  const bounds=joint(checks),breakEven=implied(offer);
- return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears conservative dependence bound':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:breakEven!=null&&bounds.lower>breakEven&&checks.every(x=>x.valueQualified)};
+ return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears marginal dependence bound; joint model unvalidated':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:false};
 }
 function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketAnchored===true;
  const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',...x.warnings].join(' · ');}
-window.PICK_QUALITY={unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

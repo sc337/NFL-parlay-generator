@@ -175,7 +175,12 @@ def box_record(e, summary, now):
                     row = {'date': e['date'], 'season_type': event_type(e), 'team': code(t['team']['abbreviation']), 'minutes': mins}
                     for k, label in {'points': 'PTS', 'rebounds': 'REB', 'assists': 'AST', 'steals': 'STL', 'blocks': 'BLK'}.items():
                         row[k] = float(v[label])
-                    row['threes'] = float(v['3PT'].split('-')[0]); player_rows.append((str(a['athlete']['id']), row))
+                    row['threes'] = float(v['3PT'].split('-')[0])
+                    try:
+                        row['usedPossessions'] = float(v['FG'].split('-')[1])+.44*float(v['FT'].split('-')[1])+float(v['TO'])
+                    except (KeyError,ValueError,IndexError):
+                        pass
+                    player_rows.append((str(a['athlete']['id']), row))
                 except (KeyError, ValueError, TypeError, IndexError):
                     pass
     return team_rows, player_rows
@@ -206,7 +211,7 @@ def context(events, now):
             histories[code(t['abbreviation'])] = {'games': []}
             for p in roster.get('athletes', []):
                 pid = str(p['id']); injuries = p.get('injuries') or []
-                players[pid] = {'id': pid, 'name': p['displayName'], 'team': code(t['abbreviation']), 'headshot': p.get('headshot', {}).get('href', ''), 'injury_status': injuries[0].get('status', '') if injuries else '', 'games': []}
+                players[pid] = {'id': pid, 'name': p['displayName'], 'team': code(t['abbreviation']), 'headshot': p.get('headshot', {}).get('href', ''), 'injury_status': injuries[0].get('status', '') if injuries else '', 'availability_checked': 'injuries' in p, 'games': []}
             seen.update({str(e['id']): e for e in recent})
         def summary(e):
             return e, get(ESPN+'/summary?event='+str(e['id']))

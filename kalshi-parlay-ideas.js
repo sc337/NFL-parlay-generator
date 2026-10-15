@@ -2,7 +2,7 @@
 // Reference-market ideas, not an alternative EV model. Strict PICK_QUALITY is unchanged.
 const supported=new Set(['player_pass_yds','player_rush_yds','player_reception_yds','player_receptions']);
 const straightOnly=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
-const active=s=>!!s&&!s.apiKey&&(s.recommendationTier||'ideas')==='ideas';
+const active=s=>!!s&&!s.apiKey&&(s.recommendationTier||'screened')==='ideas';
 function assess(m,game,state){
  const q=window.PICK_QUALITY.quote('nfl',m),now=Date.now(),start=Date.parse(game?.commence_time||''),at=Date.parse(q.checkedAt||''),contextAt=Date.parse(game?.context?.updated_at||'');
  const key=String(m.marketKey||m.type).replace(/_alternate$/,''),injury=String(m.contextSignals?.injury_status||'').toLowerCase();
@@ -64,7 +64,7 @@ function report(games,state){
 function refresh(){
  const host=document.querySelector('#nflRecommendationTierWrap'),s=window.NFL_PARLAY_STATE;if(!host||!s)return;
  host.hidden=!!s.apiKey||(window.__ACTIVE_SPORT||'nfl')!=='nfl';
- host.querySelector('select').value=s.recommendationTier||'ideas';
+ host.querySelector('select').value=s.recommendationTier||'screened';
 }
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;

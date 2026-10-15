@@ -63,7 +63,14 @@ function record(sport,entry,snapshot,now){
     forecastType:hasModel?(anchored?'market_supported':experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
-    snapshotAt:snapshot.updated_at||snapshot.generated_at||null,result:null};
+    snapshotAt:snapshot.updated_at||snapshot.generated_at||null,
+    modelVersion:'quality-20261015',sourceVersion:process.env.GITHUB_SHA||null,
+    priceSource:m.source||'Kalshi',quoteAt:m.quotedAt||snapshot.updated_at||snapshot.generated_at||null,
+    qualification:entry.qualification?{pass:entry.qualification.pass===true,reason:entry.qualification.reason||null,
+      buffer:finite(entry.qualification.buffer),conservativeP:finite(entry.qualification.conservativeP),
+      minimumOdds:finite(entry.qualification.minimumOdds),validated:entry.qualification.validated===true,
+      valueQualified:entry.qualification.valueQualified===true,missingContext:entry.qualification.context?.missing||[],
+      warnings:entry.qualification.warnings||[]}:null,result:null};
 }
 async function main(){
   const now=Date.now(),old=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{records:[]};

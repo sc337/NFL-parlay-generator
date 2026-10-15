@@ -27,7 +27,17 @@ function metrics(rows){
       removedBrier:paired.length?round(paired.reduce((s,r)=>s+(r.ablations[key]-(r.result==='win'?1:0))**2,0)/paired.length):null};
   }
   const modelScore=(key,fn)=>model.length?round(model.reduce((sum,r)=>sum+fn(r[key],r.result==='win'?1:0),0)/model.length):null;
+  const qualified=settled.filter(r=>r.qualification?.pass===true),qualifiedEvents=new Set(qualified.map(eventKey)).size;
+  const qualifiedPriced=qualified.filter(r=>r.ask>0&&r.ask<1);
+  const rejectionReasons={};for(const r of rows)if(r.qualification?.pass===false){const reason=r.qualification.reason||'Other';rejectionReasons[reason]=(rejectionReasons[reason]||0)+1}
+  const allBins=source=>[[0,.4],[.4,.6],[.6,.8],[.8,1]].map(([lo,hi])=>{const part=source.filter(r=>r.modelP>=lo&&r.modelP<hi);return {range:[lo,hi],count:part.length,predicted:part.length?round(part.reduce((s,r)=>s+r.modelP,0)/part.length):null,observed:part.length?round(part.filter(r=>r.result==='win').length/part.length):null}});
   return {recorded:rows.length,independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+    qualified:{recorded:rows.filter(r=>r.qualification?.pass===true).length,settled:qualified.length,distinctEvents:qualifiedEvents,
+      winRate:qualified.length?round(qualified.filter(r=>r.result==='win').length/qualified.length):null,
+      brier:qualified.length?round(qualified.reduce((s,r)=>s+(r.modelP-(r.result==='win'?1:0))**2,0)/qualified.length):null,
+      referenceReturnPerUnit:qualifiedPriced.length?round(qualifiedPriced.reduce((s,r)=>s+(r.result==='win'?1/r.ask-1:-1),0)/qualifiedPriced.length):null,
+      calibrationBins:allBins(qualified),note:'Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets.'},
+    experimentalCalibrationBins:allBins(experimental),rejectionReasons,
     marketSupportedRecorded:rows.filter(r=>r.forecastType==='market_supported').length,
     experimentalRecorded:rows.filter(r=>r.forecastType==='experimental').length,
     settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
@@ -56,7 +66,18 @@ function totals(rows){
     marketMAE:avg(r=>Math.abs(r.point-r.actualTotal)),modelBias:avg(r=>r.projectedLine-r.actualTotal),
     marketBias:avg(r=>r.point-r.actualTotal)};
 }
-function build(rows){
+function recommendations(records){
+ const groups={};
+ for(const r of records){const key=[r.sport,r.mode,r.profile].join('|');(groups[key]??=[]).push(r)}
+ return Object.fromEntries(Object.entries(groups).map(([key,all])=>{
+  const settled=all.filter(r=>['win','loss'].includes(r.result)),priced=settled.filter(r=>r.mode!=='sgp'&&r.legs.every(l=>l.ask>0&&l.ask<1));
+  return [key,{recorded:all.length,settled:settled.length,winRate:settled.length?round(settled.filter(r=>r.result==='win').length/settled.length):null,
+   referenceReturnPerUnit:priced.length?round(priced.reduce((s,r)=>s+(r.result==='loss'?-1:r.legs.reduce((d,l)=>d/(l.result==='win'?l.ask:1),1)-1),0)/priced.length):null,
+   scenarioBrier:settled.filter(r=>r.risk?.modelP>0&&r.risk.modelP<1).length?round(settled.filter(r=>r.risk?.modelP>0&&r.risk.modelP<1).reduce((s,r)=>s+(r.risk.modelP-(r.result==='win'?1:0))**2,0)/settled.filter(r=>r.risk?.modelP>0&&r.risk.modelP<1).length):null,
+   note:'Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized.'}];
+ }));
+}
+function build(rows,daily=[]){
   const sports={};
   for(const sport of sportNames){
     const selected=rows.filter(r=>r.sport===sport),groups={};
@@ -67,12 +88,13 @@ function build(rows){
   const pregameViolations=rows.filter(r=>!(Date.parse(r.recordedAt)<Date.parse(r.eventTime))||
     r.snapshotAt&&!(Date.parse(r.snapshotAt)<Date.parse(r.eventTime))).length;
   return {updated_at:new Date().toISOString(),method:'First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.',
-    pregameViolations,sports,nflTotals:totals(rows)};
+    pregameViolations,sports,nflTotals:totals(rows),recommendations:recommendations(daily)};
 }
 function main(){const rows=JSON.parse(fs.readFileSync(file,'utf8')).records||[];
-  const report=build(rows);fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
+  const archive=path.join(root,'data/daily-picks'),daily=fs.existsSync(archive)?fs.readdirSync(archive).filter(f=>/^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().slice(-90).flatMap(f=>JSON.parse(fs.readFileSync(path.join(archive,f),'utf8')).records||[]):[];
+  const report=build(rows,daily);fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
   console.log('Forecast report',Object.entries(report.sports).map(([s,x])=>s+': '+x.settled+'/'+x.recorded).join('; '),'NFL totals',report.nflTotals.games);
 }
 if(require.main===module)main();
-module.exports={metrics,totals,build};
+module.exports={metrics,totals,build,recommendations};
 
