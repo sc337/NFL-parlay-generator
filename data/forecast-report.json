@@ -1,11 +1,99 @@
 {
-  "updated_at": "2026-10-15T16:17:00.964Z",
+  "updated_at": "2026-10-15T16:25:50.813Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
     "mlb": {
-      "recorded": 6406,
+      "recorded": 6409,
       "independentRecorded": 0,
+      "qualified": {
+        "recorded": 0,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 101,
+          "predicted": 0.2114,
+          "observed": 0.3168
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 39,
+          "predicted": 0.4927,
+          "observed": 0.4359
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 42,
+          "predicted": 0.6985,
+          "observed": 0.5714
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 63,
+          "predicted": 0.915,
+          "observed": 0.7937
+        }
+      ],
+      "rejectionReasons": {
+        "Independent projection too thin": 3
+      },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 1139,
       "settled": 1763,
@@ -85,6 +173,92 @@
         "total": {
           "recorded": 1285,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 101,
+              "predicted": 0.2114,
+              "observed": 0.3168
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 39,
+              "predicted": 0.4927,
+              "observed": 0.4359
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 42,
+              "predicted": 0.6985,
+              "observed": 0.5714
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 63,
+              "predicted": 0.915,
+              "observed": 0.7937
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1139,
           "settled": 311,
@@ -164,6 +338,92 @@
         "moneyline": {
           "recorded": 68,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 42,
@@ -243,6 +503,92 @@
         "spread": {
           "recorded": 192,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 76,
@@ -322,6 +668,92 @@
         "hits": {
           "recorded": 1049,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 304,
@@ -401,6 +833,92 @@
         "home_runs": {
           "recorded": 519,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 165,
@@ -480,6 +998,92 @@
         "strikeouts": {
           "recorded": 429,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 142,
@@ -557,8 +1161,96 @@
           }
         },
         "hrr": {
-          "recorded": 1365,
+          "recorded": 1366,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Independent projection too thin": 1
+          },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 339,
@@ -636,8 +1328,96 @@
           }
         },
         "total_bases": {
-          "recorded": 963,
+          "recorded": 965,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Independent projection too thin": 2
+          },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 254,
@@ -717,6 +1497,92 @@
         "rbi": {
           "recorded": 536,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 130,
@@ -796,10 +1662,98 @@
       }
     },
     "nba": {
-      "recorded": 527,
+      "recorded": 530,
       "independentRecorded": 0,
+      "qualified": {
+        "recorded": 1,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        }
+      ],
+      "rejectionReasons": {
+        "Independent projection too thin": 2
+      },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 16,
+      "experimentalRecorded": 17,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -875,10 +1829,96 @@
       },
       "groups": {
         "moneyline": {
-          "recorded": 57,
+          "recorded": 58,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 1,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 16,
+          "experimentalRecorded": 17,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -954,8 +1994,96 @@
           }
         },
         "spread": {
-          "recorded": 276,
+          "recorded": 278,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Independent projection too thin": 2
+          },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 0,
@@ -1035,6 +2163,92 @@
         "total": {
           "recorded": 194,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 0,
@@ -1116,19 +2330,105 @@
     "ncaaf": {
       "recorded": 3847,
       "independentRecorded": 0,
+      "qualified": {
+        "recorded": 0,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 348,
+          "predicted": 0.2583,
+          "observed": 0.2184
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 255,
+          "predicted": 0.4935,
+          "observed": 0.5412
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 105,
+          "predicted": 0.678,
+          "observed": 0.8
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 32,
+          "predicted": 0.8487,
+          "observed": 0.9375
+        }
+      ],
+      "rejectionReasons": {},
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 2304,
-      "settled": 1412,
-      "distinctEvents": 144,
+      "settled": 1434,
+      "distinctEvents": 145,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1891,
-        "market": 0.1791
+        "model": 0.1895,
+        "market": 0.1794
       },
       "logLoss": {
-        "model": 0.5551,
-        "market": 0.5308
+        "model": 0.5559,
+        "market": 0.5315
       },
       "independentComparison": {
         "brierModel": null,
@@ -1137,10 +2437,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 718,
-        "distinctEvents": 92,
-        "brierEstimate": 0.1889,
-        "brierMarket": 0.1692
+        "settled": 740,
+        "distinctEvents": 93,
+        "brierEstimate": 0.1896,
+        "brierMarket": 0.1701
       },
       "calibrationBins": [
         {
@@ -1195,6 +2495,92 @@
         "moneyline": {
           "recorded": 387,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 7,
+              "predicted": 0.3504,
+              "observed": 0.4286
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 13,
+              "predicted": 0.5109,
+              "observed": 0.4615
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 10,
+              "predicted": 0.6472,
+              "observed": 0.6
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 173,
           "settled": 229,
@@ -1274,19 +2660,105 @@
         "spread": {
           "recorded": 2103,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 286,
+              "predicted": 0.2537,
+              "observed": 0.1853
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 142,
+              "predicted": 0.475,
+              "observed": 0.6056
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 33,
+              "predicted": 0.6632,
+              "observed": 0.9394
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 1,
+              "predicted": 0.8115,
+              "observed": 1
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1776,
-          "settled": 745,
-          "distinctEvents": 91,
+          "settled": 755,
+          "distinctEvents": 93,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1888,
-            "market": 0.1774
+            "model": 0.1895,
+            "market": 0.178
           },
           "logLoss": {
-            "model": 0.5586,
-            "market": 0.5292
+            "model": 0.5601,
+            "market": 0.5306
           },
           "independentComparison": {
             "brierModel": null,
@@ -1295,10 +2767,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 452,
-            "distinctEvents": 69,
-            "brierEstimate": 0.1739,
-            "brierMarket": 0.1551
+            "settled": 462,
+            "distinctEvents": 72,
+            "brierEstimate": 0.1754,
+            "brierMarket": 0.1566
           },
           "calibrationBins": [
             {
@@ -1353,10 +2825,96 @@
         "total": {
           "recorded": 1357,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 55,
+              "predicted": 0.2705,
+              "observed": 0.3636
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 100,
+              "predicted": 0.5176,
+              "observed": 0.46
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 62,
+              "predicted": 0.6909,
+              "observed": 0.7581
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 31,
+              "predicted": 0.8499,
+              "observed": 0.9355
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 355,
-          "settled": 438,
-          "distinctEvents": 77,
+          "settled": 450,
+          "distinctEvents": 78,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
@@ -1374,10 +2932,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 236,
-            "distinctEvents": 55,
-            "brierEstimate": 0.2096,
-            "brierMarket": 0.1922
+            "settled": 248,
+            "distinctEvents": 56,
+            "brierEstimate": 0.2085,
+            "brierMarket": 0.1914
           },
           "calibrationBins": [
             {
@@ -1432,10 +2990,98 @@
       }
     },
     "nfl": {
-      "recorded": 19495,
+      "recorded": 19499,
       "independentRecorded": 13766,
+      "qualified": {
+        "recorded": 0,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 6,
+          "predicted": 0.0724,
+          "observed": 0
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        }
+      ],
+      "rejectionReasons": {
+        "Edge does not clear uncertainty buffer": 4
+      },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 1078,
+      "experimentalRecorded": 1082,
       "settled": 6882,
       "distinctEvents": 32,
       "independentSettled": 4202,
@@ -1526,6 +3172,92 @@
         "player_prop": {
           "recorded": 6376,
           "independentRecorded": 3050,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 5362,
@@ -1605,6 +3337,92 @@
         "moneyline": {
           "recorded": 122,
           "independentRecorded": 122,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 64,
@@ -1684,6 +3502,92 @@
         "totals": {
           "recorded": 1682,
           "independentRecorded": 1682,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 618,
@@ -1776,6 +3680,92 @@
         "spreads": {
           "recorded": 2248,
           "independentRecorded": 2248,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 826,
@@ -1855,6 +3845,92 @@
         "touchdown_scorer": {
           "recorded": 628,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 6,
+              "predicted": 0.0724,
+              "observed": 0
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 509,
           "settled": 12,
@@ -1932,10 +4008,98 @@
           }
         },
         "player_pass_tds": {
-          "recorded": 116,
+          "recorded": 120,
           "independentRecorded": 98,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Edge does not clear uncertainty buffer": 4
+          },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 6,
+          "experimentalRecorded": 10,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -2013,6 +4177,92 @@
         "player_receptions": {
           "recorded": 433,
           "independentRecorded": 319,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 24,
           "settled": 0,
@@ -2092,6 +4342,92 @@
         "player_reception_yds": {
           "recorded": 536,
           "independentRecorded": 434,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 28,
           "settled": 0,
@@ -2171,6 +4507,92 @@
         "player_reception_yds_alternate": {
           "recorded": 3626,
           "independentRecorded": 2988,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 190,
           "settled": 0,
@@ -2250,6 +4672,92 @@
         "player_rush_attempts": {
           "recorded": 154,
           "independentRecorded": 127,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 9,
           "settled": 0,
@@ -2329,6 +4837,92 @@
         "player_pass_attempts": {
           "recorded": 78,
           "independentRecorded": 62,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 4,
           "settled": 0,
@@ -2408,6 +5002,92 @@
         "player_pass_completions": {
           "recorded": 76,
           "independentRecorded": 60,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 4,
           "settled": 0,
@@ -2487,6 +5167,92 @@
         "player_pass_interceptions": {
           "recorded": 76,
           "independentRecorded": 52,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2,
           "settled": 0,
@@ -2566,6 +5332,92 @@
         "player_rush_yds": {
           "recorded": 274,
           "independentRecorded": 192,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 28,
           "settled": 0,
@@ -2645,6 +5497,92 @@
         "player_rush_yds_alternate": {
           "recorded": 2098,
           "independentRecorded": 1544,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 180,
           "settled": 0,
@@ -2724,6 +5662,92 @@
         "player_pass_yds": {
           "recorded": 108,
           "independentRecorded": 88,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 10,
           "settled": 0,
@@ -2803,6 +5827,92 @@
         "player_pass_yds_alternate": {
           "recorded": 864,
           "independentRecorded": 700,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 84,
           "settled": 0,
@@ -2882,10 +5992,99 @@
       }
     },
     "nhl": {
-      "recorded": 11076,
+      "recorded": 11094,
       "independentRecorded": 0,
+      "qualified": {
+        "recorded": 0,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        }
+      ],
+      "rejectionReasons": {
+        "Edge does not clear uncertainty buffer": 16,
+        "Independent projection too thin": 2
+      },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 10287,
+      "experimentalRecorded": 10303,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -2963,6 +6162,92 @@
         "moneyline": {
           "recorded": 242,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 239,
           "settled": 0,
@@ -3040,10 +6325,98 @@
           }
         },
         "spread": {
-          "recorded": 702,
+          "recorded": 706,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Edge does not clear uncertainty buffer": 4
+          },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 680,
+          "experimentalRecorded": 684,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3121,6 +6494,92 @@
         "total": {
           "recorded": 1518,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1462,
           "settled": 0,
@@ -3198,10 +6657,98 @@
           }
         },
         "goals": {
-          "recorded": 4550,
+          "recorded": 4560,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Edge does not clear uncertainty buffer": 10
+          },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 4214,
+          "experimentalRecorded": 4224,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3279,6 +6826,92 @@
         "assists": {
           "recorded": 1404,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1320,
           "settled": 0,
@@ -3356,10 +6989,98 @@
           }
         },
         "points": {
-          "recorded": 2486,
+          "recorded": 2488,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Edge does not clear uncertainty buffer": 2
+          },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 2372,
+          "experimentalRecorded": 2374,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -3435,8 +7156,96 @@
           }
         },
         "saves": {
-          "recorded": 174,
+          "recorded": 176,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Independent projection too thin": 2
+          },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 0,
@@ -3516,8 +7325,96 @@
       }
     },
     "ufc": {
-      "recorded": 474,
+      "recorded": 475,
       "independentRecorded": 68,
+      "qualified": {
+        "recorded": 0,
+        "settled": 0,
+        "distinctEvents": 0,
+        "winRate": null,
+        "brier": null,
+        "referenceReturnPerUnit": null,
+        "calibrationBins": [
+          {
+            "range": [
+              0,
+              0.4
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.4,
+              0.6
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.6,
+              0.8
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          },
+          {
+            "range": [
+              0.8,
+              1
+            ],
+            "count": 0,
+            "predicted": null,
+            "observed": null
+          }
+        ],
+        "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+      },
+      "experimentalCalibrationBins": [
+        {
+          "range": [
+            0,
+            0.4
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.4,
+            0.6
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.6,
+            0.8
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        },
+        {
+          "range": [
+            0.8,
+            1
+          ],
+          "count": 0,
+          "predicted": null,
+          "observed": null
+        }
+      ],
+      "rejectionReasons": {
+        "Independent projection too thin": 1
+      },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 0,
       "settled": 143,
@@ -3597,6 +7494,92 @@
         "moneyline": {
           "recorded": 98,
           "independentRecorded": 68,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 28,
@@ -3676,6 +7659,92 @@
         "distance": {
           "recorded": 31,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 10,
@@ -3755,6 +7824,92 @@
         "method_victory": {
           "recorded": 212,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 78,
@@ -3832,8 +7987,96 @@
           }
         },
         "round_finish": {
-          "recorded": 55,
+          "recorded": 56,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Independent projection too thin": 1
+          },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 6,
@@ -3913,6 +8156,92 @@
         "method_finish": {
           "recorded": 78,
           "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {},
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
           "settled": 21,
@@ -3998,5 +8327,127 @@
     "marketMAE": 10.8636,
     "modelBias": -2.8843,
     "marketBias": -3.0455
+  },
+  "recommendations": {
+    "nfl|multi|Conservative": {
+      "recorded": 257,
+      "settled": 103,
+      "winRate": 0.1359,
+      "referenceReturnPerUnit": -0.676,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|sgp|Conservative": {
+      "recorded": 177,
+      "settled": 118,
+      "winRate": 0,
+      "referenceReturnPerUnit": null,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|multi|Balanced": {
+      "recorded": 444,
+      "settled": 124,
+      "winRate": 0.1048,
+      "referenceReturnPerUnit": -0.7265,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|sgp|Balanced": {
+      "recorded": 291,
+      "settled": 138,
+      "winRate": 0.0362,
+      "referenceReturnPerUnit": null,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|multi|Lotto": {
+      "recorded": 723,
+      "settled": 86,
+      "winRate": 0,
+      "referenceReturnPerUnit": -1,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|sgp|Lotto": {
+      "recorded": 223,
+      "settled": 139,
+      "winRate": 0.0216,
+      "referenceReturnPerUnit": null,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "mlb|straight|featured": {
+      "recorded": 32,
+      "settled": 3,
+      "winRate": 0,
+      "referenceReturnPerUnit": -1,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "mlb|multi|best": {
+      "recorded": 157,
+      "settled": 75,
+      "winRate": 0,
+      "referenceReturnPerUnit": -1,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "ncaaf|straight|featured": {
+      "recorded": 5,
+      "settled": 3,
+      "winRate": 0,
+      "referenceReturnPerUnit": -1,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "ncaaf|multi|best": {
+      "recorded": 230,
+      "settled": 98,
+      "winRate": 0.0102,
+      "referenceReturnPerUnit": -0.965,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nhl|straight|featured": {
+      "recorded": 64,
+      "settled": 0,
+      "winRate": null,
+      "referenceReturnPerUnit": null,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nhl|multi|balanced": {
+      "recorded": 443,
+      "settled": 0,
+      "winRate": null,
+      "referenceReturnPerUnit": null,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "ufc|straight|featured": {
+      "recorded": 2,
+      "settled": 2,
+      "winRate": 0.5,
+      "referenceReturnPerUnit": -0.1228,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "ufc|card|balanced": {
+      "recorded": 7,
+      "settled": 7,
+      "winRate": 0,
+      "referenceReturnPerUnit": -1,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    },
+    "nfl|straight|featured": {
+      "recorded": 11,
+      "settled": 5,
+      "winRate": 0.6,
+      "referenceReturnPerUnit": -0.0032,
+      "scenarioBrier": null,
+      "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
+    }
   }
 }
