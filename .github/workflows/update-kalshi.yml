@@ -141,7 +141,9 @@ jobs:
         timeout-minutes: 5
         env:
           TZ: America/Los_Angeles
-        run: node scripts/snapshot_daily_picks.js
+        run: |
+          node scripts/snapshot_daily_picks.js
+          node scripts/build_forecast_report.js
       - name: Check dashboard health
         if: always()
         env:

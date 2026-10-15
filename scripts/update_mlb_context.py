@@ -68,6 +68,11 @@ def confirm_lineup(row, fetch=None):
  try:
   url=f'https://statsapi.mlb.com/api/v1.1/game/{row["gamePk"]}/feed/live'
   live=fetch(url) if fetch else get(url,timeout=8)
+  weather=(live.get('gameData') or {}).get('weather') or {}
+  wind=re.search(r'(\d+)\s*mph',str(weather.get('wind') or ''),re.I)
+  row['weather']={'available':bool(weather),'temperature_f':weather.get('temp'),
+      'wind_mph':int(wind[1]) if wind else None,'wind':weather.get('wind'),'condition':weather.get('condition'),
+      'source':'MLB official game feed'}
   box=(live.get('liveData') or {}).get('boxscore',{}).get('teams',{})
   lineups=[box.get(side,{}).get('battingOrder',[]) for side in ('away','home')]
   row['lineupsConfirmed']=all(len(set(order))==9 for order in lineups)
@@ -77,6 +82,39 @@ def confirm_lineup(row, fetch=None):
   row['startersConfirmed']=bool(all(starters) and all(starters[i]==(row.get(side+'Probable') or {}).get('id') for i,side in enumerate(('away','home'))))
  except Exception as error: print('lineup confirmation unavailable',row['gamePk'],error)
  return row
+
+def bullpen_workload(schedule, cutoff, fetch=None):
+ """Count actual relief pitches in the last three days, never starter pitches.
+
+ A partial fetch is unavailable, rather than a deceptively well-rested bullpen.
+ """
+ games={}
+ for day in schedule.get('dates',[]):
+  for game in day.get('games',[]):
+   try:started=datetime.fromisoformat(game['gameDate'].replace('Z','+00:00'))
+   except (KeyError,ValueError):continue
+   if (game.get('status') or {}).get('abstractGameState')=='Final' and timedelta(0)<cutoff-started<=timedelta(days=3):
+    games[game['gamePk']]=(game,started)
+ out={};failed=set()
+ def load(item):
+  gid,(game,started)=item
+  try:return game,started,(fetch(f'{BASE}/game/{gid}/boxscore') if fetch else get(f'{BASE}/game/{gid}/boxscore',timeout=8))
+  except Exception:return game,started,None
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  for game,started,box in pool.map(load,games.items()):
+   for side in ('away','home'):
+    tid=str(game['teams'][side]['team']['id']);row=out.setdefault(tid,{'available':True,'pitches3d':0,'pitches24h':0,'games':0})
+    team=(box or {}).get('teams',{}).get(side,{})
+    pitchers=team.get('pitchers') or []
+    if not box or not pitchers:failed.add(tid);continue
+    row['games']+=1
+    for pid in pitchers[1:]:
+     pitches=team.get('players',{}).get('ID'+str(pid),{}).get('stats',{}).get('pitching',{}).get('numberOfPitches')
+     if not isinstance(pitches,(int,float)) or pitches<0:failed.add(tid);continue
+     row['pitches3d']+=pitches
+     if cutoff-started<=timedelta(days=1):row['pitches24h']+=pitches
+ for tid in failed:out[tid]['available']=False
+ return out
 
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
@@ -145,8 +183,13 @@ def main():
   begin=(now-timedelta(days=30)).date().isoformat()
   completed=get(f'{BASE}/schedule?sportId=1&startDate={begin}&endDate={now.date().isoformat()}')
   form=scoring_form(completed,now)
+  bullpen=bullpen_workload(completed,now)
  except Exception as e:
-  print('MLB scoring form unavailable',e);form={'teams':{},'league':{'games':0,'runs_per_team':None},'as_of':now.isoformat()}
+  print('MLB scoring form unavailable',e);form={'teams':{},'league':{'games':0,'runs_per_team':None},'as_of':now.isoformat()};bullpen={}
+ for game in games:
+  sides={side:bullpen.get(str(game.get(side+'Id'))) for side in ('away','home')}
+  game['bullpen']={'available':all(x and x['available'] for x in sides.values()),**sides,
+      'source':'MLB completed box scores; relief pitchers only','as_of':now.isoformat()}
  Path('data').mkdir(exist_ok=True)
  Path('data/mlb-context.json').write_text(json.dumps({'updated_at':now.isoformat(),'source':'MLB Stats API','games':games,'pitchers':pitchers,'players':players,'hitters':hitters,'scoring':form},indent=2))
  print('MLB context',len(games),'games',len(pitchers),'probable pitchers',len(players),'player photos of',len(names),'named props',len(hitters),'hitter samples')

@@ -8,11 +8,14 @@ function track(rows,snapshot,sport,now=Date.now()){
  const index=new Map(markets.map(m=>[[sport,m.ticker,m.quoteSide==='no'||m.side==='no'?'no':'yes'].join('|'),m]));let changed=0;
  for(const row of rows.filter(r=>r.sport===sport&&!r.result)){
   const m=index.get(row.id),start=Date.parse(row.eventTime),recorded=Date.parse(row.recordedAt);
+  const quoteAt=Date.parse(m?.quotedAt||snapshot.updated_at||snapshot.generated_at);
+  const source=m?.source||'Kalshi',entrySource=row.priceSource||'Kalshi';
+  const point=finite(m?.point??m?.line);
   const ask=finite(sport==='nfl'?m?.quoteProbability:m?.yes_ask);
-  if(!m||!(ask>0&&ask<1)||!Number.isFinite(start)||at>=start||at<recorded||at<=Date.parse(row.latestQuoteAt||row.recordedAt)||['in','post','Live','Final'].includes(m.game_status))continue;
-  row.latestAsk=ask;row.latestQuoteAt=stamp;row.latestQuoteSource='Kalshi';row.priceMovement=ask-row.ask;
+  if(!m||source!==entrySource||point!=null&&finite(row.point)!=null&&point!==finite(row.point)||!(ask>0&&ask<1)||!Number.isFinite(start)||!Number.isFinite(quoteAt)||quoteAt>now+300000||now-quoteAt>30*60000||quoteAt>=start||quoteAt<recorded||quoteAt<=Date.parse(row.latestQuoteAt||row.recordedAt)||['in','post','Live','Final'].includes(m.game_status))continue;
+  row.latestAsk=ask;row.latestQuoteAt=new Date(quoteAt).toISOString();row.latestQuoteSource=source;row.priceMovement=ask-row.ask;
   // Never call a stale, post-start, or early quote the closing price.
-  if(start-at<=15*60000){row.closingAsk=ask;row.closingQuoteAt=stamp;row.closingQuoteSource='Kalshi near-start reference';row.clv=ask-row.ask;}
+  if(start-quoteAt<=15*60000){row.closingAsk=ask;row.closingQuoteAt=new Date(quoteAt).toISOString();row.closingQuoteSource=source+' near-start reference';row.clv=ask-row.ask;}
   changed++;
  }
  return changed;

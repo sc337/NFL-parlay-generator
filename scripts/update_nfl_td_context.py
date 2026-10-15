@@ -126,7 +126,15 @@ def attach(snapshot,games,now=None):
                     values=[float(s.get(stat,0)) for s in history]
                     if any(v!=0 for v in values):metrics[kind]=values
                 if not metrics:continue
+                opportunities={kind:[float(s.get(stat,0)) for s in history] for kind,stat in
+                    [('player_rush_attempts','rush'),('player_pass_attempts','pass_attempts'),('targets','target')]}
+                relevant=opportunities['player_rush_attempts' if market.get('type')=='rushing' else
+                    'targets' if market.get('type') in ('receiving','receptions') else 'player_pass_attempts']
+                mean=sum(relevant)/len(relevant)
+                variance=sum((v-mean)**2 for v in relevant)/len(relevant)
+                stable=bool(mean>0 and variance**.5/mean<=.7 and sum(relevant[-2:])/2>=mean*.65)
                 market['propHistory']={'games':len(prior),'played':played,'latest_game':prior[-1][1]['date'],
+                    'opportunities':opportunities,'roleStable':stable,
                     'dates':[row['date'] for _,row in prior],'metrics':metrics,'source':'nflverse completed plays'}
                 props_attached+=1
             total=sum(weight(s) for s in players.values())

@@ -88,3 +88,55 @@ pass. No model is promoted to validated without the existing later-event
 holdout test. Confirmed NBA/NHL starters, advanced shot-quality data and richer
 NFL route/snap data are not fabricated when the current feeds cannot establish
 them. Prices remain source quotes, not a guarantee of Caesars availability.
+
+### Pick quality policy (October 15, 2026)
+
+All six sports use the same price-age, event-start, compatibility, evidence and
+uncertainty checks. Market-supported NFL estimates no longer bypass the edge
+buffer. Missing sport context widens that buffer without adding a favorable
+projection adjustment. Inside 90 minutes of kickoff, unconfirmed participation
+blocks featured picks and parlay legs. Early conditional estimates remain
+explicitly unvalidated. Existing saved preferences are retained; new NFL sessions
+default to model-screened recommendations and two legs. Explicit Kalshi parlay
+ideas remain available as reference-only exploration.
+
+- **Straights:** estimated likelihood, a named selection buffer (not a statistical
+  confidence interval), missing inputs, and the minimum acceptable odds are in
+  Details. Passing a gate does not establish profitability.
+- **Parlays:** Risk & price check shows combined likelihood and accepts a current
+  combined sportsbook price for the exact displayed selections. The check expires
+  after 15 minutes and never replaces any feed price. Multi-game probabilities
+  assume independence. SGP prices are never calculated by multiplying leg odds.
+- **NFL SGPs:** 24,000 deterministic scenario trials share pace, scoring, passing,
+  rushing and player factors across legs. Three assumed-dependence settings form
+  a sensitivity range, not a confidence interval. Loadings are not fitted or
+  validated; the scenarios cannot certify SGP value. Unsupported or mismatched
+  games produce no joint estimate. Simulations run only for selected builds,
+  not every search candidate.
+- **Profiles:** Conservative is estimated hit chance >=30%, Balanced >=15%,
+  Lotto <15%. These are product policy thresholds, not historical win rates.
+  Screened NFL profiles must satisfy their aggregate likelihood category;
+  otherwise that profile passes. Higher odds alone do not establish quality.
+- **Sport inputs:** NFL role stability uses opportunity variation and recent
+  declines instead of market breadth. NBA estimates expose projected minutes,
+  collect used possessions, and reject large recent minute changes. MLB collects
+  official weather, confirmed lineups and three-day relief-pitcher workload;
+  bounded experimental temperature, directional wind and bullpen adjustments
+  enter run means. NCAA small samples and unconfirmed quarterbacks widen
+  uncertainty. NHL flags goalie and line-role gaps. UFC tracks recent sample,
+  weight-class and opponent-adjustment coverage without fabricating missing data.
+- **Unavailable inputs:** the free feeds do not consistently verify NHL starters,
+  line/power-play assignments, NCAA starting quarterbacks, or opponent-adjusted
+  UFC histories. These remain explicitly missing; they are not advertised as
+  completed data integrations. NHL saves remain unsupported.
+- **Prospective audit:** new records freeze the qualification decision, buffer,
+  missing inputs, model version and source commit before kickoff. Historical
+  records are not reclassified. Diagnostics separates qualified selections from
+  rejected/all-market forecasts and reports calibration, reference returns,
+  closing-price movement, and captured parlay outcomes. SGP returns require actual
+  combined prices and are not synthesized. Reference returns exclude fees and
+  are hypothetical, not a placed-bet ledger. Build outcomes overlap and must not
+  be treated as independent trials. Accuracy and profitability remain unproven.
+
+Validation: Node behavior/regression suite, Python feed/identity/settlement suite,
+and offline builder capture against the saved six-sport feeds.

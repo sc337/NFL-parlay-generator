@@ -4,7 +4,7 @@ const state = {
   lineMode:['standard','alt','both'].includes(window.DASHBOARD_UI?.get('nfl','lines','standard'))?window.DASHBOARD_UI.get('nfl','lines','standard'):'standard',
   moreCushion:window.DASHBOARD_UI?.get('nfl','cushion','off')==='on',
   risk:50,
-  recommendationTier:window.DASHBOARD_UI?.get('nfl','tier','ideas')||'ideas',
+  recommendationTier:window.DASHBOARD_UI?.get('nfl','tier','screened')||'screened',
   selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
@@ -621,7 +621,7 @@ function profileSelectionScore(q,variant){
   if(variant==='long'&&p>.70)return -999;
   const coverage=q.coverage*12,edge=Math.max(0,Math.min(.15,q.conservativeP-p))*100;
   if(variant==='safe')return likelihood*160+coverage+edge*.15-Math.max(0,p-.78)*100;
-  if(variant==='long')return Math.log(1/p)*48+likelihood*30+coverage+edge*.5;
+  if(variant==='long')return (1-likelihood)*55+coverage+edge*.8;
   return likelihood*70+coverage+edge*.8-Math.abs(p-.60)*35-Math.max(0,p-.70)*150;
 }
 function distinctProfileBuild(p,previous){
@@ -850,6 +850,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       })
       .map(b=>{
         const p=packageParlay(b.legs,variant,true,{
+          deferRisk:true,
           scriptKey:window.PICK_QUALITY?'quality_mix':scriptKey,
           scriptName:window.PICK_QUALITY?'Quality-screened mix':GAME_SCRIPTS[scriptKey].name,
           thesis:window.PICK_QUALITY?'Individually qualifying picks, with both teams represented when comparable options are available. Same-game dependence and combined value remain unverified.':GAME_SCRIPTS[scriptKey].thesis(game)
@@ -885,6 +886,9 @@ function buildSgp(game,count,risk,variant,previous=[]){
   if(!p) return null;
 
   if(live && count>=3 && p.legs.filter(l=>l.player).length<2) return null;
+  // Scenario draws run only for the selected build, never for every search beam.
+  if(!p.ideaTier){p.risk=window.PARLAY_RISK?.summarize('nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m),game})),{sgp:true});
+    const x=p.risk;if(x?.pass&&x.modelP!=null&&((variant==='safe'&&x.profile!=='Conservative')||(variant==='balanced'&&x.profile==='Lotto')||(variant==='long'&&x.profile!=='Lotto')))return null;}
   return p;
 }
 
@@ -950,9 +954,12 @@ function packageParlay(legs,variant,isSgp,meta={}){
   }
   const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'};
   const grades={safe:'CONSERVATIVE',balanced:'BEST FIT',long:'HIGHER PAYOUT'};
+  const risk=!ideas&&!meta.deferRisk?window.PARLAY_RISK?.summarize('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m),game:window.PICK_QUALITY?.gameFor('nfl',m)})),{sgp:isSgp}):null;
+  if(risk?.pass&&risk.modelP!=null&&((variant==='safe'&&risk.profile!=='Conservative')||(variant==='balanced'&&risk.profile==='Lotto')||(variant==='long'&&risk.profile!=='Lotto')))return null;
   return {
     name:names[variant],profile:variant,grade:ideas?'PARLAY IDEA':grades[variant],legs,ideaTier:!!ideas,
     odds:decimalToAmerican(decimal),score:Math.round(avg),
+    risk,
     corr,
     scriptName:ideas?'Reference-market idea':meta.scriptName||'',
     thesis:meta.thesis||'',
@@ -1073,6 +1080,7 @@ function render(parlays){
       legs.appendChild(d);
     });
     
+    if(!p.ideaTier)window.PARLAY_RISK?.attach(node.querySelector('.parlay-card'),'nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m),game:window.PICK_QUALITY?.gameFor('nfl',m)})),{sgp:state.mode==='sgp'});
     wrap.appendChild(node);
   }
 }

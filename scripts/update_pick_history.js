@@ -18,7 +18,7 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
   const ctx=vm.createContext({Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');run('sport-markets.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 
@@ -37,7 +37,8 @@ async function candidates(sport,{all=false}={}){
         noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
         noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
       }:null;
-      return{market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations},game};
+      const forecast={modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations};
+      return{market:m,forecast,game,qualification:w.PICK_QUALITY.assess(sport,m,forecast,{game})};
     })};
   }
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
@@ -49,7 +50,8 @@ async function candidates(sport,{all=false}={}){
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();
   const snapshot=read('kalshi-'+sport+'.json');
   const model=sport==='ncaaf'?api.projection:api.model;
-  return{snapshot,rows:all?(snapshot.markets||[]).map(m=>({market:m,forecast:model(m)})):api.historyPicks()};
+  const rows=all?(snapshot.markets||[]).map(m=>({market:m,forecast:model(m)})):api.historyPicks();
+  return{snapshot,rows:rows.map(e=>({...e,qualification:w.PICK_QUALITY.assess(sport,e.market,e.forecast||{}, {game:e.game})}))};
 }
 
 function readCalibrationVersion(){try{return JSON.parse(fs.readFileSync(path.join(root,'data/model-calibration.js'),'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,'')).updated_at}catch{return null}}

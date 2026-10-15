@@ -50,7 +50,7 @@ function estimate(m,context){
     p=sigmoid(((match[1].toLowerCase()==='over'?1:-1)*(total-Number(match[2])))/13);
   }else return null;
   return {modelP:clamp(p,.04,.96),rawModelP:clamp(p,.04,.96),marketP:Number(m.probability),
-    coverage,experimental:true,betEV:null,projectedMargin:+margin.toFixed(1),projectedTotal:+total.toFixed(1),
+    coverage,uncertainty:clamp(.35+.4/Math.sqrt(Math.min(h.games,a.games))+(game.quarterbacksConfirmed===true?0:.08),.35,.8),experimental:true,betEV:null,projectedMargin:+margin.toFixed(1),projectedTotal:+total.toFixed(1),
     sources:game.sources||context.sources};
 }
 window.NCAAF_MODEL={estimate};

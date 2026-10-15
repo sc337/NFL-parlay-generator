@@ -91,6 +91,7 @@ function estimate(m,context){
  if(!result||!Number.isFinite(result.modelP))return null;
  const p=clamp(result.modelP,.001,.999),ask=num(m.yes_ask),marketP=num(m.probability);
  return {...result,modelP:p,rawModelP:p,experimental:true,betEV:null,
+  uncertainty:clamp(.4+(match.g.goaliesConfirmed===true?0:.12)+(m.player&&context.players?.[String(m.player_id)]?.lineConfirmed!==true?.08:0),.4,.75),
   estimatedEV:ask>0&&ask<1?p/ask-1:null,edge:marketP>0&&marketP<1?p-marketP:null,
   projectedLine:result.projectedLine??(m.kind==='total'?result.projectedTotal:null),
   sources:context.source,goalieNote:'Team-average goaltending; starters unconfirmed',

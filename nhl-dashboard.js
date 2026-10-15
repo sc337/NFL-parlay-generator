@@ -68,6 +68,7 @@ function render(){if(window.__ACTIVE_SPORT&&window.__ACTIVE_SPORT!=='nhl')return
  $('#resultsTitle').textContent='NHL Recommendations';
  $('#results').innerHTML=(selected.length===legs&&G.independent(selected)?card(selected):'<div class="empty">'+G.esc(emptyReason(games))+'</div>')+(PROPS.some(kind=>selectedMarkets.has(kind))?propsCard():'');
  
+ window.PARLAY_RISK?.attach($('#results')?.querySelector?.('.parlay-card'),'nhl',selected.map(m=>({market:m,forecast:model(m)||{}})));
  window.EXTRA_PICKS?.show('nhl',{rows:ranked.map(m=>({market:m,forecast:model(m)||{}})),selected:[...(selected.length===legs&&G.independent(selected)?selected:[]),today].filter(Boolean),media});
  window.PARLAY_GENERATOR?.syncLabel?.();
 }
