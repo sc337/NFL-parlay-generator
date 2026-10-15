@@ -1,6 +1,7 @@
 // Fit on older independent model picks. Later outcomes are a fixed, untouched
 // validation window. Only retest after 20 more settled picks for a sport.
 const fs=require('node:fs'),path=require('node:path');
+const L=require('../model-learning');
 const root=path.resolve(__dirname,'..'),history=path.join(root,'data/pick-history.json');
 const output=path.join(root,'data/model-calibration.js');
 const brier=(rows,fn)=>rows.reduce((s,r)=>s+(fn(r)-(r.result==='win'?1:0))**2,0)/rows.length;
@@ -9,14 +10,15 @@ const calibrated=(r,alpha,bias)=>clamp(r.marketP+alpha*(r.rawModelP-r.marketP)+b
 const candidates=[];
 for(const alpha of [.25,.5,.75,1])for(const bias of [-.04,-.02,0,.02,.04])candidates.push({alpha,bias});
 function fit(rows,previous={},cohort='model'){
-  const all=rows.filter(r=>r.forecastType===cohort&&Date.parse(r.recordedAt)<Date.parse(r.eventTime)&&['win','loss'].includes(r.result)&&Number.isFinite(+r.modelP)&&Number.isFinite(+r.marketP))
+  const known=new Set(L.clean(rows).map(r=>r.id));
+  const all=rows.filter(r=>r.modelVersion!==L.VERSION||known.has(r.id)).filter(r=>r.forecastType===cohort&&Date.parse(r.recordedAt)<Date.parse(r.eventTime)&&['win','loss'].includes(r.result)&&Number.isFinite(+r.modelP)&&Number.isFinite(+r.marketP))
     .map(r=>({...r,rawModelP:Number(r.rawModelP??r.modelP),marketP:Number(r.marketP)}))
     .filter(r=>r.rawModelP>0&&r.rawModelP<1&&r.marketP>0&&r.marketP<1)
     .sort((a,b)=>Date.parse(a.eventTime)-Date.parse(b.eventTime)||Date.parse(a.recordedAt)-Date.parse(b.recordedAt)||a.id.localeCompare(b.id));
   const seen=new Set(),clean=all.filter(r=>{const event=(r.eventId||r.event||r.ticker)+'|'+(r.eventTime||'');if(seen.has(event))return false;seen.add(event);return true});
   if(clean.length<50)return {...previous,active:false,settled:all.length,distinctEvents:clean.length,reason:'Need 30 training and 20 later validation events'};
   if(previous.evaluatedCount&&clean.length<previous.evaluatedCount+20)return {...previous,settled:all.length,distinctEvents:clean.length};
-  const validation=clean.slice(-20),train=clean.filter(r=>Date.parse(r.eventTime)<Date.parse(validation[0].eventTime));
+  const validation=clean.slice(-20),before=Math.min(...validation.map(r=>Date.parse(r.recordedAt))),train=clean.filter(r=>r.eventTime.slice(0,10)<validation[0].eventTime.slice(0,10)&&(r.modelVersion!==L.VERSION||Date.parse(r.settledAt)<before));
   if(train.length<30)return {active:false,settled:all.length,distinctEvents:clean.length,reason:'Need 30 strictly earlier training events and 20 later validation events'};
   const best=candidates.map(c=>({...c,trainBrier:brier(train,r=>calibrated(r,c.alpha,c.bias))}))
     .sort((a,b)=>a.trainBrier-b.trainBrier||Math.abs(a.bias)-Math.abs(b.bias))[0];
@@ -33,7 +35,9 @@ function build(payload,previous={sports:{}}){const sports={};for(const sport of 
   sports[sport]={};const rows=(payload.records||[]).filter(r=>r.sport===sport);
   for(const group of new Set(rows.map(r=>r.marketGroup||r.market).filter(Boolean)))for(const cohort of ['model','experimental']){
     const key=cohort==='model'?group:group+':experimental';const chosen=rows.filter(r=>(r.marketGroup||r.market)===group&&r.forecastType===cohort);if(!chosen.length)continue;
-    sports[sport][key]=fit(chosen,previous.sports?.[sport]?.[key],cohort);
+    const current=chosen.filter(r=>r.modelVersion===L.VERSION),version=current.length?L.VERSION:'legacy';
+    const prior=previous.sports?.[sport]?.[key];
+    sports[sport][key]={...fit(current.length?current:chosen,prior?.modelVersion===version?prior:{},cohort),modelVersion:version};
   }
 }return {updated_at:new Date().toISOString(),sports}}
 function main(){const payload=JSON.parse(fs.readFileSync(history,'utf8'));const audit=path.join(root,'data/forecast-audit.json');if(fs.existsSync(audit)){const seen=new Set(payload.records.map(r=>r.id));payload.records.push(...(JSON.parse(fs.readFileSync(audit,'utf8')).records||[]).filter(r=>!seen.has(r.id)))}let previous={sports:{}};

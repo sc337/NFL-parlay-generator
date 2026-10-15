@@ -7,7 +7,7 @@ function track(rows,snapshot,sport,now=Date.now()){
  const markets=sport==='nfl'?(snapshot.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,eventTime:g.commence_time}))):snapshot.markets||[];
  const index=new Map(markets.map(m=>[[sport,m.ticker,m.quoteSide==='no'||m.side==='no'?'no':'yes'].join('|'),m]));let changed=0;
  for(const row of rows.filter(r=>r.sport===sport&&!r.result)){
-  const m=index.get(row.id),start=Date.parse(row.eventTime),recorded=Date.parse(row.recordedAt);
+  const m=index.get(row.contractId||row.id),start=Date.parse(row.eventTime),recorded=Date.parse(row.recordedAt);
   const quoteAt=Date.parse(m?.quotedAt||snapshot.updated_at||snapshot.generated_at);
   const source=m?.source||'Kalshi',entrySource=row.priceSource||'Kalshi';
   const point=finite(m?.point??m?.line);

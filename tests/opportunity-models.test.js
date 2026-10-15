@@ -1,0 +1,11 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const now=Date.parse('2026-10-15T12:00:00Z'),start=new Date(now+86400000).toISOString();
+function runtime(files){const window={},state={games:[]};class Clock extends Date{constructor(...a){super(...(a.length?a:[now]))}static now(){return now}}const ctx=vm.createContext({window,state,Date:Clock,document:{readyState:'loading',addEventListener(){}},setTimeout(){},impliedProbability:o=>o>0?100/(100+o):Math.abs(o)/(100+Math.abs(o))});for(const f of ['model-learning.js',...files])vm.runInContext(fs.readFileSync(f,'utf8'),ctx);return {window,state,ctx}}
+test('NFL carry-based projections flag reduced opportunity and save simple baselines',()=>{
+ const r=runtime(['model-core.js','nfl-projection-engine.js','nfl-model-v3.js']),m={type:'rushing',marketKey:'player_rush_yds',player:'RB',team:'Home',point:49.5,side:'over',price:100,prob:.5,propHistory:{source:'nflverse completed plays',games:5,played:5,latest_game:'2026-10-14',metrics:{player_rush_yds:[100,100,100,25,25]},opportunities:{player_rush_attempts:[20,20,20,5,5]}}},g={id:'g',home:'Home',away:'Away',commence_time:start};
+ const f=r.window.NFL_MODEL_V3.evaluate(g,m);assert.equal(f.opportunity.projectedExposure,10.4);assert.equal(f.projection,52);assert.equal(f.roleChange.status,'falling');assert.ok(f.baselines.simpleMean>0);assert.equal(r.window.NFL_PROJECTIONS.marketProjection(g,{...m,price:-500}).projectionLine,52);
+});
+test('MLB player estimates need exact identity, matching current team and real logs',()=>{
+ const r=runtime(['pick-quality.js','mlb-prop-model.js']),m={kind:'hits',label:'Hitter: 1+ hits',game_id:'g',game_time:start,probability:.5},rows=Array.from({length:8},(_,i)=>({date:new Date(now-(10-i)*86400000).toISOString(),teamId:1,plateAppearances:4,hits:1,totalBases:2})),ctx={updated_at:new Date(now).toISOString(),players:{Hitter:7},games:[{gamePk:'g',homeId:1,awayId:2}],playerLogs:{'7':rows}};
+ const f=r.window.MLB_PROP_MODEL.estimate(m,ctx);assert.ok(f);assert.equal(f.projectedLine,1);assert.equal(f.opportunity.projectedExposure,4);assert.ok(f.modelP>0&&f.modelP<1);assert.equal(f.roleChange.status,'stable');ctx.games[0].homeId=3;assert.equal(r.window.MLB_PROP_MODEL.estimate(m,ctx),null);
+});

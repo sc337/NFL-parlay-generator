@@ -18,7 +18,7 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
   const ctx=vm.createContext({Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 
@@ -37,14 +37,14 @@ async function candidates(sport,{all=false}={}){
         noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
         noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
       }:null;
-      const forecast={modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations};
+      const forecast={modelP:m.modelProbability,rawModelP:m.rawModelProbability,modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,baselines:m.baselines,confidence:m.modelConfidence,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations};
       return{market:m,forecast,game,qualification:w.PICK_QUALITY.assess(sport,m,forecast,{game})};
     })};
   }
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
   if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js')}
   if(sport==='ncaaf')r.run('ncaaf-model.js');
-  if(sport==='mlb')r.run('mlb-totals-model.js');
+  if(sport==='mlb'){r.run('mlb-totals-model.js');r.run('mlb-prop-model.js');}
   if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
   r.run(sport==='nba'?'nba-dashboard.js':sport==='mlb'?'mlb-dashboard.js':sport==='ncaaf'?'ncaaf-dashboard.js':sport==='nhl'?'nhl-dashboard.js':'ufc-dashboard.js');
   const api=w[sport.toUpperCase()+'_DASHBOARD'];await api.load();

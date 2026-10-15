@@ -3,6 +3,7 @@ const clamp=(p)=>Math.min(.97,Math.max(.03,p));
 function validated(sport,group){
  const rule=window.MODEL_CALIBRATION_DATA?.sports?.[sport]?.[group];
  const at=Date.parse(window.MODEL_CALIBRATION_DATA?.updated_at||'');
+ if(window.MODEL_LEARNING&&rule?.modelVersion!==window.MODEL_LEARNING.VERSION)return false;
  return !!(rule?.active&&rule.trainingCount>=30&&rule.validationCount>=20&&rule.distinctEvents>=50&&
   Number.isFinite(at)&&at<=Date.now()+300000&&Date.now()-at<=7*86400000&&
   Number.isFinite(rule.adjustedBrier)&&Number.isFinite(rule.marketBrier)&&Number.isFinite(rule.rawBrier)&&

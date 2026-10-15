@@ -162,11 +162,45 @@ def collect(now, old=None):
             'league': league, 'games': games, 'teams': teams, 'players': players,
             'rosters': rosters, 'roster_teams': sorted(clubs), 'status': 'ready'}
 
+def recent_logs(raw, now):
+    rows=[]
+    for r in raw.get('gameLog',[]):
+        try:
+            at=datetime.fromisoformat(r['gameDate']+'T00:00:00+00:00')
+            minutes,seconds=map(int,str(r['toi']).split(':'))
+            if not now-timedelta(days=28)<at<now.replace(hour=0,minute=0,second=0,microsecond=0):continue
+            rows.append({'date':at.isoformat(),'team':code(r.get('teamAbbrev')),'toi':minutes*60+seconds,
+                **{key:float(r[key]) for key in ('goals','assists','shots')},'points':float(r['goals'])+float(r['assists'])})
+        except (KeyError,ValueError,TypeError):continue
+    return sorted(rows,key=lambda r:r['date'])[-10:]
+
+def attach_recent_logs(payload, now, old=None):
+    snapshot=Path('data/kalshi-nhl.json')
+    if not snapshot.exists():return
+    markets=json.loads(snapshot.read_text()).get('markets',[])
+    roster={name_key(r['name']):str(r['id']) for r in payload.get('rosters',[])}
+    ids=sorted({str(m.get('player_id') or roster.get(name_key(m.get('player')))) for m in markets if m.get('player')})
+    ids=[pid for pid in ids if pid in payload.get('players',{})][:32]
+    def load(pid):
+        previous=(old or {}).get('players',{}).get(pid,{})
+        try:
+            stamp=datetime.fromisoformat(previous.get('logs_at',''))
+            if timedelta(0)<=now-stamp<timedelta(hours=6):return pid,previous.get('logs',[]),previous['logs_at']
+        except ValueError:pass
+        try:
+            raw=get(WEB+'/player/'+pid+'/game-log/'+str(payload['season'])+'/2')
+            return pid,recent_logs(raw,now),now.isoformat()
+        except Exception:return pid,[],None
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for pid,logs,at in pool.map(load,ids):
+            payload['players'][pid]['logs']=logs;payload['players'][pid]['logs_at']=at
+
 def main():
     now = datetime.now(timezone.utc)
     try:
         old = json.loads(TARGET.read_text()) if TARGET.exists() else None
         payload = collect(now, old)
+        attach_recent_logs(payload,now,old)
     except Exception as error:
         # Team quotes may still load. A failed context refresh never gets a new timestamp.
         print('NHL context unavailable; retaining its original timestamp:', str(error))

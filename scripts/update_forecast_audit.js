@@ -55,8 +55,9 @@ function record(sport,entry,snapshot,now){
     (sport==='nfl'&&f.experimental===true&&(m.type==='td'?coverage>=.3:!!m.player&&coverage>=.45&&projectedLine!=null));
   const anchored=f.marketAnchored===true;
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
-  return {id:[sport,ticker,side].join('|'),sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
-    eventId:g.context?.event_id||m.game_id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
+  const contractId=[sport,ticker,side].join('|'),version=f.modelVersion||null;
+  return {id:version?contractId+'|'+version:contractId,contractId,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+    eventId:g.context?.event_id||m.game_id||g.id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
     market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
     marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
@@ -64,10 +65,15 @@ function record(sport,entry,snapshot,now){
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
     snapshotAt:snapshot.updated_at||snapshot.generated_at||null,
-    modelVersion:'quality-20261015',sourceVersion:process.env.GITHUB_SHA||null,
+    modelVersion:f.modelVersion||'legacy',
+    player:m.player||f.player||null,team:m.team||m.team_code||null,
+    marketFamily:String(m.marketKey||m.kind||m.type).replace(/_alternate$/,''),
+    direction:m.side==='under'?'under':m.side==='over'?'over':m.quoteSide||m.side||'yes',
+    baselines:f.baselines||f.ablations?Object.fromEntries(Object.entries({...f.baselines,...f.ablations}).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
+    roleChange:f.roleChange||null,opportunity:f.opportunity||null,sourceVersion:process.env.GITHUB_SHA||null,
     priceSource:m.source||'Kalshi',quoteAt:m.quotedAt||snapshot.updated_at||snapshot.generated_at||null,
     qualification:entry.qualification?{pass:entry.qualification.pass===true,reason:entry.qualification.reason||null,
-      buffer:finite(entry.qualification.buffer),conservativeP:finite(entry.qualification.conservativeP),
+      bufferMethod:entry.qualification.bufferMethod||null,buffer:finite(entry.qualification.buffer),conservativeP:finite(entry.qualification.conservativeP),
       minimumOdds:finite(entry.qualification.minimumOdds),validated:entry.qualification.validated===true,
       valueQualified:entry.qualification.valueQualified===true,missingContext:entry.qualification.context?.missing||[],
       warnings:entry.qualification.warnings||[]}:null,result:null};

@@ -80,10 +80,14 @@ function propForecast(m,context,match){
  const side=m.team_code===match.g.home?'home':m.team_code===match.g.away?'away':null;if(!side)return null;
  const opposite=side==='home'?'away':'home';
  const opponent=m.kind==='shots'?match.rates[opposite].shotsAgainst/match.leagueShots:match.rates[opposite].def/match.league;
- mean=clamp(mean*usage*clamp(opponent,.75,1.3),.02,10);
+ const logs=(profile.logs||[]).filter(r=>r.team===m.team_code&&Date.parse(r.date)<Date.now()&&Date.parse(r.date)<Date.parse(match.g.start)&&Date.parse(r.date)>Date.now()-28*86400000&&num(r[stat])!==null&&r.toi>0).slice(-10);
+ const opportunity=window.MODEL_LEARNING?.opportunity(logs.map(r=>r[stat]),logs.map(r=>r.toi));
+ const simpleMean=opportunity?.simpleMean??mean;
+ mean=clamp((opportunity?.projection??mean*usage)*clamp(opponent,.75,1.3),.02,10);
  const counts=distribution(mean,m.kind==='shots'?8:4);if(!counts)return null;
  const under=counts.reduce((sum,p,k)=>sum+(k<m.line?p:0),0);
- return {modelP:m.side==='no'?under:1-under,projectedLine:mean,coverage:Math.min(match.coverage,.5+.2*weight),conditionalOnPlaying:true};
+ const simple=distribution(simpleMean,m.kind==='shots'?8:4),simpleUnder=simple?.reduce((s,p,k)=>s+(k<m.line?p:0),0),noOpp=distribution(opportunity?.projection??simpleMean*usage,m.kind==='shots'?8:4),noOppUnder=noOpp?.reduce((s,p,k)=>s+(k<m.line?p:0),0);
+ return {modelP:m.side==='no'?under:1-under,opportunity,roleChange:opportunity?.role,baselines:{market:m.probability,simpleMean:simple?m.side==='no'?simpleUnder:1-simpleUnder:null,noOpponent:noOpp?m.side==='no'?noOppUnder:1-noOppUnder:null},projectedLine:mean,coverage:Math.min(match.coverage,.5+.2*weight),conditionalOnPlaying:true};
 }
 function estimate(m,context){
  const match=matchup(m,context);if(!match)return null;

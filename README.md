@@ -140,3 +140,49 @@ ideas remain available as reference-only exploration.
 
 Validation: Node behavior/regression suite, Python feed/identity/settlement suite,
 and offline builder capture against the saved six-sport feeds.
+
+### Forward model learning and paper tracking
+
+The `learning-20261015` model version adds separate opportunity and efficiency
+projections: NFL carries/targets (including catch rate for receiving yards), NBA
+minutes, MLB plate appearances/batters faced, and NHL ice time when recent
+same-team logs are available. Five observations are required for decomposition.
+Thin data keeps its existing experimental fallback. Material shifts between the
+last two opportunities and the earlier baseline are labeled rising/falling and
+block qualified picks until the role stabilizes.
+
+`scripts/train_model_learning.js` fits dated artifacts in
+`data/model-learning.js`. It only accepts frozen forecasts from this exact model
+version, with known settlement timestamps before training/validation cutoffs.
+Entire events and UTC dates stay together, and scoring gives every game equal
+weight rather than letting alternate-line ladders dominate. Three chronological
+evaluation windows compare market, simple-production and available ablation
+baselines. Validated selection status additionally requires held-out improvement
+over the market and available simple/ablation forecasts.
+
+Empirical selection buffers and NFL pair-correlation rules require at least 60
+earlier training events and 30 later validation events. Buffer bins also need 25
+training events and sufficient later coverage. A learned buffer replaces the fixed
+base only when its held-out checks pass; missing-context penalties remain.
+Historical SGP correlations activate only when every required pair relationship
+has adequate metadata and improves later joint log loss over independence.
+Positive-definite shrinkage keeps scenario matrices usable. Full SGP probabilities
+and betting value remain unvalidated. With insufficient evidence, the dashboard
+says evidence is collecting and retains the labeled experimental assumptions.
+Older forecasts are never retroactively assigned the new model version.
+
+**Paper tracking:** expand a straight's Details or a parlay's Risk & price check,
+then Track paper pick. Enter the exact sportsbook, current combined odds, offer
+terms and fee per $1 stake. No wager is placed. Records are saved on this device;
+export them from Settings → Diagnostics → Forward paper ledger. Entries are
+immutable and must precede every event. Later manual price observations must
+match the same sportsbook, lines and offer terms and occur before kickoff;
+only the last 15 minutes qualify as a near-start closing observation. The app
+does not claim an automated Caesars closing-price feed.
+
+Confirm the final result at the same book after the events have started.
+Results are explicitly user-confirmed paper outcomes, not verified placed bets.
+Net paper returns include the entered fees. Unknown fees or revised payouts after
+partially voided parlays remain unavailable. Straights, multi-game parlays and SGPs
+have separate metrics; overlapping builds are not independent trials. No claimed
+edge or future profit follows from a small paper sample.
