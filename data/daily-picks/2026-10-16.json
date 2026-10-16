@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T21:40:24.233Z",
+  "updated_at": "2026-10-16T21:48:37.124Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,16 +32,22 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T21:39:57.046315+00:00"
+      "snapshotAt": "2026-10-16T21:47:33.173548+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T21:30:01.319537+00:00"
+      "snapshotAt": "2026-10-16T21:40:01.318772+00:00"
     },
     "ncaaf": {
-      "captured": 3,
+      "captured": 2,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "best",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "multi",
           "profile": "best",
@@ -49,7 +55,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T21:39:57.050836+00:00"
+      "snapshotAt": "2026-10-16T21:47:25.873028+00:00"
     },
     "nfl": {
       "captured": 7,
@@ -121,12 +127,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T21:39:57.056418+00:00"
+      "snapshotAt": "2026-10-16T21:47:23.199202+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T21:29:57.582227+00:00"
+      "snapshotAt": "2026-10-16T21:47:37.194021+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -156,7 +162,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T21:39:57.075447+00:00"
+      "snapshotAt": "2026-10-16T21:47:31.819541+00:00"
     }
   },
   "records": [
@@ -15707,6 +15713,102 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|ncaaf|multi|best|2||learning-20261015|154c5b84c944d54b",
+      "day": "2026-10-16",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T21:48:37.124Z",
+      "snapshotAt": "2026-10-16T21:47:25.873028+00:00",
+      "sourceVersion": "9a150f3364cd543f51813e3ff4630dbe2e6e0b39",
+      "priceEstimate": 304,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.36734919697372187,
+        "conservativeP": 0.2783770681060329,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.21863251039346432,
+          "upper": 0.5467295004218805,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17UNCDUKE-DUKE|yes",
+          "ticker": "KXNCAAFGAME-26OCT17UNCDUKE-DUKE",
+          "side": "yes",
+          "eventId": "401858266",
+          "event": "North Carolina Tar Heels at Duke Blue Devils",
+          "eventTime": "2026-10-17T19:30Z",
+          "closeTime": "2026-10-19T19:30:00Z",
+          "selection": "Duke",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.59,
+          "referenceAmericanOdds": null,
+          "marketP": 0.585,
+          "modelP": 0.6719030099715839,
+          "rawModelP": 0.6719030099715839,
+          "coverage": 0.85,
+          "confidence": 51,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 47.5,
+          "projectedMargin": 9.3,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17OSUIND-IND|yes",
+          "ticker": "KXNCAAFGAME-26OCT17OSUIND-IND",
+          "side": "yes",
+          "eventId": "401858488",
+          "event": "Ohio State Buckeyes at Indiana Hoosiers",
+          "eventTime": "2026-10-17T16:00Z",
+          "closeTime": "2026-10-19T16:00:00Z",
+          "selection": "Indiana",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.42,
+          "referenceAmericanOdds": null,
+          "marketP": 0.415,
+          "modelP": 0.5467295004218805,
+          "rawModelP": 0.5467295004218805,
+          "coverage": 0.85,
+          "confidence": 50,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 53.8,
+          "projectedMargin": 2.4,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
