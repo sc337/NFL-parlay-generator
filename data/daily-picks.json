@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-15",
-  "updated_at": "2026-10-16T05:19:47.465Z",
+  "updated_at": "2026-10-16T05:26:47.103Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T05:19:22.075790+00:00"
+      "snapshotAt": "2026-10-16T05:09:22.079673+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T05:06:45.152343+00:00"
+      "snapshotAt": "2026-10-16T05:26:45.152369+00:00"
     },
     "ncaaf": {
       "captured": 2,
@@ -55,26 +55,14 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T05:19:22.082948+00:00"
+      "snapshotAt": "2026-10-16T05:09:22.082609+00:00"
     },
     "nfl": {
-      "captured": 0,
+      "captured": 6,
       "passes": [
         {
-          "mode": "multi",
-          "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -109,20 +97,8 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -145,20 +121,8 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -169,7 +133,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T05:19:22.089182+00:00"
+      "snapshotAt": "2026-10-16T05:09:22.087300+00:00"
     },
     "nhl": {
       "captured": 2,
@@ -217,7 +181,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T05:19:22.105113+00:00"
+      "snapshotAt": "2026-10-16T05:09:22.104751+00:00"
     }
   },
   "records": [
@@ -27955,10 +27919,10 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:09:49.515Z",
-      "snapshotAt": "2026-10-16T01:09:22.082753+00:00",
+      "capturedAt": "2026-10-16T01:06:46.929Z",
+      "snapshotAt": "2026-10-16T00:55:08.189614+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
-      "priceEstimate": 209,
+      "priceEstimate": 204,
       "priceNote": "Combined reference asks; excludes fees.",
       "risk": {
         "modelP": 0.42366418941381784,
@@ -27986,8 +27950,8 @@
           "market": "player_reception_yds",
           "line": 24.5,
           "player": "Cade Otton",
-          "ask": 0.61,
-          "referenceAmericanOdds": -156,
+          "ask": 0.62,
+          "referenceAmericanOdds": -163,
           "marketP": 0.585,
           "modelP": 0.6905449785721266,
           "rawModelP": 0.6905449785721266,
@@ -28038,6 +28002,288 @@
       "result": null
     },
     {
+      "id": "2026-10-15|nfl|multi|Balanced|3||learning-20261015|10ee3ce690377502",
+      "day": "2026-10-15",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T01:06:46.929Z",
+      "snapshotAt": "2026-10-16T00:55:08.189614+00:00",
+      "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
+      "priceEstimate": 474,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.2637915631277342,
+        "conservativeP": 0.19148542320999418,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6135214976001258,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
+          "side": "yes",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cade Otton Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Cade Otton",
+          "ask": 0.62,
+          "referenceAmericanOdds": -163,
+          "marketP": 0.585,
+          "modelP": 0.6905449785721266,
+          "rawModelP": 0.6905449785721266,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 35.32148148148148,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40|yes",
+          "ticker": "KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Juwan Johnson Over 39.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 39.5,
+          "player": "Juwan Johnson",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.52,
+          "modelP": 0.622643050130615,
+          "rawModelP": 0.622643050130615,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 49.91,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90|no",
+          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Jonathan Taylor Under 89.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 89.5,
+          "player": "Jonathan Taylor",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.6135214976001258,
+          "rawModelP": 0.6135214976001258,
+          "coverage": 0.55,
+          "confidence": 59,
+          "forecastType": "experimental",
+          "projectedLine": 75.34415841584158,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-15|nfl|multi|Balanced|4||learning-20261015|57d0a51de0a99784",
+      "day": "2026-10-15",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T01:06:46.929Z",
+      "snapshotAt": "2026-10-16T00:55:08.189614+00:00",
+      "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
+      "priceEstimate": 1026,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.1587729435134967,
+        "conservativeP": 0.10259945576269773,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6018878755292678,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
+          "side": "yes",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cade Otton Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Cade Otton",
+          "ask": 0.62,
+          "referenceAmericanOdds": -163,
+          "marketP": 0.585,
+          "modelP": 0.6905449785721266,
+          "rawModelP": 0.6905449785721266,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 35.32148148148148,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40|yes",
+          "ticker": "KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Juwan Johnson Over 39.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 39.5,
+          "player": "Juwan Johnson",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.52,
+          "modelP": 0.622643050130615,
+          "rawModelP": 0.622643050130615,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 49.91,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90|no",
+          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Jonathan Taylor Under 89.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 89.5,
+          "player": "Jonathan Taylor",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.6135214976001258,
+          "rawModelP": 0.6135214976001258,
+          "coverage": 0.55,
+          "confidence": 59,
+          "forecastType": "experimental",
+          "projectedLine": 75.34415841584158,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70|no",
+          "ticker": "KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70",
+          "side": "no",
+          "eventId": "kalshi-dallas-cowboys-green-bay-packers",
+          "event": "Dallas Cowboys @ Green Bay Packers",
+          "eventTime": "2026-10-19T00:20:00Z",
+          "closeTime": "2026-10-19T00:20:00Z",
+          "selection": "Javonte Williams Under 69.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 69.5,
+          "player": "Javonte Williams",
+          "ask": 0.51,
+          "referenceAmericanOdds": -104,
+          "marketP": 0.495,
+          "modelP": 0.6018878755292678,
+          "rawModelP": 0.6018878755292678,
+          "coverage": 0.55,
+          "confidence": 54,
+          "forecastType": "experimental",
+          "projectedLine": 56.24432432432433,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-15|nfl|multi|Balanced|3||learning-20261015|c8c374c9c128ccd1",
       "day": "2026-10-15",
       "sport": "nfl",
@@ -28051,7 +28297,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:09:49.515Z",
+      "capturedAt": "2026-10-16T01:26:46.982Z",
       "snapshotAt": "2026-10-16T01:09:22.082753+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 462,
@@ -28177,7 +28423,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:09:49.515Z",
+      "capturedAt": "2026-10-16T01:26:46.982Z",
       "snapshotAt": "2026-10-16T01:09:22.082753+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 1163,
@@ -28303,7 +28549,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:09:49.515Z",
+      "capturedAt": "2026-10-16T01:26:46.982Z",
       "snapshotAt": "2026-10-16T01:09:22.082753+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 1003,
@@ -28459,7 +28705,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:09:49.515Z",
+      "capturedAt": "2026-10-16T01:26:46.982Z",
       "snapshotAt": "2026-10-16T01:09:22.082753+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 2586,
@@ -28615,19 +28861,19 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:49:49.191Z",
-      "snapshotAt": "2026-10-16T01:49:22.081698+00:00",
+      "capturedAt": "2026-10-16T01:36:47.085Z",
+      "snapshotAt": "2026-10-16T01:19:50.300787+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
-      "priceEstimate": 391,
+      "priceEstimate": 399,
       "priceNote": "Combined reference asks; excludes fees.",
       "risk": {
-        "modelP": 0.2955723323604083,
-        "conservativeP": 0.2162027417773073,
+        "modelP": 0.29462724257415746,
+        "conservativeP": 0.21544007320333405,
         "profile": "Balanced",
         "method": "Product of leg estimates; assumes independence",
         "scenario": null,
         "bounds": {
-          "lower": 0.0017065225254757621,
+          "lower": 0,
           "upper": 0.6135214976001258,
           "method": "Dependence bounds; joint model unvalidated"
         },
@@ -28646,11 +28892,11 @@
           "market": "player_reception_yds",
           "line": 24.5,
           "player": "Cade Otton",
-          "ask": 0.62,
-          "referenceAmericanOdds": -163,
-          "marketP": 0.595,
-          "modelP": 0.6949894230165711,
-          "rawModelP": 0.6949894230165711,
+          "ask": 0.61,
+          "referenceAmericanOdds": -156,
+          "marketP": 0.59,
+          "modelP": 0.6927672007943488,
+          "rawModelP": 0.6927672007943488,
           "coverage": 0.55,
           "confidence": 55,
           "forecastType": "experimental",
@@ -28741,7 +28987,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T01:59:48.462Z",
+      "capturedAt": "2026-10-16T02:06:47.298Z",
       "snapshotAt": "2026-10-16T01:47:25.906451+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 576,
@@ -28837,7 +29083,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T02:29:49.935Z",
+      "capturedAt": "2026-10-16T02:46:47.149Z",
       "snapshotAt": "2026-10-16T02:29:22.083424+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 1955,
@@ -28993,7 +29239,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T02:39:49.494Z",
+      "capturedAt": "2026-10-16T02:56:47.200Z",
       "snapshotAt": "2026-10-16T02:39:22.082371+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 3125,
@@ -29149,7 +29395,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T02:49:49.631Z",
+      "capturedAt": "2026-10-16T03:06:53.714Z",
       "snapshotAt": "2026-10-16T02:49:22.082754+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 227,
@@ -29245,7 +29491,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T03:19:48.474Z",
+      "capturedAt": "2026-10-16T03:36:47.099Z",
       "snapshotAt": "2026-10-16T03:19:22.082911+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 2376,
@@ -29401,7 +29647,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T03:29:48.459Z",
+      "capturedAt": "2026-10-16T03:46:47.099Z",
       "snapshotAt": "2026-10-16T03:29:22.089046+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 380,
@@ -29527,7 +29773,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T03:29:48.459Z",
+      "capturedAt": "2026-10-16T03:46:47.099Z",
       "snapshotAt": "2026-10-16T03:29:22.089046+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 506,
@@ -29653,7 +29899,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T03:29:48.459Z",
+      "capturedAt": "2026-10-16T03:46:47.099Z",
       "snapshotAt": "2026-10-16T03:29:22.089046+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 1082,
@@ -29779,7 +30025,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T03:29:48.459Z",
+      "capturedAt": "2026-10-16T03:46:47.099Z",
       "snapshotAt": "2026-10-16T03:29:22.089046+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 2312,
@@ -29922,6 +30168,102 @@
       "result": null
     },
     {
+      "id": "2026-10-15|nba|multi|best|2||learning-20261015|179a8d79f87c5097",
+      "day": "2026-10-15",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T04:46:47.000Z",
+      "snapshotAt": "2026-10-16T04:46:45.151739+00:00",
+      "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
+      "priceEstimate": 288,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.36120607645902036,
+        "conservativeP": 0.27551223490811705,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.2123454750020337,
+          "upper": 0.5271834266389999,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAGAME-26OCT21SACLAC-LAC|yes",
+          "ticker": "KXNBAGAME-26OCT21SACLAC-LAC",
+          "side": "yes",
+          "eventId": "401909842",
+          "event": "Kings vs Clippers",
+          "eventTime": "2026-10-22T02:30Z",
+          "closeTime": "2026-10-24T02:30:00Z",
+          "selection": "Clippers ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.6,
+          "referenceAmericanOdds": null,
+          "marketP": 0.585,
+          "modelP": 0.685162048363034,
+          "rawModelP": 0.685162048363034,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 231.1209253855178,
+          "projectedMargin": 5.786194302990836,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAGAME-26OCT21ATLORL-ATL|yes",
+          "ticker": "KXNBAGAME-26OCT21ATLORL-ATL",
+          "side": "yes",
+          "eventId": "401909834",
+          "event": "Hawks vs Magic",
+          "eventTime": "2026-10-21T23:00Z",
+          "closeTime": "2026-10-23T23:00:00Z",
+          "selection": "Hawks ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.43,
+          "referenceAmericanOdds": null,
+          "marketP": 0.42,
+          "modelP": 0.5271834266389999,
+          "rawModelP": 0.5271834266389999,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 233.42480749208198,
+          "projectedMargin": -0.8182924176838782,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-15|nfl|multi|Balanced|2||learning-20261015|e237fd86b206864b",
       "day": "2026-10-15",
       "sport": "nfl",
@@ -29935,7 +30277,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T04:29:48.033Z",
+      "capturedAt": "2026-10-16T04:46:47.000Z",
       "snapshotAt": "2026-10-16T04:29:22.083968+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 319,
@@ -30031,7 +30373,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T04:29:48.033Z",
+      "capturedAt": "2026-10-16T04:46:47.000Z",
       "snapshotAt": "2026-10-16T04:29:22.083968+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 832,
@@ -30157,7 +30499,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T04:29:48.033Z",
+      "capturedAt": "2026-10-16T04:46:47.000Z",
       "snapshotAt": "2026-10-16T04:29:22.083968+00:00",
       "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
       "priceEstimate": 2229,
@@ -30289,102 +30631,6 @@
           "projectedLine": 259.25,
           "projectedTotal": null,
           "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-15|nba|multi|best|2||learning-20261015|179a8d79f87c5097",
-      "day": "2026-10-15",
-      "sport": "nba",
-      "mode": "multi",
-      "profile": "best",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T04:59:47.749Z",
-      "snapshotAt": "2026-10-16T04:46:45.151739+00:00",
-      "sourceVersion": "6815ec170d0ba980ed237017812180580c0b72ec",
-      "priceEstimate": 288,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.36120607645902036,
-        "conservativeP": 0.27551223490811705,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.2123454750020337,
-          "upper": 0.5271834266389999,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nba|KXNBAGAME-26OCT21SACLAC-LAC|yes",
-          "ticker": "KXNBAGAME-26OCT21SACLAC-LAC",
-          "side": "yes",
-          "eventId": "401909842",
-          "event": "Kings vs Clippers",
-          "eventTime": "2026-10-22T02:30Z",
-          "closeTime": "2026-10-24T02:30:00Z",
-          "selection": "Clippers ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "ask": 0.6,
-          "referenceAmericanOdds": null,
-          "marketP": 0.585,
-          "modelP": 0.685162048363034,
-          "rawModelP": 0.685162048363034,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 231.1209253855178,
-          "projectedMargin": 5.786194302990836,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nba|KXNBAGAME-26OCT21ATLORL-ATL|yes",
-          "ticker": "KXNBAGAME-26OCT21ATLORL-ATL",
-          "side": "yes",
-          "eventId": "401909834",
-          "event": "Hawks vs Magic",
-          "eventTime": "2026-10-21T23:00Z",
-          "closeTime": "2026-10-23T23:00:00Z",
-          "selection": "Hawks ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "ask": 0.43,
-          "referenceAmericanOdds": null,
-          "marketP": 0.42,
-          "modelP": 0.5271834266389999,
-          "rawModelP": 0.5271834266389999,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 233.42480749208198,
-          "projectedMargin": -0.8182924176838782,
           "projectedAway": null,
           "projectedHome": null,
           "isAltLine": false,
