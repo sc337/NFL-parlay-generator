@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T14:48:57.227Z",
+  "updated_at": "2026-10-16T14:53:19.876Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,7 +32,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T14:46:43.129885+00:00"
+      "snapshotAt": "2026-10-16T14:51:56.914440+00:00"
     },
     "nba": {
       "captured": 0,
@@ -80,11 +80,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T14:46:36.530048+00:00"
+      "snapshotAt": "2026-10-16T14:51:56.904600+00:00"
     },
     "nfl": {
-      "captured": 6,
+      "captured": 3,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "sgp",
           "profile": "safe",
@@ -118,6 +124,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -142,6 +154,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -158,7 +176,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T14:46:34.308793+00:00"
+      "snapshotAt": "2026-10-16T14:51:56.908206+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -170,7 +188,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T14:46:46.577770+00:00"
+      "snapshotAt": "2026-10-16T14:38:52.763257+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -200,7 +218,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T14:46:42.013041+00:00"
+      "snapshotAt": "2026-10-16T14:51:56.945029+00:00"
     }
   },
   "records": [
@@ -5206,6 +5224,102 @@
           "projectedMargin": null,
           "projectedAway": 3.1138033066647344,
           "projectedHome": 3.1360593232877587,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nfl|multi|Balanced|2||learning-20261015|789a39395c0ae61e",
+      "day": "2026-10-16",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T14:53:19.876Z",
+      "snapshotAt": "2026-10-16T14:51:56.908206+00:00",
+      "sourceVersion": "3033168a192ab925624fadf1159ad38d7dd24215",
+      "priceEstimate": 327,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.30663595080751527,
+        "conservativeP": 0.23985585363865305,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.10989049785057681,
+          "upper": 0.5184996936786597,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225|yes",
+          "ticker": "KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225",
+          "side": "yes",
+          "eventId": "kalshi-kansas-city-chiefs-los-angeles-chargers",
+          "event": "Los Angeles Chargers @ Kansas City Chiefs",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Patrick Mahomes Over 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Patrick Mahomes",
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.51,
+          "modelP": 0.5913908041719171,
+          "rawModelP": 0.5913908041719171,
+          "coverage": 0.5,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 259.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Daniel Jones Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Daniel Jones",
+          "ask": 0.44999999999999996,
+          "referenceAmericanOdds": 122,
+          "marketP": 0.43500000000000005,
+          "modelP": 0.5184996936786597,
+          "rawModelP": 0.5184996936786597,
+          "coverage": 0.55,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 213.01772727272726,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
