@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T19:09:03.882Z",
+  "updated_at": "2026-10-16T19:09:13.727Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,28 +32,22 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T19:08:35.763695+00:00"
+      "snapshotAt": "2026-10-16T18:51:11.770579+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T18:59:09.519740+00:00"
+      "snapshotAt": "2026-10-16T19:09:09.519524+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T19:08:35.764579+00:00"
+      "snapshotAt": "2026-10-16T18:50:55.672330+00:00"
     },
     "nfl": {
-      "captured": 4,
+      "captured": 7,
       "passes": [
         {
-          "mode": "multi",
-          "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "safe",
           "requestedLegs": 2,
@@ -75,12 +69,6 @@
           "mode": "sgp",
           "profile": "long",
           "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "safe",
-          "requestedLegs": 3,
           "reason": "No qualifying build"
         },
         {
@@ -110,12 +98,6 @@
         {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "balanced",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -132,12 +114,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T19:08:35.771169+00:00"
+      "snapshotAt": "2026-10-16T18:50:52.414890+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T18:59:21.093554+00:00"
+      "snapshotAt": "2026-10-16T18:51:18.274217+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -167,7 +149,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T19:08:35.786865+00:00"
+      "snapshotAt": "2026-10-16T18:51:07.679909+00:00"
     }
   },
   "records": [
@@ -14338,229 +14320,7 @@
       "result": null
     },
     {
-      "id": "2026-10-16|nfl|multi|Balanced|2||learning-20261015|d02cca65c0c3bef0",
-      "day": "2026-10-16",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Balanced",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T19:09:03.882Z",
-      "snapshotAt": "2026-10-16T19:08:35.771169+00:00",
-      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
-      "priceEstimate": 257,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.3657692346990972,
-        "conservativeP": 0.29168310483193133,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.21000635243290988,
-          "upper": 0.5888908041719172,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50|yes",
-          "ticker": "KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50",
-          "side": "yes",
-          "eventId": "kalshi-new-orleans-saints-new-york-giants",
-          "event": "New Orleans Saints @ New York Giants",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Cam Skattebo Over 49.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 49.5,
-          "player": "Cam Skattebo",
-          "ask": 0.55,
-          "referenceAmericanOdds": -122,
-          "marketP": 0.545,
-          "modelP": 0.6211155482609927,
-          "rawModelP": 0.6211155482609927,
-          "coverage": 0.55,
-          "confidence": 60,
-          "forecastType": "experimental",
-          "projectedLine": 57.7837037037037,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225|yes",
-          "ticker": "KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225",
-          "side": "yes",
-          "eventId": "kalshi-kansas-city-chiefs-los-angeles-chargers",
-          "event": "Los Angeles Chargers @ Kansas City Chiefs",
-          "eventTime": "2026-10-18T20:25:00Z",
-          "closeTime": "2026-10-18T20:25:00Z",
-          "selection": "Patrick Mahomes Over 224.5 passing yards",
-          "market": "player_pass_yds",
-          "line": 224.5,
-          "player": "Patrick Mahomes",
-          "ask": 0.51,
-          "referenceAmericanOdds": -104,
-          "marketP": 0.505,
-          "modelP": 0.5888908041719172,
-          "rawModelP": 0.5888908041719172,
-          "coverage": 0.5,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 259.25,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-16|nfl|multi|Balanced|3||learning-20261015|b276ab4de5216698",
-      "day": "2026-10-16",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Balanced",
-      "requestedLegs": 3,
-      "actualLegs": 3,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T19:09:03.882Z",
-      "snapshotAt": "2026-10-16T19:08:35.771169+00:00",
-      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
-      "priceEstimate": 613,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.23212765644324787,
-        "conservativeP": 0.16630697746923598,
-        "profile": "Balanced",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0,
-          "upper": 0.5888908041719172,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50|yes",
-          "ticker": "KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50",
-          "side": "yes",
-          "eventId": "kalshi-new-orleans-saints-new-york-giants",
-          "event": "New Orleans Saints @ New York Giants",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Cam Skattebo Over 49.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 49.5,
-          "player": "Cam Skattebo",
-          "ask": 0.55,
-          "referenceAmericanOdds": -122,
-          "marketP": 0.545,
-          "modelP": 0.6211155482609927,
-          "rawModelP": 0.6211155482609927,
-          "coverage": 0.55,
-          "confidence": 60,
-          "forecastType": "experimental",
-          "projectedLine": 57.7837037037037,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18NYJNE-NERSTEVENSON38-60|no",
-          "ticker": "KXNFLRSHYDS-26OCT18NYJNE-NERSTEVENSON38-60",
-          "side": "no",
-          "eventId": "kalshi-new-england-patriots-new-york-jets",
-          "event": "New York Jets @ New England Patriots",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Rhamondre Stevenson Under 59.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 59.5,
-          "player": "Rhamondre Stevenson",
-          "ask": 0.5,
-          "referenceAmericanOdds": -100,
-          "marketP": 0.49,
-          "modelP": 0.6346287069064445,
-          "rawModelP": 0.6346287069064445,
-          "coverage": 0.55,
-          "confidence": 59,
-          "forecastType": "experimental",
-          "projectedLine": 47.94877192982456,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225|yes",
-          "ticker": "KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225",
-          "side": "yes",
-          "eventId": "kalshi-kansas-city-chiefs-los-angeles-chargers",
-          "event": "Los Angeles Chargers @ Kansas City Chiefs",
-          "eventTime": "2026-10-18T20:25:00Z",
-          "closeTime": "2026-10-18T20:25:00Z",
-          "selection": "Patrick Mahomes Over 224.5 passing yards",
-          "market": "player_pass_yds",
-          "line": 224.5,
-          "player": "Patrick Mahomes",
-          "ask": 0.51,
-          "referenceAmericanOdds": -104,
-          "marketP": 0.505,
-          "modelP": 0.5888908041719172,
-          "rawModelP": 0.5888908041719172,
-          "coverage": 0.5,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 259.25,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-16|nfl|multi|Lotto|4||learning-20261015|9d821b7d5e3c20ee",
+      "id": "2026-10-16|nfl|multi|Lotto|4||learning-20261015|de1b24d57c8cf373",
       "day": "2026-10-16",
       "sport": "nfl",
       "mode": "multi",
@@ -14573,25 +14333,55 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T19:09:03.882Z",
-      "snapshotAt": "2026-10-16T19:08:35.771169+00:00",
+      "capturedAt": "2026-10-16T19:09:13.727Z",
+      "snapshotAt": "2026-10-16T18:50:52.414890+00:00",
       "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
-      "priceEstimate": 2678,
+      "priceEstimate": 3196,
       "priceNote": "Combined reference asks; excludes fees.",
       "risk": {
-        "modelP": 0.08762818268842827,
-        "conservativeP": 0.05175925733677202,
+        "modelP": 0.08250120423913578,
+        "conservativeP": 0.04768920730732324,
         "profile": "Lotto",
         "method": "Product of leg estimates; assumes independence",
         "scenario": null,
         "bounds": {
           "lower": 0,
-          "upper": 0.5069501132643592,
+          "upper": 0.4902558159528359,
           "method": "Dependence bounds; joint model unvalidated"
         },
         "version": "learning-20261015"
       },
       "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18HOUJAC-JACBTUTEN33-15|yes",
+          "ticker": "KXNFLRECYDS-26OCT18HOUJAC-JACBTUTEN33-15",
+          "side": "yes",
+          "eventId": "kalshi-houston-texans-jacksonville-jaguars",
+          "event": "Houston Texans @ Jacksonville Jaguars",
+          "eventTime": "2026-10-18T13:30:00Z",
+          "closeTime": "2026-10-18T13:30:00Z",
+          "selection": "Bhayshul Tuten Over 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Bhayshul Tuten",
+          "ask": 0.37,
+          "referenceAmericanOdds": 170,
+          "marketP": 0.36,
+          "modelP": 0.4902558159528359,
+          "rawModelP": 0.4902558159528359,
+          "coverage": 0.55,
+          "confidence": 54,
+          "forecastType": "experimental",
+          "projectedLine": 17.16,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
         {
           "id": "nfl|KXNFLRSHYDS-26OCT18ARILAR-ARIJBRISSETT7-10|yes",
           "ticker": "KXNFLRSHYDS-26OCT18ARILAR-ARIJBRISSETT7-10",
@@ -14604,11 +14394,11 @@
           "market": "player_rush_yds",
           "line": 9.5,
           "player": "Jacoby Brissett",
-          "ask": 0.4,
-          "referenceAmericanOdds": 150,
-          "marketP": 0.385,
-          "modelP": 0.5208390861438501,
-          "rawModelP": 0.5208390861438501,
+          "ask": 0.41,
+          "referenceAmericanOdds": 144,
+          "marketP": 0.39,
+          "modelP": 0.5230613083660725,
+          "rawModelP": 0.5230613083660725,
           "coverage": 0.55,
           "confidence": 50,
           "forecastType": "experimental",
@@ -14673,36 +14463,6 @@
           "confidence": 59,
           "forecastType": "experimental",
           "projectedLine": 47.94877192982456,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225|no",
-          "ticker": "KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225",
-          "side": "no",
-          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
-          "event": "Tennessee Titans @ Indianapolis Colts",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Daniel Jones Under 224.5 passing yards",
-          "market": "player_pass_yds",
-          "line": 224.5,
-          "player": "Daniel Jones",
-          "ask": 0.44999999999999996,
-          "referenceAmericanOdds": 122,
-          "marketP": 0.44499999999999995,
-          "modelP": 0.522944138123104,
-          "rawModelP": 0.522944138123104,
-          "coverage": 0.55,
-          "confidence": 58,
-          "forecastType": "experimental",
-          "projectedLine": 213.01772727272726,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
