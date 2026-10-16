@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T18:49:02.664Z",
+  "updated_at": "2026-10-16T18:49:14.077Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T18:48:35.763623+00:00"
+      "snapshotAt": "2026-10-16T18:38:35.762191+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T18:29:09.521166+00:00"
+      "snapshotAt": "2026-10-16T18:49:09.519616+00:00"
     },
     "ncaaf": {
       "captured": 3,
@@ -49,7 +49,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T18:48:35.767122+00:00"
+      "snapshotAt": "2026-10-16T18:38:35.764666+00:00"
     },
     "nfl": {
       "captured": 3,
@@ -145,12 +145,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T18:48:35.770195+00:00"
+      "snapshotAt": "2026-10-16T18:38:35.772264+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T18:29:21.254088+00:00"
+      "snapshotAt": "2026-10-16T18:39:22.704459+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -180,7 +180,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T18:48:35.789576+00:00"
+      "snapshotAt": "2026-10-16T18:38:35.789348+00:00"
     }
   },
   "records": [
@@ -14039,6 +14039,162 @@
       "result": null
     },
     {
+      "id": "2026-10-16|nhl|multi|balanced|4||learning-20261015|24b3cc6c10a6c275",
+      "day": "2026-10-16",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T18:39:13.675Z",
+      "snapshotAt": "2026-10-16T18:26:54.645326+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": 564,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.26424623920410567,
+        "conservativeP": 0.16348551134286704,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.54602555730198,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLAST-26OCT16BOSANA-ANAAKILLORN17-1|no",
+          "ticker": "KXNHLAST-26OCT16BOSANA-ANAAKILLORN17-1",
+          "side": "no",
+          "eventId": "401892518",
+          "event": "Bruins vs Ducks",
+          "eventTime": "2026-10-17T02:00Z",
+          "closeTime": "2026-10-19T02:00:00Z",
+          "selection": "Alex Killorn Under 0.5 Assists",
+          "market": "assists",
+          "line": 0.5,
+          "player": "Alex Killorn",
+          "ask": 0.74,
+          "referenceAmericanOdds": null,
+          "marketP": 0.73,
+          "modelP": 0.8539245012028852,
+          "rawModelP": 0.8539245012028852,
+          "coverage": 0.5461538461538462,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.16107096611019323,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLTOTAL-26OCT17EDMUTA-6|yes",
+          "ticker": "KXNHLTOTAL-26OCT17EDMUTA-6",
+          "side": "yes",
+          "eventId": "401892531",
+          "event": "Oilers vs Mammoth",
+          "eventTime": "2026-10-18T02:00Z",
+          "closeTime": "2026-10-20T02:00:00Z",
+          "selection": "Over 5.5 goals",
+          "market": "total",
+          "line": 5.5,
+          "player": null,
+          "ask": 0.62,
+          "referenceAmericanOdds": null,
+          "marketP": 0.615,
+          "modelP": 0.6967364679273038,
+          "rawModelP": 0.6967364679273038,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 7.133001721920808,
+          "projectedTotal": 7.133001721920808,
+          "projectedMargin": null,
+          "projectedAway": 3.408627353678928,
+          "projectedHome": 3.7243743682418793,
+          "isAltLine": true,
+          "altReferenceLine": 6.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NJWSH-NJ2|no",
+          "ticker": "KXNHLSPREAD-26OCT17NJWSH-NJ2",
+          "side": "no",
+          "eventId": "401892519",
+          "event": "Devils vs Capitals",
+          "eventTime": "2026-10-17T17:00Z",
+          "closeTime": "2026-10-19T17:00:00Z",
+          "selection": "Capitals +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.73,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.8134068529255319,
+          "rawModelP": 0.8134068529255319,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.247251684392624,
+          "projectedMargin": null,
+          "projectedAway": 2.7987173829312892,
+          "projectedHome": 3.4485343014613346,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLPTS-26OCT16PITCOL-COLJSCHWARTZ71-1|yes",
+          "ticker": "KXNHLPTS-26OCT16PITCOL-COLJSCHWARTZ71-1",
+          "side": "yes",
+          "eventId": "401892517",
+          "event": "Penguins vs Avalanche",
+          "eventTime": "2026-10-17T01:00Z",
+          "closeTime": "2026-10-19T01:00:00Z",
+          "selection": "Jaden Schwartz Over 0.5 Points",
+          "market": "points",
+          "line": 0.5,
+          "player": "Jaden Schwartz",
+          "ask": 0.45,
+          "referenceAmericanOdds": null,
+          "marketP": 0.435,
+          "modelP": 0.54602555730198,
+          "rawModelP": 0.54602555730198,
+          "coverage": 0.5518518518518518,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.8730642815997813,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-16|nfl|multi|Lotto|4||learning-20261015|f1d90987f3bcd307",
       "day": "2026-10-16",
       "sport": "nfl",
@@ -14052,7 +14208,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-16T18:39:05.177Z",
+      "capturedAt": "2026-10-16T18:49:14.077Z",
       "snapshotAt": "2026-10-16T18:38:35.772264+00:00",
       "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
       "priceEstimate": 2321,
@@ -14189,162 +14345,6 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-16|nhl|multi|balanced|4||learning-20261015|24b3cc6c10a6c275",
-      "day": "2026-10-16",
-      "sport": "nhl",
-      "mode": "multi",
-      "profile": "balanced",
-      "requestedLegs": 4,
-      "actualLegs": 4,
-      "filters": {
-        "lines": "both",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T18:39:05.177Z",
-      "snapshotAt": "2026-10-16T18:29:21.254088+00:00",
-      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
-      "priceEstimate": 564,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.26424623920410567,
-        "conservativeP": 0.16348551134286704,
-        "profile": "Balanced",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0,
-          "upper": 0.54602555730198,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nhl|KXNHLAST-26OCT16BOSANA-ANAAKILLORN17-1|no",
-          "ticker": "KXNHLAST-26OCT16BOSANA-ANAAKILLORN17-1",
-          "side": "no",
-          "eventId": "401892518",
-          "event": "Bruins vs Ducks",
-          "eventTime": "2026-10-17T02:00Z",
-          "closeTime": "2026-10-19T02:00:00Z",
-          "selection": "Alex Killorn Under 0.5 Assists",
-          "market": "assists",
-          "line": 0.5,
-          "player": "Alex Killorn",
-          "ask": 0.74,
-          "referenceAmericanOdds": null,
-          "marketP": 0.73,
-          "modelP": 0.8539245012028852,
-          "rawModelP": 0.8539245012028852,
-          "coverage": 0.5461538461538462,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": 0.16107096611019323,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": 0.5,
-          "altDistance": 0,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLTOTAL-26OCT17EDMUTA-6|yes",
-          "ticker": "KXNHLTOTAL-26OCT17EDMUTA-6",
-          "side": "yes",
-          "eventId": "401892531",
-          "event": "Oilers vs Mammoth",
-          "eventTime": "2026-10-18T02:00Z",
-          "closeTime": "2026-10-20T02:00:00Z",
-          "selection": "Over 5.5 goals",
-          "market": "total",
-          "line": 5.5,
-          "player": null,
-          "ask": 0.62,
-          "referenceAmericanOdds": null,
-          "marketP": 0.615,
-          "modelP": 0.6967364679273038,
-          "rawModelP": 0.6967364679273038,
-          "coverage": 0.5583333333333333,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": 7.133001721920808,
-          "projectedTotal": 7.133001721920808,
-          "projectedMargin": null,
-          "projectedAway": 3.408627353678928,
-          "projectedHome": 3.7243743682418793,
-          "isAltLine": true,
-          "altReferenceLine": 6.5,
-          "altDistance": 1,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLSPREAD-26OCT17NJWSH-NJ2|no",
-          "ticker": "KXNHLSPREAD-26OCT17NJWSH-NJ2",
-          "side": "no",
-          "eventId": "401892519",
-          "event": "Devils vs Capitals",
-          "eventTime": "2026-10-17T17:00Z",
-          "closeTime": "2026-10-19T17:00:00Z",
-          "selection": "Capitals +1.5 Puck line",
-          "market": "spread",
-          "line": 1.5,
-          "player": null,
-          "ask": 0.73,
-          "referenceAmericanOdds": null,
-          "marketP": 0.725,
-          "modelP": 0.8134068529255319,
-          "rawModelP": 0.8134068529255319,
-          "coverage": 0.5583333333333333,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 6.247251684392624,
-          "projectedMargin": null,
-          "projectedAway": 2.7987173829312892,
-          "projectedHome": 3.4485343014613346,
-          "isAltLine": false,
-          "altReferenceLine": 1.5,
-          "altDistance": 0,
-          "result": null
-        },
-        {
-          "id": "nhl|KXNHLPTS-26OCT16PITCOL-COLJSCHWARTZ71-1|yes",
-          "ticker": "KXNHLPTS-26OCT16PITCOL-COLJSCHWARTZ71-1",
-          "side": "yes",
-          "eventId": "401892517",
-          "event": "Penguins vs Avalanche",
-          "eventTime": "2026-10-17T01:00Z",
-          "closeTime": "2026-10-19T01:00:00Z",
-          "selection": "Jaden Schwartz Over 0.5 Points",
-          "market": "points",
-          "line": 0.5,
-          "player": "Jaden Schwartz",
-          "ask": 0.45,
-          "referenceAmericanOdds": null,
-          "marketP": 0.435,
-          "modelP": 0.54602555730198,
-          "rawModelP": 0.54602555730198,
-          "coverage": 0.5518518518518518,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": 0.8730642815997813,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": 0.5,
-          "altDistance": 0,
           "result": null
         }
       ],
