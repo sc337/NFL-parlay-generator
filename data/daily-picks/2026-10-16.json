@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T21:00:52.038Z",
+  "updated_at": "2026-10-16T21:09:02.678Z",
   "sports": {
     "mlb": {
-      "captured": 0,
+      "captured": 4,
       "passes": [
         {
           "mode": "multi",
@@ -32,24 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:58:35.764818+00:00"
+      "snapshotAt": "2026-10-16T21:08:35.762716+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T20:49:09.521469+00:00"
+      "snapshotAt": "2026-10-16T20:59:09.521847+00:00"
     },
     "ncaaf": {
-      "captured": 3,
-      "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        }
-      ],
-      "snapshotAt": "2026-10-16T20:58:35.766840+00:00"
+      "captured": 4,
+      "passes": [],
+      "snapshotAt": "2026-10-16T21:08:35.772498+00:00"
     },
     "nfl": {
       "captured": 4,
@@ -139,12 +132,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:58:35.771753+00:00"
+      "snapshotAt": "2026-10-16T21:08:35.775036+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T20:49:20.854045+00:00"
+      "snapshotAt": "2026-10-16T20:59:21.204982+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -174,7 +167,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:58:35.789131+00:00"
+      "snapshotAt": "2026-10-16T21:08:35.789849+00:00"
     }
   },
   "records": [
@@ -16276,6 +16269,72 @@
           "confidence": 55,
           "forecastType": "experimental",
           "projectedLine": 259.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|mlb|straight|featured|1||learning-20261015|45de7dbf3ad81e6a",
+      "day": "2026-10-16",
+      "sport": "mlb",
+      "mode": "straight",
+      "profile": "featured",
+      "requestedLegs": 1,
+      "actualLegs": 1,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T21:09:02.678Z",
+      "snapshotAt": "2026-10-16T21:08:35.762716+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": -178,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.7258042587383208,
+        "conservativeP": 0.6488042587383207,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.7258042587383208,
+          "upper": 0.7258042587383208,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "mlb|KXMLBHIT-26OCT161800TBCLE-CLEJRAMREZ11-1|yes",
+          "ticker": "KXMLBHIT-26OCT161800TBCLE-CLEJRAMREZ11-1",
+          "side": "yes",
+          "eventId": "849817",
+          "event": "Tampa Bay Rays at Cleveland Guardians",
+          "eventTime": "2026-10-17T00:00:00Z",
+          "closeTime": "2026-10-19T22:00:00Z",
+          "selection": "José Ramírez: 1+ hits?",
+          "market": "hits",
+          "line": null,
+          "player": null,
+          "ask": 0.64,
+          "referenceAmericanOdds": null,
+          "marketP": 0.64,
+          "modelP": 0.7258042587383208,
+          "rawModelP": 0.7258042587383208,
+          "coverage": 0.5,
+          "confidence": 79,
+          "forecastType": "experimental",
+          "projectedLine": 1.2939130434782609,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
