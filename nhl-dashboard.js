@@ -72,13 +72,13 @@ function render(){if(window.__ACTIVE_SPORT&&window.__ACTIVE_SPORT!=='nhl')return
  window.EXTRA_PICKS?.show('nhl',{rows:ranked.map(m=>({market:m,forecast:model(m)||{}})),selected:[...(selected.length===legs&&G.independent(selected)?selected:[]),today].filter(Boolean),media});
  window.PARLAY_GENERATOR?.syncLabel?.();
 }
-async function load(){const uiRequest=window.DASHBOARD_UI?.begin('nhl');
+async function load(){const starterRequest=window.STARTER_STATUS?.load?.();const uiRequest=window.DASHBOARD_UI?.begin('nhl');
  const token=window.__SPORT_TOKEN,request=++loadSequence;
  window.DASHBOARD_UI?.placeholder('nhl');
  try{
   const contextRequest=fetch('data/nhl-context.json?ts='+Date.now(),{cache:'no-store'}).then(res=>res.ok?res.json():null).catch(()=>null);
   const res=await fetch('data/kalshi-nhl.json?ts='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('NHL feed unavailable');
-  const data=await res.json(),ctx=await contextRequest;
+  const data=await res.json(),ctx=await contextRequest;if(starterRequest)await starterRequest;
   if(data.status==='initializing')throw Error('NHL feed initializing');if(!G.fresh(data,2))throw Error('NHL feed stale');if(!Array.isArray(data.markets))throw Error('Invalid NHL feed');
   if(window.__ACTIVE_SPORT!=='nhl'||window.__SPORT_TOKEN!==token||request!==loadSequence)return;
   markets=window.NHL_ALT_LINES?.classify?.(data.markets)||data.markets;context=ctx;modelCache.clear();snapshotAt=data.updated_at;lastLoaded=Date.now();window.FEED_FRESHNESS?.set?.('nhl',snapshotAt);render();window.COMPACT_UI?.refresh?.();

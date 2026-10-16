@@ -7,6 +7,8 @@ on:
     paths:
       - '.github/workflows/refresh-prices.yml'
       - 'scripts/refresh_price_worker.py'
+      - 'scripts/update_public_starters.py'
+      - 'starter-status.js'
   schedule:
     - cron: '19 * * * *'
 
@@ -85,3 +87,21 @@ jobs:
         env:
           TZ: America/Los_Angeles
         run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nhl
+
+  starter-checks:
+    concurrency:
+      group: rolling-public-starter-checks
+      cancel-in-progress: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check public-page identity and confirmation parsing
+        run: python -m unittest discover -s tests -p 'test_public_starters.py'
+      - name: Read public starter pages every five minutes
+        run: python -u scripts/update_public_starters.py --minutes 330 --interval 300 --publish

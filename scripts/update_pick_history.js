@@ -16,9 +16,9 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const fetch=async url=>{const name=String(url).split('?')[0];if(!/^data\/[a-z0-9-]+\.json$/.test(name))throw Error('Unexpected fetch '+url);const data=JSON.parse(fs.readFileSync(path.join(dataDir,name.slice(5)),'utf8'));return{ok:true,json:async()=>data,text:async()=>JSON.stringify(data)}};
   if(capture)window.RECOMMENDATION_CAPTURE=capture;
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
-  const ctx=vm.createContext({Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
+  const ctx=vm.createContext({URL,Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('starter-status.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 

@@ -186,3 +186,33 @@ Net paper returns include the entered fees. Unknown fees or revised payouts afte
 partially voided parlays remain unavailable. Straights, multi-game parlays and SGPs
 have separate metrics; overlapping builds are not independent trials. No claimed
 edge or future profit follows from a small paper sample.
+
+### Public starter checks (October 16, 2026)
+
+The dashboard reads today's public RotoWire NBA lineup cards and Daily Faceoff
+NHL goalie/line-combination pages without an additional API subscription. The
+isolated `starter-checks` worker refreshes every five minutes while running;
+GitHub scheduling/publication can delay delivery. It follows robots.txt, uses no
+credentials and never calls those sites' private APIs or subscriber pages.
+
+Evidence is matched to the scheduled game, team and current roster. NBA cards
+need exactly five unique roster matches and an explicit Confirmed Lineup status.
+NHL goalies need an explicit confirmation in that game's reporting window.
+Practice/last-game lines remain reported, not confirmed. Fetch failures remove
+that source's confirmations; records expire after 30 minutes without a new
+check. Public source links and last-check times appear in Settings → Starter checks.
+
+Open a sport to load its games, then use Settings → Starter checks for a sourced
+manual check. These are labeled user-confirmed, saved only on that device, expire
+within two hours or at game time and can be cleared. Conflicting confirmations
+block affected selections. Manual checks cannot bypass injuries, thin history,
+unstable minutes or other eligibility requirements. Changing evidence refreshes
+the active sport's recommendations and invalidates displayed offer checks.
+
+NCAAF QB confirmation remains manual from a game-specific school/coach
+announcement; the panel links conference availability reports for reference.
+Depth-chart rank or availability alone never confirms the QB. There is no
+universal automated school-announcement parser. NHL goalie confirmation does not
+yet add individual-goalie performance to the team-average score model, and goalie
+saves remain unsupported. Starting-status evidence does not validate a model or
+establish a profitable edge. No paid feed has been connected.
