@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-15",
-  "updated_at": "2026-10-16T00:56:59.590Z",
+  "updated_at": "2026-10-16T00:58:33.375Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,7 +32,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T00:55:41.203352+00:00"
+      "snapshotAt": "2026-10-16T00:58:05.876486+00:00"
     },
     "nba": {
       "captured": 0,
@@ -80,10 +80,10 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T00:55:24.719149+00:00"
+      "snapshotAt": "2026-10-16T00:58:05.879994+00:00"
     },
     "nfl": {
-      "captured": 5,
+      "captured": 2,
       "passes": [
         {
           "mode": "multi",
@@ -94,6 +94,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -124,6 +130,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -148,6 +160,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -164,7 +182,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T00:55:21.522358+00:00"
+      "snapshotAt": "2026-10-16T00:58:05.882478+00:00"
     },
     "nhl": {
       "captured": 0,
@@ -194,7 +212,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T00:55:50.446261+00:00"
+      "snapshotAt": "2026-10-16T00:46:43.238643+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -224,7 +242,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T00:55:37.853986+00:00"
+      "snapshotAt": "2026-10-16T00:58:05.899344+00:00"
     }
   },
   "records": [
@@ -28566,384 +28584,6 @@
           "confidence": 51,
           "forecastType": "experimental",
           "projectedLine": 8.34,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-15|nfl|multi|Balanced|2||learning-20261015|9d1f780ec4b6198a",
-      "day": "2026-10-15",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Balanced",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T00:56:59.590Z",
-      "snapshotAt": "2026-10-16T00:55:21.522358+00:00",
-      "sourceVersion": "139cb3c176e04262be0fb69a168afc8dcb9a1ab1",
-      "priceEstimate": 204,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.42366418941381784,
-        "conservativeP": 0.34336502932165275,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.30406647617225246,
-          "upper": 0.6135214976001258,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
-          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
-          "side": "yes",
-          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
-          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Cade Otton Over 24.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 24.5,
-          "player": "Cade Otton",
-          "ask": 0.62,
-          "referenceAmericanOdds": -163,
-          "marketP": 0.585,
-          "modelP": 0.6905449785721266,
-          "rawModelP": 0.6905449785721266,
-          "coverage": 0.55,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 35.32148148148148,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90|no",
-          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90",
-          "side": "no",
-          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
-          "event": "Tennessee Titans @ Indianapolis Colts",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Jonathan Taylor Under 89.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 89.5,
-          "player": "Jonathan Taylor",
-          "ask": 0.53,
-          "referenceAmericanOdds": -113,
-          "marketP": 0.525,
-          "modelP": 0.6135214976001258,
-          "rawModelP": 0.6135214976001258,
-          "coverage": 0.55,
-          "confidence": 59,
-          "forecastType": "experimental",
-          "projectedLine": 75.34415841584158,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-15|nfl|multi|Balanced|3||learning-20261015|10ee3ce690377502",
-      "day": "2026-10-15",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Balanced",
-      "requestedLegs": 3,
-      "actualLegs": 3,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T00:56:59.590Z",
-      "snapshotAt": "2026-10-16T00:55:21.522358+00:00",
-      "sourceVersion": "139cb3c176e04262be0fb69a168afc8dcb9a1ab1",
-      "priceEstimate": 474,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.2637915631277342,
-        "conservativeP": 0.19148542320999418,
-        "profile": "Balanced",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0,
-          "upper": 0.6135214976001258,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
-          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
-          "side": "yes",
-          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
-          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Cade Otton Over 24.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 24.5,
-          "player": "Cade Otton",
-          "ask": 0.62,
-          "referenceAmericanOdds": -163,
-          "marketP": 0.585,
-          "modelP": 0.6905449785721266,
-          "rawModelP": 0.6905449785721266,
-          "coverage": 0.55,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 35.32148148148148,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40|yes",
-          "ticker": "KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40",
-          "side": "yes",
-          "eventId": "kalshi-new-orleans-saints-new-york-giants",
-          "event": "New Orleans Saints @ New York Giants",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Juwan Johnson Over 39.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 39.5,
-          "player": "Juwan Johnson",
-          "ask": 0.53,
-          "referenceAmericanOdds": -113,
-          "marketP": 0.52,
-          "modelP": 0.622643050130615,
-          "rawModelP": 0.622643050130615,
-          "coverage": 0.55,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 49.91,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90|no",
-          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90",
-          "side": "no",
-          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
-          "event": "Tennessee Titans @ Indianapolis Colts",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Jonathan Taylor Under 89.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 89.5,
-          "player": "Jonathan Taylor",
-          "ask": 0.53,
-          "referenceAmericanOdds": -113,
-          "marketP": 0.525,
-          "modelP": 0.6135214976001258,
-          "rawModelP": 0.6135214976001258,
-          "coverage": 0.55,
-          "confidence": 59,
-          "forecastType": "experimental",
-          "projectedLine": 75.34415841584158,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-15|nfl|multi|Balanced|4||learning-20261015|57d0a51de0a99784",
-      "day": "2026-10-15",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Balanced",
-      "requestedLegs": 4,
-      "actualLegs": 4,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-16T00:56:59.590Z",
-      "snapshotAt": "2026-10-16T00:55:21.522358+00:00",
-      "sourceVersion": "139cb3c176e04262be0fb69a168afc8dcb9a1ab1",
-      "priceEstimate": 1026,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.1587729435134967,
-        "conservativeP": 0.10259945576269773,
-        "profile": "Balanced",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0,
-          "upper": 0.6018878755292678,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25|yes",
-          "ticker": "KXNFLRECYDS-26OCT18PITTB-TBCOTTON88-25",
-          "side": "yes",
-          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
-          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Cade Otton Over 24.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 24.5,
-          "player": "Cade Otton",
-          "ask": 0.62,
-          "referenceAmericanOdds": -163,
-          "marketP": 0.585,
-          "modelP": 0.6905449785721266,
-          "rawModelP": 0.6905449785721266,
-          "coverage": 0.55,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 35.32148148148148,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40|yes",
-          "ticker": "KXNFLRECYDS-26OCT18NONYG-NOJJOHNSON83-40",
-          "side": "yes",
-          "eventId": "kalshi-new-orleans-saints-new-york-giants",
-          "event": "New Orleans Saints @ New York Giants",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Juwan Johnson Over 39.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 39.5,
-          "player": "Juwan Johnson",
-          "ask": 0.53,
-          "referenceAmericanOdds": -113,
-          "marketP": 0.52,
-          "modelP": 0.622643050130615,
-          "rawModelP": 0.622643050130615,
-          "coverage": 0.55,
-          "confidence": 55,
-          "forecastType": "experimental",
-          "projectedLine": 49.91,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90|no",
-          "ticker": "KXNFLRSHYDS-26OCT18TENIND-INDJTAYLOR28-90",
-          "side": "no",
-          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
-          "event": "Tennessee Titans @ Indianapolis Colts",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Jonathan Taylor Under 89.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 89.5,
-          "player": "Jonathan Taylor",
-          "ask": 0.53,
-          "referenceAmericanOdds": -113,
-          "marketP": 0.525,
-          "modelP": 0.6135214976001258,
-          "rawModelP": 0.6135214976001258,
-          "coverage": 0.55,
-          "confidence": 59,
-          "forecastType": "experimental",
-          "projectedLine": 75.34415841584158,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70|no",
-          "ticker": "KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70",
-          "side": "no",
-          "eventId": "kalshi-dallas-cowboys-green-bay-packers",
-          "event": "Dallas Cowboys @ Green Bay Packers",
-          "eventTime": "2026-10-19T00:20:00Z",
-          "closeTime": "2026-10-19T00:20:00Z",
-          "selection": "Javonte Williams Under 69.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 69.5,
-          "player": "Javonte Williams",
-          "ask": 0.51,
-          "referenceAmericanOdds": -104,
-          "marketP": 0.495,
-          "modelP": 0.6018878755292678,
-          "rawModelP": 0.6018878755292678,
-          "coverage": 0.55,
-          "confidence": 54,
-          "forecastType": "experimental",
-          "projectedLine": 56.24432432432433,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
