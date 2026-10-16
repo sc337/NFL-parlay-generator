@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T18:01:21.095Z",
+  "updated_at": "2026-10-16T18:09:02.344Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T17:58:35.762473+00:00"
+      "snapshotAt": "2026-10-16T18:08:35.761805+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T17:39:09.517892+00:00"
+      "snapshotAt": "2026-10-16T17:59:09.519558+00:00"
     },
     "ncaaf": {
       "captured": 3,
@@ -49,11 +49,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T17:58:35.765266+00:00"
+      "snapshotAt": "2026-10-16T18:08:35.764759+00:00"
     },
     "nfl": {
-      "captured": 7,
+      "captured": 3,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "sgp",
           "profile": "safe",
@@ -79,6 +85,12 @@
           "reason": "No qualifying build"
         },
         {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
           "mode": "sgp",
           "profile": "safe",
           "requestedLegs": 3,
@@ -87,6 +99,12 @@
         {
           "mode": "sgp",
           "profile": "balanced",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -105,6 +123,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -121,12 +145,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T17:58:35.767876+00:00"
+      "snapshotAt": "2026-10-16T18:08:35.769741+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T17:49:21.023080+00:00"
+      "snapshotAt": "2026-10-16T17:59:21.050040+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -156,7 +180,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T17:58:35.786029+00:00"
+      "snapshotAt": "2026-10-16T18:08:35.787899+00:00"
     }
   },
   "records": [
@@ -14696,6 +14720,258 @@
           "projectedMargin": null,
           "projectedAway": 3.1812278325157632,
           "projectedHome": 3.0222736866369186,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nba|multi|best|2||learning-20261015|311eeb3d540a8894",
+      "day": "2026-10-16",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T18:09:02.344Z",
+      "snapshotAt": "2026-10-16T17:59:09.519558+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": 198,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.4412002873549984,
+        "conservativeP": 0.3467068287067463,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3290977251990457,
+          "upper": 0.6439356768360116,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAGAME-26OCT21SACLAC-LAC|yes",
+          "ticker": "KXNBAGAME-26OCT21SACLAC-LAC",
+          "side": "yes",
+          "eventId": "401909842",
+          "event": "Kings vs Clippers",
+          "eventTime": "2026-10-22T02:30Z",
+          "closeTime": "2026-10-24T02:30:00Z",
+          "selection": "Clippers ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.6,
+          "referenceAmericanOdds": null,
+          "marketP": 0.59,
+          "modelP": 0.685162048363034,
+          "rawModelP": 0.685162048363034,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 231.1209253855178,
+          "projectedMargin": 5.786194302990836,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAGAME-26OCT21CHABKN-CHA|yes",
+          "ticker": "KXNBAGAME-26OCT21CHABKN-CHA",
+          "side": "yes",
+          "eventId": "401909836",
+          "event": "Hornets vs Nets",
+          "eventTime": "2026-10-21T23:30Z",
+          "closeTime": "2026-10-23T23:30:00Z",
+          "selection": "Hornets ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "ask": 0.56,
+          "referenceAmericanOdds": null,
+          "marketP": 0.55,
+          "modelP": 0.6439356768360116,
+          "rawModelP": 0.6439356768360116,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 226.28601165234238,
+          "projectedMargin": -4.42798399402416,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nfl|multi|Lotto|4||learning-20261015|23600e94795e0349",
+      "day": "2026-10-16",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T18:09:02.344Z",
+      "snapshotAt": "2026-10-16T18:08:35.769741+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": 2986,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.06539368668442862,
+        "conservativeP": 0.036438830895565745,
+        "profile": "Lotto",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.47488421519068513,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLREC-26OCT18BUFLV-LVMMAYER87-4|yes",
+          "ticker": "KXNFLREC-26OCT18BUFLV-LVMMAYER87-4",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Michael Mayer Over 3.5 receptions",
+          "market": "player_receptions",
+          "line": 3.5,
+          "player": "Michael Mayer",
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.5069501132643592,
+          "rawModelP": 0.5069501132643592,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 4.368,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT19WASSF-SFBPURDY13-3|yes",
+          "ticker": "KXNFLPASSTDS-26OCT19WASSF-SFBPURDY13-3",
+          "side": "yes",
+          "eventId": "kalshi-san-francisco-49ers-washington-commanders",
+          "event": "Washington Commanders @ San Francisco 49ers",
+          "eventTime": "2026-10-20T00:15:00Z",
+          "closeTime": "2026-10-20T00:15:00Z",
+          "selection": "Brock Purdy Over 2.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 2.5,
+          "player": "Brock Purdy",
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.47488421519068513,
+          "rawModelP": 0.47488421519068513,
+          "coverage": 0.55,
+          "confidence": 45,
+          "forecastType": "experimental",
+          "projectedLine": 2.6402816901408452,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Daniel Jones Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Daniel Jones",
+          "ask": 0.44999999999999996,
+          "referenceAmericanOdds": 122,
+          "marketP": 0.44499999999999995,
+          "modelP": 0.522944138123104,
+          "rawModelP": 0.522944138123104,
+          "coverage": 0.55,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 213.01772727272726,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT18ARILAR-ARITMCBRIDE85-8|yes",
+          "ticker": "KXNFLREC-26OCT18ARILAR-ARITMCBRIDE85-8",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
+          "event": "Arizona Cardinals @ Los Angeles Rams",
+          "eventTime": "2026-10-18T20:05:00Z",
+          "closeTime": "2026-10-18T20:05:00Z",
+          "selection": "Trey McBride Over 7.5 receptions",
+          "market": "player_receptions",
+          "line": 7.5,
+          "player": "Trey McBride",
+          "ask": 0.45,
+          "referenceAmericanOdds": 122,
+          "marketP": 0.44,
+          "modelP": 0.5194306403650051,
+          "rawModelP": 0.5194306403650051,
+          "coverage": 0.55,
+          "confidence": 51,
+          "forecastType": "experimental",
+          "projectedLine": 8.34,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
