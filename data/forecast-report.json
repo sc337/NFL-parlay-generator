@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-16T23:52:45.802Z",
+  "updated_at": "2026-10-16T23:59:10.470Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
@@ -166,7 +166,7 @@
       "ablations": {},
       "priceMovement": {
         "source": "Kalshi near-start reference; not Caesars",
-        "count": 674,
+        "count": 676,
         "meanCLV": -0.003
       },
       "positiveEV": {
@@ -1186,7 +1186,7 @@
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
             "count": 44,
-            "meanCLV": -0.0177
+            "meanCLV": -0.018
           },
           "positiveEV": {
             "settled": 0,
@@ -1525,7 +1525,7 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 89,
+            "count": 91,
             "meanCLV": -0.0026
           },
           "positiveEV": {
@@ -1708,7 +1708,7 @@
       }
     },
     "nba": {
-      "recorded": 1714,
+      "recorded": 1718,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 4,
@@ -1796,7 +1796,7 @@
         }
       ],
       "rejectionReasons": {
-        "Independent projection too thin": 629,
+        "Independent projection too thin": 633,
         "Edge does not clear uncertainty buffer": 549,
         "Unvalidated longshot; insufficient reliability": 4,
         "Quote spread too wide": 1
@@ -1868,8 +1868,8 @@
       "ablations": {},
       "priceMovement": {
         "source": "Kalshi near-start reference; not Caesars",
-        "count": 0,
-        "meanCLV": null
+        "count": 170,
+        "meanCLV": -0.0065
       },
       "positiveEV": {
         "settled": 0,
@@ -2037,8 +2037,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 10,
+            "meanCLV": -0.029
           },
           "positiveEV": {
             "settled": 0,
@@ -2205,8 +2205,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 108,
+            "meanCLV": -0.005
           },
           "positiveEV": {
             "settled": 0,
@@ -2215,7 +2215,7 @@
           }
         },
         "total": {
-          "recorded": 654,
+          "recorded": 658,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 0,
@@ -2303,7 +2303,7 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 254,
+            "Independent projection too thin": 258,
             "Edge does not clear uncertainty buffer": 204,
             "Unvalidated longshot; insufficient reliability": 2
           },
@@ -2374,8 +2374,8 @@
           "ablations": {},
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
-            "count": 0,
-            "meanCLV": null
+            "count": 52,
+            "meanCLV": -0.0052
           },
           "positiveEV": {
             "settled": 0,
@@ -2716,7 +2716,7 @@
       "priceMovement": {
         "source": "Kalshi near-start reference; not Caesars",
         "count": 309,
-        "meanCLV": -0.0089
+        "meanCLV": -0.0087
       },
       "positiveEV": {
         "settled": 0,
@@ -3223,7 +3223,7 @@
           "priceMovement": {
             "source": "Kalshi near-start reference; not Caesars",
             "count": 117,
-            "meanCLV": -0.0097
+            "meanCLV": -0.0092
           },
           "positiveEV": {
             "settled": 0,
@@ -6340,7 +6340,7 @@
       }
     },
     "nhl": {
-      "recorded": 13174,
+      "recorded": 13176,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 40,
@@ -6395,9 +6395,9 @@
             0,
             0.4
           ],
-          "count": 138,
-          "predicted": 0.1704,
-          "observed": 0.2101
+          "count": 159,
+          "predicted": 0.1701,
+          "observed": 0.1887
         },
         {
           "range": [
@@ -6413,39 +6413,39 @@
             0.6,
             0.8
           ],
-          "count": 58,
-          "predicted": 0.703,
-          "observed": 0.6552
+          "count": 65,
+          "predicted": 0.7032,
+          "observed": 0.6769
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 82,
-          "predicted": 0.9155,
-          "observed": 0.8659
+          "count": 96,
+          "predicted": 0.9126,
+          "observed": 0.8854
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 1841,
+        "Edge does not clear uncertainty buffer": 1843,
         "Independent projection too thin": 178,
         "Model disagrees too strongly with market": 14,
         "Unvalidated longshot; insufficient reliability": 25
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 12207,
-      "settled": 347,
+      "experimentalRecorded": 12209,
+      "settled": 389,
       "distinctEvents": 31,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1694,
-        "market": 0.17
+        "model": 0.157,
+        "market": 0.1576
       },
       "logLoss": {
-        "model": 0.4999,
-        "market": 0.5022
+        "model": 0.4703,
+        "market": 0.4727
       },
       "independentComparison": {
         "brierModel": null,
@@ -6454,10 +6454,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 345,
+        "settled": 387,
         "distinctEvents": 30,
-        "brierEstimate": 0.1694,
-        "brierMarket": 0.17
+        "brierEstimate": 0.157,
+        "brierMarket": 0.1575
       },
       "calibrationBins": [
         {
@@ -7017,7 +7017,7 @@
           }
         },
         "goals": {
-          "recorded": 5288,
+          "recorded": 5290,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 5,
@@ -7072,9 +7072,9 @@
                 0,
                 0.4
               ],
-              "count": 38,
-              "predicted": 0.1809,
-              "observed": 0.2895
+              "count": 59,
+              "predicted": 0.1762,
+              "observed": 0.2034
             },
             {
               "range": [
@@ -7090,39 +7090,39 @@
                 0.6,
                 0.8
               ],
-              "count": 15,
-              "predicted": 0.7208,
-              "observed": 0.7333
+              "count": 22,
+              "predicted": 0.7157,
+              "observed": 0.7727
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 23,
-              "predicted": 0.8833,
-              "observed": 0.6957
+              "count": 37,
+              "predicted": 0.8881,
+              "observed": 0.8108
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 656,
+            "Edge does not clear uncertainty buffer": 658,
             "Independent projection too thin": 66,
             "Unvalidated longshot; insufficient reliability": 8,
             "Model disagrees too strongly with market": 3
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 4886,
-          "settled": 76,
-          "distinctEvents": 2,
+          "experimentalRecorded": 4888,
+          "settled": 118,
+          "distinctEvents": 3,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2259,
-            "market": 0.2246
+            "model": 0.1649,
+            "market": 0.1641
           },
           "logLoss": {
-            "model": 0.6598,
-            "market": 0.6608
+            "model": 0.5051,
+            "market": 0.5071
           },
           "independentComparison": {
             "brierModel": null,
@@ -7131,10 +7131,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 76,
-            "distinctEvents": 2,
-            "brierEstimate": 0.2259,
-            "brierMarket": 0.2246
+            "settled": 118,
+            "distinctEvents": 3,
+            "brierEstimate": 0.1649,
+            "brierMarket": 0.1641
           },
           "calibrationBins": [
             {
