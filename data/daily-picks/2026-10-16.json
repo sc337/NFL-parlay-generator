@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-16T20:39:14.292Z",
+  "updated_at": "2026-10-16T20:49:14.608Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:18:35.765737+00:00"
+      "snapshotAt": "2026-10-16T20:38:35.762267+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-16T20:39:09.521279+00:00"
+      "snapshotAt": "2026-10-16T20:49:09.521469+00:00"
     },
     "ncaaf": {
       "captured": 3,
@@ -49,10 +49,10 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:18:35.765939+00:00"
+      "snapshotAt": "2026-10-16T20:38:35.765247+00:00"
     },
     "nfl": {
-      "captured": 3,
+      "captured": 4,
       "passes": [
         {
           "mode": "multi",
@@ -103,12 +103,6 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "long",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "long",
           "requestedLegs": 3,
@@ -145,12 +139,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:18:35.771923+00:00"
+      "snapshotAt": "2026-10-16T20:38:35.769691+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-16T20:29:20.919489+00:00"
+      "snapshotAt": "2026-10-16T20:39:22.750124+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -180,7 +174,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-16T20:18:35.789277+00:00"
+      "snapshotAt": "2026-10-16T20:38:35.787700+00:00"
     }
   },
   "records": [
@@ -16007,6 +16001,288 @@
           "isAltLine": false,
           "altReferenceLine": 1.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nfl|multi|Lotto|3||learning-20261015|2edfa177104018cf",
+      "day": "2026-10-16",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T20:49:14.608Z",
+      "snapshotAt": "2026-10-16T20:38:35.769691+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": 1362,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.12310792737267026,
+        "conservativeP": 0.07701056392466467,
+        "profile": "Lotto",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.4643714339515984,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLREC-26OCT18BUFLV-LVMMAYER87-4|yes",
+          "ticker": "KXNFLREC-26OCT18BUFLV-LVMMAYER87-4",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Michael Mayer Over 3.5 receptions",
+          "market": "player_receptions",
+          "line": 3.5,
+          "player": "Michael Mayer",
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.5069501132643592,
+          "rawModelP": 0.5069501132643592,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 4.368,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT18ARILAR-LARBCORUM24-2|yes",
+          "ticker": "KXNFLREC-26OCT18ARILAR-LARBCORUM24-2",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
+          "event": "Arizona Cardinals @ Los Angeles Rams",
+          "eventTime": "2026-10-18T20:05:00Z",
+          "closeTime": "2026-10-18T20:05:00Z",
+          "selection": "Blake Corum Over 1.5 receptions",
+          "market": "player_receptions",
+          "line": 1.5,
+          "player": "Blake Corum",
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.375,
+          "modelP": 0.4643714339515984,
+          "rawModelP": 0.4643714339515984,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 1.603636363636364,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Daniel Jones Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Daniel Jones",
+          "ask": 0.44999999999999996,
+          "referenceAmericanOdds": 122,
+          "marketP": 0.44499999999999995,
+          "modelP": 0.522944138123104,
+          "rawModelP": 0.522944138123104,
+          "coverage": 0.55,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 213.01772727272726,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nfl|multi|Lotto|4||learning-20261015|f5dc01af172880e0",
+      "day": "2026-10-16",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-16T20:49:14.608Z",
+      "snapshotAt": "2026-10-16T20:38:35.769691+00:00",
+      "sourceVersion": "5dc23a04150f0b975f774e8b84ec5bfbeacc054d",
+      "priceEstimate": 2712,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.0731126659872931,
+        "conservativeP": 0.04073298021608133,
+        "profile": "Lotto",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.4643714339515984,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLREC-26OCT18BUFLV-LVMMAYER87-4|yes",
+          "ticker": "KXNFLREC-26OCT18BUFLV-LVMMAYER87-4",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Michael Mayer Over 3.5 receptions",
+          "market": "player_receptions",
+          "line": 3.5,
+          "player": "Michael Mayer",
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.5069501132643592,
+          "rawModelP": 0.5069501132643592,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 4.368,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT18ARILAR-LARBCORUM24-2|yes",
+          "ticker": "KXNFLREC-26OCT18ARILAR-LARBCORUM24-2",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
+          "event": "Arizona Cardinals @ Los Angeles Rams",
+          "eventTime": "2026-10-18T20:05:00Z",
+          "closeTime": "2026-10-18T20:05:00Z",
+          "selection": "Blake Corum Over 1.5 receptions",
+          "market": "player_receptions",
+          "line": 1.5,
+          "player": "Blake Corum",
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.375,
+          "modelP": 0.4643714339515984,
+          "rawModelP": 0.4643714339515984,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 1.603636363636364,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225|no",
+          "ticker": "KXNFLPASSYDS-26OCT18TENIND-INDDJONES17-225",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Daniel Jones Under 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Daniel Jones",
+          "ask": 0.44999999999999996,
+          "referenceAmericanOdds": 122,
+          "marketP": 0.44499999999999995,
+          "modelP": 0.522944138123104,
+          "rawModelP": 0.522944138123104,
+          "coverage": 0.55,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 213.01772727272726,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225|yes",
+          "ticker": "KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225",
+          "side": "yes",
+          "eventId": "kalshi-kansas-city-chiefs-los-angeles-chargers",
+          "event": "Los Angeles Chargers @ Kansas City Chiefs",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Patrick Mahomes Over 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Patrick Mahomes",
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.515,
+          "modelP": 0.5938908041719171,
+          "rawModelP": 0.5938908041719171,
+          "coverage": 0.5,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 259.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
