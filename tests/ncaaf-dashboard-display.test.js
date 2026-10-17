@@ -41,6 +41,9 @@ test('NCAAF card distinguishes an experimental estimate from a market-only signa
   assert.doesNotMatch(app.nodes.get('#results').innerHTML,/MARKET ONLY/);
   assert.match(app.nodes.get('#results').innerHTML,/Quote quality .*Not win chance/);
   assert.match(app.nodes.get('#results').innerHTML,/Starts /);
+  assert.match(app.nodes.get('#results').innerHTML,/Projected margin for this team/);
+  assert.match(app.nodes.get('#results').innerHTML,/projection 2 points worse/);
+  assert.match(app.nodes.get('#results').innerHTML,/Recheck if the starting QB, spread or price changes/);
   assert.match(app.nodes.get('#results').innerHTML,/1 of 2 legs available/);
   assert.match(marketOnly.nodes.get('#results').innerHTML,/MARKET SIGNALS/);
 });

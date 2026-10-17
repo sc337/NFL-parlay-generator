@@ -42,3 +42,35 @@ test('missing, thin, stale, post-kickoff, and unresolved markets have no model',
   assert.equal(window.NCAAF_MODEL.estimate(m,thin),null);
   assert.equal(window.NCAAF_MODEL.estimate({...m,game_status:'in'},context),null);
 });
+
+function residualContext(n=100,error=-20){
+  return {...context,margin_errors:{version:'ncaaf-margin-v1',generated_at:context.updated_at,rows:Array.from({length:n},(_,i)=>({event_id:String(i),kickoff:'2026-09-01T00:00:00Z',available_at:'2026-09-01T08:00:00Z',error}))}};
+}
+test('spread probabilities learn signed home errors, preserve opposing-side symmetry and fall back with too few games',()=>{
+  const m={...market('spread',''),referenceOnly:true,team_id:'h',point:-7.5};
+  const ctx=residualContext();ctx.games={'99':{...context.games['99'],home:{...context.games['99'].home,id:'h'},away:{...context.games['99'].away,id:'a'}}};
+  const fallback=window.NCAAF_MODEL.estimate(m,contextWithIds());
+  const learned=window.NCAAF_MODEL.estimate(m,ctx);
+  assert.equal(learned.errorSample,100);assert.match(learned.probabilityMethod,/Historical/);assert.ok(learned.modelP<fallback.modelP);
+  const other=window.NCAAF_MODEL.estimate({...m,team_id:'a',point:7.5},ctx);
+  assert.ok(Math.abs(learned.modelP+other.modelP-1)<1e-10);
+  const thin=window.NCAAF_MODEL.estimate(m,{...ctx,margin_errors:{...ctx.margin_errors,rows:ctx.margin_errors.rows.slice(0,79)}});
+  assert.equal(thin.modelP,fallback.modelP);assert.match(thin.probabilityMethod,/insufficient/);
+  const integer=window.NCAAF_MODEL.estimate({...m,point:7},ctx),opposite=window.NCAAF_MODEL.estimate({...m,point:-7,team_id:'a'},ctx);
+  assert.ok(integer.pushProbability>0);assert.ok(Math.abs(integer.modelP+opposite.modelP-1)<1e-10);assert.ok(Math.abs(integer.pushProbability-opposite.pushProbability)<1e-10);
+});
+function contextWithIds(){return {...context,games:{'99':{...context.games['99'],home:{...context.games['99'].home,id:'h'},away:{...context.games['99'].away,id:'a'}}}};}
+test('future errors, duplicate games and mismatched projection versions never inflate the error sample',()=>{
+  const ctx=residualContext(),m=market('spread','Alabama wins by over 7.5 points');
+  const base=window.NCAAF_MODEL.estimate(m,ctx),rows=ctx.margin_errors.rows;
+  const poisoned={...ctx,margin_errors:{...ctx.margin_errors,rows:[...rows,...rows,{event_id:'future',kickoff:new Date(Date.now()+86400000).toISOString(),available_at:new Date(Date.now()+2*86400000).toISOString(),error:999}]}};
+  const result=window.NCAAF_MODEL.estimate(m,poisoned);assert.equal(result.errorSample,100);assert.equal(result.modelP,base.modelP);
+  const mismatch=window.NCAAF_MODEL.estimate(m,{...ctx,margin_errors:{...ctx.margin_errors,version:'other'}});assert.equal(mismatch.errorSample,0);
+});
+test('adverse scenarios reduce probabilities and QB confirmation removes only the QB scenario',()=>{
+  const m=market('spread','Alabama wins by over 7.5 points'),x=window.NCAAF_MODEL.estimate(m,context);
+  assert.equal(x.sensitivity.scenarios.length,4);assert.ok(x.sensitivity.scenarios.every(r=>r.modelP<=x.modelP));
+  const confirmed={...context,games:{'99':{...context.games['99'],quarterbacksConfirmed:true}}};
+  const y=window.NCAAF_MODEL.estimate(m,confirmed);assert.equal(y.sensitivity.scenarios.length,3);assert.equal(y.modelP,x.modelP);
+  assert.ok(y.sensitivity.scenarios.at(-1).modelP>x.sensitivity.scenarios.at(-1).modelP);
+});

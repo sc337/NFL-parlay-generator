@@ -6,6 +6,7 @@ Failure leaves the previous context intact; no fabricated values are published.
 import csv
 import io
 import json
+import math
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -17,6 +18,7 @@ OUTPUT = Path('data/ncaaf-context.json')
 ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard'
 BOX = 'https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_cfb_team_box/team_box_{}.csv'
 AGENT = 'NFL-parlay-generator/1.0 (https://github.com/sc337/NFL-parlay-generator)'
+MARGIN_VERSION = 'ncaaf-margin-v1'
 
 
 def fetch(url, timeout=20):
@@ -48,7 +50,7 @@ def completed(event, now):
         values = {str(c['team']['id']): float(c['score']['value'] if isinstance(c['score'], dict) else c['score']) for c in sides}
     except (KeyError, ValueError, TypeError):
         return None
-    return values if len(values) == 2 else None
+    return values if len(values) == 2 and all(math.isfinite(v) for v in values.values()) else None
 
 
 def box_rows(season):
@@ -96,8 +98,12 @@ def summary(team_id, games):
 
 
 def read_games(events, boxes, now):
-    games = {}
+    games, seen = {}, set()
     for event in events:
+        event_id = str(event.get('id', ''))
+        if not event_id or event_id in seen:
+            continue
+        seen.add(event_id)
         scores = completed(event, now)
         if not scores:
             continue
@@ -112,6 +118,53 @@ def read_games(events, boxes, now):
                 'allowed': scores[opponent], 'margin': scores[team] - scores[opponent], 'opponent': opponent,
                 'yards': yards, 'allowed_yards': against, 'turnovers': number(box.get('turnovers')) or 0})
     return games
+
+
+def projected_margin(home, away, neutral=False):
+    """Same score projection as NCAAF_MODEL.margin; no odds enter the fit."""
+    if any(not f.get('available') or f.get('games', 0) < 3 or f.get('box_games', 0) < 2
+           for f in (home, away)):
+        return None
+    keys = ('yards_for', 'yards_against', 'margin')
+    if any(number(f.get(k)) is None or not math.isfinite(number(f.get(k))) for f in (home, away) for k in keys):
+        return None
+    shrink = min(home['games'], away['games']) / (min(home['games'], away['games']) + 3)
+    yards = ((home['yards_for']-home['yards_against'])-(away['yards_for']-away['yards_against'])) / 65
+    adjusted = home.get('opponent_adjusted_margin', home['margin'])-away.get('opponent_adjusted_margin', away['margin'])
+    return max(-28, min(28, (0 if neutral else 2.5)+shrink*(.68*adjusted+max(-4, min(4, yards)))))
+
+
+def margin_errors(events, boxes, now):
+    """Reconstruct walk-forward errors using only prior completed games.
+
+    ESPN lacks a reliable historical final timestamp here. Exclude games within
+    eight hours of a target kickoff so contemporaneous scores/boxes cannot leak.
+    These reconstructed errors describe model spread, not live holdout proof.
+    """
+    games = read_games(events, boxes, now)
+    rows, seen = [], set()
+    for event in sorted(events, key=lambda e: str(e.get('date', ''))):
+        event_id = str(event.get('id', ''))
+        scores = completed(event, now)
+        start = instant(event.get('date'))
+        if not event_id or event_id in seen or not scores or not start or start+timedelta(hours=8) > now:
+            continue
+        seen.add(event_id)
+        comp = (event.get('competitions') or [{}])[0]
+        sides = {c.get('homeAway'): str((c.get('team') or {}).get('id')) for c in comp.get('competitors', [])}
+        if sides.get('home') not in scores or sides.get('away') not in scores:
+            continue
+        prior = {team: [g for g in history if instant(g['date'])+timedelta(hours=8) < start]
+                 for team, history in games.items()}
+        estimate = projected_margin(summary(sides['home'], prior), summary(sides['away'], prior), comp.get('neutralSite') is True)
+        if estimate is None:
+            continue
+        actual = scores[sides['home']]-scores[sides['away']]
+        rows.append({'event_id': event_id, 'kickoff': start.isoformat(),
+                     'available_at': (start+timedelta(hours=8)).isoformat(),
+                     'error': round(actual-estimate, 6)})
+    return {'version': MARGIN_VERSION, 'method': 'Reconstructed walk-forward margin errors',
+            'generated_at': now.isoformat(), 'rows': rows[-800:]}
 
 
 def college_name(value):
@@ -226,7 +279,7 @@ def build(snapshot, events, boxes, now, weather_fn=weather):
             record['weather'] = wx
         output[game_id] = record
     points = [g['points'] for rows in games.values() for g in rows]
-    return {'updated_at': now.isoformat(), 'games': output,
+    return {'updated_at': now.isoformat(), 'games': output, 'margin_errors': margin_errors(events, boxes, now),
             'league_points_per_team': round(sum(points) / len(points), 2) if points else None,
             'sources': ['ESPN', 'SportsDataverse' if boxes else 'ESPN scores only', 'NWS when available']}
 
@@ -237,7 +290,7 @@ def main(now=None, include_weather=True):
     previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
     updated = instant(previous.get('updated_at'))
     needed = {str(m.get('game_id')) for m in snapshot.get('markets', []) if m.get('game_id') and instant(m.get('game_time')) and instant(m['game_time']) > now}
-    if updated and now - updated < timedelta(hours=3) and needed.issubset(previous.get('games', {})):
+    if updated and now - updated < timedelta(hours=3) and needed.issubset(previous.get('games', {})) and previous.get('margin_errors', {}).get('version') == MARGIN_VERSION:
         print('NCAAF context cache fresh; skipped refresh')
         return
     season = now.year
