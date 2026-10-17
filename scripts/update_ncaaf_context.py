@@ -237,7 +237,7 @@ def main(now=None):
     previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
     updated = instant(previous.get('updated_at'))
     needed = {str(m.get('game_id')) for m in snapshot.get('markets', []) if m.get('game_id') and instant(m.get('game_time')) and instant(m['game_time']) > now}
-    if updated and now - updated < timedelta(hours=3):
+    if updated and now - updated < timedelta(hours=3) and needed.issubset(previous.get('games', {})):
         print('NCAAF context cache fresh; skipped refresh')
         return
     season = now.year
