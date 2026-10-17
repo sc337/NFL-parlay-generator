@@ -32,6 +32,7 @@ function start(sport,m,g,snapshot){
 }
 function record(sport,entry,snapshot,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
+  if(m.referenceOnly)return null; // No exchange contract to settle.
   const ticker=String(m.ticker||''),side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const eventTime=start(sport,m,g,snapshot),closeTime=m.close_time||eventTime;
   const marketP=finite(m.prob??m.probability??m.marketProbability);
