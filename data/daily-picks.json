@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T22:49:33.920Z",
+  "updated_at": "2026-10-17T22:58:45.724Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:49:11.917977+00:00"
+      "snapshotAt": "2026-10-17T22:39:11.824788+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T22:28:44.292790+00:00"
+      "snapshotAt": "2026-10-17T22:58:44.692985+00:00"
     },
     "ncaaf": {
       "captured": 2,
@@ -55,10 +55,10 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:49:28.033928+00:00"
+      "snapshotAt": "2026-10-17T22:39:29.708648+00:00"
     },
     "nfl": {
-      "captured": 0,
+      "captured": 3,
       "passes": [
         {
           "mode": "multi",
@@ -73,12 +73,6 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 2,
@@ -121,12 +115,6 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "long",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "long",
           "requestedLegs": 3,
@@ -153,12 +141,6 @@
         {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -169,12 +151,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:49:29.717028+00:00"
+      "snapshotAt": "2026-10-17T22:39:28.917343+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T22:39:50.589445+00:00"
+      "snapshotAt": "2026-10-17T22:49:49.035227+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -204,7 +186,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:49:10.088073+00:00"
+      "snapshotAt": "2026-10-17T22:39:11.093554+00:00"
     }
   },
   "records": [
@@ -28441,6 +28423,120 @@
       "result": null
     },
     {
+      "id": "2026-10-17|nba|multi|best|2||learning-20261015|f6dc50688643abbb",
+      "day": "2026-10-17",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T22:48:45.226Z",
+      "snapshotAt": "2026-10-17T22:48:44.097322+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 246,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.43110230213396983,
+        "conservativeP": 0.3377907707705181,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3134160576283882,
+          "upper": 0.6439356768360116,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAGAME-26OCT21CHABKN-CHA|yes",
+          "ticker": "KXNBAGAME-26OCT21CHABKN-CHA",
+          "side": "yes",
+          "eventId": "401909836",
+          "event": "Hornets vs Nets",
+          "eventTime": "2026-10-21T23:30Z",
+          "closeTime": "2026-10-23T23:30:00Z",
+          "selection": "Hornets ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.535,
+          "modelP": 0.6439356768360116,
+          "rawModelP": 0.6439356768360116,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 226.28601165234238,
+          "projectedMargin": -4.42798399402416,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nba|ESPN:401909835:100:spread:away:6.5|no",
+          "ticker": "ESPN:401909835:100:spread:away:6.5",
+          "side": "no",
+          "eventId": "401909835",
+          "event": "Milwaukee Bucks at Washington Wizards",
+          "eventTime": "2026-10-21T23:00:00+00:00",
+          "closeTime": "2026-10-21T23:00:00+00:00",
+          "selection": "Milwaukee Bucks +6.5",
+          "market": "spread",
+          "line": 6.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "nba",
+            "eventId": "401909835",
+            "teams": [
+              "15",
+              "27"
+            ],
+            "teamId": "15",
+            "kind": "spread",
+            "line": 6.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-21T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5348837209302325,
+          "referenceAmericanOdds": -115,
+          "marketP": 0.5348837209302325,
+          "modelP": 0.6694803807923766,
+          "rawModelP": 0.6694803807923766,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 233.80154543065703,
+          "projectedMargin": 1.2382563371235022,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 6.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-17|nhl|multi|balanced|2||learning-20261015|2c94cf915578935a",
       "day": "2026-10-17",
       "sport": "nhl",
@@ -28454,7 +28550,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:49:33.920Z",
+      "capturedAt": "2026-10-17T22:48:45.226Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": -166,
@@ -28554,7 +28650,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:49:33.920Z",
+      "capturedAt": "2026-10-17T22:48:45.226Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 143,
@@ -28686,7 +28782,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:49:33.920Z",
+      "capturedAt": "2026-10-17T22:48:45.226Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 268,
@@ -28831,6 +28927,302 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nhl|multi|balanced|3||learning-20261015|70aa83180aa24f55",
+      "day": "2026-10-17",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T22:58:45.724Z",
+      "snapshotAt": "2026-10-17T22:49:49.035227+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 143,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.5614740616045196,
+        "conservativeP": 0.4304719334331219,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.48122352755350484,
+          "upper": 0.7453189731142763,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYITOR-TOR3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYITOR-TOR3",
+          "side": "no",
+          "eventId": "401892523",
+          "event": "Islanders vs Maple Leafs",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Islanders +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.785,
+          "modelP": 0.8652618688196186,
+          "rawModelP": 0.8652618688196186,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.203501519152682,
+          "projectedMargin": null,
+          "projectedAway": 3.1812278325157632,
+          "projectedHome": 3.0222736866369186,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYRCBJ-CBJ3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYRCBJ-CBJ3",
+          "side": "no",
+          "eventId": "401892527",
+          "event": "Rangers vs Blue Jackets",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Rangers +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.785,
+          "modelP": 0.87064268561961,
+          "rawModelP": 0.87064268561961,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.089309921904754,
+          "projectedMargin": null,
+          "projectedAway": 3.141117641929381,
+          "projectedHome": 2.9481922799753737,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT18CARCGY-CAR|yes",
+          "ticker": "KXNHLGAME-26OCT18CARCGY-CAR",
+          "side": "yes",
+          "eventId": "401892534",
+          "event": "Hurricanes vs Flames",
+          "eventTime": "2026-10-19T00:00Z",
+          "closeTime": "2026-10-21T00:00:00Z",
+          "selection": "Hurricanes ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.66,
+          "referenceAmericanOdds": null,
+          "marketP": 0.655,
+          "modelP": 0.7453189731142763,
+          "rawModelP": 0.7453189731142763,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.337340487687193,
+          "projectedMargin": null,
+          "projectedAway": 4.000722898136274,
+          "projectedHome": 2.336617589550919,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nhl|multi|balanced|4||learning-20261015|a37e51fd4186b437",
+      "day": "2026-10-17",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T22:58:45.724Z",
+      "snapshotAt": "2026-10-17T22:49:49.035227+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 268,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.4321815017340076,
+        "conservativeP": 0.291656171122764,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.25095009426072945,
+          "upper": 0.7453189731142763,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYITOR-TOR3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYITOR-TOR3",
+          "side": "no",
+          "eventId": "401892523",
+          "event": "Islanders vs Maple Leafs",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Islanders +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.785,
+          "modelP": 0.8652618688196186,
+          "rawModelP": 0.8652618688196186,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.203501519152682,
+          "projectedMargin": null,
+          "projectedAway": 3.1812278325157632,
+          "projectedHome": 3.0222736866369186,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYRCBJ-CBJ3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYRCBJ-CBJ3",
+          "side": "no",
+          "eventId": "401892527",
+          "event": "Rangers vs Blue Jackets",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Rangers +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.785,
+          "modelP": 0.87064268561961,
+          "rawModelP": 0.87064268561961,
+          "coverage": 0.5416666666666666,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.089309921904754,
+          "projectedMargin": null,
+          "projectedAway": 3.141117641929381,
+          "projectedHome": 2.9481922799753737,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT18CARCGY-CAR|yes",
+          "ticker": "KXNHLGAME-26OCT18CARCGY-CAR",
+          "side": "yes",
+          "eventId": "401892534",
+          "event": "Hurricanes vs Flames",
+          "eventTime": "2026-10-19T00:00Z",
+          "closeTime": "2026-10-21T00:00:00Z",
+          "selection": "Hurricanes ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.66,
+          "referenceAmericanOdds": null,
+          "marketP": 0.655,
+          "modelP": 0.7453189731142763,
+          "rawModelP": 0.7453189731142763,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.337340487687193,
+          "projectedMargin": null,
+          "projectedAway": 4.000722898136274,
+          "projectedHome": 2.336617589550919,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLAST-26OCT17BOSLA-LAQBYFIELD55-1|no",
+          "ticker": "KXNHLAST-26OCT17BOSLA-LAQBYFIELD55-1",
+          "side": "no",
+          "eventId": "401892530",
+          "event": "Bruins vs Kings",
+          "eventTime": "2026-10-18T01:00Z",
+          "closeTime": "2026-10-20T01:00:00Z",
+          "selection": "Quinton Byfield Under 0.5 Assists",
+          "market": "assists",
+          "line": 0.5,
+          "player": "Quinton Byfield",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.66,
+          "referenceAmericanOdds": null,
+          "marketP": 0.655,
+          "modelP": 0.7697265667072246,
+          "rawModelP": 0.7697265667072246,
+          "coverage": 0.54,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.2704719367534003,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
           "result": null
         }
       ],
