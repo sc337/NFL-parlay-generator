@@ -167,8 +167,9 @@ function assess(s,m,f={},options={}){
   });
   const requiredP=clamp((q.p||0)+.02,.001,.999),valid=scenarios.length>0&&scenarios.every(row=>row.bufferedP!=null);
   const worstP=valid?Math.min(conservativeP,...scenarios.map(row=>row.bufferedP)):null;
-  sensitivity={pass:valid&&worstP>requiredP,worstP,requiredP,scenarios,pricePenalty:.02};
-  if(!reason&&!sensitivity.pass)reason='NCAAF sensitivity check failed';
+  const robust=valid&&worstP>requiredP;
+  sensitivity={pass:robust,label:valid?(robust?'Robust':'Sensitive to assumptions'):'Sensitivity unavailable',policy:'advisory',worstP,requiredP,scenarios,pricePenalty:.02};
+  if(!robust)warnings.push(sensitivity.label+'; review adverse scenarios in Details');
  }
  // Policy safeguards for provisional estimates, not measured confidence limits.
  if(!reason&&!validated&&(q.p<.35||p<.45))reason='Unvalidated longshot; insufficient reliability';
@@ -191,7 +192,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,sensitivity,minimumOdds:conservativeP>0?american(sensitivity?.worstP!=null?clamp(sensitivity.worstP-.02,.001,.999):conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,sensitivity,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));

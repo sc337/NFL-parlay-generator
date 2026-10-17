@@ -15,16 +15,19 @@ test('book compatibility blocks ALT player unders on straight, featured, extra a
  assert.equal(r.Q.unsupportedAltUnder({...m,player:null,type:'totals',marketKey:'totals'}),false);
 });
 test('all selections need independent coverage and edge beyond a named uncertainty buffer',()=>{const r=runtime(),{m,f}=fixture(r);assert.equal(r.Q.assess('nfl',m,f).pass,true);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.49}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.53}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,coverage:.1}).reason,'Independent projection too thin');assert.equal(r.Q.assess('nfl',m,{...f,modelP:.5}).reason,'Market-only estimate');assert.ok(r.Q.assess('nfl',m,f).conservativeP<f.modelP)});
-test('NCAAF sensitivity veto applies to straights, featured picks and parlay packaging',()=>{
- const r=runtime(),m={ticker:'college',kind:'spread',game_id:'1',game_time:new Date(r.now()+4*3600000).toISOString(),yes_ask:.52,probability:.52,game_status:'pre'};
+test('NCAAF sensitivity labels are advisory for straights, featured picks and parlays',()=>{
+ const r=runtime(),m={ticker:'college',kind:'spread',game_id:'1',game_time:new Date(r.now()+4*3600000).toISOString(),yes_ask:.56,probability:.56,game_status:'pre'};
  r.Q.prepare('ncaaf',[m],{},[],new Date(r.now()).toISOString());
- const f={modelP:.66,rawModelP:.66,marketP:.52,coverage:.8,uncertainty:.5,experimental:true,forecastVersion:'ncaaf-errors-stress-v1'};
+ const f={modelP:.70,rawModelP:.70,marketP:.56,coverage:.8,uncertainty:.5,experimental:true,forecastVersion:'ncaaf-errors-stress-v1'};
  assert.equal(r.Q.assess('ncaaf',m,f).pass,true,'base edge clears buffer');
- const fragile={...f,sensitivity:{scenarios:[{name:'Combined adverse assumptions',modelP:.59}],pricePenalty:.02}};
- for(const options of [{},{featured:true},{parlay:true}])assert.equal(r.Q.assess('ncaaf',m,fragile,options).reason,'NCAAF sensitivity check failed');
- assert.equal(r.Q.checkBuild('ncaaf',[{market:m,forecast:fragile}],false).pass,false);
- const robust={...f,sensitivity:{scenarios:[{name:'Combined adverse assumptions',modelP:.65}],pricePenalty:.02}},x=r.Q.assess('ncaaf',m,robust);
- assert.equal(x.pass,true);assert.equal(x.sensitivity.requiredP,.54);assert.ok(x.sensitivity.worstP>.54);assert.ok(x.minimumOdds>r.Q.assess('ncaaf',m,f).minimumOdds,'minimum acceptable price reflects stress');
+ const fragile={...f,sensitivity:{scenarios:[{name:'Combined adverse assumptions',modelP:.63}],pricePenalty:.02}};
+ for(const options of [{},{featured:true},{parlay:true}]){const x=r.Q.assess('ncaaf',m,fragile,options);assert.equal(x.pass,true);assert.equal(x.sensitivity.pass,false);assert.equal(x.sensitivity.label,'Sensitive to assumptions');assert.equal(x.sensitivity.policy,'advisory');assert.match(x.warnings.join(' '),/Sensitive to assumptions/);}
+ assert.equal(r.Q.checkBuild('ncaaf',[{market:m,forecast:fragile}],false).pass,true);
+ const robust={...f,sensitivity:{scenarios:[{name:'Combined adverse assumptions',modelP:.69}],pricePenalty:.02}},x=r.Q.assess('ncaaf',m,robust);
+ assert.equal(x.pass,true);assert.equal(x.sensitivity.label,'Robust');assert.ok(Math.abs(x.sensitivity.requiredP-.58)<1e-12);assert.ok(x.sensitivity.worstP>.58);assert.equal(x.minimumOdds,r.Q.assess('ncaaf',m,f).minimumOdds,'minimum acceptable price uses the original buffer');
+ assert.equal(r.Q.assess('ncaaf',m,{...fragile,modelP:.55}).reason,'Edge does not clear uncertainty buffer');
+ assert.equal(r.Q.assess('ncaaf',{...m,context_unmatched:true},robust).reason,'Matchup context unverified');
+ assert.equal(r.Q.assess('ncaaf',{...m,quotedAt:new Date(r.now()-31*60000).toISOString()},robust).reason,'Quote older than 30 minutes');
 });
 test('delayed references never qualify as current value and started events always fail',()=>{const r=runtime(),{m,f}=fixture(r);r.advance(31*60000);assert.equal(r.Q.quote('nfl',m).source,'Kalshi');assert.equal(r.Q.assess('nfl',m,f).valueQualified,false);assert.match(r.Q.assess('nfl',m,f).warnings.join(' '),/Delayed reference/);r.advance(2*3600000);assert.equal(r.Q.assess('nfl',m,f).reason,'Event already started')});
 test('injury, roster and role checks cannot be bypassed by odds; attempts stay straight only',()=>{const r=runtime(),{m,g,f}=fixture(r,{player:'Player',_rosterVerified:true,type:'rushing',marketKey:'player_rush_attempts',contextSignals:{injury_status:'questionable'}});assert.equal(r.Q.assess('nfl',m,f).reason,'Confirm current injury status');m.contextSignals={injury_status:'none_reported',injury_checked:true};g.context={updated_at:new Date(r.now()).toISOString()};f.roleStability=.7;assert.equal(r.Q.assess('nfl',m,f).pass,true);assert.equal(r.Q.assess('nfl',m,f,{parlay:true}).reason,'Caesars straight only');m.contextSignals.injury_status='out';assert.equal(r.Q.assess('nfl',m,f).reason,'Player unavailable');m.contextSignals.injury_status='none_reported';m._rosterVerified=false;assert.equal(r.Q.assess('nfl',m,f).reason,'Roster unverified')});
