@@ -41,6 +41,7 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
   if(likelihood){estimate=document.createElement('small');estimate.className='pick-estimate';estimate.textContent='Estimated hit chance '+likelihood[1]+'% · Uncertainty in Details';}
   foot.textContent=[/value unverified|context-supported/i.test(note)?'Suggestion · Value unverified':'',/delayed reference/i.test(note)?'Verify current price':'',/lineups unconfirmed|starters unconfirmed|injury status unconfirmed/i.test(note)?'Confirm lineup/status':'',/unvalidated/i.test(note)?'Model unvalidated':/experimental/i.test(note)?'Experimental':/market.only|no independent/i.test(note)?'Market only':'',/if playing|participation/i.test(note)?'Confirm participation':/goalies unconfirmed/i.test(note)?'Goalies unconfirmed':''].filter(Boolean).join(' · ');
   if(sport==='ncaaf')foot.textContent=foot.textContent.replace('Confirm lineup/status','Confirm starters');
+  if(sport==='ncaaf'){const sensitivity=note.includes('Sensitive to assumptions')?'Sensitive to assumptions':note.includes('Sensitivity: Robust')?'Robust':note.includes('Sensitivity unavailable')?'Sensitivity unavailable':'';if(sensitivity)foot.textContent=[sensitivity,foot.textContent].filter(Boolean).join(' · ');}
   foot.hidden=!foot.textContent;
   foot.title=note;
   heading.textContent=window.DISPLAY_COPY?.shortMarket?.(parsed.market)||parsed.market;heading.title=parsed.market;line.textContent=parsed.line;tile.setAttribute('aria-label',parsed.market+' '+parsed.line+', '+reference.textContent);
