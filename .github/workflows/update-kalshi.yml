@@ -122,7 +122,7 @@ jobs:
       - name: Refresh free NCAAF pregame context
         run: |
           python scripts/update_ncaaf_slate.py
-          python scripts/update_ncaaf_context.py
+          python scripts/update_ncaaf_context.py --no-weather
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context

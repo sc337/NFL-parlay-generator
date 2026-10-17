@@ -231,7 +231,7 @@ def build(snapshot, events, boxes, now, weather_fn=weather):
             'sources': ['ESPN', 'SportsDataverse' if boxes else 'ESPN scores only', 'NWS when available']}
 
 
-def main(now=None):
+def main(now=None, include_weather=True):
     now = now or datetime.now(timezone.utc)
     snapshot = json.loads(SNAPSHOT.read_text())
     previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {}
@@ -261,7 +261,8 @@ def main(now=None):
     except (ValueError, OSError) as exc:
         print('NCAAF SportsDataverse unavailable, scores only', exc)
         boxes = {}
-    result = build(snapshot, events, boxes, now)
+    weather_fn = weather if include_weather else lambda venue, kickoff, now: ({'indoor': True, 'source': 'ESPN venue'} if venue.get('indoor') is True else None)
+    result = build(snapshot, events, boxes, now, weather_fn=weather_fn)
     if needed and not result['games']:
         print('NCAAF context: no matched upcoming games; preserving previous snapshot')
         return
@@ -270,4 +271,8 @@ def main(now=None):
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-weather', action='store_true', help='Refresh scores and boxes without slow weather lookups')
+    args = parser.parse_args()
+    main(include_weather=not args.no_weather)
