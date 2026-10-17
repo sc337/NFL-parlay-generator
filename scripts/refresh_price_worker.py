@@ -19,7 +19,7 @@ STEPS = {
     'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py',
             'enrich_snapshot_context.py', 'update_nfl_td_context.py'],
     'mlb': ['update_kalshi_mlb.py', 'update_mlb_context.py', 'attach_game_context.py'],
-    'ncaaf': ['update_kalshi_ncaaf.py', 'attach_game_context.py --ncaaf', 'update_ncaaf_context.py'],
+    'ncaaf': ['update_kalshi_ncaaf.py', 'attach_game_context.py --ncaaf', 'update_ncaaf_slate.py', 'update_ncaaf_context.py'],
     'nhl': ['update_nhl_context.py', 'update_kalshi_nhl.py'],
     'ufc': ['update_kalshi_ufc.py'],
 }
