@@ -6,7 +6,7 @@ const odds=o=>num(o)!=null&&Math.abs(Number(o))>=100&&Math.abs(Number(o))<=10000
 const decimal=o=>o>0?1+o/100:1+100/Math.abs(o);
 const implied=o=>odds(o)?1/decimal(Number(o)):null;
 const american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);
-function group(s,m){return s==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?m.marketKey||m.type:m.type==='h2h'?'moneyline':m.type):m.kind}
+function group(s,m){const family=s==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?m.marketKey||m.type:m.type==='h2h'?'moneyline':m.type):m.kind;return family+(m.referenceOnly?':public':'')}
 function line(m){
  if(num(m.point)!=null)return num(m.point);
  const text=String(m.name||m.label||m.title||'');
@@ -20,7 +20,7 @@ function line(m){
  const milestone=text.match(/(?:^|[\s:])(\d+)\+\s/);return milestone?Number(milestone[1])-.5:null;
 }
 function id(s,m){return JSON.stringify([s,m.ticker||m.selection_id||JSON.stringify([m.game_id||m.gameId||m.event_ticker||m.kickoff||'',m.name||m.label]),m.quoteSide||m.side||'yes',m.marketKey||m.kind||m.type,line(m),m.player||m.team||''])}
-function prepare(s,markets,context={},games=[],at=null){window.STARTER_STATUS?.register(s,markets,context);const byTicker=new Map(),byGame=new Map();for(const g of games){byGame.set(g.id,g);for(const m of g.markets||[])if(m.ticker)byTicker.set(m.ticker,g)}data.set(s,{markets,context,games,at,byTicker,byGame});window.SLATE_UI?.prepare(s,markets,games)}
+function prepare(s,markets,context={},games=[],at=null){window.STARTER_STATUS?.register(s,markets,context);window.ESPN_EVIDENCE?.prepare(s,markets);const byTicker=new Map(),byGame=new Map();for(const g of games){byGame.set(g.id,g);for(const m of g.markets||[])if(m.ticker)byTicker.set(m.ticker,g)}data.set(s,{markets,context,games,at,byTicker,byGame});window.SLATE_UI?.prepare(s,markets,games)}
 function gameFor(s,m,game){return game||data.get(s)?.byGame?.get(m.gameId)||data.get(s)?.byTicker?.get(m.ticker)||data.get(s)?.games?.find(g=>g.id===m.gameId||(g.markets||[]).some(x=>x===m||x.ticker&&x.ticker===m.ticker))}
 function quote(s,m){
  const price=num(m.price),p=price!=null?implied(price):num(m.yes_ask??m.quoteProbability);
@@ -151,6 +151,7 @@ function assess(s,m,f={},options={}){
  else if(!(p>0&&p<1)||coverage<minCoverage)reason='Independent projection too thin';
  else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
  else reason=participation(s,m,f,g,warnings);
+ const monitored=window.ESPN_EVIDENCE?.inspect(m);if(monitored){warnings.push(...monitored.warnings);if(!reason&&monitored.blocked)reason=monitored.blocked;}
  const roleChange=f.roleChange??m.roleChange;
  if(!reason&&['falling','rising'].includes(roleChange?.status))reason='Recent opportunity changed; waiting for a stable role';
  const clearsValue=ev>0&&conservativeEV>0;
@@ -202,6 +203,6 @@ function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketA
  const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
 window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

@@ -38,6 +38,7 @@ function metrics(rows){
       referenceReturnPerUnit:qualifiedPriced.length?round(qualifiedPriced.reduce((s,r)=>s+(r.result==='win'?1/r.ask-1:-1),0)/qualifiedPriced.length):null,
       calibrationBins:allBins(qualified),note:'Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets.'},
     experimentalCalibrationBins:allBins(experimental),rejectionReasons,
+    sources:Object.fromEntries([...new Set(rows.map(r=>r.priceSource||'Kalshi'))].map(source=>{const r=rows.filter(x=>(x.priceSource||'Kalshi')===source),done=r.filter(x=>['win','loss','push'].includes(x.result));return [source,{recorded:r.length,settled:done.length,pushes:done.filter(x=>x.result==='push').length,distinctEvents:new Set(done.map(x=>x.eventId||x.event)).size}]})),
     marketSupportedRecorded:rows.filter(r=>r.forecastType==='market_supported').length,
     experimentalRecorded:rows.filter(r=>r.forecastType==='experimental').length,
     settled:settled.length,distinctEvents:new Set(settled.map(eventKey)).size,
@@ -50,7 +51,7 @@ function metrics(rows){
       distinctEvents:new Set(experimental.map(eventKey)).size,
       brierEstimate:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.modelP,r.result==='win'?1:0),0)/experimental.length):null,
       brierMarket:experimental.length?round(experimental.reduce((s,r)=>s+brier(r.marketP,r.result==='win'?1:0),0)/experimental.length):null},
-    calibrationBins:bins,ablations,priceMovement:{source:'Kalshi near-start reference; not Caesars',count:movement.length,meanCLV:movement.length?round(movement.reduce((sum,r)=>sum+r.closingAsk-r.ask,0)/movement.length):null},
+    calibrationBins:bins,ablations,priceMovement:{source:'Same-source near-start reference; verify sportsbook price',count:movement.length,meanCLV:movement.length?round(movement.reduce((sum,r)=>sum+r.closingAsk-r.ask,0)/movement.length):null},
     positiveEV:{settled:value.length,distinctEvents:new Set(value.map(eventKey)).size,
       grossReturnPerUnit:value.length?round(value.reduce((s,r)=>s+(r.result==='win'?1/r.ask-1:-1),0)/value.length):null}};
 }

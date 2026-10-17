@@ -1,3 +1,4 @@
+const {contract:referenceContract}=require('../espn-evidence');
 // Immutable first-observed, pregame forecasts for evaluation, not pick selection.
 const fs=require('node:fs');
 const path=require('node:path');
@@ -32,7 +33,7 @@ function start(sport,m,g,snapshot){
 }
 function record(sport,entry,snapshot,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
-  if(m.referenceOnly)return null; // No exchange contract to settle.
+  if(m.referenceOnly&&!referenceContract(sport,m,g,now))return null;
   const ticker=String(m.ticker||''),side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const eventTime=start(sport,m,g,snapshot),closeTime=m.close_time||eventTime;
   const marketP=finite(m.prob??m.probability??m.marketProbability);
@@ -42,8 +43,8 @@ function record(sport,entry,snapshot,now){
      !(marketP>0&&marketP<1)||!(ask>0&&ask<1))return null;
   if(sport==='nfl'){
     if((finite(m.sourceQuality)||0)<60||m._invalidRoster===true)return null;
-  }else if((finite(m.volume)||0)<25||!(finite(m.spread)>=0&&finite(m.spread)<=.16)||
-           m.game_status==='Final'||m.game_status==='Live'||m.game_status==='in'||m.game_status==='post')return null;
+  }else if(!m.referenceOnly&&((finite(m.volume)||0)<25||!(finite(m.spread)>=0&&finite(m.spread)<=.16)||
+           m.game_status==='Final'||m.game_status==='Live'||m.game_status==='in'||m.game_status==='post'))return null;
   const modelP=finite(f.modelP),rawModelP=finite(f.rawModelP);
   const coverage=finite(f.coverage??f.context?.coverage??f.match?.coverage)||0;
   const projectedLine=finite(f.projectedLine);
@@ -57,11 +58,12 @@ function record(sport,entry,snapshot,now){
   const anchored=f.marketAnchored===true;
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   const contractId=[sport,ticker,side].join('|'),version=f.modelVersion||null;
+  const publicGroup=m.referenceOnly?':public':'';
   return {id:version?contractId+'|'+version:contractId,contractId,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||g.id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
-    market:m.marketKey||m.kind||m.type,marketGroup:sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,
+    market:m.marketKey||m.kind||m.type,marketGroup:(sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind)+publicGroup,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
-    marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
+    settlement:referenceContract(sport,m,g,now),referenceOnly:m.referenceOnly===true,marketP,modelP:hasModel?modelP:marketP,rawModelP:hasModel?rawModelP:null,coverage,
     forecastType:hasModel?(anchored?'market_supported':experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,

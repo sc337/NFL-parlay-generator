@@ -1,3 +1,4 @@
+const {contract:referenceContract}=require('../espn-evidence');
 // Capture the same browser builders; preserve first prices, forecasts and source
 // versions for each daily recommendation. Personal browser settings are excluded.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
@@ -12,13 +13,13 @@ function legRecord(sport,entry,snapshot,now){
  let ask=finite(sport==='nfl'?m.quoteProbability:m.yes_ask);
  if(ask===null&&sport==='nfl'&&finite(m.price)!==null&&Math.abs(m.price)>=100)ask=m.price>0?100/(100+m.price):Math.abs(m.price)/(100+Math.abs(m.price));
  if(!m.ticker||!(ask>0&&ask<1)||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!Number.isFinite(Date.parse(closeTime))||Date.parse(closeTime)<=now||['Live','Final','in','post'].includes(m.game_status)||['in','post'].includes(g.game_status))return null;
- if(m.referenceOnly)return null; // Public references do not have exchange settlement contracts.
+ if(m.referenceOnly&&!referenceContract(sport,m,g,now))return null;
  const coverage=finite(f.coverage??f.context?.coverage??f.match?.coverage),estimate=finite(f.modelP);
  const hasModel=coverage>0&&estimate>0&&estimate<1;
  return {id:[sport,m.ticker,m.quoteSide==='no'||m.side==='no'?'no':'yes'].join('|'),ticker:m.ticker,side:m.quoteSide==='no'||m.side==='no'?'no':'yes',
   eventId:String(m.game_id||g.id||''),event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',eventTime,closeTime,
   selection:m.name||m.label||m.title,market:m.marketKey||m.kind||m.type,line:finite(m.point??m.line??String(m.title||m.label||'').match(/(?:over|under)\s+(\d+(?:\.\d+)?)/i)?.[1]),player:m.player||null,
-  ask,referenceAmericanOdds:finite(m.price),marketP:finite(m.prob??m.probability??m.marketProbability),
+  settlement:referenceContract(sport,m,g,now),referenceOnly:m.referenceOnly===true,ask,referenceAmericanOdds:finite(m.price),marketP:finite(m.prob??m.probability??m.marketProbability),
   modelP:hasModel?estimate:null,rawModelP:hasModel?finite(f.rawModelP??estimate):null,coverage,confidence:finite(f.confidence),
   forecastType:hasModel?(f.marketAnchored?'market_supported':f.experimental?'experimental':'model'):'market_only',projectedLine:finite(f.projectedLine),projectedTotal:finite(f.projectedTotal),projectedMargin:finite(f.projectedMargin),projectedAway:finite(f.projectedAway),projectedHome:finite(f.projectedHome),
   isAltLine:m.isAltLine===true,altReferenceLine:finite(m.altReferenceLine),altDistance:finite(m.altDistance),result:null};

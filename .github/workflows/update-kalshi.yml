@@ -26,6 +26,9 @@ on:
       - 'scripts/update_ncaaf_context.py'
       - 'scripts/update_ncaaf_slate.py'
       - 'scripts/update_public_odds.py'
+      - 'scripts/update_espn_evidence.py'
+      - 'scripts/settle_espn_reference.py'
+      - 'espn-evidence.js'
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
@@ -84,6 +87,7 @@ jobs:
       - name: Publish NFL without waiting for other sports
         run: |
           python scripts/update_public_odds.py --sport nfl
+          python scripts/update_espn_evidence.py --sport nfl
           python scripts/publish_nfl_snapshot.py
 
   update:
@@ -138,6 +142,12 @@ jobs:
           python scripts/update_public_odds.py --sport mlb
           python scripts/update_public_odds.py --sport nhl
           python scripts/update_public_odds.py --sport ufc
+      - name: Monitor dated availability and completed-game usage
+        run: |
+          python scripts/update_espn_evidence.py --sport nfl
+          python scripts/update_espn_evidence.py --sport nhl
+          python scripts/update_espn_evidence.py --sport mlb
+          python scripts/update_espn_evidence.py --sport ncaaf
       - name: Match team and fighter media
         run: python scripts/update_sports_media.py
       - name: Track and settle pregame model picks

@@ -1,3 +1,4 @@
+const {contract:referenceContract}=require('../espn-evidence');
 // Runs after the scheduled snapshots. Uses the same browser models and gates to
 // preserve the first pregame forecast for each selected Kalshi contract.
 const fs=require('node:fs');
@@ -18,7 +19,7 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
   const ctx=vm.createContext({URL,Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('starter-status.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('starter-status.js');run('espn-evidence.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 
@@ -57,7 +58,7 @@ async function candidates(sport,{all=false}={}){
 function readCalibrationVersion(){try{return JSON.parse(fs.readFileSync(path.join(root,'data/model-calibration.js'),'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,'')).updated_at}catch{return null}}
 function record(sport,entry,now){
   const m=entry.market||{},f=entry.forecast||{},g=entry.game||{};
-  if(m.referenceOnly)return null; // No exchange contract to settle.
+  if(m.referenceOnly&&!referenceContract(sport,m,g,now))return null;
   const ticker=String(m.ticker||'');const side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const close=m.close_time||g.commence_time||m.game_time;
   const eventDate=String(m.event_ticker||ticker).match(/-(\d{2})([A-Z]{3})(\d{2})(?:\d{4})?[A-Z]/);
@@ -72,8 +73,8 @@ function record(sport,entry,now){
   const p=independent||experimental?modelP:marketP;
   return{id:[sport,ticker,side].join('|'),sport,ticker,side,market:m.marketKey||m.kind||m.type,
     isAltLine:m.isAltLine===true,altReferenceLine:m.altReferenceLine??null,altDistance:m.altDistance??null,
-    marketGroup:sport==='nfl'?(m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind,selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
-    closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
+    marketGroup:(sport==='nfl'?(m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind)+(m.referenceOnly?':public':''),selection:m.name||m.label||m.title||'',event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+    settlement:referenceContract(sport,m,g,now),referenceOnly:m.referenceOnly===true,priceSource:m.source||'Kalshi',closeTime:close,eventTime,recordedAt:new Date(now).toISOString(),marketP,modelP:p,rawModelP:independent||experimental?rawModelP:null,calibrationVersion:independent?(readCalibrationVersion()):null,
     eventId:g.context?.event_id||m.game_id||null,marketAnchored:f.marketAnchored===true,
     forecastType:f.marketAnchored===true?'market_supported':experimental?'experimental':independent?'model':'market_only',confidence:Number.isFinite(+f.confidence)?+f.confidence:null,
     ask:sport==='nfl'?m.quoteProbability:m.yes_ask,modelEV:independent&&!experimental&&!f.marketAnchored?Number(f.betEV):null,result:null};
