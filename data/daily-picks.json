@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T14:20:27.012Z",
+  "updated_at": "2026-10-17T14:27:14.059Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T14:20:00.107417+00:00"
+      "snapshotAt": "2026-10-17T14:24:48.666410+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T14:09:09.113815+00:00"
+      "snapshotAt": "2026-10-17T14:19:09.117952+00:00"
     },
     "ncaaf": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T14:20:23.025464+00:00"
+      "snapshotAt": "2026-10-17T14:24:29.718077+00:00"
     },
     "nfl": {
       "captured": 7,
@@ -114,12 +114,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T14:20:11.439897+00:00"
+      "snapshotAt": "2026-10-17T14:24:43.113790+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T14:08:06.456721+00:00"
+      "snapshotAt": "2026-10-17T14:24:51.711657+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -149,7 +149,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T14:20:00.135450+00:00"
+      "snapshotAt": "2026-10-17T14:24:54.822571+00:00"
     }
   },
   "records": [
@@ -15114,6 +15114,106 @@
           "isAltLine": false,
           "altReferenceLine": 1.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nba|multi|best|2||learning-20261015|6c9bb11fc35cbe01",
+      "day": "2026-10-17",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T14:27:14.059Z",
+      "snapshotAt": "2026-10-17T14:19:09.117952+00:00",
+      "sourceVersion": "00ebc7f4925c6cc9e9b137ebfbdff8d0e8dc59df",
+      "priceEstimate": 168,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.5017149640222612,
+        "conservativeP": 0.40013851347826246,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.42307400084912716,
+          "upper": 0.6439356768360116,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAPTS-26OCT20BOSDET-DETJDUREN0-15|yes",
+          "ticker": "KXNBAPTS-26OCT20BOSDET-DETJDUREN0-15",
+          "side": "yes",
+          "eventId": "401909088",
+          "event": "Celtics vs Pistons",
+          "eventTime": "2026-10-20T19:00Z",
+          "closeTime": "2026-10-22T19:00:00Z",
+          "selection": "Jalen Duren Over 14.5 Points",
+          "market": "points",
+          "line": 14.5,
+          "player": "Jalen Duren",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.69,
+          "referenceAmericanOdds": null,
+          "marketP": 0.6499999999999999,
+          "modelP": 0.7791383240131154,
+          "rawModelP": 0.7791383240131154,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 19.542488524109018,
+          "projectedTotal": 228.8579493843801,
+          "projectedMargin": 2.066621512484403,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 14.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAGAME-26OCT21CHABKN-CHA|yes",
+          "ticker": "KXNBAGAME-26OCT21CHABKN-CHA",
+          "side": "yes",
+          "eventId": "401909836",
+          "event": "Hornets vs Nets",
+          "eventTime": "2026-10-21T23:30Z",
+          "closeTime": "2026-10-23T23:30:00Z",
+          "selection": "Hornets ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.535,
+          "modelP": 0.6439356768360116,
+          "rawModelP": 0.6439356768360116,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 226.28601165234238,
+          "projectedMargin": -4.42798399402416,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
