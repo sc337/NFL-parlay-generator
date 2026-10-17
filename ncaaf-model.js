@@ -73,12 +73,12 @@ function estimate(m,context){
     const named=side(title.replace(/\s+wins\s*$/i,''),game);
     if(!named)return null;
     orientation=named==='home'?1:-1;selectedMargin=orientation*projected;edge=selectedMargin;
-  }else if(m.kind==='spread'&&m.referenceOnly){
-    const named=['home','away'].find(k=>String(game[k]?.id)===String(m.team_id));
+  }else if(m.kind==='spread'&&(m.referenceOnly||m.selection_team)){
+    const named=m.referenceOnly?['home','away'].find(k=>String(game[k]?.id)===String(m.team_id)):side(m.selection_team,game);
     if(!named||!Number.isFinite(m.point))return null;
     orientation=named==='home'?1:-1;selectedMargin=orientation*projected;offeredLine=m.point;edge=selectedMargin+offeredLine;
     if(!Number.isInteger(offeredLine*2))return null;
-    pushLine=Number.isInteger(offeredLine);
+    pushLine=m.referenceOnly&&Number.isInteger(offeredLine);
   }else if(m.kind==='spread'){
     const match=title.match(/^(.+?) wins by over (\d+(?:\.\d+)?) points?$/i);
     const named=match&&side(match[1],game);

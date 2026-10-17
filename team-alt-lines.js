@@ -10,6 +10,7 @@ function descriptor(sport,m){
   if(match)return {family:'team-total|'+match[1].toLowerCase(),line:Number(match[2])};
  }
  if(sport==='ncaaf'){
+  if(m.kind==='spread'&&m.selection_team&&number(m.point)!==null)return {family:'spread|'+String(m.selection_team).toLowerCase(),line:-Number(m.point)};
   if(m.kind==='total')match=title.match(/^(?:Over|Under)\s+([\d.]+)\s+points scored$/i);
   if(match)return {family:'game-total',line:Number(match[1])};
   if(m.kind==='spread')match=title.match(/^(.+?)\s+wins by over\s+([\d.]+)\s+points?$/i);
@@ -21,7 +22,7 @@ function classify(sport,markets,snapshotAt){
  const groups=new Map();
  for(const m of markets){
   if(m.referenceOnly){m.isAltLine=false;m.altReferenceLine=m.point;m.altDistance=0;m.altSnapshotAt=m.quotedAt;continue;}
-  m.isAltLine=false;m.altReferenceLine=null;m.altDistance=null;m.altSnapshotAt=snapshotAt;
+  m.isAltLine=false;m.altReferenceLine=null;m.altDistance=null;m.altSnapshotAt=m.quotedAt||snapshotAt;
   // MLB run-line alternatives have no independent margin model yet. Recognize
   // them so they cannot slip into Standard/Both as unlabelled market-only picks.
   if(sport==='mlb'&&m.kind==='spread'){
@@ -29,7 +30,7 @@ function classify(sport,markets,snapshotAt){
    if(match){m.isAltLine=Number(match[1])!==1.5;m.altReferenceLine=1.5;m.altDistance=Math.abs(Number(match[1])-1.5)}
    continue;
   }
-  const d=descriptor(sport,m);if(!d||!m.game_id||!Number.isFinite(d.line)||d.line%1!==.5)continue;
+  const d=descriptor(sport,m);if(!d||!m.game_id||!Number.isFinite(d.line)||Math.abs(d.line)%1!==.5)continue;
   const key=m.game_id+'|'+d.family;if(!groups.has(key))groups.set(key,[]);groups.get(key).push({m,...d});
  }
  for(const rows of groups.values()){
@@ -40,15 +41,25 @@ function classify(sport,markets,snapshotAt){
  }
  return markets;
 }
-function qualifies(sport,m,forecast){
- if(!m.isAltLine)return true;
+function reasons(sport,m,forecast){
+ if(!m.isAltLine)return [];
  const policy=policies[sport],ask=number(m.yes_ask),p=number(forecast?.modelP),coverage=number(forecast?.coverage),distance=number(m.altDistance),age=Date.now()-Date.parse(m.altSnapshotAt);
- return !!policy&&forecast?.experimental===true&&distance!==null&&distance<=policy.maxDistance&&ask>0&&ask<=policy.maxAsk&&p>=.55&&coverage>=policy.minCoverage&&p-ask>=policy.minEdge-1e-10&&Number.isFinite(age)&&age>=-300000&&age<=1800000;
+ if(!policy)return ['ALT market unsupported'];
+ const excluded=[];
+ if(forecast?.experimental!==true)excluded.push('Independent ALT projection unavailable');
+ if(distance===null||distance>policy.maxDistance)excluded.push('ALT more than '+policy.maxDistance+' points from reference');
+ if(!(ask>0&&ask<=policy.maxAsk))excluded.push('ALT quote unavailable or above '+Math.round(policy.maxAsk*100)+'%');
+ if(!(p>=.55))excluded.push('ALT estimated probability below 55%');
+ if(!(coverage>=policy.minCoverage))excluded.push('ALT input coverage below '+Math.round(policy.minCoverage*100)+'%');
+ if(p===null||ask===null||p-ask<policy.minEdge-1e-10)excluded.push('ALT estimated advantage below '+Math.round(policy.minEdge*100)+' points');
+ if(!Number.isFinite(age)||age< -300000||age>1800000)excluded.push('ALT quote older than 30 minutes or unverified');
+ return excluded;
 }
+function qualifies(sport,m,forecast){return reasons(sport,m,forecast).length===0}
 const dateKey=time=>{const d=new Date(time);return Number.isFinite(+d)?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):''};
 function create(sport,changed){
  let date=window.DASHBOARD_UI?.get(sport,'date','all')||'all',mode='both',rows=[];try{const saved=localStorage.getItem(sport+'LineMode');if(['standard','alt','both'].includes(saved))mode=saved}catch{}
- function matches(m){return (window.SLATE_UI?window.SLATE_UI.matches(sport,m):(date==='all'||dateKey(m.game_time||m.start_time)===date))&&(mode==='both'||(mode==='alt'?m.isAltLine===true:m.isAltLine!==true))}
+ function matches(m,lineMode=mode){return (window.SLATE_UI?window.SLATE_UI.matches(sport,m):(date==='all'||dateKey(m.game_time||m.start_time)===date))&&(lineMode==='both'||(lineMode==='alt'?m.isAltLine===true:m.isAltLine!==true))}
  function allowed(m,f){return matches(m)&&qualifies(sport,m,f)}
  function controls(){
   const host=document.querySelector('#'+sport+'LineFilters');if(!host?.querySelector)return;
@@ -64,5 +75,5 @@ function create(sport,changed){
  document.addEventListener?.('change',e=>{const target=e.target;if(target?.closest?.('#'+sport+'LineFilters')){if(target.hasAttribute('data-date'))setDate(target.value);if(target.hasAttribute('data-lines'))setLineMode(target.value)}});
  return {allowed,matches,controls,setDate,setLineMode,filters:()=>({date,lineMode:mode}),selectedDay:m=>window.SLATE_UI?window.SLATE_UI.matches(sport,m):date==='all'?window.PICK_OF_DAY?.today?.(m.game_time||m.start_time):dateKey(m.game_time||m.start_time)===date,load:(markets,at)=>{rows=classify(sport,markets,at);controls();return rows}};
 }
-window.TEAM_ALT_LINES={policies,descriptor,classify,qualifies,create,dateKey};
+window.TEAM_ALT_LINES={policies,descriptor,classify,qualifies,reasons,create,dateKey};
 })();

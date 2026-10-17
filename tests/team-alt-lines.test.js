@@ -24,6 +24,12 @@ test('date and line controls intersect and preserve an empty selected date',()=>
  controller.setLineMode('alt');assert.equal(controller.matches(rows[0]),false);assert.equal(controller.matches(rows[1]),true);
  controller.setDate('2040-01-01');assert.equal(controller.matches(rows[1]),false);assert.equal(controller.filters().date,'2040-01-01');controller.setDate('all');assert.equal(controller.matches(rows[1]),true);
 });
+test('signed NO-side college spreads share a stable team reference and report all policy exclusions',()=>{
+ const api=runtime(),rows=[row('Away +3.5',.5,{kind:'spread',selection_team:'Away',point:3.5}),row('Away +5.5',.65,{kind:'spread',selection_team:'Away',point:5.5}),row('Away +10.5',.8,{kind:'spread',selection_team:'Away',point:10.5})];
+ api.classify('ncaaf',rows,stamp());assert.equal(rows[0].isAltLine,false);assert.equal(rows[1].isAltLine,true);assert.equal(rows[1].altDistance,2);assert.equal(rows[1].altReferenceLine,-3.5);
+ const f={experimental:true,modelP:.78,coverage:.8};assert.equal(api.qualifies('ncaaf',rows[1],f),true);assert.ok(api.reasons('ncaaf',rows[2],f).length>=2);
+ const ctl=api.create('ncaaf',()=>{});ctl.load(rows,stamp());ctl.setLineMode('alt');assert.equal(ctl.matches(rows[0]),false);assert.equal(ctl.matches(rows[0],'both'),true);assert.equal(ctl.filters().lineMode,'alt');
+});
 test('dashboard ALT mode cannot be bypassed by creator fallbacks and repeated builds stay stable',async()=>{
  for(const sport of ['mlb','ncaaf']){
   const nodes=new Map(),document={addEventListener(){},body:{classList:{contains:()=>false}},querySelector:s=>{if(!nodes.has(s))nodes.set(s,{innerHTML:'',textContent:'',style:{}});return nodes.get(s)}};

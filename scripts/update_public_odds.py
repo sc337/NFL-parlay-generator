@@ -109,7 +109,7 @@ def selected_team(m, game, ctx):
             return norm(t.get('name'))
     if m.get('team') and m['team'] not in ('Game', 'Player'):
         return norm(m['team'])
-    title = norm(m.get('contract_title') or m.get('title') or m.get('label'))
+    title = norm(m.get('selection_team') or m.get('contract_title') or m.get('title') or m.get('label'))
     aliases = {}
     c = ctx.get('games', {})
     college = c.get(str(m.get('game_id')), {}) if isinstance(c, dict) else {}
@@ -134,7 +134,8 @@ def slot(sport, m, game, ctx):
     point = number(m.get('point'))
     if kind == 'total':
         text = str(m.get('title') or m.get('label') or m.get('name', ''))
-        direction = 'under' if m.get('side') in ('no', 'under') or re.match('Under ', text, re.I) else 'over'
+        named_direction = re.match(r'(over|under)\b', text, re.I)
+        direction = named_direction[1].lower() if named_direction else 'under' if m.get('side') in ('no', 'under') else 'over'
         if point is None:
             point = number(m.get('line'))
         if point is None:

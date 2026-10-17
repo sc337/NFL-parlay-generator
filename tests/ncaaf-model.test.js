@@ -31,6 +31,13 @@ test('spread and total estimates respect side and wind without calling it value'
   assert.ok(Math.abs(over.modelP+under.modelP-1)<1e-10);
   assert.equal(over.betEV,null);
 });
+test('native complementary spreads model the opposing team and signed point',()=>{
+ const yes={...market('spread','Alabama wins by over 7.5 points'),selection_team:'Alabama',point:-7.5,quoteSide:'yes'};
+ const no={...market('spread','Mississippi State +7.5'),selection_team:'Mississippi State',point:7.5,quoteSide:'no'};
+ const a=window.NCAAF_MODEL.estimate(yes,context),b=window.NCAAF_MODEL.estimate(no,context);
+ assert.ok(Math.abs(a.modelP+b.modelP-1)<1e-10);assert.equal(a.selectedMargin,-b.selectedMargin);assert.equal(b.offeredLine,7.5);
+ assert.equal(window.NCAAF_MODEL.estimate({...no,selection_team:'Unknown'},context),null);
+});
 
 test('missing, thin, stale, post-kickoff, and unresolved markets have no model',()=>{
   const m=market('moneyline','Alabama wins');
