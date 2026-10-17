@@ -27,6 +27,7 @@ function quote(s,m){
  return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):(m.source||'Kalshi'),checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
 function validatedRule(s,m,f={}){
+ if(s==='ncaaf'&&f.forecastVersion&&window.MODEL_CALIBRATION?.rules(s)?.[group(s,m)+(f.experimental?':experimental':'')]?.forecastVersion!==f.forecastVersion)return false;
  if(window.MODEL_LEARNING&&!window.MODEL_LEARNING.baselineApproved(s,group(s,m)))return false;
  return window.MODEL_CALIBRATION?.validated?.(s,group(s,m)+(f.experimental?':experimental':''))===true;
 }
@@ -125,7 +126,7 @@ function assess(s,m,f={},options={}){
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
- const learned=window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
+ const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
  const buffer=learned?learned.buffer+context.penalty:(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015+context.penalty;
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
@@ -157,6 +158,18 @@ function assess(s,m,f={},options={}){
  const clearsValue=ev>0&&conservativeEV>0;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
  if(!reason&&!clearsValue)reason='Edge does not clear uncertainty buffer';
+ let sensitivity=null;
+ if(s==='ncaaf'&&f.sensitivity){
+  const scenarios=(f.sensitivity.scenarios||[]).map(row=>{
+   let estimate=num(row.modelP);
+   if(validated&&estimate>0&&estimate<1&&market>0&&market<1)estimate=window.MODEL_CALIBRATION.apply(s,ruleKey,estimate,market);
+   return {name:row.name,bufferedP:estimate==null?null:clamp(estimate-buffer,.001,.999)};
+  });
+  const requiredP=clamp((q.p||0)+.02,.001,.999),valid=scenarios.length>0&&scenarios.every(row=>row.bufferedP!=null);
+  const worstP=valid?Math.min(conservativeP,...scenarios.map(row=>row.bufferedP)):null;
+  sensitivity={pass:valid&&worstP>requiredP,worstP,requiredP,scenarios,pricePenalty:.02};
+  if(!reason&&!sensitivity.pass)reason='NCAAF sensitivity check failed';
+ }
  // Policy safeguards for provisional estimates, not measured confidence limits.
  if(!reason&&!validated&&(q.p<.35||p<.45))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
@@ -178,7 +191,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
+ return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,sensitivity,minimumOdds:conservativeP>0?american(sensitivity?.worstP!=null?clamp(sensitivity.worstP-.02,.001,.999):conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
@@ -203,6 +216,6 @@ function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketA
  const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
 window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();

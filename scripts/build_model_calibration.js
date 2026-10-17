@@ -35,9 +35,11 @@ function build(payload,previous={sports:{}}){const sports={};for(const sport of 
   sports[sport]={};const rows=(payload.records||[]).filter(r=>r.sport===sport);
   for(const group of new Set(rows.map(r=>r.marketGroup||r.market).filter(Boolean)))for(const cohort of ['model','experimental']){
     const key=cohort==='model'?group:group+':experimental';const chosen=rows.filter(r=>(r.marketGroup||r.market)===group&&r.forecastType===cohort);if(!chosen.length)continue;
-    const current=chosen.filter(r=>r.modelVersion===L.VERSION),version=current.length?L.VERSION:'legacy';
+    const forecastVersion=sport==='ncaaf'?chosen.filter(r=>r.forecastVersion).sort((a,b)=>Date.parse(b.recordedAt)-Date.parse(a.recordedAt))[0]?.forecastVersion||null:null;
+    const versioned=forecastVersion?chosen.filter(r=>r.forecastVersion===forecastVersion):chosen;
+    const current=versioned.filter(r=>r.modelVersion===L.VERSION),version=current.length?L.VERSION:'legacy';
     const prior=previous.sports?.[sport]?.[key];
-    sports[sport][key]={...fit(current.length?current:chosen,prior?.modelVersion===version?prior:{},cohort),modelVersion:version};
+    sports[sport][key]={...fit(current.length?current:versioned,prior?.modelVersion===version&&(prior.forecastVersion||null)===forecastVersion?prior:{},cohort),modelVersion:version,...(forecastVersion?{forecastVersion}:{})};
   }
 }return {updated_at:new Date().toISOString(),sports}}
 function main(){const payload=JSON.parse(fs.readFileSync(history,'utf8'));const audit=path.join(root,'data/forecast-audit.json');if(fs.existsSync(audit)){const seen=new Set(payload.records.map(r=>r.id));payload.records.push(...(JSON.parse(fs.readFileSync(audit,'utf8')).records||[]).filter(r=>!seen.has(r.id)))}let previous={sports:{}};

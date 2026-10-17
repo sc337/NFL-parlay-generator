@@ -15,6 +15,11 @@ assert.equal(fit(duplicate).active,false,'same-event picks cannot create validat
 const grouped=build({records:[...rows.map(r=>({...r,sport:'mlb',marketGroup:'moneyline'})),...rows.slice(0,10).map(r=>({...r,id:'prop'+r.id,sport:'mlb',marketGroup:'player_prop'}))]});
 assert.equal(grouped.sports.mlb.moneyline.active,true);
 assert.equal(grouped.sports.mlb.player_prop.active,false,'market families need separate evidence');
+const collegeVersions=build({records:[...rows.map(r=>({...r,sport:'ncaaf',marketGroup:'spread',forecastType:'experimental'})),
+  {...rows.at(-1),id:'new-college',sport:'ncaaf',marketGroup:'spread',forecastType:'experimental',forecastVersion:'ncaaf-errors-stress-v1',recordedAt:'2027-01-01T00:00:00Z',eventTime:'2027-01-02T00:00:00Z'}]});
+assert.equal(collegeVersions.sports.ncaaf['spread:experimental'].active,false,'new college formula cannot inherit the older formula validation');
+assert.equal(collegeVersions.sports.ncaaf['spread:experimental'].forecastVersion,'ncaaf-errors-stress-v1');
+assert.equal(collegeVersions.sports.ncaaf['spread:experimental'].distinctEvents,1);
 const context={window:{MODEL_CALIBRATION_DATA:{updated_at:new Date().toISOString(),sports:{mlb:{moneyline:rule}}}},localStorage:{getItem:()=>null},Math};
 vm.runInNewContext(fs.readFileSync('model-calibration.js','utf8'),context);
 vm.runInNewContext(fs.readFileSync('model-core.js','utf8'),context);
