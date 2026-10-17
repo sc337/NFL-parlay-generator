@@ -20,6 +20,7 @@ function descriptor(sport,m){
 function classify(sport,markets,snapshotAt){
  const groups=new Map();
  for(const m of markets){
+  if(m.referenceOnly){m.isAltLine=false;m.altReferenceLine=m.point;m.altDistance=0;m.altSnapshotAt=m.quotedAt;continue;}
   m.isAltLine=false;m.altReferenceLine=null;m.altDistance=null;m.altSnapshotAt=snapshotAt;
   // MLB run-line alternatives have no independent margin model yet. Recognize
   // them so they cannot slip into Standard/Both as unlabelled market-only picks.
