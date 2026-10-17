@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-17T04:20:31.383Z",
+  "updated_at": "2026-10-17T04:22:44.432Z",
   "method": "First pregame Kalshi quote per contract and side; settled contract result; no postgame feature backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger. NFL totals use final ESPN score when available.",
   "pregameViolations": 0,
   "sports": {
@@ -1708,7 +1708,7 @@
       }
     },
     "nba": {
-      "recorded": 1763,
+      "recorded": 1766,
       "independentRecorded": 0,
       "qualified": {
         "recorded": 7,
@@ -1797,13 +1797,13 @@
       ],
       "rejectionReasons": {
         "Independent projection too thin": 637,
-        "Edge does not clear uncertainty buffer": 586,
+        "Edge does not clear uncertainty buffer": 589,
         "Unvalidated longshot; insufficient reliability": 4,
         "Quote spread too wide": 1,
         "Model disagrees too strongly with market": 1
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 615,
+      "experimentalRecorded": 618,
       "settled": 0,
       "distinctEvents": 0,
       "independentSettled": 0,
@@ -2048,7 +2048,7 @@
           }
         },
         "spread": {
-          "recorded": 990,
+          "recorded": 991,
           "independentRecorded": 0,
           "qualified": {
             "recorded": 1,
@@ -2137,10 +2137,10 @@
           ],
           "rejectionReasons": {
             "Independent projection too thin": 372,
-            "Edge does not clear uncertainty buffer": 341
+            "Edge does not clear uncertainty buffer": 342
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 342,
+          "experimentalRecorded": 343,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -2480,6 +2480,173 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 10,
+          "settled": 0,
+          "distinctEvents": 0,
+          "independentSettled": 0,
+          "independentEvents": 0,
+          "brier": {
+            "model": null,
+            "market": null
+          },
+          "logLoss": {
+            "model": null,
+            "market": null
+          },
+          "independentComparison": {
+            "brierModel": null,
+            "brierMarket": null,
+            "logLossModel": null,
+            "logLossMarket": null
+          },
+          "experimentalComparison": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "brierEstimate": null,
+            "brierMarket": null
+          },
+          "calibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "ablations": {},
+          "priceMovement": {
+            "source": "Kalshi near-start reference; not Caesars",
+            "count": 0,
+            "meanCLV": null
+          },
+          "positiveEV": {
+            "settled": 0,
+            "distinctEvents": 0,
+            "grossReturnPerUnit": null
+          }
+        },
+        "assists": {
+          "recorded": 2,
+          "independentRecorded": 0,
+          "qualified": {
+            "recorded": 0,
+            "settled": 0,
+            "distinctEvents": 0,
+            "winRate": null,
+            "brier": null,
+            "referenceReturnPerUnit": null,
+            "calibrationBins": [
+              {
+                "range": [
+                  0,
+                  0.4
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.4,
+                  0.6
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.6,
+                  0.8
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              },
+              {
+                "range": [
+                  0.8,
+                  1
+                ],
+                "count": 0,
+                "predicted": null,
+                "observed": null
+              }
+            ],
+            "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
+          },
+          "experimentalCalibrationBins": [
+            {
+              "range": [
+                0,
+                0.4
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.4,
+                0.6
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.6,
+                0.8
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            },
+            {
+              "range": [
+                0.8,
+                1
+              ],
+              "count": 0,
+              "predicted": null,
+              "observed": null
+            }
+          ],
+          "rejectionReasons": {
+            "Edge does not clear uncertainty buffer": 2
+          },
+          "marketSupportedRecorded": 0,
+          "experimentalRecorded": 2,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
