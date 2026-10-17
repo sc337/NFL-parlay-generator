@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T23:18:44.786Z",
+  "updated_at": "2026-10-17T23:19:38.543Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:59:11.468258+00:00"
+      "snapshotAt": "2026-10-17T23:19:12.726603+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T23:18:43.797976+00:00"
+      "snapshotAt": "2026-10-17T23:08:44.146223+00:00"
     },
     "ncaaf": {
       "captured": 2,
@@ -55,10 +55,10 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:59:27.631898+00:00"
+      "snapshotAt": "2026-10-17T23:19:28.439680+00:00"
     },
     "nfl": {
-      "captured": 1,
+      "captured": 5,
       "passes": [
         {
           "mode": "multi",
@@ -73,12 +73,6 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 2,
@@ -109,12 +103,6 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
           "requestedLegs": 3,
@@ -139,20 +127,8 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -163,7 +139,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:59:30.482907+00:00"
+      "snapshotAt": "2026-10-17T23:19:33.678518+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -175,7 +151,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:59:49.088574+00:00"
+      "snapshotAt": "2026-10-17T23:09:56.006209+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -205,7 +181,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:59:10.443638+00:00"
+      "snapshotAt": "2026-10-17T23:19:12.752790+00:00"
     }
   },
   "records": [
@@ -28442,120 +28418,6 @@
       "result": null
     },
     {
-      "id": "2026-10-17|nba|multi|best|2||learning-20261015|f6dc50688643abbb",
-      "day": "2026-10-17",
-      "sport": "nba",
-      "mode": "multi",
-      "profile": "best",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-17T22:48:45.226Z",
-      "snapshotAt": "2026-10-17T22:48:44.097322+00:00",
-      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
-      "priceEstimate": 246,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.43110230213396983,
-        "conservativeP": 0.3377907707705181,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.3134160576283882,
-          "upper": 0.6439356768360116,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nba|KXNBAGAME-26OCT21CHABKN-CHA|yes",
-          "ticker": "KXNBAGAME-26OCT21CHABKN-CHA",
-          "side": "yes",
-          "eventId": "401909836",
-          "event": "Hornets vs Nets",
-          "eventTime": "2026-10-21T23:30Z",
-          "closeTime": "2026-10-23T23:30:00Z",
-          "selection": "Hornets ML",
-          "market": "moneyline",
-          "line": null,
-          "player": null,
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.54,
-          "referenceAmericanOdds": null,
-          "marketP": 0.535,
-          "modelP": 0.6439356768360116,
-          "rawModelP": 0.6439356768360116,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 226.28601165234238,
-          "projectedMargin": -4.42798399402416,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nba|ESPN:401909835:100:spread:away:6.5|no",
-          "ticker": "ESPN:401909835:100:spread:away:6.5",
-          "side": "no",
-          "eventId": "401909835",
-          "event": "Milwaukee Bucks at Washington Wizards",
-          "eventTime": "2026-10-21T23:00:00+00:00",
-          "closeTime": "2026-10-21T23:00:00+00:00",
-          "selection": "Milwaukee Bucks +6.5",
-          "market": "spread",
-          "line": 6.5,
-          "player": null,
-          "settlement": {
-            "provider": "ESPN",
-            "sport": "nba",
-            "eventId": "401909835",
-            "teams": [
-              "15",
-              "27"
-            ],
-            "teamId": "15",
-            "kind": "spread",
-            "line": 6.5,
-            "direction": null,
-            "scope": "full_game",
-            "eventTime": "2026-10-21T23:00:00.000Z"
-          },
-          "referenceOnly": true,
-          "ask": 0.5348837209302325,
-          "referenceAmericanOdds": -115,
-          "marketP": 0.5348837209302325,
-          "modelP": 0.6694803807923766,
-          "rawModelP": 0.6694803807923766,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 233.80154543065703,
-          "projectedMargin": 1.2382563371235022,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": 6.5,
-          "altDistance": 0,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
       "id": "2026-10-17|nhl|multi|balanced|2||learning-20261015|2c94cf915578935a",
       "day": "2026-10-17",
       "sport": "nhl",
@@ -28569,7 +28431,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:48:45.226Z",
+      "capturedAt": "2026-10-17T22:49:33.920Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": -166,
@@ -28669,7 +28531,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:48:45.226Z",
+      "capturedAt": "2026-10-17T22:49:33.920Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 143,
@@ -28801,7 +28663,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:48:45.226Z",
+      "capturedAt": "2026-10-17T22:49:33.920Z",
       "snapshotAt": "2026-10-17T22:39:50.589445+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 268,
@@ -28952,6 +28814,120 @@
       "result": null
     },
     {
+      "id": "2026-10-17|nba|multi|best|2||learning-20261015|f6dc50688643abbb",
+      "day": "2026-10-17",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T22:59:33.185Z",
+      "snapshotAt": "2026-10-17T22:48:44.097322+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 246,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.43110230213396983,
+        "conservativeP": 0.3377907707705181,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3134160576283882,
+          "upper": 0.6439356768360116,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAGAME-26OCT21CHABKN-CHA|yes",
+          "ticker": "KXNBAGAME-26OCT21CHABKN-CHA",
+          "side": "yes",
+          "eventId": "401909836",
+          "event": "Hornets vs Nets",
+          "eventTime": "2026-10-21T23:30Z",
+          "closeTime": "2026-10-23T23:30:00Z",
+          "selection": "Hornets ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.535,
+          "modelP": 0.6439356768360116,
+          "rawModelP": 0.6439356768360116,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 226.28601165234238,
+          "projectedMargin": -4.42798399402416,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nba|ESPN:401909835:100:spread:away:6.5|no",
+          "ticker": "ESPN:401909835:100:spread:away:6.5",
+          "side": "no",
+          "eventId": "401909835",
+          "event": "Milwaukee Bucks at Washington Wizards",
+          "eventTime": "2026-10-21T23:00:00+00:00",
+          "closeTime": "2026-10-21T23:00:00+00:00",
+          "selection": "Milwaukee Bucks +6.5",
+          "market": "spread",
+          "line": 6.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "nba",
+            "eventId": "401909835",
+            "teams": [
+              "15",
+              "27"
+            ],
+            "teamId": "15",
+            "kind": "spread",
+            "line": 6.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-21T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5348837209302325,
+          "referenceAmericanOdds": -115,
+          "marketP": 0.5348837209302325,
+          "modelP": 0.6694803807923766,
+          "rawModelP": 0.6694803807923766,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 233.80154543065703,
+          "projectedMargin": 1.2382563371235022,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 6.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-17|nhl|multi|balanced|3||learning-20261015|70aa83180aa24f55",
       "day": "2026-10-17",
       "sport": "nhl",
@@ -28965,7 +28941,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:58:45.724Z",
+      "capturedAt": "2026-10-17T22:59:33.185Z",
       "snapshotAt": "2026-10-17T22:49:49.035227+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 143,
@@ -29097,7 +29073,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T22:58:45.724Z",
+      "capturedAt": "2026-10-17T22:59:33.185Z",
       "snapshotAt": "2026-10-17T22:49:49.035227+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 268,
@@ -29242,6 +29218,170 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nfl|multi|Lotto|4||learning-20261015|e7993bc7fff5da80",
+      "day": "2026-10-17",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T23:09:36.642Z",
+      "snapshotAt": "2026-10-17T23:09:31.877829+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 2493,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.07543758410623545,
+        "conservativeP": 0.04301641950010607,
+        "profile": "Lotto",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.4766210022601446,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT18ARILAR-ARIJBRISSETT7-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT18ARILAR-ARIJBRISSETT7-2",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
+          "event": "Arizona Cardinals @ Los Angeles Rams",
+          "eventTime": "2026-10-18T20:05:00Z",
+          "closeTime": "2026-10-18T20:05:00Z",
+          "selection": "Jacoby Brissett Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Jacoby Brissett",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.4766210022601446,
+          "rawModelP": 0.4766210022601446,
+          "coverage": 0.55,
+          "confidence": 45,
+          "forecastType": "experimental",
+          "projectedLine": 1.821708542713568,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT18CARPHI-CARBYOUNG9-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT18CARPHI-CARBYOUNG9-2",
+          "side": "yes",
+          "eventId": "kalshi-carolina-panthers-philadelphia-eagles",
+          "event": "Carolina Panthers @ Philadelphia Eagles",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Bryce Young Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Bryce Young",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.41,
+          "referenceAmericanOdds": 144,
+          "marketP": 0.405,
+          "modelP": 0.48734701342754033,
+          "rawModelP": 0.48734701342754033,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "experimental",
+          "projectedLine": 2.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50|yes",
+          "ticker": "KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cam Skattebo Over 49.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 49.5,
+          "player": "Cam Skattebo",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.49,
+          "referenceAmericanOdds": 104,
+          "marketP": 0.485,
+          "modelP": 0.594448881594326,
+          "rawModelP": 0.594448881594326,
+          "coverage": 0.55,
+          "confidence": 60,
+          "forecastType": "experimental",
+          "projectedLine": 57.7837037037037,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18TENIND-TENCWARD1-200|no",
+          "ticker": "KXNFLPASSYDS-26OCT18TENIND-TENCWARD1-200",
+          "side": "no",
+          "eventId": "kalshi-indianapolis-colts-tennessee-titans",
+          "event": "Tennessee Titans @ Indianapolis Colts",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cam Ward Under 199.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 199.5,
+          "player": "Cam Ward",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.48,
+          "referenceAmericanOdds": 108,
+          "marketP": 0.475,
+          "modelP": 0.5463384583090303,
+          "rawModelP": 0.5463384583090303,
+          "coverage": 0.55,
+          "confidence": 62,
+          "forecastType": "experimental",
+          "projectedLine": 184.98064516129028,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
