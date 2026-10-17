@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T17:57:54.961Z",
+  "updated_at": "2026-10-17T18:01:45.094Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,21 +32,34 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T17:55:40.984694+00:00"
+      "snapshotAt": "2026-10-17T17:43:34.899314+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T17:51:43.710598+00:00"
+      "snapshotAt": "2026-10-17T18:01:43.811266+00:00"
     },
     "ncaaf": {
-      "captured": 8,
-      "passes": [],
-      "snapshotAt": "2026-10-17T17:55:27.955203+00:00"
+      "captured": 3,
+      "passes": [
+        {
+          "mode": "multi",
+          "profile": "best",
+          "requestedLegs": 4,
+          "reason": "No qualifying build"
+        }
+      ],
+      "snapshotAt": "2026-10-17T17:44:01.517987+00:00"
     },
     "nfl": {
-      "captured": 7,
+      "captured": 5,
       "passes": [
+        {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
         {
           "mode": "sgp",
           "profile": "safe",
@@ -69,6 +82,12 @@
           "mode": "sgp",
           "profile": "long",
           "requestedLegs": 2,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "safe",
+          "requestedLegs": 3,
           "reason": "No qualifying build"
         },
         {
@@ -114,12 +133,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T17:55:40.357804+00:00"
+      "snapshotAt": "2026-10-17T17:43:44.682509+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T17:55:41.253747+00:00"
+      "snapshotAt": "2026-10-17T17:49:05.445196+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -149,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T17:55:41.736423+00:00"
+      "snapshotAt": "2026-10-17T17:43:33.516916+00:00"
     }
   },
   "records": [
@@ -18921,6 +18940,408 @@
           "confidence": 62,
           "forecastType": "experimental",
           "projectedLine": 213.01772727272726,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|ncaaf|multi|best|2||learning-20261015|f418bdcca99123f8",
+      "day": "2026-10-17",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T18:01:45.094Z",
+      "snapshotAt": "2026-10-17T17:44:01.517987+00:00",
+      "sourceVersion": "3aa3f921e3cb6bf098c2ddf7ec8c27cbb5ed27ae",
+      "priceEstimate": 261,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.3992840658223511,
+        "conservativeP": 0.3068712625455091,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.2642076874213619,
+          "upper": 0.6156355890531324,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|ESPN:401858269:100:spread:home:10.5|yes",
+          "ticker": "ESPN:401858269:100:spread:home:10.5",
+          "side": "yes",
+          "eventId": "401858269",
+          "event": "Wake Forest Demon Deacons at California Golden Bears",
+          "eventTime": "2026-10-18T02:30:00+00:00",
+          "closeTime": "2026-10-18T02:30:00+00:00",
+          "selection": "California Golden Bears +10.5",
+          "market": "spread",
+          "line": 10.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858269",
+            "teams": [
+              "154",
+              "25"
+            ],
+            "teamId": "25",
+            "kind": "spread",
+            "line": 10.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-18T02:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5283018867924528,
+          "referenceAmericanOdds": -112,
+          "marketP": 0.5283018867924528,
+          "modelP": 0.6485720983682295,
+          "rawModelP": 0.6485720983682295,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 54.7,
+          "projectedMargin": -4.1,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 10.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401871070:100:spread:home:2.5|yes",
+          "ticker": "ESPN:401871070:100:spread:home:2.5",
+          "side": "yes",
+          "eventId": "401871070",
+          "event": "New Mexico State Aggies at Sam Houston Bearkats",
+          "eventTime": "2026-10-22T00:00:00+00:00",
+          "closeTime": "2026-10-22T00:00:00+00:00",
+          "selection": "Sam Houston Bearkats +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401871070",
+            "teams": [
+              "166",
+              "2534"
+            ],
+            "teamId": "2534",
+            "kind": "spread",
+            "line": 2.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-22T00:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6156355890531324,
+          "rawModelP": 0.6156355890531324,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 49,
+          "projectedMargin": 2,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|ncaaf|multi|best|3||learning-20261015|064ebe27287fa063",
+      "day": "2026-10-17",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T18:01:45.094Z",
+      "snapshotAt": "2026-10-17T17:44:01.517987+00:00",
+      "sourceVersion": "3aa3f921e3cb6bf098c2ddf7ec8c27cbb5ed27ae",
+      "priceEstimate": 596,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.24268561836394867,
+        "conservativeP": 0.16254008113929266,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6078019113137463,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|ESPN:401858269:100:spread:home:10.5|yes",
+          "ticker": "ESPN:401858269:100:spread:home:10.5",
+          "side": "yes",
+          "eventId": "401858269",
+          "event": "Wake Forest Demon Deacons at California Golden Bears",
+          "eventTime": "2026-10-18T02:30:00+00:00",
+          "closeTime": "2026-10-18T02:30:00+00:00",
+          "selection": "California Golden Bears +10.5",
+          "market": "spread",
+          "line": 10.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858269",
+            "teams": [
+              "154",
+              "25"
+            ],
+            "teamId": "25",
+            "kind": "spread",
+            "line": 10.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-18T02:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5283018867924528,
+          "referenceAmericanOdds": -112,
+          "marketP": 0.5283018867924528,
+          "modelP": 0.6485720983682295,
+          "rawModelP": 0.6485720983682295,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 54.7,
+          "projectedMargin": -4.1,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 10.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401871070:100:spread:home:2.5|yes",
+          "ticker": "ESPN:401871070:100:spread:home:2.5",
+          "side": "yes",
+          "eventId": "401871070",
+          "event": "New Mexico State Aggies at Sam Houston Bearkats",
+          "eventTime": "2026-10-22T00:00:00+00:00",
+          "closeTime": "2026-10-22T00:00:00+00:00",
+          "selection": "Sam Houston Bearkats +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401871070",
+            "teams": [
+              "166",
+              "2534"
+            ],
+            "teamId": "2534",
+            "kind": "spread",
+            "line": 2.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-22T00:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6156355890531324,
+          "rawModelP": 0.6156355890531324,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 49,
+          "projectedMargin": 2,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401869934:100:spread:home:6.0|yes",
+          "ticker": "ESPN:401869934:100:spread:home:6.0",
+          "side": "yes",
+          "eventId": "401869934",
+          "event": "Arkansas State Red Wolves at Southern Miss Golden Eagles",
+          "eventTime": "2026-10-17T23:00:00+00:00",
+          "closeTime": "2026-10-17T23:00:00+00:00",
+          "selection": "Southern Miss Golden Eagles +6",
+          "market": "spread",
+          "line": 6,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401869934",
+            "teams": [
+              "2032",
+              "2572"
+            ],
+            "teamId": "2572",
+            "kind": "spread",
+            "line": 6,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5192307692307693,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.5192307692307693,
+          "modelP": 0.6078019113137463,
+          "rawModelP": 0.6078019113137463,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 57,
+          "projectedMargin": -2,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 6,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nfl|multi|Balanced|2||learning-20261015|6bd2d62010636a21",
+      "day": "2026-10-17",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T18:01:45.094Z",
+      "snapshotAt": "2026-10-17T17:43:44.682509+00:00",
+      "sourceVersion": "3aa3f921e3cb6bf098c2ddf7ec8c27cbb5ed27ae",
+      "priceEstimate": 232,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.39561723764548845,
+        "conservativeP": 0.3143879710605501,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.26035155712011937,
+          "upper": 0.5913908041719171,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18PITTB-TBKGAINWELL1-15|no",
+          "ticker": "KXNFLRSHYDS-26OCT18PITTB-TBKGAINWELL1-15",
+          "side": "no",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Kenny Gainwell Under 14.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 14.5,
+          "player": "Kenny Gainwell",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.5800000000000001,
+          "referenceAmericanOdds": -138,
+          "marketP": 0.575,
+          "modelP": 0.6689607529482021,
+          "rawModelP": 0.6689607529482021,
+          "coverage": 0.55,
+          "confidence": 45,
+          "forecastType": "experimental",
+          "projectedLine": 8.903529411764707,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225|yes",
+          "ticker": "KXNFLPASSYDS-26OCT18LACKC-KCPMAHOMES15-225",
+          "side": "yes",
+          "eventId": "kalshi-kansas-city-chiefs-los-angeles-chargers",
+          "event": "Los Angeles Chargers @ Kansas City Chiefs",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Patrick Mahomes Over 224.5 passing yards",
+          "market": "player_pass_yds",
+          "line": 224.5,
+          "player": "Patrick Mahomes",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.51,
+          "modelP": 0.5913908041719171,
+          "rawModelP": 0.5913908041719171,
+          "coverage": 0.5,
+          "confidence": 58,
+          "forecastType": "experimental",
+          "projectedLine": 259.25,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
