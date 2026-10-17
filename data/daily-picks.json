@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-17T02:20:24.001Z",
+  "updated_at": "2026-10-17T02:24:23.292Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T02:19:57.046472+00:00"
+      "snapshotAt": "2026-10-17T02:22:58.925381+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T02:10:01.323036+00:00"
+      "snapshotAt": "2026-10-17T02:20:01.323302+00:00"
     },
     "ncaaf": {
       "captured": 3,
@@ -49,26 +49,14 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T02:19:57.049262+00:00"
+      "snapshotAt": "2026-10-17T02:22:41.462903+00:00"
     },
     "nfl": {
-      "captured": 0,
+      "captured": 7,
       "passes": [
         {
-          "mode": "multi",
-          "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "safe",
-          "requestedLegs": 2,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "balanced",
           "requestedLegs": 2,
           "reason": "No qualifying build"
         },
@@ -91,32 +79,14 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "safe",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "safe",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -139,20 +109,8 @@
           "reason": "No qualifying build"
         },
         {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
           "mode": "sgp",
           "profile": "balanced",
-          "requestedLegs": 4,
-          "reason": "No qualifying build"
-        },
-        {
-          "mode": "multi",
-          "profile": "long",
           "requestedLegs": 4,
           "reason": "No qualifying build"
         },
@@ -163,12 +121,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T02:19:57.053534+00:00"
+      "snapshotAt": "2026-10-17T02:22:37.023039+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T02:09:55.071171+00:00"
+      "snapshotAt": "2026-10-17T02:23:07.224151+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -198,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T02:19:57.070474+00:00"
+      "snapshotAt": "2026-10-17T02:22:56.369944+00:00"
     }
   },
   "records": [
@@ -20350,6 +20308,444 @@
           "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": 24.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nfl|multi|Balanced|4||learning-20261015|3791cd039968e7d6",
+      "day": "2026-10-16",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T02:24:23.292Z",
+      "snapshotAt": "2026-10-17T02:22:37.023039+00:00",
+      "sourceVersion": "1b190e8a65c45a05be36aa54da3e41cfcbd49764",
+      "priceEstimate": 885,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.19214992145966883,
+        "conservativeP": 0.12656800065132015,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6152212088626012,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-PITJWARREN30-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18PITTB-PITJWARREN30-25",
+          "side": "yes",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Jaylen Warren Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Jaylen Warren",
+          "ask": 0.58,
+          "referenceAmericanOdds": -138,
+          "marketP": 0.575,
+          "modelP": 0.7230602350231836,
+          "rawModelP": 0.7230602350231836,
+          "coverage": 0.55,
+          "confidence": 57,
+          "forecastType": "experimental",
+          "projectedLine": 48.83076923076923,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18BALCLE-BALMANDREWS89-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18BALCLE-BALMANDREWS89-25",
+          "side": "yes",
+          "eventId": "kalshi-baltimore-ravens-cleveland-browns",
+          "event": "Baltimore Ravens @ Cleveland Browns",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Mark Andrews Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Mark Andrews",
+          "ask": 0.59,
+          "referenceAmericanOdds": -144,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.6905028392088897,
+          "rawModelP": 0.6905028392088897,
+          "coverage": 0.55,
+          "confidence": 55,
+          "forecastType": "experimental",
+          "projectedLine": 35.39999999999999,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50|yes",
+          "ticker": "KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cam Skattebo Over 49.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 49.5,
+          "player": "Cam Skattebo",
+          "ask": 0.56,
+          "referenceAmericanOdds": -127,
+          "marketP": 0.555,
+          "modelP": 0.625559992705437,
+          "rawModelP": 0.625559992705437,
+          "coverage": 0.55,
+          "confidence": 60,
+          "forecastType": "experimental",
+          "projectedLine": 57.7837037037037,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70|no",
+          "ticker": "KXNFLRSHYDS-26OCT18DALGB-DALJWILLIAMS33-70",
+          "side": "no",
+          "eventId": "kalshi-dallas-cowboys-green-bay-packers",
+          "event": "Dallas Cowboys @ Green Bay Packers",
+          "eventTime": "2026-10-19T00:20:00Z",
+          "closeTime": "2026-10-19T00:20:00Z",
+          "selection": "Javonte Williams Under 69.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 69.5,
+          "player": "Javonte Williams",
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.6152212088626012,
+          "rawModelP": 0.6152212088626012,
+          "coverage": 0.55,
+          "confidence": 57,
+          "forecastType": "experimental",
+          "projectedLine": 56.24432432432433,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nhl|multi|balanced|3||learning-20261015|11f9edfb8801b947",
+      "day": "2026-10-16",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T02:24:23.292Z",
+      "snapshotAt": "2026-10-17T02:23:07.224151+00:00",
+      "sourceVersion": "1b190e8a65c45a05be36aa54da3e41cfcbd49764",
+      "priceEstimate": 184,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.5144101962274588,
+        "conservativeP": 0.38341598583785763,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.4095623502889598,
+          "upper": 0.730893628543809,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYITOR-TOR3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYITOR-TOR3",
+          "side": "no",
+          "eventId": "401892523",
+          "event": "Islanders vs Maple Leafs",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Islanders +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.78,
+          "modelP": 0.8652618688196186,
+          "rawModelP": 0.8652618688196186,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.203501519152682,
+          "projectedMargin": null,
+          "projectedAway": 3.1812278325157632,
+          "projectedHome": 3.0222736866369186,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NJWSH-NJ2|no",
+          "ticker": "KXNHLSPREAD-26OCT17NJWSH-NJ2",
+          "side": "no",
+          "eventId": "401892519",
+          "event": "Devils vs Capitals",
+          "eventTime": "2026-10-17T17:00Z",
+          "closeTime": "2026-10-19T17:00:00Z",
+          "selection": "Capitals +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.73,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.8134068529255319,
+          "rawModelP": 0.8134068529255319,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.247251684392624,
+          "projectedMargin": null,
+          "projectedAway": 2.7987173829312892,
+          "projectedHome": 3.4485343014613346,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17SEAFLA-FLA2|no",
+          "ticker": "KXNHLSPREAD-26OCT17SEAFLA-FLA2",
+          "side": "no",
+          "eventId": "401892522",
+          "event": "Kraken vs Panthers",
+          "eventTime": "2026-10-17T22:00Z",
+          "closeTime": "2026-10-19T22:00:00Z",
+          "selection": "Kraken +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.61,
+          "referenceAmericanOdds": null,
+          "marketP": 0.6,
+          "modelP": 0.730893628543809,
+          "rawModelP": 0.730893628543809,
+          "coverage": 0.5666666666666667,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.249862629952493,
+          "projectedMargin": null,
+          "projectedAway": 3.1138033066647344,
+          "projectedHome": 3.1360593232877587,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|nhl|multi|balanced|4||learning-20261015|f702b13b99bbf3e7",
+      "day": "2026-10-16",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T02:24:23.292Z",
+      "snapshotAt": "2026-10-17T02:23:07.224151+00:00",
+      "sourceVersion": "1b190e8a65c45a05be36aa54da3e41cfcbd49764",
+      "priceEstimate": 426,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.34279214189188956,
+        "conservativeP": 0.2268847405030061,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.07594133034384942,
+          "upper": 0.6663789800548896,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NYITOR-TOR3|no",
+          "ticker": "KXNHLSPREAD-26OCT17NYITOR-TOR3",
+          "side": "no",
+          "eventId": "401892523",
+          "event": "Islanders vs Maple Leafs",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Islanders +2.5 Puck line",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "ask": 0.79,
+          "referenceAmericanOdds": null,
+          "marketP": 0.78,
+          "modelP": 0.8652618688196186,
+          "rawModelP": 0.8652618688196186,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.203501519152682,
+          "projectedMargin": null,
+          "projectedAway": 3.1812278325157632,
+          "projectedHome": 3.0222736866369186,
+          "isAltLine": true,
+          "altReferenceLine": 1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17PITVGK-VGK2|no",
+          "ticker": "KXNHLSPREAD-26OCT17PITVGK-VGK2",
+          "side": "no",
+          "eventId": "401892532",
+          "event": "Penguins vs Golden Knights",
+          "eventTime": "2026-10-18T02:00Z",
+          "closeTime": "2026-10-20T02:00:00Z",
+          "selection": "Penguins +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.53,
+          "modelP": 0.6663789800548896,
+          "rawModelP": 0.6663789800548896,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.7957632797184155,
+          "projectedMargin": null,
+          "projectedAway": 3.1830649215875177,
+          "projectedHome": 3.6126983581308982,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17NJWSH-NJ2|no",
+          "ticker": "KXNHLSPREAD-26OCT17NJWSH-NJ2",
+          "side": "no",
+          "eventId": "401892519",
+          "event": "Devils vs Capitals",
+          "eventTime": "2026-10-17T17:00Z",
+          "closeTime": "2026-10-19T17:00:00Z",
+          "selection": "Capitals +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.73,
+          "referenceAmericanOdds": null,
+          "marketP": 0.725,
+          "modelP": 0.8134068529255319,
+          "rawModelP": 0.8134068529255319,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.247251684392624,
+          "projectedMargin": null,
+          "projectedAway": 2.7987173829312892,
+          "projectedHome": 3.4485343014613346,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLSPREAD-26OCT17SEAFLA-FLA2|no",
+          "ticker": "KXNHLSPREAD-26OCT17SEAFLA-FLA2",
+          "side": "no",
+          "eventId": "401892522",
+          "event": "Kraken vs Panthers",
+          "eventTime": "2026-10-17T22:00Z",
+          "closeTime": "2026-10-19T22:00:00Z",
+          "selection": "Kraken +1.5 Puck line",
+          "market": "spread",
+          "line": 1.5,
+          "player": null,
+          "ask": 0.61,
+          "referenceAmericanOdds": null,
+          "marketP": 0.6,
+          "modelP": 0.730893628543809,
+          "rawModelP": 0.730893628543809,
+          "coverage": 0.5666666666666667,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.249862629952493,
+          "projectedMargin": null,
+          "projectedAway": 3.1138033066647344,
+          "projectedHome": 3.1360593232877587,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
           "altDistance": 0,
           "result": null
         }
