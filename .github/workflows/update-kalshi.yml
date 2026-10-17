@@ -24,6 +24,7 @@ on:
       - 'scripts/update_mlb_context.py'
       - 'scripts/attach_game_context.py'
       - 'scripts/update_ncaaf_context.py'
+      - 'scripts/update_ncaaf_slate.py'
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
@@ -119,7 +120,9 @@ jobs:
       - name: Match college games to schedule
         run: python scripts/attach_game_context.py --ncaaf
       - name: Refresh free NCAAF pregame context
-        run: python scripts/update_ncaaf_context.py
+        run: |
+          python scripts/update_ncaaf_slate.py
+          python scripts/update_ncaaf_context.py
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
       - name: Enrich games with ESPN matchup context
