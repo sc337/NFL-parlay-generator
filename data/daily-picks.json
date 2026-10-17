@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-16",
-  "updated_at": "2026-10-17T04:56:33.403Z",
+  "updated_at": "2026-10-17T04:58:28.564Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,42 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T04:56:01.759301+00:00"
+      "snapshotAt": "2026-10-17T04:46:01.359088+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T04:45:27.770671+00:00"
+      "snapshotAt": "2026-10-17T04:58:27.418434+00:00"
     },
     "ncaaf": {
-      "captured": 0,
-      "passes": [
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "Unverified start or stale quote"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 2,
-          "reason": "Unverified start or stale quote"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 3,
-          "reason": "Unverified start or stale quote"
-        },
-        {
-          "mode": "multi",
-          "profile": "best",
-          "requestedLegs": 4,
-          "reason": "Unverified start or stale quote"
-        }
-      ],
-      "snapshotAt": "2026-10-17T04:56:30.676360+00:00"
+      "captured": 4,
+      "passes": [],
+      "snapshotAt": "2026-10-17T04:46:28.970182+00:00"
     },
     "nfl": {
       "captured": 7,
@@ -139,12 +114,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T04:56:18.567878+00:00"
+      "snapshotAt": "2026-10-17T04:46:17.156130+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T04:45:32.513319+00:00"
+      "snapshotAt": "2026-10-17T04:55:33.313917+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -174,7 +149,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T04:56:00.332208+00:00"
+      "snapshotAt": "2026-10-17T04:45:59.423474+00:00"
     }
   },
   "records": [
@@ -21359,6 +21334,486 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|ncaaf|multi|best|2||learning-20261015|ef86331393ac263e",
+      "day": "2026-10-16",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T04:58:28.564Z",
+      "snapshotAt": "2026-10-17T04:46:28.970182+00:00",
+      "sourceVersion": "9381518450b0d8ab6bf8a99316a31a9449619744",
+      "priceEstimate": 219,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.4237979346452417,
+        "conservativeP": 0.3281126731308436,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3027748118919278,
+          "upper": 0.6288570269040941,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17UNCDUKE-DUKE|yes",
+          "ticker": "KXNCAAFGAME-26OCT17UNCDUKE-DUKE",
+          "side": "yes",
+          "eventId": "401858266",
+          "event": "North Carolina Tar Heels at Duke Blue Devils",
+          "eventTime": "2026-10-17T19:30Z",
+          "closeTime": "2026-10-19T19:30:00Z",
+          "selection": "Duke",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.575,
+          "modelP": 0.6739177849878338,
+          "rawModelP": 0.6739177849878338,
+          "coverage": 0.85,
+          "confidence": 51,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": 9.4,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856720:100:spread:away:16.5|yes",
+          "ticker": "ESPN:401856720:100:spread:away:16.5",
+          "side": "yes",
+          "eventId": "401856720",
+          "event": "Mississippi State Bulldogs at LSU Tigers",
+          "eventTime": "2026-10-17T16:00:00+00:00",
+          "closeTime": "2026-10-17T16:00:00+00:00",
+          "selection": "Mississippi State Bulldogs +16.5",
+          "market": "spread",
+          "line": 16.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856720",
+            "teams": [
+              "344",
+              "99"
+            ],
+            "teamId": "344",
+            "kind": "spread",
+            "line": 16.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T16:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5412844036697247,
+          "referenceAmericanOdds": -118,
+          "marketP": 0.5412844036697247,
+          "modelP": 0.6288570269040941,
+          "rawModelP": 0.6288570269040941,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 60,
+          "projectedMargin": 9.6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 16.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|ncaaf|multi|best|3||learning-20261015|33f5053ad141309d",
+      "day": "2026-10-16",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T04:58:28.564Z",
+      "snapshotAt": "2026-10-17T04:46:28.970182+00:00",
+      "sourceVersion": "9381518450b0d8ab6bf8a99316a31a9449619744",
+      "priceEstimate": 496,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.27594288809224476,
+        "conservativeP": 0.18800387626842266,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6288570269040941,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17UNCDUKE-DUKE|yes",
+          "ticker": "KXNCAAFGAME-26OCT17UNCDUKE-DUKE",
+          "side": "yes",
+          "eventId": "401858266",
+          "event": "North Carolina Tar Heels at Duke Blue Devils",
+          "eventTime": "2026-10-17T19:30Z",
+          "closeTime": "2026-10-19T19:30:00Z",
+          "selection": "Duke",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.575,
+          "modelP": 0.6739177849878338,
+          "rawModelP": 0.6739177849878338,
+          "coverage": 0.85,
+          "confidence": 51,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": 9.4,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856720:100:spread:away:16.5|yes",
+          "ticker": "ESPN:401856720:100:spread:away:16.5",
+          "side": "yes",
+          "eventId": "401856720",
+          "event": "Mississippi State Bulldogs at LSU Tigers",
+          "eventTime": "2026-10-17T16:00:00+00:00",
+          "closeTime": "2026-10-17T16:00:00+00:00",
+          "selection": "Mississippi State Bulldogs +16.5",
+          "market": "spread",
+          "line": 16.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856720",
+            "teams": [
+              "344",
+              "99"
+            ],
+            "teamId": "344",
+            "kind": "spread",
+            "line": 16.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T16:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5412844036697247,
+          "referenceAmericanOdds": -118,
+          "marketP": 0.5412844036697247,
+          "modelP": 0.6288570269040941,
+          "rawModelP": 0.6288570269040941,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 60,
+          "projectedMargin": 9.6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 16.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856721:100:spread:away:5.5|yes",
+          "ticker": "ESPN:401856721:100:spread:away:5.5",
+          "side": "yes",
+          "eventId": "401856721",
+          "event": "Missouri Tigers at Ole Miss Rebels",
+          "eventTime": "2026-10-17T19:30:00+00:00",
+          "closeTime": "2026-10-17T19:30:00+00:00",
+          "selection": "Missouri Tigers +5.5",
+          "market": "spread",
+          "line": 5.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856721",
+            "teams": [
+              "142",
+              "145"
+            ],
+            "teamId": "142",
+            "kind": "spread",
+            "line": 5.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T19:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5348837209302325,
+          "referenceAmericanOdds": -115,
+          "marketP": 0.5348837209302325,
+          "modelP": 0.6511190016139051,
+          "rawModelP": 0.6511190016139051,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 57.7,
+          "projectedMargin": -2.6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 5.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-16|ncaaf|multi|best|4||learning-20261015|b69269a72146e7f0",
+      "day": "2026-10-16",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T04:58:28.564Z",
+      "snapshotAt": "2026-10-17T04:46:28.970182+00:00",
+      "sourceVersion": "9381518450b0d8ab6bf8a99316a31a9449619744",
+      "priceEstimate": 1027,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.17697283869541827,
+        "conservativeP": 0.10588479196971316,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6288570269040941,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFGAME-26OCT17UNCDUKE-DUKE|yes",
+          "ticker": "KXNCAAFGAME-26OCT17UNCDUKE-DUKE",
+          "side": "yes",
+          "eventId": "401858266",
+          "event": "North Carolina Tar Heels at Duke Blue Devils",
+          "eventTime": "2026-10-17T19:30Z",
+          "closeTime": "2026-10-19T19:30:00Z",
+          "selection": "Duke",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.575,
+          "modelP": 0.6739177849878338,
+          "rawModelP": 0.6739177849878338,
+          "coverage": 0.85,
+          "confidence": 51,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": 9.4,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856720:100:spread:away:16.5|yes",
+          "ticker": "ESPN:401856720:100:spread:away:16.5",
+          "side": "yes",
+          "eventId": "401856720",
+          "event": "Mississippi State Bulldogs at LSU Tigers",
+          "eventTime": "2026-10-17T16:00:00+00:00",
+          "closeTime": "2026-10-17T16:00:00+00:00",
+          "selection": "Mississippi State Bulldogs +16.5",
+          "market": "spread",
+          "line": 16.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856720",
+            "teams": [
+              "344",
+              "99"
+            ],
+            "teamId": "344",
+            "kind": "spread",
+            "line": 16.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T16:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5412844036697247,
+          "referenceAmericanOdds": -118,
+          "marketP": 0.5412844036697247,
+          "modelP": 0.6288570269040941,
+          "rawModelP": 0.6288570269040941,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 60,
+          "projectedMargin": 9.6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 16.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856721:100:spread:away:5.5|yes",
+          "ticker": "ESPN:401856721:100:spread:away:5.5",
+          "side": "yes",
+          "eventId": "401856721",
+          "event": "Missouri Tigers at Ole Miss Rebels",
+          "eventTime": "2026-10-17T19:30:00+00:00",
+          "closeTime": "2026-10-17T19:30:00+00:00",
+          "selection": "Missouri Tigers +5.5",
+          "market": "spread",
+          "line": 5.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856721",
+            "teams": [
+              "142",
+              "145"
+            ],
+            "teamId": "142",
+            "kind": "spread",
+            "line": 5.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T19:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5348837209302325,
+          "referenceAmericanOdds": -115,
+          "marketP": 0.5348837209302325,
+          "modelP": 0.6511190016139051,
+          "rawModelP": 0.6511190016139051,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 57.7,
+          "projectedMargin": -2.6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 5.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401856724:100:spread:away:11.5|yes",
+          "ticker": "ESPN:401856724:100:spread:away:11.5",
+          "side": "yes",
+          "eventId": "401856724",
+          "event": "Florida Gators at Texas Longhorns",
+          "eventTime": "2026-10-17T16:00:00+00:00",
+          "closeTime": "2026-10-17T16:00:00+00:00",
+          "selection": "Florida Gators +11.5",
+          "market": "spread",
+          "line": 11.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401856724",
+            "teams": [
+              "251",
+              "57"
+            ],
+            "teamId": "57",
+            "kind": "spread",
+            "line": 11.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-17T16:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5283018867924528,
+          "referenceAmericanOdds": -112,
+          "marketP": 0.5283018867924528,
+          "modelP": 0.6413386477141536,
+          "rawModelP": 0.6413386477141536,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 57,
+          "projectedMargin": 3.9,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 11.5,
+          "altDistance": 0,
           "result": null
         }
       ],
