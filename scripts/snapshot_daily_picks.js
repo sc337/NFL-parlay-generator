@@ -12,6 +12,7 @@ function legRecord(sport,entry,snapshot,now){
  let ask=finite(sport==='nfl'?m.quoteProbability:m.yes_ask);
  if(ask===null&&sport==='nfl'&&finite(m.price)!==null&&Math.abs(m.price)>=100)ask=m.price>0?100/(100+m.price):Math.abs(m.price)/(100+Math.abs(m.price));
  if(!m.ticker||!(ask>0&&ask<1)||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||!Number.isFinite(Date.parse(closeTime))||Date.parse(closeTime)<=now||['Live','Final','in','post'].includes(m.game_status)||['in','post'].includes(g.game_status))return null;
+ if(m.referenceOnly)return null; // Public references do not have exchange settlement contracts.
  const coverage=finite(f.coverage??f.context?.coverage??f.match?.coverage),estimate=finite(f.modelP);
  const hasModel=coverage>0&&estimate>0&&estimate<1;
  return {id:[sport,m.ticker,m.quoteSide==='no'||m.side==='no'?'no':'yes'].join('|'),ticker:m.ticker,side:m.quoteSide==='no'||m.side==='no'?'no':'yes',
