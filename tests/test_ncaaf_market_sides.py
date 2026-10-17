@@ -37,6 +37,16 @@ class CollegeSides(unittest.TestCase):
             self.assertEqual(no['yes_ask'], .42)
         self.assertEqual(len(normalize_market(self.market(title='Over 50 points scored'), 'KXNCAAFTOTAL')), 1)
 
+    def test_live_full_game_prefix_is_normalized_but_other_periods_are_not_reinterpreted(self):
+        yes, no = normalize_market(self.market(title='Full Game: Over 50.5 points scored'), 'KXNCAAFTOTAL')
+        self.assertEqual(yes['title'], 'Over 50.5 points scored')
+        self.assertEqual(no['title'], 'Under 50.5 points scored')
+        self.assertEqual(yes['contract_title'], 'Full Game: Over 50.5 points scored')
+        self.assertEqual(no['yes_ask'], .42)
+        self.assertEqual(yes['point'], 50.5)
+        rows = normalize_market(self.market(title='First Half: Over 50.5 points scored'), 'KXNCAAFTOTAL')
+        self.assertEqual(rows, [])
+
     def test_identity_groups_do_not_cross_event_dates_and_native_no_settles_as_no(self):
         names = teams_by_event([{'event_ticker': 'KXNCAAFGAME-26OCT17AWYHOM', 'title': 'Home wins'},
                                 {'event_ticker': 'KXNCAAFGAME-26OCT17AWYHOM', 'title': 'Away wins'},
