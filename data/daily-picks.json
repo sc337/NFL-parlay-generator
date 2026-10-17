@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T22:29:32.813Z",
+  "updated_at": "2026-10-17T22:39:31.779Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:29:11.568303+00:00"
+      "snapshotAt": "2026-10-17T22:39:11.824788+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T22:08:44.240152+00:00"
+      "snapshotAt": "2026-10-17T22:28:44.292790+00:00"
     },
     "ncaaf": {
       "captured": 2,
@@ -55,10 +55,10 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:29:30.650978+00:00"
+      "snapshotAt": "2026-10-17T22:39:29.708648+00:00"
     },
     "nfl": {
-      "captured": 4,
+      "captured": 3,
       "passes": [
         {
           "mode": "multi",
@@ -99,6 +99,12 @@
         {
           "mode": "sgp",
           "profile": "safe",
+          "requestedLegs": 3,
+          "reason": "No qualifying build"
+        },
+        {
+          "mode": "multi",
+          "profile": "balanced",
           "requestedLegs": 3,
           "reason": "No qualifying build"
         },
@@ -145,12 +151,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:29:29.312790+00:00"
+      "snapshotAt": "2026-10-17T22:39:28.917343+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T22:19:50.038353+00:00"
+      "snapshotAt": "2026-10-17T22:29:52.845078+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -180,7 +186,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T22:29:09.736547+00:00"
+      "snapshotAt": "2026-10-17T22:39:11.093554+00:00"
     }
   },
   "records": [
@@ -28279,6 +28285,138 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-17|nhl|multi|balanced|3||learning-20261015|eaa2246ae8b28357",
+      "day": "2026-10-17",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T22:39:31.779Z",
+      "snapshotAt": "2026-10-17T22:29:52.845078+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 303,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.36610860876170004,
+        "conservativeP": 0.2597070527225624,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.15320805086079048,
+          "upper": 0.6381625110392897,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT18CARCGY-CAR|yes",
+          "ticker": "KXNHLGAME-26OCT18CARCGY-CAR",
+          "side": "yes",
+          "eventId": "401892534",
+          "event": "Hurricanes vs Flames",
+          "eventTime": "2026-10-19T00:00Z",
+          "closeTime": "2026-10-21T00:00:00Z",
+          "selection": "Hurricanes ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.66,
+          "referenceAmericanOdds": null,
+          "marketP": 0.655,
+          "modelP": 0.7453189731142763,
+          "rawModelP": 0.7453189731142763,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.337340487687193,
+          "projectedMargin": null,
+          "projectedAway": 4.000722898136274,
+          "projectedHome": 2.336617589550919,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLAST-26OCT17BOSLA-LAQBYFIELD55-1|no",
+          "ticker": "KXNHLAST-26OCT17BOSLA-LAQBYFIELD55-1",
+          "side": "no",
+          "eventId": "401892530",
+          "event": "Bruins vs Kings",
+          "eventTime": "2026-10-18T01:00Z",
+          "closeTime": "2026-10-20T01:00:00Z",
+          "selection": "Quinton Byfield Under 0.5 Assists",
+          "market": "assists",
+          "line": 0.5,
+          "player": "Quinton Byfield",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.66,
+          "referenceAmericanOdds": null,
+          "marketP": 0.655,
+          "modelP": 0.7697265667072246,
+          "rawModelP": 0.7697265667072246,
+          "coverage": 0.54,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.2704719367534003,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLTOTAL-26OCT17DALCHI-7|no",
+          "ticker": "KXNHLTOTAL-26OCT17DALCHI-7",
+          "side": "no",
+          "eventId": "401892528",
+          "event": "Stars vs Blackhawks",
+          "eventTime": "2026-10-17T23:00Z",
+          "closeTime": "2026-10-19T23:00:00Z",
+          "selection": "Under 6.5 goals",
+          "market": "total",
+          "line": 6.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.57,
+          "referenceAmericanOdds": null,
+          "marketP": 0.565,
+          "modelP": 0.6381625110392897,
+          "rawModelP": 0.6381625110392897,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 5.685777462728745,
+          "projectedTotal": 5.685777462728745,
+          "projectedMargin": null,
+          "projectedAway": 3.4108111018009204,
+          "projectedHome": 2.2749663609278246,
+          "isAltLine": true,
+          "altReferenceLine": 5.5,
+          "altDistance": 1,
           "result": null
         }
       ],
