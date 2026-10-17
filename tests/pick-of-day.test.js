@@ -52,6 +52,8 @@ test('featured MLB and college team markets retain their actual line rather than
   ['mlb','Padres +1.5 Run Line','Run line','+1.5'],
   ['ncaaf','Over 55.5 points scored','Total','O 55.5'],
   ['ncaaf','Under 55.5 points scored','Total','U 55.5']
+  ,['ncaaf','Duke -1.5','Spread','-1.5']
+  ,['ncaaf','North Carolina +3.5','Spread','+3.5']
  ]){
   const app=runtime();app.window.__ACTIVE_SPORT=sport;
   app.window.PICK_OF_DAY.show(sport,{market:{yes_ask:.6},eventTime:new Date(Date.now()+60000),label,event:'Away vs Home'});

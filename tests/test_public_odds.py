@@ -28,6 +28,13 @@ def base(sport, rows=None):
 
 
 class PublicOdds(unittest.TestCase):
+    def test_native_no_side_uses_selected_team_and_direction_for_gap_matching(self):
+        game = normalize([fixture()], NOW)[0][0]
+        row = {'kind': 'spread', 'selection_team': 'Away', 'contract_title': 'Home wins by over 3.5 points',
+               'title': 'Away +3.5', 'point': 3.5, 'side': 'no'}
+        self.assertEqual(slot('ncaaf', row, game, {}), ('spread', 'away', 3.5))
+        row = {'kind': 'total', 'title': 'Over 50.5 points scored', 'contract_title': 'Under 50.5 points scored', 'point': 50.5, 'side': 'no'}
+        self.assertEqual(slot('ncaaf', row, game, {}), ('total', 'over', 50.5))
     def test_all_team_sports_receive_attributed_core_markets_without_fake_liquidity(self):
         for sport in ['mlb', 'nba', 'ncaaf', 'nfl', 'nhl']:
             d = enrich(sport, base(sport), [fixture()], {}, NOW)
