@@ -25,6 +25,7 @@ on:
       - 'scripts/attach_game_context.py'
       - 'scripts/update_ncaaf_context.py'
       - 'scripts/update_ncaaf_slate.py'
+      - 'scripts/update_public_odds.py'
       - 'scripts/update_sports_media.py'
       - 'scripts/verify_snapshot_rosters.py'
       - 'scripts/enrich_snapshot_context.py'
@@ -81,7 +82,9 @@ jobs:
         continue-on-error: true
         run: python scripts/update_nfl_td_context.py
       - name: Publish NFL without waiting for other sports
-        run: python scripts/publish_nfl_snapshot.py
+        run: |
+          python scripts/update_public_odds.py --sport nfl
+          python scripts/publish_nfl_snapshot.py
 
   update:
     concurrency:
@@ -121,7 +124,7 @@ jobs:
         run: python scripts/attach_game_context.py --ncaaf
       - name: Refresh free NCAAF pregame context
         run: |
-          python scripts/update_ncaaf_slate.py
+          python scripts/update_public_odds.py --sport ncaaf
           python scripts/update_ncaaf_context.py --no-weather
       - name: Verify player props against ESPN rosters
         run: python scripts/verify_snapshot_rosters.py
@@ -129,6 +132,12 @@ jobs:
         run: python scripts/enrich_snapshot_context.py
       - name: Add completed-play touchdown opportunity
         run: python scripts/update_nfl_td_context.py
+      - name: Fill remaining public sportsbook selection gaps
+        run: |
+          python scripts/update_public_odds.py --sport nfl
+          python scripts/update_public_odds.py --sport mlb
+          python scripts/update_public_odds.py --sport nhl
+          python scripts/update_public_odds.py --sport ufc
       - name: Match team and fighter media
         run: python scripts/update_sports_media.py
       - name: Track and settle pregame model picks

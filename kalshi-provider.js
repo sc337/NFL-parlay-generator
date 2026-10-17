@@ -37,7 +37,7 @@
     if(!games){if(usable(warm)){const valid=warm.games.filter(isPregame);if(valid.length){data=warm;games=valid;source='Cached Kalshi · snapshot refresh failed'}}}
     if(!games)throw snapshotError;
    }
-   saveCache(data);diag({source,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:data.updated_at});
+   if(data.slate?.source==='ESPN')source='Kalshi + ESPN references';window.PUBLIC_SLATE?.set('nfl',data);saveCache(data);diag({source,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:data.updated_at});
    return await apply(data,games,source);
   }catch(e){
    if(!current())return false;state.games=[];window.PICK_QUALITY?.prepare('nfl',[]);state.propsLoaded?.clear?.();window.PICK_OF_DAY?.show?.('nfl');lastStamp=null;lastResult={code:e.code||'unavailable',message:String(e.message||e)};

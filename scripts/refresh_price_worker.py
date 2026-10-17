@@ -19,7 +19,7 @@ STEPS = {
     'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py',
             'enrich_snapshot_context.py', 'update_nfl_td_context.py'],
     'mlb': ['update_kalshi_mlb.py', 'update_mlb_context.py', 'attach_game_context.py'],
-    'ncaaf': ['update_kalshi_ncaaf.py', 'attach_game_context.py --ncaaf', 'update_ncaaf_slate.py', 'update_ncaaf_context.py --no-weather'],
+    'ncaaf': ['update_kalshi_ncaaf.py', 'attach_game_context.py --ncaaf'],
     'nhl': ['update_nhl_context.py', 'update_kalshi_nhl.py'],
     'ufc': ['update_kalshi_ufc.py'],
 }
@@ -64,9 +64,29 @@ def run(args, timeout=240):
 def refresh(sport):
     saved = {name: Path(name).read_bytes() for name in FILES[sport] if Path(name).exists()}
     try:
-        for step in STEPS[sport]:
-            parts = step.split()
-            run(['python', 'scripts/' + parts[0], *parts[1:]], timeout=600 if sport == 'nba' else 180)
+        primary_error = None
+        try:
+            for step in STEPS[sport]:
+                parts = step.split()
+                run(['python', 'scripts/' + parts[0], *parts[1:]], timeout=600 if sport == 'nba' else 180)
+        except Exception as error:
+            primary_error = error
+            print('Primary source unavailable; trying public references:', sport, error, flush=True)
+            for name in FILES[sport]:
+                if name in saved:
+                    Path(name).write_bytes(saved[name])
+                else:
+                    Path(name).unlink(missing_ok=True)
+        # Public references may recover a primary outage, without refreshing any
+        # old native quote timestamps. Individual source failures retain data.
+        run(['python', 'scripts/update_public_odds.py', '--sport', sport], timeout=90)
+        if sport == 'ncaaf':
+            try:
+                run(['python', 'scripts/update_ncaaf_context.py', '--no-weather'], timeout=180)
+            except Exception as error:
+                print('NCAAF context delayed; retain prior independent context:', error, flush=True)
+                if 'data/ncaaf-context.json' in saved:
+                    Path('data/ncaaf-context.json').write_bytes(saved['data/ncaaf-context.json'])
         name = FILES[sport][0]
         valid_snapshot(json.loads(Path(name).read_text()), sport,
                        json.loads(saved[name]) if name in saved else None)

@@ -12,6 +12,7 @@ function qualifies(m,forecast){
 function classify(markets){
  const groups=new Map();
  for(const m of markets){
+  if(m.referenceOnly){m.isAltLine=false;m.altReferenceLine=m.line;m.altDistance=0;continue}
   m.isAltLine=false;m.altReference=false;m.altReferenceLine=null;m.altDistance=null;const line=number(m.line);
   if(line===null||line<.5||line%1!==.5)continue;
   // Conventional NHL puck lines are +/-1.5 goals.

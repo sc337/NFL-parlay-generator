@@ -144,6 +144,7 @@ function assess(s,m,f={},options={}){
  else if(!Number.isFinite(start))reason='Event start unverified';
  else if(!q.checkedAt)reason='Quote timestamp unavailable';
  else if(q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL))reason='Quote older than 30 minutes';
+ else if(m.context_unmatched===true)reason='Matchup context unverified';
  else if(m._invalidRoster===true)reason='Roster unverified';
  else if(!(q.p>0&&q.p<1))reason='Quote unavailable';
  else if(num(m.sourceQuality)!=null&&num(m.sourceQuality)<60)reason='Source quality too low';
