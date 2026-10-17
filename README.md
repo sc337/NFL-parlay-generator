@@ -216,3 +216,9 @@ universal automated school-announcement parser. NHL goalie confirmation does not
 yet add individual-goalie performance to the team-average score model, and goalie
 saves remain unsupported. Starting-status evidence does not validate a model or
 establish a profitable edge. No paid feed has been connected.
+
+### Expanded college-football coverage
+
+NCAAF combines Kalshi markets with ESPN's upcoming FBS schedule and the current DraftKings moneylines, signed spreads and totals supplied by ESPN. The public feed uses no paid Odds API quota. A collapsed Full NCAAF Slate lists schedule-only games and exclusions for the selected date. The rolling price worker refreshes the source along with NCAAF markets.
+
+Public sportsbook prices are labeled references with their retrieval time, rather than an asserted bookmaker update time. Missing current prices never fall back to opening lines. Source failures retain available Kalshi coverage. Reference prices still require independent context and the existing uncertainty checks, expire after 30 minutes, and must be checked at the user's book. They are excluded from the exchange-contract performance archive because they have no Kalshi settlement contract. More schedule coverage does not imply validated model accuracy.
