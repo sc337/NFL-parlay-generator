@@ -71,7 +71,10 @@ def normalize_market(market, series, teams=None):
     label = str(market.get("yes_sub_title") or market.get("subtitle") or title).strip()
     selections = [("yes", title, label, None, None)]
     spread = re.fullmatch(r"(.+?) wins by over (\d+(?:\.\d+)?) points?", title, re.I) if kind == "spread" else None
-    total = re.fullmatch(r"(Over|Under) (\d+(?:\.\d+)?) points scored", title, re.I) if kind == "total" else None
+    total_title = re.sub(r"^Full Game:\s*", "", title, flags=re.I)
+    total = re.fullmatch(r"(Over|Under) (\d+(?:\.\d+)?) points scored", total_title, re.I) if kind == "total" else None
+    if kind == "total" and total is None:
+        return []
     if spread and float(spread[2]) % 1 == .5:
         line, selected = float(spread[2]), spread[1].strip()
         selections = [("yes", title, f"{selected} -{line:g}", selected, -line)]
@@ -80,6 +83,7 @@ def normalize_market(market, series, teams=None):
             opponent = next(name for name_key, name in names.items() if name_key != key(selected))
             selections.append(("no", f"{opponent} +{line:g}", f"{opponent} +{line:g}", opponent, line))
     elif total and float(total[2]) % 1 == .5:
+        selections = [("yes", total_title, total_title, None, float(total[2]))]
         opposite = "Under" if total[1].lower() == "over" else "Over"
         selections.append(("no", f"{opposite} {float(total[2]):g} points scored", f"{opposite} {float(total[2]):g} points scored", None, float(total[2])))
     rows = []
