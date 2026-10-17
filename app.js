@@ -963,7 +963,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
     corr,
     scriptName:ideas?'Reference-market idea':meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:ideas?({safe:'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Verified recent usage, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
+    summary:ideas?({safe:'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Recent context checked, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
     ({safe:'Prioritizes buffered likelihood with a penalty for excessive juice.',balanced:'Balances evidence, buffered likelihood and price discipline; rejects legs above 78% quote-implied probability.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'Cushion is a small preference, not evidence of value. ':'')+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
       : 'One leg per game. Combined model probability remains unvalidated; separate games do not guarantee independence.')
@@ -1028,7 +1028,7 @@ function render(parlays){
     const count=Number($('#legsSelect')?.value)||2;
     let scoped=nflSlate();if(state.mode==='sgp')scoped=scoped.filter(g=>g.id===$('#gameSelect').value);
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
-    wrap.innerHTML='<div class="empty">'+(window.NFL_PARLAY_IDEAS?.active?.(state)?'No NFL '+count+'-leg parlay idea':'No qualifying NFL '+count+'-leg parlay')+' for these filters. '+(report?report.eligible.length+' eligible market selections across '+report.players+' players. ':'')+'Try fewer legs or enable supported ALT overs.'+(report?.reasons.length?'<details><summary>Why selections were excluded</summary>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'')+'</div>';
+    wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(report?.reasons.length?'<details><summary>Why selections were excluded</summary>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'')+'</div>';
     if(window.PICK_QUALITY){
       const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
@@ -1062,7 +1062,7 @@ function render(parlays){
       const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l));const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
-      if(p.ideaTier)metrics.push('Verified recent usage · Kalshi reference · Check Caesars');
+      if(p.ideaTier)metrics.push('Recent context checked · '+(l.source||'Reference')+' · Check Caesars');
       if(quality?.pass&&quality.warnings?.length)metrics.push(...quality.warnings);
       const lineComparison=window.NFL_ALT_LINES?.comparisonText?.(l,state.games.find(g=>g.id===l.gameId)||state.games.find(g=>(g.markets||[]).some(m=>m===l||m.ticker&&m.ticker===l.ticker)));
       if(lineComparison)metrics.push(lineComparison);
@@ -1136,9 +1136,9 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     if(state.apiKey && propCount===0 && game?.propStatus==='none'){
       $('#resultsTitle').textContent='No FanDuel player props posted yet';
     }else{
-      $('#resultsTitle').textContent=window.NFL_PARLAY_IDEAS?.active?.(state)?'Kalshi parlay ideas · Reference markets':propCount
-        ? `Logical correlated SGPs • ${propCount} live props`
-        : 'Logical correlated SGPs';
+      $('#resultsTitle').textContent=window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':propCount
+        ? `Value-screened SGPs • ${propCount} quoted props`
+        : 'Value-screened SGPs';
     }
     if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
       render([]);
@@ -1172,7 +1172,7 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   state.mode=btn.dataset.mode;
   $('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
   $('#modeTitle').textContent=state.mode==='sgp'?'Same Game Parlay':'Multi-Game Parlay';
-  $('#resultsTitle').textContent=state.mode==='sgp'?'Logical correlated SGPs':'Best legs across the slate';
+  $('#resultsTitle').textContent=window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':state.mode==='sgp'?'Value-screened SGPs':'Value-screened multi-game picks';
   await generate();
 }));
 

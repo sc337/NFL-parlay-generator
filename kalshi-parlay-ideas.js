@@ -8,8 +8,9 @@ function assess(m,game,state){
  const key=String(m.marketKey||m.type).replace(/_alternate$/,''),injury=String(m.contextSignals?.injury_status||'').toLowerCase();
  let reason=null,coverage=0;
  if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game?.commence_time))reason='Outside selected date';
- else if(!active(state))reason='Parlay ideas require Kalshi-only mode';
- else if(q.source!=='Kalshi'||game?.dataSource!=='Kalshi')reason='Kalshi reference required';
+ else if(!active(state))reason='Matchup ideas require reference-feed mode';
+ else if(m.context_unmatched===true)reason='Matchup context unverified';
+ else if(m.referenceOnly ? !window.ESPN_EVIDENCE?.contract('nfl',m,game,now) : q.source!=='Kalshi'||game?.dataSource!=='Kalshi')reason='Verified Kalshi or ESPN reference required';
  else if(!Number.isFinite(start)||start<=now||game.game_status!=='pre')reason='Verified upcoming game required';
  else if(!Number.isFinite(at)||at>now+60000||now-at>30*60000)reason='Quote older than 30 minutes';
  else if(!(q.p>=.40&&q.p<=.85))reason='Reference price outside idea limits';
@@ -47,7 +48,9 @@ function assess(m,game,state){
   const limit=m.type==='passing'?50:['rushing','receiving'].includes(m.type)?20:m.type==='receptions'?2:7;
   if(!reference||Math.abs(Number(m.point)-Number(reference.point))>limit)reason='ALT threshold too far from reference';
  }
- const warnings=['Parlay idea; value and win probability unverified','Kalshi reference; verify exact line and SGP price on Caesars'];
+ const monitored=window.ESPN_EVIDENCE?.inspect(m,now);
+ if(!reason&&monitored?.blocked)reason=monitored.blocked;
+ const warnings=['Matchup idea; value and win probability unverified',q.source+' reference; verify exact line and SGP price on Caesars',...(monitored?.warnings||[])];
  return {pass:!reason,reason,quote:q,coverage,tier:'idea',validated:false,valueQualified:false,modelP:null,conservativeP:q.p,rankingP:q.p,ev:null,conservativeEV:null,warnings,rank:reason?-999:q.p*100+coverage*8};
 }
 function checkBuild(legs,state){
@@ -58,25 +61,35 @@ function scopedGames(games,state,selected){
  return state.mode==='sgp'?games.filter(g=>g.id===selected):games;
 }
 function report(games,state){
- const reasons=new Map(),eligible=[];
+ const reasons=new Map(),eligible=[];let checked=0,props=0;
  for(const game of games)for(const m of game.markets||[]){
   if(!state.selectedMarkets.has(m.type)||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
+  if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game.commence_time))continue;
+  checked++;if(m.player)props++;
   const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
   if(result.pass)eligible.push({market:m,game});else reasons.set(result.reason,(reasons.get(result.reason)||0)+1);
  }
- return {eligible,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+ return {eligible,checked,props,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+}
+function emptyMessage(report,count,state){
+ const ideas=active(state),n=report?.eligible.length||0;
+ const lead='No '+count+'-leg '+(ideas?'matchup idea':'value-screened parlay')+' for these filters. ';
+ if(!report?.checked)return lead+'No selections available for the selected date and markets.';
+ if(!n)return lead+report.checked+' selections checked; none passed '+(ideas?'the context and data-quality checks.':'the value screen. ')+(ideas?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
+ return lead+n+' eligible selections'+(report.props?' across '+report.players+' players':'')+'. Try fewer legs or different markets; compatible legs are still required.';
 }
 function refresh(){
  const host=document.querySelector('#nflRecommendationTierWrap'),s=window.NFL_PARLAY_STATE;if(!host||!s)return;
  host.hidden=!!s.apiKey||(window.__ACTIVE_SPORT||'nfl')!=='nfl';
  host.querySelector('select').value=s.recommendationTier||'screened';
+ host.querySelector('small').textContent=active(s)?'Ranks supported matchups using Kalshi or ESPN/DraftKings reference prices and recent context. Value unverified. Verify each line and combined price on Caesars.':'Requires the probability estimate, after an uncertainty deduction, to beat the quoted price. Models remain unvalidated; this mode may return no qualifying picks.';
 }
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;
  const field=document.createElement('div');field.id='nflRecommendationTierWrap';field.className='field';
- field.innerHTML='<label for="nflRecommendationTier">Kalshi-only tier</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="ideas">Parlay ideas</option><option value="screened">Model-screened</option></select><small id="nflIdeasNote">Ideas use verified usage and reference prices, not proven betting value. ALT overs require Include ALT lines. Verify each leg on Caesars.</small>';
+ field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="ideas">Matchup ideas</option><option value="screened">Value-screened</option></select><small id="nflIdeasNote"></small>';
  anchor.before(field);
- field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);window.generate?.()});
+ field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);refresh();window.generate?.()});
  // TD suggestions are not a parlay market. Preserve a separate scoped drawer.
  document.querySelector('#marketChips [data-market="td"]')?.remove();
  window.NFL_PARLAY_STATE?.selectedMarkets.delete('td');
@@ -84,6 +97,6 @@ function mount(){
  if(td&&results){const drawer=document.createElement('details');drawer.className='market-filter-details';drawer.id='nflTdStraightDrawer';drawer.innerHTML='<summary>TD straight-only ideas</summary>';drawer.append(td);results.after(drawer)}
  refresh();
 }
-window.NFL_PARLAY_IDEAS={active,assess,checkBuild,scopedGames,report,refresh};
+window.NFL_PARLAY_IDEAS={active,assess,checkBuild,scopedGames,report,emptyMessage,refresh};
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();
