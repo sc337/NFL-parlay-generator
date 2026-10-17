@@ -80,6 +80,16 @@ def refresh(sport):
         # Public references may recover a primary outage, without refreshing any
         # old native quote timestamps. Individual source failures retain data.
         run(['python', 'scripts/update_public_odds.py', '--sport', sport], timeout=90)
+        # Preserve the previous dated evidence cache across native feed rebuilds.
+        previous = json.loads(saved[FILES[sport][0]]) if FILES[sport][0] in saved else {}
+        if previous.get('espn_evidence'):
+            target = Path(FILES[sport][0]);current = json.loads(target.read_text())
+            current.setdefault('espn_evidence', previous['espn_evidence'])
+            target.write_text(json.dumps(current, separators=(',', ':'))+'\n')
+        try:
+            run(['python', 'scripts/update_espn_evidence.py', '--sport', sport], timeout=180)
+        except Exception as error:
+            print('ESPN evidence check delayed; earlier dated evidence retained:', sport, error, flush=True)
         if sport == 'ncaaf':
             try:
                 run(['python', 'scripts/update_ncaaf_context.py', '--no-weather'], timeout=180)

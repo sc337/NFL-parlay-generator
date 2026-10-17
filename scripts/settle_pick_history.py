@@ -22,7 +22,7 @@ def settle_records(records, fetch=fetch_market, now=None, limit=60):
     cache = {}
     changed = 0
     for row in records:
-        if row.get('result') or not row.get('ticker'):
+        if row.get('result') or not row.get('ticker') or (row.get('settlement') or {}).get('provider') == 'ESPN':
             continue
         try:
             close = datetime.fromisoformat((row.get('eventTime') or row['closeTime']).replace('Z', '+00:00'))
@@ -55,7 +55,11 @@ def main():
     if not FILE.exists():
         return
     payload = json.loads(FILE.read_text())
-    changed = settle_records(payload.get('records', []))
+    try:
+        from .settle_espn_reference import settle_references
+    except ImportError:
+        from settle_espn_reference import settle_references
+    changed = settle_records(payload.get('records', [])) + settle_references(payload.get('records', []))
     if changed:
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()
         FILE.write_text(json.dumps(payload, indent=2) + '\n')

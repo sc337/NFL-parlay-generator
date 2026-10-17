@@ -10,6 +10,11 @@ try:
 except ImportError:
     from settle_pick_history import settle_records
 
+try:
+    from .settle_espn_reference import settle_references
+except ImportError:
+    from settle_espn_reference import settle_references
+
 FILE = Path(__file__).resolve().parent.parent / 'data/forecast-audit.json'
 SUMMARY = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?'
 
@@ -49,7 +54,7 @@ def add_nfl_totals(records, fetch=final_total, now=None):
             continue
         if kickoff + timedelta(hours=2) > now:
             continue
-        event = row['eventId']
+        event = (row.get('settlement') or {}).get('eventId') or row['eventId']
         if event not in cache:
             try:
                 cache[event] = fetch(event)
@@ -67,7 +72,7 @@ def main():
         return
     payload = json.loads(FILE.read_text())
     records = payload.get('records', [])
-    changed = settle_records(records, limit=100) + add_nfl_totals(records)
+    changed = settle_records(records, limit=100) + settle_references(records, limit=100) + add_nfl_totals(records)
     if changed:
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()
         FILE.write_text(json.dumps(payload, indent=2) + '\n')
