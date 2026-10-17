@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-17",
-  "updated_at": "2026-10-17T18:29:53.745Z",
+  "updated_at": "2026-10-17T18:38:51.844Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,12 +32,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T18:29:11.175133+00:00"
+      "snapshotAt": "2026-10-17T18:19:16.781600+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-17T18:18:44.545100+00:00"
+      "snapshotAt": "2026-10-17T18:38:50.807460+00:00"
     },
     "ncaaf": {
       "captured": 3,
@@ -49,7 +49,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T18:29:49.923698+00:00"
+      "snapshotAt": "2026-10-17T18:19:51.623073+00:00"
     },
     "nfl": {
       "captured": 7,
@@ -121,12 +121,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T18:29:31.990551+00:00"
+      "snapshotAt": "2026-10-17T18:19:29.728726+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-17T18:19:49.035599+00:00"
+      "snapshotAt": "2026-10-17T18:29:48.529892+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-17T18:29:09.547333+00:00"
+      "snapshotAt": "2026-10-17T18:19:17.814737+00:00"
     }
   },
   "records": [
@@ -20815,6 +20815,138 @@
       "result": null
     },
     {
+      "id": "2026-10-17|nfl|multi|Balanced|3||learning-20261015|9666250a24a898a9",
+      "day": "2026-10-17",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-17T18:28:45.536Z",
+      "snapshotAt": "2026-10-17T18:18:31.688917+00:00",
+      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
+      "priceEstimate": 492,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.2975553191125389,
+        "conservativeP": 0.21796581133254236,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.007930661604899303,
+          "upper": 0.6077822149276593,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18PITTB-PITJWARREN30-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18PITTB-PITJWARREN30-25",
+          "side": "yes",
+          "eventId": "kalshi-pittsburgh-steelers-tampa-bay-buccaneers",
+          "event": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Jaylen Warren Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Jaylen Warren",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": -138,
+          "marketP": 0.575,
+          "modelP": 0.7230602350231836,
+          "rawModelP": 0.7230602350231836,
+          "coverage": 0.55,
+          "confidence": 57,
+          "forecastType": "experimental",
+          "projectedLine": 48.83076923076923,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18CARPHI-CARDWALLER88-25|yes",
+          "ticker": "KXNFLRECYDS-26OCT18CARPHI-CARDWALLER88-25",
+          "side": "yes",
+          "eventId": "kalshi-carolina-panthers-philadelphia-eagles",
+          "event": "Carolina Panthers @ Philadelphia Eagles",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Darren Waller Over 24.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 24.5,
+          "player": "Darren Waller",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.56,
+          "referenceAmericanOdds": -127,
+          "marketP": 0.55,
+          "modelP": 0.6770882116540564,
+          "rawModelP": 0.6770882116540564,
+          "coverage": 0.5,
+          "confidence": 57,
+          "forecastType": "experimental",
+          "projectedLine": 37,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50|yes",
+          "ticker": "KXNFLRSHYDS-26OCT18NONYG-NYGCSKATTEBO44-50",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cam Skattebo Over 49.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 49.5,
+          "player": "Cam Skattebo",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.52,
+          "referenceAmericanOdds": -108,
+          "marketP": 0.515,
+          "modelP": 0.6077822149276593,
+          "rawModelP": 0.6077822149276593,
+          "coverage": 0.55,
+          "confidence": 60,
+          "forecastType": "experimental",
+          "projectedLine": 57.7837037037037,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-17|nfl|multi|Balanced|2||learning-20261015|82fe89e9ec41f986",
       "day": "2026-10-17",
       "sport": "nfl",
@@ -20828,7 +20960,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T18:19:55.507Z",
+      "capturedAt": "2026-10-17T18:38:51.844Z",
       "snapshotAt": "2026-10-17T18:19:29.728726+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 202,
@@ -20928,7 +21060,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T18:19:55.507Z",
+      "capturedAt": "2026-10-17T18:38:51.844Z",
       "snapshotAt": "2026-10-17T18:19:29.728726+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 357,
@@ -21060,7 +21192,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-17T18:19:55.507Z",
+      "capturedAt": "2026-10-17T18:38:51.844Z",
       "snapshotAt": "2026-10-17T18:19:29.728726+00:00",
       "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
       "priceEstimate": 3406,
@@ -21198,170 +21330,6 @@
           "confidence": 48,
           "forecastType": "experimental",
           "projectedLine": 2.25,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-17|nfl|multi|Lotto|4||learning-20261015|a831063638eb9d7d",
-      "day": "2026-10-17",
-      "sport": "nfl",
-      "mode": "multi",
-      "profile": "Lotto",
-      "requestedLegs": 4,
-      "actualLegs": 4,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-17T18:29:53.745Z",
-      "snapshotAt": "2026-10-17T18:29:31.990551+00:00",
-      "sourceVersion": "edf0bab20adaee0ecc377910372bb2c323e2da2c",
-      "priceEstimate": 2444,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.10306173835579097,
-        "conservativeP": 0.061538036508051626,
-        "profile": "Lotto",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0,
-          "upper": 0.5069501132643592,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nfl|KXNFLRSHYDS-26OCT18ARILAR-ARIJBRISSETT7-10|yes",
-          "ticker": "KXNFLRSHYDS-26OCT18ARILAR-ARIJBRISSETT7-10",
-          "side": "yes",
-          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
-          "event": "Arizona Cardinals @ Los Angeles Rams",
-          "eventTime": "2026-10-18T20:05:00Z",
-          "closeTime": "2026-10-18T20:05:00Z",
-          "selection": "Jacoby Brissett Over 9.5 rushing yards",
-          "market": "player_rush_yds",
-          "line": 9.5,
-          "player": "Jacoby Brissett",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.41,
-          "referenceAmericanOdds": 144,
-          "marketP": 0.405,
-          "modelP": 0.529727975032739,
-          "rawModelP": 0.529727975032739,
-          "coverage": 0.55,
-          "confidence": 50,
-          "forecastType": "experimental",
-          "projectedLine": 11.816470588235294,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLREC-26OCT18BUFLV-LVMMAYER87-4|yes",
-          "ticker": "KXNFLREC-26OCT18BUFLV-LVMMAYER87-4",
-          "side": "yes",
-          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
-          "event": "Buffalo Bills @ Las Vegas Raiders",
-          "eventTime": "2026-10-18T20:25:00Z",
-          "closeTime": "2026-10-18T20:25:00Z",
-          "selection": "Michael Mayer Over 3.5 receptions",
-          "market": "player_receptions",
-          "line": 3.5,
-          "player": "Michael Mayer",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.4,
-          "referenceAmericanOdds": 150,
-          "marketP": 0.395,
-          "modelP": 0.5069501132643592,
-          "rawModelP": 0.5069501132643592,
-          "coverage": 0.55,
-          "confidence": 44,
-          "forecastType": "experimental",
-          "projectedLine": 4.368,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18DALGB-DALJWILLIAMS33-15|yes",
-          "ticker": "KXNFLRECYDS-26OCT18DALGB-DALJWILLIAMS33-15",
-          "side": "yes",
-          "eventId": "kalshi-dallas-cowboys-green-bay-packers",
-          "event": "Dallas Cowboys @ Green Bay Packers",
-          "eventTime": "2026-10-19T00:20:00Z",
-          "closeTime": "2026-10-19T00:20:00Z",
-          "selection": "Javonte Williams Over 14.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 14.5,
-          "player": "Javonte Williams",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.47,
-          "referenceAmericanOdds": 113,
-          "marketP": 0.45999999999999996,
-          "modelP": 0.5862881960025674,
-          "rawModelP": 0.5862881960025674,
-          "coverage": 0.55,
-          "confidence": 57,
-          "forecastType": "experimental",
-          "projectedLine": 18.8,
-          "projectedTotal": null,
-          "projectedMargin": null,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": null,
-          "altDistance": null,
-          "result": null
-        },
-        {
-          "id": "nfl|KXNFLRECYDS-26OCT18CARPHI-CARDWALLER88-25|yes",
-          "ticker": "KXNFLRECYDS-26OCT18CARPHI-CARDWALLER88-25",
-          "side": "yes",
-          "eventId": "kalshi-carolina-panthers-philadelphia-eagles",
-          "event": "Carolina Panthers @ Philadelphia Eagles",
-          "eventTime": "2026-10-18T17:00:00Z",
-          "closeTime": "2026-10-18T17:00:00Z",
-          "selection": "Darren Waller Over 24.5 receiving yards",
-          "market": "player_reception_yds",
-          "line": 24.5,
-          "player": "Darren Waller",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.51,
-          "referenceAmericanOdds": -104,
-          "marketP": 0.505,
-          "modelP": 0.6545882116540563,
-          "rawModelP": 0.6545882116540563,
-          "coverage": 0.5,
-          "confidence": 57,
-          "forecastType": "experimental",
-          "projectedLine": 37,
           "projectedTotal": null,
           "projectedMargin": null,
           "projectedAway": null,
