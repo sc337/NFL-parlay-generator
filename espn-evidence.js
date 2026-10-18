@@ -40,8 +40,8 @@ function prepare(s,markets){feeds.set(s,markets||[])}
 function render(){if(typeof document==='undefined')return;const s=window.__ACTIVE_SPORT||'nfl',rows=feeds.get(s)||[],seen=new Set(),items=[];
  for(const m of rows){if(!m.espnEvidence)continue;const name=m.player||m.espnEvidence.player||(m.espnEvidence.teamAlerts||[]).map(a=>a.name).join(', ');if(!name)continue;const key=name+'|'+(m.team||m.team_code);if(seen.has(key))continue;seen.add(key);const x=inspect(m);if(x.blocked||x.role||x.warnings.length)items.push({m:{...m,player:name},x});}
  if(!items.length){if(host)host.hidden=true;return}
- const esc=window.MARKET_GUARDS?.esc;if(!esc)return;if(!host){host=document.createElement('section');host.id='espnEvidencePanel';document.querySelector('#settingsDiagnosticsBody')?.append(host)}
- const html='<details class="parlay-card"><summary>Availability &amp; Usage · '+items.length+' players</summary>'+items.map(({m,x})=>'<div class="leg"><div class="leg-title">'+esc(m.player)+'</div><div class="leg-sub">'+esc(x.blocked||[...x.warnings,x.note].filter(Boolean).join(' · '))+'</div></div>').join('')+'</details>';
+ const esc=window.MARKET_GUARDS?.esc;if(!esc)return;if(!host){host=document.createElement('section');host.id='espnEvidencePanel';document.querySelector('#results')?.after(host)}
+ const html='<details class="parlay-card"><summary>Availability &amp; Usage · '+items.length+' players</summary>'+items.slice(0,12).map(({m,x})=>'<div class="leg"><div class="leg-title">'+esc(m.player)+'</div><div class="leg-sub">'+esc(x.blocked||[...x.warnings,x.note].filter(Boolean).join(' · '))+'</div></div>').join('')+'</details>';
  host.hidden=false;if(host.__markup!==html){host.__markup=html;host.innerHTML=html}
 }
 if(typeof document!=='undefined'){const init=()=>{if(typeof MutationObserver==='undefined')return;const o=new MutationObserver(render),r=document.querySelector('#results');if(r)o.observe(r,{childList:true});o.observe(document.body,{attributes:true,attributeFilter:['data-sport']})};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();}

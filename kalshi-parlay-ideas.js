@@ -73,8 +73,7 @@ function report(games,state){
 }
 function emptyMessage(report,count,state){
  const ideas=active(state),n=report?.eligible.length||0;
- const games=new Set((report?.eligible||[]).map(x=>x.game?.id).filter(Boolean)).size;
- const lead='No qualifying '+count+'-leg parlay. '+games+' games qualify. ';
+ const lead='No '+count+'-leg '+(ideas?'matchup idea':'value-screened parlay')+' for these filters. ';
  if(!report?.checked)return lead+'No selections available for the selected date and markets.';
  if(!n)return lead+report.checked+' selections checked; none passed '+(ideas?'the context and data-quality checks.':'the value screen. ')+(ideas?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
  return lead+n+' eligible selections'+(report.props?' across '+report.players+' players':'')+'. Try fewer legs or different markets; compatible legs are still required.';

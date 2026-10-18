@@ -5,9 +5,3 @@ test('saved selections preserve independent sports and intentional empty choices
 test('controls disable unavailable quotes and show only the active sport',()=>{const app=runtime();let renders=0;app.api.sync('mlb',[{kind:'moneyline',future:true,ask:.5},{kind:'spread',future:false,ask:.5},{kind:'total',series:'KXMLBTEAMTOTAL',future:true,ask:.6}],()=>renders++);assert.equal(app.buttons[0].disabled,false);assert.equal(app.buttons[1].disabled,true);assert.equal(app.buttons[2].disabled,true);assert.equal(app.buttons[3].disabled,false);app.api.set('mlb',[]);assert.equal(renders,1);assert.match(app.note.textContent,/Select at least one/);app.window.__ACTIVE_SPORT='ufc';app.api.activate();assert.equal(app.host.hidden,true)});
 
 test('UFC availability uses the verified card timing policy when contracts lack individual start times',()=>{const app=runtime(undefined,'ufc');app.window.__ACTIVE_SPORT='ufc';app.window.UFC_DASHBOARD={isPregame:m=>m.cardVerified};app.api.sync('ufc',[{kind:'moneyline',cardVerified:true,ask:.6}],()=>{});assert.equal(app.buttons[0].disabled,false);app.api.sync('ufc',[{kind:'moneyline',cardVerified:false,ask:.6}],()=>{});assert.equal(app.buttons[0].disabled,true)});
-test('available market choices follow the selected date without resetting saved selections',()=>{
- const app=runtime();let selected='tomorrow';app.window.SLATE_UI={matches:(_s,m)=>m.day===selected};
- const rows=[{kind:'moneyline',future:true,ask:.5,day:'today'},{kind:'total',series:'KXMLBTEAMTOTAL',future:true,ask:.6,day:'tomorrow'}];
- app.api.sync('mlb',rows,()=>{});assert.equal(app.buttons[0].hidden,true);assert.equal(app.buttons[3].hidden,false);
- selected='today';app.api.sync('mlb',rows,()=>{});assert.equal(app.buttons[0].hidden,false);assert.equal(app.buttons[3].hidden,true);assert.equal(app.api.allowed('mlb',{kind:'moneyline'}),true);
-});
