@@ -61,7 +61,7 @@ function mount(){
    }
   }
  }
- function tidy(){policies();markets();emptyStates();sources();const td=$('#nflTdStraightDrawer');hidden(td,(window.__ACTIVE_SPORT||'nfl')!=='nfl'||!td?.querySelector('#tdMarketOptions .leg'));}
+ function tidy(){policies();markets();emptyStates();sources();const td=$('#nflTdStraightDrawer');hidden(td,(window.__ACTIVE_SPORT||'nfl')!=='nfl'||!td?.querySelector('#tdMarketOptions .leg'));const pass=$('#pickOfDayContent .pick-pass')?.textContent.trim();for(const node of $$('#results > .empty'))hidden(node,!!pass&&node.textContent.trim()===pass);}
  let timer;
  new MutationObserver(mutations=>{if(!mutations.some(m=>m.type==='attributes'||m.target?.closest?.('#results,#parlayControls,#tdMarketOptions')))return;clearTimeout(timer);timer=setTimeout(tidy,60)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-sport']});
  document.addEventListener('change',e=>{if(e.target.closest?.('#parlayControls'))tidy()});
