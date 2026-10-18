@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-18T22:22:46.581Z",
+  "updated_at": "2026-10-18T22:31:02.484Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T22:22:20.052422+00:00"
+      "snapshotAt": "2026-10-18T22:12:20.174603+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T22:11:00.660287+00:00"
+      "snapshotAt": "2026-10-18T22:31:01.109480+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T22:22:45.092164+00:00"
+      "snapshotAt": "2026-10-18T22:12:43.091416+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T22:22:30.117625+00:00"
+      "snapshotAt": "2026-10-18T22:12:31.211996+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -168,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T22:08:59.218145+00:00"
+      "snapshotAt": "2026-10-18T22:18:59.269211+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -198,7 +198,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T22:22:19.948454+00:00"
+      "snapshotAt": "2026-10-18T22:12:18.744568+00:00"
     }
   },
   "records": [
@@ -21874,7 +21874,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-18T22:02:43.156Z",
+      "capturedAt": "2026-10-18T22:21:01.985Z",
       "snapshotAt": "2026-10-18T22:02:41.623650+00:00",
       "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
       "priceEstimate": 1005,
@@ -22080,7 +22080,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-18T22:22:46.581Z",
+      "capturedAt": "2026-10-18T22:21:01.985Z",
       "snapshotAt": "2026-10-18T22:08:59.218145+00:00",
       "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
       "priceEstimate": -285,
@@ -22148,7 +22148,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-18T22:22:46.581Z",
+      "capturedAt": "2026-10-18T22:21:01.985Z",
       "snapshotAt": "2026-10-18T22:08:59.218145+00:00",
       "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
       "priceEstimate": 133,
@@ -22248,7 +22248,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-18T22:22:46.581Z",
+      "capturedAt": "2026-10-18T22:21:01.985Z",
       "snapshotAt": "2026-10-18T22:08:59.218145+00:00",
       "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
       "priceEstimate": 418,
@@ -22358,6 +22358,238 @@
           "projectedMargin": null,
           "projectedAway": 2.9035932481235305,
           "projectedHome": 3.3727954375570905,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|nhl|multi|balanced|2||learning-20261015|0a0ac08148e22075",
+      "day": "2026-10-18",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T22:31:02.484Z",
+      "snapshotAt": "2026-10-18T22:18:59.269211+00:00",
+      "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
+      "priceEstimate": 157,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.4985595602278338,
+        "conservativeP": 0.4032126049420179,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.41430061037145616,
+          "upper": 0.6683947391798687,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT18CARCGY-CAR|yes",
+          "ticker": "KXNHLGAME-26OCT18CARCGY-CAR",
+          "side": "yes",
+          "eventId": "401892534",
+          "event": "Hurricanes vs Flames",
+          "eventTime": "2026-10-19T00:00Z",
+          "closeTime": "2026-10-21T00:00:00Z",
+          "selection": "Hurricanes ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.67,
+          "referenceAmericanOdds": null,
+          "marketP": 0.665,
+          "modelP": 0.7459058711915875,
+          "rawModelP": 0.7459058711915875,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.3000086229676295,
+          "projectedMargin": null,
+          "projectedAway": 3.9818608048626016,
+          "projectedHome": 2.318147818105028,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT20LAWSH-WSH|yes",
+          "ticker": "KXNHLGAME-26OCT20LAWSH-WSH",
+          "side": "yes",
+          "eventId": "401892542",
+          "event": "Kings vs Capitals",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Capitals ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.565,
+          "modelP": 0.6683947391798687,
+          "rawModelP": 0.6683947391798687,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.991021728841387,
+          "projectedMargin": null,
+          "projectedAway": 2.4596540982193855,
+          "projectedHome": 3.531367630622002,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|nhl|multi|balanced|3||learning-20261015|e7a420bb1f5a3f6b",
+      "day": "2026-10-18",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T22:31:02.484Z",
+      "snapshotAt": "2026-10-18T22:18:59.269211+00:00",
+      "sourceVersion": "57b0a77a2c3dcdf9113e2b9351fda7ee3e17fda3",
+      "priceEstimate": 485,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.2860368568959034,
+        "conservativeP": 0.20137508055602663,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.5737265508762666,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT18CARCGY-CAR|yes",
+          "ticker": "KXNHLGAME-26OCT18CARCGY-CAR",
+          "side": "yes",
+          "eventId": "401892534",
+          "event": "Hurricanes vs Flames",
+          "eventTime": "2026-10-19T00:00Z",
+          "closeTime": "2026-10-21T00:00:00Z",
+          "selection": "Hurricanes ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.67,
+          "referenceAmericanOdds": null,
+          "marketP": 0.665,
+          "modelP": 0.7459058711915875,
+          "rawModelP": 0.7459058711915875,
+          "coverage": 0.5583333333333333,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.3000086229676295,
+          "projectedMargin": null,
+          "projectedAway": 3.9818608048626016,
+          "projectedHome": 2.318147818105028,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT21FLAOTT-OTT|yes",
+          "ticker": "KXNHLGAME-26OCT21FLAOTT-OTT",
+          "side": "yes",
+          "eventId": "401892551",
+          "event": "Panthers vs Senators",
+          "eventTime": "2026-10-21T23:30Z",
+          "closeTime": "2026-10-23T23:30:00Z",
+          "selection": "Senators ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.44,
+          "referenceAmericanOdds": null,
+          "marketP": 0.43,
+          "modelP": 0.5737265508762666,
+          "rawModelP": 0.5737265508762666,
+          "coverage": 0.575,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 6.276388685680621,
+          "projectedMargin": null,
+          "projectedAway": 2.9035932481235305,
+          "projectedHome": 3.3727954375570905,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLGAME-26OCT20LAWSH-WSH|yes",
+          "ticker": "KXNHLGAME-26OCT20LAWSH-WSH",
+          "side": "yes",
+          "eventId": "401892542",
+          "event": "Kings vs Capitals",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Capitals ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.565,
+          "modelP": 0.6683947391798687,
+          "rawModelP": 0.6683947391798687,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.991021728841387,
+          "projectedMargin": null,
+          "projectedAway": 2.4596540982193855,
+          "projectedHome": 3.531367630622002,
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
