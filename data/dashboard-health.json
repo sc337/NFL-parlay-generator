@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-18T00:00:15.631Z",
+  "updated_at": "2026-10-18T00:00:42.839Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-17T23:51:01.560986+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 117,
       "quotedMarkets": 117,
       "playerMarkets": 61,
@@ -33,7 +33,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-17T23:59:56.522091+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 3141,
       "quotedMarkets": 3141,
       "playerMarkets": 792,
@@ -514,7 +514,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-10-17T23:51:11.449030+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 4083,
       "quotedMarkets": 4083,
       "playerMarkets": 2771,
@@ -654,19 +654,15 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-10-17T23:50:41.904863+00:00",
-      "ageMinutes": 10,
-      "markets": 905,
-      "quotedMarkets": 905,
-      "playerMarkets": 590,
+      "snapshotAt": "2026-10-18T00:00:41.704170+00:00",
+      "ageMinutes": 0,
+      "markets": 315,
+      "quotedMarkets": 315,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 77,
         "spread": 74,
-        "total": 164,
-        "goals": 228,
-        "assists": 146,
-        "points": 206,
-        "saves": 10
+        "total": 164
       },
       "futureEvents": [
         {
@@ -830,7 +826,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-17T23:50:59.127136+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 22,
       "quotedMarkets": 22,
       "playerMarkets": 0,
@@ -895,6 +891,15 @@
       "message": "2314 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "nhl:props-missing",
+      "sport": "nhl",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-18T00:00:42.839Z",
+      "changedAt": "2026-10-18T00:00:42.839Z"
     }
   ],
   "resolved": [],
@@ -918,7 +923,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-17T23:50:44.657288+00:00"
+      "at": "2026-10-18T00:00:42.819814+00:00"
     },
     "ufc": {
       "ok": true,
