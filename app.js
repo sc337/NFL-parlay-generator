@@ -772,124 +772,88 @@ function teamCounts(legs,game){
   return [game.away,game.home].map(team=>legs.filter(m=>sgpTeam(m,game)===team).length);
 }
 
-function pickDistinctAlternative(game,count,risk,variant,previous){
-  const cfg=PROFILE_RULES[variant]||PROFILE_RULES.balanced;
-  const scriptKeys=scriptCandidatesForVariant(variant);
-  let best=null;
-
-  for(const scriptKey of scriptKeys){
-    const pool=game.markets.filter(m=>isParlayEligible(m) && state.selectedMarkets.has(m.type) && candidateScore(m,risk,variant)>-900);
-    const props=pool.filter(m=>m.player);
-    const desiredProps=props.length ? Math.max(1,Math.min(count-1,Math.ceil(count*cfg.propShare))) : 0;
-
-    const sorted=[...pool].sort((a,b)=>scriptMarketScore(b,game,variant,scriptKey,risk)-scriptMarketScore(a,game,variant,scriptKey,risk));
-    // Reserve candidates for each offense: a large alternate-prop slate from
-    // one team must not push every opposing player out of the search pool.
-    const ranked=[...new Set([...sorted.slice(0,48),
-      ...[game.away,game.home].flatMap(team=>sorted.filter(m=>sgpTeam(m,game)===team).slice(0,14))])];
-    const mixedTarget=mixedTeamTarget(pool,game,count,risk,variant);
-
-    function search(target){
-    let beams=[{legs:[],score:0}];
-
-    for(let depth=0;depth<count;depth++){
-      const next=[],seenLegs=new Set();
-      for(const beam of beams){
-        for(const m of ranked){
-          if(beam.legs.includes(m) || !coherentWithLegs(m,beam.legs,variant)) continue;
-          if(target){
-            const counts=teamCounts([...beam.legs,m],game);
-            if(counts.some(n=>n>count-target)) continue;
-            if(counts.some(n=>n+count-beam.legs.length-1<target)) continue;
-          }
-
-          const propCount=beam.legs.filter(l=>l.player).length;
-          const remainingSlots=count-beam.legs.length;
-          const needProps=Math.max(0,desiredProps-propCount);
-          if(needProps>=remainingSlots && !m.player) continue;
-
-          const corr=beam.legs.reduce((s,l)=>s+correlation(l,m),0);
-          const scriptFit=GAME_SCRIPTS[scriptKey].legFit(m,game);
-          if(!window.PICK_QUALITY&&scriptFit<0) continue;
-
-          const diversityPenalty=0;
-
-          const s=beam.score
-            + scriptMarketScore(m,game,variant,scriptKey,risk)
-            + (window.PICK_QUALITY?0:corr*cfg.corrWeight)
-            + (window.PICK_QUALITY?0:scriptFit*1.2)
-            - diversityPenalty;
-
-          const legs=[...beam.legs,m],signature=parlaySignature({legs});if(seenLegs.has(signature))continue;seenLegs.add(signature);next.push({legs,score:s});
-        }
-      }
-
-      next.sort((a,b)=>b.score-a.score);
-      // Preserve different team-exposure paths until the final leg; otherwise
-      // the highest-scoring one-team stack crowds out every mixed build.
-      const diverse=[],seen=new Map();
-      for(const beam of next){
-        const key=teamCounts(beam.legs,game).join(':');
-        const n=seen.get(key)||0;
-        if(n>=24) continue;
-        seen.set(key,n+1);diverse.push(beam);
-        if(diverse.length>=160) break;
-      }
-      beams=diverse;
-      if(!beams.length) break;
-    }
-
-    const finals=beams
-      .filter(b=>b.legs.length===count)
-      .filter(b=>!target || teamCounts(b.legs,game).every(n=>n>=target))
-      .filter(b=>b.legs.filter(l=>l.player).length>=Math.min(desiredProps,count))
-      .filter(b=>{
-        if(window.PICK_QUALITY)return true;
-        const positiveFits=b.legs.filter(l=>GAME_SCRIPTS[scriptKey].legFit(l,game)>=8).length;
-        return positiveFits>=Math.min(2,count);
-      })
-      .map(b=>{
-        const p=packageParlay(b.legs,variant,true,{
-          deferRisk:true,
-          scriptKey:window.PICK_QUALITY?'quality_mix':scriptKey,
-          scriptName:window.PICK_QUALITY?'Quality-screened mix':GAME_SCRIPTS[scriptKey].name,
-          thesis:window.PICK_QUALITY?'Individually qualifying picks, with both teams represented when comparable options are available. Same-game dependence and combined value remain unverified.':GAME_SCRIPTS[scriptKey].thesis(game)
-        });
-        if(p){p.gameLabel=`${game.away} @ ${game.home}`;p.kickoff=game.commence_time;p.teamMix=teamCounts(b.legs,game).every(n=>n>0)?'Both teams':'Concentrated';}
-        return {raw:b,parlay:p};
-      })
-      .filter(x=>x.parlay);
-
-    if(!finals.length) return null;
-    const distinct=finals.find(x=>distinctProfileBuild(x.parlay,previous));
-    return distinct?{...distinct,distinct:true}:null;
-    }
-
-    const selected=search(mixedTarget) || (mixedTarget ? search(0) : null);
-    if(!selected) continue;
-    if(!best || (selected.parlay.teamMix==='Both teams' && best.parlay.teamMix!=='Both teams') ||
-      (selected.parlay.teamMix===best.parlay.teamMix && selected.distinct && !best.distinct) ||
-      (selected.parlay.teamMix===best.parlay.teamMix && selected.distinct===best.distinct && selected.raw.score>best.raw.score)) best=selected;
+// Complete-build ranking uses a bounded deterministic shortlist. Reference quotes
+// are scenario inputs only; they are never promoted to independent model forecasts.
+function sgpCombinationRisk(legs,game,ideas,trials=1000){
+  const entries=legs.map(m=>({market:m,forecast:nflQualityForecast(m),game}));
+  if(ideas){
+    const gate=window.NFL_PARLAY_IDEAS.checkBuild(legs,state);
+    if(!gate.pass)return null;
+    const scenario=window.PARLAY_RISK?.scenarios(entries,gate.checks.map(x=>({modelP:x.quote.p})),trials);
+    return scenario?{pass:true,modelP:null,referenceP:scenario.modelP,scenario,validated:false}:null;
   }
-
-  return best?.parlay||null;
+  const gate=window.PICK_QUALITY?.checkBuild('nfl',entries,true);
+  if(!gate?.pass)return null;
+  const scenario=window.PARLAY_RISK?.scenarios(entries,gate.checks,trials);
+  return scenario?{pass:true,modelP:scenario.modelP,scenario,validated:false}:null;
+}
+function sgpLikelihood(p){return p?.risk?.modelP??p?.risk?.referenceP??null;}
+function sgpProfileFits(p,variant,previous){
+  const probability=sgpLikelihood(p);
+  if(!Number.isFinite(probability))return false;
+  const category=window.PARLAY_RISK.profile(probability);
+  if(category!==({safe:'Conservative',balanced:'Balanced',long:'Lotto'})[variant])return false;
+  // Require separation in joint scenario likelihood as well as distinct legs.
+  return previous.filter(Boolean).every(old=>{
+    const before=sgpLikelihood(old);
+    return Number.isFinite(before)&&before-probability>=.03&&
+      overlapCount(old,p)<=p.legs.length-(p.legs.length>=3?2:1);
+  });
+}
+function pickDistinctAlternative(game,count,risk,variant,previous){
+  const ideas=!!window.NFL_PARLAY_IDEAS?.active?.(state);
+  const scores=new Map();
+  const pool=game.markets.filter(m=>{
+    if(!isParlayEligible(m)||!state.selectedMarkets.has(m.type))return false;
+    const score=candidateScore(m,risk,variant);scores.set(m,score);return score>-900;
+  }).sort((a,b)=>scores.get(b)-scores.get(a)||String(a.ticker||a.name).localeCompare(String(b.ticker||b.name)));
+  // Preserve market-family and team paths instead of enforcing a prop quota.
+  const groups=new Map();
+  for(const m of pool){const key=[m.type,m.team,m.side].join('|');if(!groups.has(key))groups.set(key,[]);if(groups.get(key).length<4)groups.get(key).push(m);}
+  const ranked=[...new Set([...pool.slice(0,24),...[...groups.values()].flat()])].slice(0,64);
+  let beams=[{legs:[],score:0}];
+  for(let depth=0;depth<count;depth++){
+    const next=[],seen=new Set();
+    for(const beam of beams)for(const m of ranked){
+      if(beam.legs.includes(m)||!coherentWithLegs(m,beam.legs,variant))continue;
+      const legs=[...beam.legs,m],signature=parlaySignature({legs});
+      if(seen.has(signature))continue;seen.add(signature);
+      next.push({legs,score:beam.score+scores.get(m)});
+    }
+    next.sort((a,b)=>b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b)));
+    const paths=new Map();beams=[];
+    for(const beam of next){
+      const key=beam.legs.map(m=>m.type+':'+(m.side||'')).sort().join('|')+'|'+teamCounts(beam.legs,game).join(':');
+      const n=paths.get(key)||0;if(n>=4)continue;paths.set(key,n+1);beams.push(beam);if(beams.length>=120)break;
+    }
+  }
+  const candidates=beams.filter(b=>b.legs.length===count).slice(0,24).map(b=>{
+    const p=packageParlay(b.legs,variant,true,{deferRisk:true});
+    if(!p)return null;
+    p.risk=sgpCombinationRisk(p.legs,game,ideas);
+    p.searchScore=b.score/count;
+    return p;
+  }).filter(p=>p&&sgpProfileFits(p,variant,previous));
+  // Within each risk band prefer the highest lower sensitivity scenario,
+  // with individual evidence as a modest tie-breaker. No correlation bonus or EV claim.
+  candidates.sort((a,b)=>(b.risk.scenario.sensitivity[0]*100+b.searchScore*.03)-(a.risk.scenario.sensitivity[0]*100+a.searchScore*.03)||parlaySignature(a).localeCompare(parlaySignature(b)));
+  for(const p of candidates.slice(0,12)){
+    p.risk=sgpCombinationRisk(p.legs,game,ideas,8000);
+    if(!sgpProfileFits(p,variant,previous))continue;
+    p.gameLabel=`${game.away} @ ${game.home}`;p.kickoff=game.commence_time;
+    p.teamMix=teamCounts(p.legs,game).every(n=>n>0)?'Both teams':'Concentrated';
+    p.scriptName=ideas?'Reference-based joint scenario':'Experimental joint scenario';
+    p.summary='Complete SGP compared within its joint-risk band; no required prop mix. '+
+      (ideas?'Reference prices supply scenario inputs, not a validated win forecast. ':'Model inputs and same-game dependence remain experimental. ')+
+      'Profile ordering is approximate. Verify exact lines and combined SGP odds on Caesars; not a proven edge.';
+    return p;
+  }
+  return null;
 }
 function buildSgp(game,count,risk,variant,previous=[]){
   count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
   window.NFL_ALT_LINES?.classify?.(game);
-  const live=game.dataSource==='Caesars' && !String(game.id).startsWith('demo-');
-  const props=game.markets.filter(m=>m.player && state.selectedMarkets.has(m.type));
-
-  if(live && props.length===0) return null;
-
-  const p=pickDistinctAlternative(game,count,risk,variant,previous);
-  if(!p) return null;
-
-  if(live && count>=3 && p.legs.filter(l=>l.player).length<2) return null;
-  // Scenario draws run only for the selected build, never for every search beam.
-  if(!p.ideaTier){p.risk=window.PARLAY_RISK?.summarize('nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m),game})),{sgp:true});
-    const x=p.risk;if(x?.pass&&x.modelP!=null&&((variant==='safe'&&x.profile!=='Conservative')||(variant==='balanced'&&x.profile==='Lotto')||(variant==='long'&&x.profile!=='Lotto')))return null;}
-  return p;
+  return pickDistinctAlternative(game,count,risk,variant,previous);
 }
 
 function propFamily(m){
@@ -1047,7 +1011,7 @@ function render(parlays){
     node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':estimateLabel;
     node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
     node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
-      (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration: no qualifying mixed-team build was available.':'');
+      (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration.':'');
     const matchup=nflMatchup(p.gameLabel);
     node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(nflKickoff(p.kickoff)?nflKickoff(p.kickoff)+' · ':'')+(matchup||'Same game'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
       (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');

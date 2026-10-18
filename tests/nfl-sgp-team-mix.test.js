@@ -1,7 +1,45 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
-function build(opponent=true){const markets=[1,2,3,4,5].map(i=>({player:'Home '+i,team:'Home',type:'receiving',side:'over',name:'Home '+i,score:120-i}));if(opponent)markets.push({player:'Away WR',team:'Away',type:'receiving',side:'under',name:'Away under',score:115});const game={away:'Away',home:'Home',markets};const source=fs.readFileSync('app.js','utf8');const ctx=vm.createContext({window:{PICK_QUALITY:{}},state:{apiKey:'',selectedMarkets:new Set(['receiving'])},PROFILE_RULES:{balanced:{propShare:.75}},scriptCandidatesForVariant:()=>['shootout'],GAME_SCRIPTS:{shootout:{name:'Shootout',thesis:()=>'',legFit:m=>m.side==='under'?-12:13}},candidateScore:m=>m.score,scriptMarketScore:m=>m.score,isParlayEligible:()=>true,coherentWithLegs:()=>true,correlation:()=>0,parlaySignature:p=>p.legs.map(l=>l.name).sort().join('|'),overlapCount:(a,b)=>b.legs.filter(l=>a.legs.some(x=>x.name===l.name)).length,packageParlay:(legs,variant,sgp,meta)=>({legs,variant,...meta})});vm.runInContext(source.slice(source.indexOf('function distinctProfileBuild('),source.indexOf('function candidateScore(')),ctx);vm.runInContext(source.slice(source.indexOf('function sgpTeam('),source.indexOf('function propFamily(')),ctx);return{ctx,game,run:n=>ctx.buildSgp(game,n,50,'balanced',[])}}
-test('qualified opposing-team unders cannot be rejected by the old shootout template',()=>{const app=build(),p=app.run(4);assert.equal(p.legs.length,4);assert.ok(p.legs.some(m=>m.team==='Away'&&m.side==='under'));assert.equal(p.teamMix,'Both teams');assert.equal(p.scriptKey,'quality_mix');assert.doesNotMatch(p.thesis,/aggressive offensive/);assert.deepEqual(p.legs.map(m=>m.name),app.run(4).legs.map(m=>m.name))});
-test('legacy five-leg SGP requests cap at four and retain a qualified opponent',()=>{const p=build().run(5);assert.equal(p.legs.length,4);assert.ok(p.legs.some(m=>m.team==='Away'))});
-test('one-team builds remain possible when no opposing pick qualifies',()=>{const p=build(false).run(4);assert.equal(p.legs.length,4);assert.equal(p.teamMix,'Concentrated');assert.ok(p.legs.every(m=>m.team==='Home'))});
-
-test('a profile without enough distinct qualifying legs is omitted instead of repeating the first build',()=>{const app=build(false),first=app.run(4);assert.equal(app.ctx.buildSgp(app.game,4,50,'balanced',[first]),null)});
+function build({ideas=false,probability=.8,markets}={}){
+ const source=fs.readFileSync('app.js','utf8');
+ markets=markets||[
+ {type:'spreads',team:'Home',score:120},
+ {type:'totals',side:'under',score:119},
+ {type:'passing',team:'Home',player:'QB',side:'under',score:118},
+ {type:'receiving',team:'Away',player:'WR',side:'under',score:90}];
+ markets=markets.map((m,i)=>({name:'Leg '+i,marketKey:m.type==='passing'?'player_pass_yds':m.type==='receiving'?'player_reception_yds':m.type,...m}));
+ const game={away:'Away',home:'Home',markets};
+ const window={PICK_QUALITY:{id:(s,m)=>m.name,checkBuild:(s,entries)=>({pass:true,checks:entries.map(()=>({modelP:probability}))})}},ctx=vm.createContext({window,Date,state:{selectedMarkets:new Set(markets.map(m=>m.type))},candidateScore:m=>m.score,isParlayEligible:()=>true,nflQualityForecast:()=>({}),packageParlay:(legs,profile)=>({legs,profile,ideaTier:ideas})});
+ window.NFL_PARLAY_IDEAS={active:()=>ideas,checkBuild:legs=>({pass:true,checks:legs.map(()=>({quote:{p:probability}}))})};
+ vm.runInContext(fs.readFileSync('parlay-risk.js','utf8'),ctx);
+ vm.runInContext(source.slice(source.indexOf('function isTeamSide('),source.indexOf('function marketQuality(')),ctx);
+ vm.runInContext(source.slice(source.indexOf('function playerCount('),source.indexOf('function favoriteTeam(')),ctx);
+ vm.runInContext(source.slice(source.indexOf('function sgpTeam('),source.indexOf('function propFamily(')),ctx);
+ return{ctx,game,run:(variant='safe',previous=[],count=3)=>ctx.buildSgp(game,count,50,variant,previous)};
+}
+test('a spread, total and one prop can win without a forced two-prop or both-team quota',()=>{
+ const r=build();r.game.markets=r.game.markets.slice(0,3);const p=r.run();assert.ok(p);assert.equal(p.legs.filter(m=>m.player).length,1);assert.equal(p.teamMix,'Concentrated');assert.equal(p.legs.length,3);assert.equal(p.scriptName,'Experimental joint scenario');assert.equal(r.ctx.parlaySignature(p),r.ctx.parlaySignature(r.run()));
+});
+test('joint ranking can prefer a lower individual score with better shared outcomes',()=>{
+ const r=build(),p=r.run();assert.ok(p.legs.some(m=>m.type==='totals'));assert.ok(p.risk.scenario.sensitivity[0]>0);
+ // Inject controlled complete-combination likelihoods to isolate selection from marginal scores.
+ r.ctx.sgpCombinationRisk=legs=>({pass:true,modelP:legs.some(m=>m.team==='Away')?.60:.40,scenario:{sensitivity:[legs.some(m=>m.team==='Away')?.55:.35]}});
+ const better=r.run();assert.ok(better.legs.some(m=>m.team==='Away'));
+});
+test('reference-mode combination checks retain null model probability and label their price inputs',()=>{
+ const p=build({ideas:true}).run();assert.ok(p);assert.equal(p.risk.modelP,null);assert.ok(p.risk.referenceP>.3);assert.equal(p.risk.validated,false);assert.match(p.summary,/Reference prices supply scenario inputs/);assert.match(p.summary,/not a proven edge/);
+});
+test('risk bands and joint ordering omit unavailable profiles rather than relabel the same build',()=>{
+ const r=build(),safe=r.run();assert.ok(safe);assert.equal(r.run('balanced',[safe]),null);assert.equal(r.run('long',[safe]),null);assert.equal(r.run('safe',[safe]),null);
+ const legs=names=>names.map(name=>({name})),p=(value,names)=>({legs:legs(names),risk:{referenceP:value}});
+ assert.equal(r.ctx.sgpProfileFits(p(.20,['x','y','z']),'balanced',[p(.40,['a','b','c'])]),true);
+ assert.equal(r.ctx.sgpProfileFits(p(.29,['x','y','z']),'balanced',[p(.31,['a','b','c'])]),false);
+ assert.equal(r.ctx.sgpProfileFits(p(.10,['a','b','z']),'long',[p(.40,['a','b','c'])]),false);
+});
+test('unknown team identities cannot fabricate joint risk and failed build gates remain blocked',()=>{
+ const r=build();
+ r.ctx.window.PICK_QUALITY.checkBuild=()=>({pass:false,checks:[]});assert.equal(r.run(),null);
+ const u=build({markets:[{type:'passing',player:'X',team:'Unknown',score:100},{type:'passing',player:'Y',team:'Unknown',score:99}]});assert.equal(u.run('safe',[],2),null);
+});
+test('legacy requests cap at four and incomplete SGPs are omitted',()=>{
+ const r=build();const p=r.run('safe',[],5);assert.ok(p);assert.equal(p.legs.length,4);r.game.markets=r.game.markets.slice(0,1);assert.equal(r.run(),null);
+});

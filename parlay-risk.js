@@ -43,28 +43,31 @@ function fittedMatrix(entries){
  return {matrix,rules};
 }
 function cholesky(matrix){const n=matrix.length,out=matrix.map(()=>Array(n).fill(0));for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let sum=matrix[i][j];for(let k=0;k<j;k++)sum-=out[i][k]*out[j][k];if(i===j){if(sum<=1e-8)return null;out[i][j]=Math.sqrt(sum)}else out[i][j]=sum/out[j][j]}return out}
-function scenarios(entries,checks){
+function scenarios(entries,checks,trials=TRIALS){
+ trials=Math.max(1000,Math.min(TRIALS,Math.floor(trials)||TRIALS));
+ if(checks.length!==entries.length||checks.some(q=>!Number.isFinite(q.modelP)||q.modelP<=0||q.modelP>=1))return null;
  const vectors=entries.map(vector);if(vectors.some(v=>!v))return null;
  const ps=checks.map(q=>q.modelP),thresholds=ps.map(p=>quantile(1-p));
  const fitted=fittedMatrix(entries);
- const key=JSON.stringify([entries.map(e=>window.PICK_QUALITY.id('nfl',e.market)),ps,fitted?.matrix]);
+ const key=JSON.stringify([entries.map(e=>window.PICK_QUALITY.id('nfl',e.market)),ps,fitted?.matrix,trials]);
  if(cache.has(key))return cache.get(key);
  const factors=[...new Set(vectors.flatMap(v=>Object.keys(v).filter(k=>k!=='sign')))];
  const outcomes=[];
  for(const scale of [.65,1,1.25]){
   const random=rng(hash(key)),scales=vectors.map(v=>{const variance=Object.entries(v).filter(([k])=>k!=='sign').reduce((s,[,x])=>s+x*x,0);return Math.min(scale,Math.sqrt(.95/variance))}),norms=vectors.map((v,i)=>Math.sqrt(1-Object.entries(v).filter(([k])=>k!=='sign').reduce((s,[,x])=>s+(x*scales[i])**2,0)));
+  const loadings=vectors.map((v,i)=>factors.map(k=>(v[k]||0)*scales[i]));
   let wins=0,chol=null;
   if(fitted)for(const shrink of [1,.8,.6,.4,0]){chol=cholesky(fitted.matrix.map((row,i)=>row.map((v,j)=>i===j?1:clamp(v*scale*shrink,-.85,.85))));if(chol)break}
-  for(let trial=0;trial<TRIALS;trial++){
+  for(let trial=0;trial<trials;trial++){
    if(chol){const independent=entries.map(()=>normal(random));if(chol.every((row,i)=>row.reduce((sum,v,j)=>sum+v*independent[j],0)>thresholds[i]))wins++;continue;}
-   const z=Object.fromEntries(factors.map(k=>[k,normal(random)]));let success=true;
+   const z=factors.map(()=>normal(random));let success=true;
    // Draw every leg even after a miss so sensitivity scenarios share randomness.
-   vectors.forEach((v,i)=>{let shared=0;for(const [k,w] of Object.entries(v))if(k!=='sign')shared+=w*scales[i]*z[k];const value=(shared+norms[i]*normal(random))*v.sign;if(value<=thresholds[i])success=false});
+   vectors.forEach((v,i)=>{let shared=0;for(let k=0;k<z.length;k++)shared+=loadings[i][k]*z[k];const value=(shared+norms[i]*normal(random))*v.sign;if(value<=thresholds[i])success=false});
    if(success)wins++;
   }
-  outcomes.push(wins/TRIALS);
+  outcomes.push(wins/trials);
  }
- const result={modelP:outcomes[1],sensitivity:[Math.min(...outcomes),Math.max(...outcomes)],trials:TRIALS*3,validated:false,empiricalPairs:fitted?.rules.length||0,
+ const result={modelP:outcomes[1],sensitivity:[Math.min(...outcomes),Math.max(...outcomes)],trials:trials*3,validated:false,empiricalPairs:fitted?.rules.length||0,
   method:fitted?'Held-out historical pair correlations; positive-definite shrinkage as needed; full SGP unvalidated':'Shared pace, team scoring, passing/rushing and player factors; assumed dependence; historical pairs collecting',version:'sgp-scenarios-v2'};
  if(cache.size>64)cache.clear();cache.set(key,result);return result;
 }
