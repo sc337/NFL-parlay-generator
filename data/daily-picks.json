@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-18T14:40:10.386Z",
+  "updated_at": "2026-10-18T14:47:58.034Z",
   "sports": {
     "mlb": {
       "captured": 4,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T14:38:51.301258+00:00"
+      "snapshotAt": "2026-10-18T14:47:24.465908+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T14:28:05.057323+00:00"
+      "snapshotAt": "2026-10-18T14:38:06.860273+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T14:39:09.779706+00:00"
+      "snapshotAt": "2026-10-18T14:47:07.848985+00:00"
     },
     "nfl": {
       "captured": 9,
@@ -108,7 +108,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T14:39:54.424244+00:00"
+      "snapshotAt": "2026-10-18T14:47:23.930257+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -120,7 +120,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T14:26:51.375245+00:00"
+      "snapshotAt": "2026-10-18T14:47:24.828470+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -150,7 +150,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T14:38:48.118264+00:00"
+      "snapshotAt": "2026-10-18T14:47:25.323497+00:00"
     }
   },
   "records": [
@@ -8077,6 +8077,528 @@
           "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858498:100:spread:away:16.5|yes",
+          "ticker": "ESPN:401858498:100:spread:away:16.5",
+          "side": "yes",
+          "eventId": "401858498",
+          "event": "Rutgers Scarlet Knights at Northwestern Wildcats",
+          "eventTime": "2026-10-24T16:00:00+00:00",
+          "closeTime": "2026-10-24T16:00:00+00:00",
+          "selection": "Rutgers Scarlet Knights +16.5",
+          "market": "spread",
+          "line": 16.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858498",
+            "teams": [
+              "164",
+              "77"
+            ],
+            "teamId": "164",
+            "kind": "spread",
+            "line": 16.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-24T16:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5121951219512195,
+          "referenceAmericanOdds": -105,
+          "marketP": 0.5121951219512195,
+          "modelP": 0.6146149380643829,
+          "rawModelP": 0.6146149380643829,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 55.6,
+          "projectedMargin": 10.4,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 16.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|ncaaf|multi|best|2||learning-20261015|6e4df1012fb39272",
+      "day": "2026-10-18",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T14:47:58.034Z",
+      "snapshotAt": "2026-10-18T14:47:07.848985+00:00",
+      "sourceVersion": "4ad2c92a634dee6b1e41d01d1dad8435cc84bf49",
+      "priceEstimate": 264,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.38001988677437437,
+        "conservativeP": 0.29004467399819134,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.23291620517022427,
+          "upper": 0.6156181808850296,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|ESPN:401871056:100:spread:home:10.5|yes",
+          "ticker": "ESPN:401871056:100:spread:home:10.5",
+          "side": "yes",
+          "eventId": "401871056",
+          "event": "Liberty Flames at Kennesaw State Owls",
+          "eventTime": "2026-10-22T23:00:00+00:00",
+          "closeTime": "2026-10-22T23:00:00+00:00",
+          "selection": "Kennesaw State Owls +10.5",
+          "market": "spread",
+          "line": 10.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401871056",
+            "teams": [
+              "2335",
+              "338"
+            ],
+            "teamId": "338",
+            "kind": "spread",
+            "line": 10.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-22T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6172980242851946,
+          "rawModelP": 0.6172980242851946,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": -6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 10.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858500:100:spread:home:2.5|yes",
+          "ticker": "ESPN:401858500:100:spread:home:2.5",
+          "side": "yes",
+          "eventId": "401858500",
+          "event": "USC Trojans at Wisconsin Badgers",
+          "eventTime": "2026-10-24T23:30:00+00:00",
+          "closeTime": "2026-10-24T23:30:00+00:00",
+          "selection": "Wisconsin Badgers +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858500",
+            "teams": [
+              "275",
+              "30"
+            ],
+            "teamId": "275",
+            "kind": "spread",
+            "line": 2.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-24T23:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6156181808850296,
+          "rawModelP": 0.6156181808850296,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 52.7,
+          "projectedMargin": 1.9,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|ncaaf|multi|best|3||learning-20261015|16e74f3d107a75a9",
+      "day": "2026-10-18",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T14:47:58.034Z",
+      "snapshotAt": "2026-10-18T14:47:07.848985+00:00",
+      "sourceVersion": "4ad2c92a634dee6b1e41d01d1dad8435cc84bf49",
+      "priceEstimate": 612,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.24886338580880876,
+        "conservativeP": 0.1673470423290982,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6156181808850296,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|ESPN:401871056:100:spread:home:10.5|yes",
+          "ticker": "ESPN:401871056:100:spread:home:10.5",
+          "side": "yes",
+          "eventId": "401871056",
+          "event": "Liberty Flames at Kennesaw State Owls",
+          "eventTime": "2026-10-22T23:00:00+00:00",
+          "closeTime": "2026-10-22T23:00:00+00:00",
+          "selection": "Kennesaw State Owls +10.5",
+          "market": "spread",
+          "line": 10.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401871056",
+            "teams": [
+              "2335",
+              "338"
+            ],
+            "teamId": "338",
+            "kind": "spread",
+            "line": 10.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-22T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6172980242851946,
+          "rawModelP": 0.6172980242851946,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": -6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 10.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858500:100:spread:home:2.5|yes",
+          "ticker": "ESPN:401858500:100:spread:home:2.5",
+          "side": "yes",
+          "eventId": "401858500",
+          "event": "USC Trojans at Wisconsin Badgers",
+          "eventTime": "2026-10-24T23:30:00+00:00",
+          "closeTime": "2026-10-24T23:30:00+00:00",
+          "selection": "Wisconsin Badgers +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858500",
+            "teams": [
+              "275",
+              "30"
+            ],
+            "teamId": "275",
+            "kind": "spread",
+            "line": 2.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-24T23:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6156181808850296,
+          "rawModelP": 0.6156181808850296,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 52.7,
+          "projectedMargin": 1.9,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858497:100:total:over:41.5|yes",
+          "ticker": "ESPN:401858497:100:total:over:41.5",
+          "side": "yes",
+          "eventId": "401858497",
+          "event": "Iowa Hawkeyes at Minnesota Golden Gophers",
+          "eventTime": "2026-10-24T19:30:00+00:00",
+          "closeTime": "2026-10-24T19:30:00+00:00",
+          "selection": "Over 41.5 points scored",
+          "market": "total",
+          "line": 41.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858497",
+            "teams": [
+              "135",
+              "2294"
+            ],
+            "teamId": null,
+            "kind": "total",
+            "line": 41.5,
+            "direction": "over",
+            "scope": "full_game",
+            "eventTime": "2026-10-24T19:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5121951219512195,
+          "referenceAmericanOdds": -105,
+          "marketP": 0.5121951219512195,
+          "modelP": 0.654869375182368,
+          "rawModelP": 0.654869375182368,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 49.8,
+          "projectedMargin": -3.3,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 41.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|ncaaf|multi|best|4||learning-20261015|4389f1eea16e7923",
+      "day": "2026-10-18",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T14:47:58.034Z",
+      "snapshotAt": "2026-10-18T14:47:07.848985+00:00",
+      "sourceVersion": "4ad2c92a634dee6b1e41d01d1dad8435cc84bf49",
+      "priceEstimate": 1289,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.15295515445537364,
+        "conservativeP": 0.08981774284895568,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6146149380643829,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|ESPN:401871056:100:spread:home:10.5|yes",
+          "ticker": "ESPN:401871056:100:spread:home:10.5",
+          "side": "yes",
+          "eventId": "401871056",
+          "event": "Liberty Flames at Kennesaw State Owls",
+          "eventTime": "2026-10-22T23:00:00+00:00",
+          "closeTime": "2026-10-22T23:00:00+00:00",
+          "selection": "Kennesaw State Owls +10.5",
+          "market": "spread",
+          "line": 10.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401871056",
+            "teams": [
+              "2335",
+              "338"
+            ],
+            "teamId": "338",
+            "kind": "spread",
+            "line": 10.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-22T23:00:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6172980242851946,
+          "rawModelP": 0.6172980242851946,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": -6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 10.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858500:100:spread:home:2.5|yes",
+          "ticker": "ESPN:401858500:100:spread:home:2.5",
+          "side": "yes",
+          "eventId": "401858500",
+          "event": "USC Trojans at Wisconsin Badgers",
+          "eventTime": "2026-10-24T23:30:00+00:00",
+          "closeTime": "2026-10-24T23:30:00+00:00",
+          "selection": "Wisconsin Badgers +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858500",
+            "teams": [
+              "275",
+              "30"
+            ],
+            "teamId": "275",
+            "kind": "spread",
+            "line": 2.5,
+            "direction": null,
+            "scope": "full_game",
+            "eventTime": "2026-10-24T23:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5238095238095238,
+          "referenceAmericanOdds": -110,
+          "marketP": 0.5238095238095238,
+          "modelP": 0.6156181808850296,
+          "rawModelP": 0.6156181808850296,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 52.7,
+          "projectedMargin": 1.9,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858497:100:total:over:41.5|yes",
+          "ticker": "ESPN:401858497:100:total:over:41.5",
+          "side": "yes",
+          "eventId": "401858497",
+          "event": "Iowa Hawkeyes at Minnesota Golden Gophers",
+          "eventTime": "2026-10-24T19:30:00+00:00",
+          "closeTime": "2026-10-24T19:30:00+00:00",
+          "selection": "Over 41.5 points scored",
+          "market": "total",
+          "line": 41.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858497",
+            "teams": [
+              "135",
+              "2294"
+            ],
+            "teamId": null,
+            "kind": "total",
+            "line": 41.5,
+            "direction": "over",
+            "scope": "full_game",
+            "eventTime": "2026-10-24T19:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5121951219512195,
+          "referenceAmericanOdds": -105,
+          "marketP": 0.5121951219512195,
+          "modelP": 0.654869375182368,
+          "rawModelP": 0.654869375182368,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 49.8,
+          "projectedMargin": -3.3,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 41.5,
           "altDistance": 0,
           "result": null
         },
