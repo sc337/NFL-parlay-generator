@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-18T12:59:32.848Z",
+  "updated_at": "2026-10-18T13:08:06.870Z",
   "sports": {
     "mlb": {
-      "captured": 0,
+      "captured": 4,
       "passes": [
         {
           "mode": "multi",
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T12:58:50.496095+00:00"
+      "snapshotAt": "2026-10-18T13:07:17.273225+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T12:48:04.899803+00:00"
+      "snapshotAt": "2026-10-18T12:58:05.003333+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-18T12:59:03.808792+00:00"
+      "snapshotAt": "2026-10-18T13:07:04.206719+00:00"
     },
     "nfl": {
       "captured": 7,
@@ -120,7 +120,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T12:59:17.781539+00:00"
+      "snapshotAt": "2026-10-18T13:07:16.699313+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -132,7 +132,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T12:46:50.973010+00:00"
+      "snapshotAt": "2026-10-18T13:07:17.578682+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -162,7 +162,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-18T12:58:47.565475+00:00"
+      "snapshotAt": "2026-10-18T13:07:17.927670+00:00"
     }
   },
   "records": [
@@ -5749,6 +5749,170 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|nfl|multi|Lotto|4||learning-20261015|375049fd32b45ce9",
+      "day": "2026-10-18",
+      "sport": "nfl",
+      "mode": "multi",
+      "profile": "Lotto",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-18T13:08:06.870Z",
+      "snapshotAt": "2026-10-18T13:07:16.699313+00:00",
+      "sourceVersion": "7e17193acd6e569513cb86937c5f8e5c4ca77fbd",
+      "priceEstimate": 4237,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.0522715370240616,
+        "conservativeP": 0.026633622779251093,
+        "profile": "Lotto",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.459926989507154,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLREC-26OCT18BUFLV-LVMMAYER87-4|yes",
+          "ticker": "KXNFLREC-26OCT18BUFLV-LVMMAYER87-4",
+          "side": "yes",
+          "eventId": "kalshi-buffalo-bills-las-vegas-raiders",
+          "event": "Buffalo Bills @ Las Vegas Raiders",
+          "eventTime": "2026-10-18T20:25:00Z",
+          "closeTime": "2026-10-18T20:25:00Z",
+          "selection": "Michael Mayer Over 3.5 receptions",
+          "market": "player_receptions",
+          "line": 3.5,
+          "player": "Michael Mayer",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.4,
+          "referenceAmericanOdds": 150,
+          "marketP": 0.395,
+          "modelP": 0.5069501132643592,
+          "rawModelP": 0.5069501132643592,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 4.368,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLREC-26OCT18ARILAR-LARBCORUM24-2|yes",
+          "ticker": "KXNFLREC-26OCT18ARILAR-LARBCORUM24-2",
+          "side": "yes",
+          "eventId": "kalshi-arizona-cardinals-los-angeles-rams",
+          "event": "Arizona Cardinals @ Los Angeles Rams",
+          "eventTime": "2026-10-18T20:05:00Z",
+          "closeTime": "2026-10-18T20:05:00Z",
+          "selection": "Blake Corum Over 1.5 receptions",
+          "market": "player_receptions",
+          "line": 1.5,
+          "player": "Blake Corum",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.37,
+          "referenceAmericanOdds": 170,
+          "marketP": 0.365,
+          "modelP": 0.459926989507154,
+          "rawModelP": 0.459926989507154,
+          "coverage": 0.55,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": 1.603636363636364,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26OCT18NONYG-NYGCSKATTEBO44-15|yes",
+          "ticker": "KXNFLRECYDS-26OCT18NONYG-NYGCSKATTEBO44-15",
+          "side": "yes",
+          "eventId": "kalshi-new-orleans-saints-new-york-giants",
+          "event": "New Orleans Saints @ New York Giants",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Cam Skattebo Over 14.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 14.5,
+          "player": "Cam Skattebo",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.38,
+          "referenceAmericanOdds": 163,
+          "marketP": 0.37,
+          "modelP": 0.4600158985220244,
+          "rawModelP": 0.4600158985220244,
+          "coverage": 0.55,
+          "confidence": 43,
+          "forecastType": "experimental",
+          "projectedLine": 14.74666666666667,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLPASSTDS-26OCT18CARPHI-CARBYOUNG9-2|yes",
+          "ticker": "KXNFLPASSTDS-26OCT18CARPHI-CARBYOUNG9-2",
+          "side": "yes",
+          "eventId": "kalshi-carolina-panthers-philadelphia-eagles",
+          "event": "Carolina Panthers @ Philadelphia Eagles",
+          "eventTime": "2026-10-18T17:00:00Z",
+          "closeTime": "2026-10-18T17:00:00Z",
+          "selection": "Bryce Young Over 1.5 passing touchdowns",
+          "market": "player_pass_tds",
+          "line": 1.5,
+          "player": "Bryce Young",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.41,
+          "referenceAmericanOdds": 144,
+          "marketP": 0.405,
+          "modelP": 0.48734701342754033,
+          "rawModelP": 0.48734701342754033,
+          "coverage": 0.5,
+          "confidence": 48,
+          "forecastType": "experimental",
+          "projectedLine": 2.25,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
           "result": null
         }
       ],
