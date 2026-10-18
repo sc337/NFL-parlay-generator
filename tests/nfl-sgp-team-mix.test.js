@@ -30,7 +30,7 @@ test('reference-mode combination checks retain null model probability and label 
 });
 test('risk bands and joint ordering omit unavailable profiles rather than relabel the same build',()=>{
  const r=build(),safe=r.run();assert.ok(safe);assert.equal(r.run('balanced',[safe]),null);assert.equal(r.run('long',[safe]),null);assert.equal(r.run('safe',[safe]),null);
- const legs=names=>names.map(name=>({name})),p=(value,names)=>({legs:legs(names),risk:{referenceP:value}});
+ const legs=names=>names.map(name=>({name,player:name,type:'receiving'})),p=(value,names)=>({legs:legs(names),risk:{referenceP:value}});
  assert.equal(r.ctx.sgpProfileFits(p(.20,['x','y','z']),'balanced',[p(.40,['a','b','c'])]),true);
  assert.equal(r.ctx.sgpProfileFits(p(.29,['x','y','z']),'balanced',[p(.31,['a','b','c'])]),false);
  assert.equal(r.ctx.sgpProfileFits(p(.10,['a','b','z']),'long',[p(.40,['a','b','c'])]),false);
@@ -42,4 +42,20 @@ test('unknown team identities cannot fabricate joint risk and failed build gates
 });
 test('legacy requests cap at four and incomplete SGPs are omitted',()=>{
  const r=build();const p=r.run('safe',[],5);assert.ok(p);assert.equal(p.legs.length,4);r.game.markets=r.game.markets.slice(0,1);assert.equal(r.run(),null);
+});
+test('flipping every direction or moving thresholds cannot masquerade as distinct profile exposure',()=>{
+ const r=build(),legs=['A','B','C','D'].map(player=>({player,type:'receptions',marketKey:'player_receptions',side:'over',point:.5,name:player+' over'}));
+ const old={legs,risk:{referenceP:.25}},mirror={legs:legs.map(m=>({...m,side:'under',point:3.5,name:m.player+' under'})),risk:{referenceP:.10}};
+ assert.equal(r.ctx.sgpExposureOverlap(old,mirror),4);assert.equal(r.ctx.sgpProfileFits(mirror,'long',[old]),false);
+});
+test('four same-offense receivers are blocked for overs and unders without forcing both teams',()=>{
+ const r=build();for(const side of ['over','under']){
+ const rows=['A','B','C','D'].map(player=>({player,team:'Home',type:'receptions',side}));
+ assert.equal(r.ctx.sgpConcentrationPass(rows),false);assert.equal(r.ctx.sgpConcentrationPass(rows.slice(0,2)),true);
+ assert.equal(r.ctx.sgpConcentrationPass([...rows.slice(0,2),{type:'totals'},{player:'RB',type:'rushing',team:'Home'}]),true);
+ }
+});
+test('assumed correlation uplift alone cannot create a Conservative label',()=>{
+ const r=build(),p={legs:[{name:'a'},{name:'b'},{name:'c'},{name:'d'}],risk:{referenceP:.38,independentP:.19,scenario:{sensitivity:[.31,.42]}}};
+ assert.equal(r.ctx.sgpLikelihood(p),.19);assert.equal(r.ctx.sgpProfileFits(p,'safe',[]),false);assert.equal(r.ctx.sgpProfileFits(p,'balanced',[]),true);
 });

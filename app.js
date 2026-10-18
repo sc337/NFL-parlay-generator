@@ -780,14 +780,36 @@ function sgpCombinationRisk(legs,game,ideas,trials=1000){
     const gate=window.NFL_PARLAY_IDEAS.checkBuild(legs,state);
     if(!gate.pass)return null;
     const scenario=window.PARLAY_RISK?.scenarios(entries,gate.checks.map(x=>({modelP:x.quote.p})),trials);
-    return scenario?{pass:true,modelP:null,referenceP:scenario.modelP,scenario,validated:false}:null;
+    return scenario?{pass:true,modelP:null,referenceP:scenario.modelP,independentP:gate.checks.reduce((p,x)=>p*x.quote.p,1),scenario,validated:false}:null;
   }
   const gate=window.PICK_QUALITY?.checkBuild('nfl',entries,true);
   if(!gate?.pass)return null;
   const scenario=window.PARLAY_RISK?.scenarios(entries,gate.checks,trials);
-  return scenario?{pass:true,modelP:scenario.modelP,scenario,validated:false}:null;
+  return scenario?{pass:true,modelP:scenario.modelP,independentP:gate.checks.reduce((p,x)=>p*x.modelP,1),scenario,validated:false}:null;
 }
-function sgpLikelihood(p){return p?.risk?.modelP??p?.risk?.referenceP??null;}
+// Direction and threshold changes do not create a new underlying exposure.
+function sgpExposure(m){
+  return [m.player?'player:'+m.player:'team:'+(m.team||'Game'),String(m.marketKey||m.type).replace(/_alternate$/,'')].join('|');
+}
+function sgpExposureOverlap(a,b){
+  const keys=new Set(a.legs.map(sgpExposure));return b.legs.filter(m=>keys.has(sgpExposure(m))).length;
+}
+function sgpConcentrationPass(legs){
+  const counts=new Map();
+  for(const m of legs){
+    if(!m.player||!['receiving','receptions'].includes(m.type))continue;
+    const key=m.team||'unknown';counts.set(key,(counts.get(key)||0)+1);
+  }
+  // Policy limit while target competition and receiver dependence are unvalidated.
+  return [...counts.values()].every(n=>n<=2);
+}
+function sgpLikelihood(p){
+  const risk=p?.risk,raw=risk?.modelP??risk?.referenceP;
+  if(!Number.isFinite(raw))return null;
+  // Assumed positive correlation must not be the sole reason for a safer label.
+  const independent=risk.independentP,lower=risk.scenario?.sensitivity?.[0];
+  return Math.min(raw,Number.isFinite(independent)?independent:raw,Number.isFinite(lower)?lower:raw);
+}
 function sgpProfileFits(p,variant,previous){
   const probability=sgpLikelihood(p);
   if(!Number.isFinite(probability))return false;
@@ -797,7 +819,8 @@ function sgpProfileFits(p,variant,previous){
   return previous.filter(Boolean).every(old=>{
     const before=sgpLikelihood(old);
     return Number.isFinite(before)&&before-probability>=.03&&
-      overlapCount(old,p)<=p.legs.length-(p.legs.length>=3?2:1);
+      overlapCount(old,p)<=p.legs.length-(p.legs.length>=3?2:1)&&
+      sgpExposureOverlap(old,p)<=p.legs.length-(p.legs.length>=3?2:1);
   });
 }
 function pickDistinctAlternative(game,count,risk,variant,previous){
@@ -817,6 +840,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     for(const beam of beams)for(const m of ranked){
       if(beam.legs.includes(m)||!coherentWithLegs(m,beam.legs,variant))continue;
       const legs=[...beam.legs,m],signature=parlaySignature({legs});
+      if(!sgpConcentrationPass(legs))continue;
       if(seen.has(signature))continue;seen.add(signature);
       next.push({legs,score:beam.score+scores.get(m)});
     }
@@ -845,7 +869,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     p.scriptName=ideas?'Reference-based joint scenario':'Experimental joint scenario';
     p.summary='Complete SGP compared within its joint-risk band; no required prop mix. '+
       (ideas?'Reference prices supply scenario inputs, not a validated win forecast. ':'Model inputs and same-game dependence remain experimental. ')+
-      'Profile ordering is approximate. Verify exact lines and combined SGP odds on Caesars; not a proven edge.';
+      'At most two receiver props per offense; safer labels cannot rely on assumed correlation uplift. Profile ordering is approximate. Verify exact lines and combined SGP odds on Caesars; not a proven edge.';
     return p;
   }
   return null;
