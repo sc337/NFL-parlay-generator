@@ -163,12 +163,12 @@ function mount(){
   const toggle=document.createElement('button');
   toggle.type='button';toggle.id='explorePanelToggle';toggle.className='explore-panel-toggle';
   toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls','parlayControls');
-  toggle.textContent='Parlay options';
+  toggle.textContent='Build a parlay';
   $('#pickOfDay')?.after(toggle);const modes=$('.mode-tabs');if(modes)$('#parlayControls')?.prepend(modes);
   toggle.addEventListener('click',()=>{
     const open=document.body.classList.toggle('explore-expanded');
     toggle.setAttribute('aria-expanded',String(open));
-    toggle.textContent=open?'Hide parlay options':'Parlay options';
+    toggle.textContent=open?'Close parlay builder':'Build a parlay';
   });
   new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-sport']});
   const results=$('#results');

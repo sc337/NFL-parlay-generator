@@ -1,13 +1,19 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 function setup(saved){const document={readyState:'loading',addEventListener(){},querySelector(){return null}},window={__ACTIVE_SPORT:'nfl'};vm.runInNewContext(fs.readFileSync('slate-ui.js','utf8'),{window,document,localStorage:{getItem:()=>saved},Date,Map,Set});return window}
 function mounted(picker){
- const handlers={},input={value:'',addEventListener:(name,fn)=>handlers[name]=fn,...picker},display={textContent:''};
- const host={setAttribute(){},addEventListener(){},querySelector:s=>s==='input'?input:display,querySelectorAll:()=>[]};
+ const handlers={},input={value:'',addEventListener:(name,fn)=>handlers[name]=fn,...picker},display={textContent:''},next={dataset:{slate:'next'},setAttribute(){}};
+ const host={setAttribute(){},addEventListener(){},querySelector:s=>s==='input'?input:display,querySelectorAll:()=>[next]};
  const document={readyState:'complete',body:{},createElement:()=>host,querySelector:s=>s==='main'?{prepend(){}}:s==='#pickOfDay'?{}:s==='#slateControls'?host:null};
  let refreshes=0;const window={__ACTIVE_SPORT:'nfl',generate:()=>refreshes++};
  vm.runInNewContext(fs.readFileSync('slate-ui.js','utf8'),{window,document,localStorage:{getItem(){}},Date,Map,Set,MutationObserver:class{observe(){}},setTimeout(){}});
- return {window,handlers,input,display,refreshes:()=>refreshes};
+ return {window,handlers,input,display,next,refreshes:()=>refreshes};
 }
+test('Next slate is offered only when quotes exist and none remain today',()=>{
+ const m=mounted({});assert.equal(m.next.hidden,true);
+ m.window.SLATE_UI.prepare('nfl',[{game_time:new Date(Date.now()+86400000).toISOString()}]);assert.equal(m.next.hidden,false);
+ m.window.SLATE_UI.prepare('nfl',[{game_time:new Date(Date.now()+1000).toISOString()}]);assert.equal(m.next.hidden,true);
+ m.window.SLATE_UI.prepare('nfl',[]);assert.equal(m.next.hidden,true);
+});
 test('date field opens calendar from a click or keyboard and commits the selected local day',()=>{
  let opened=0,prevented=0;const m=mounted({showPicker:()=>opened++});
  m.handlers.click();m.handlers.keydown({key:'Enter',preventDefault:()=>prevented++});m.handlers.keydown({key:' ',preventDefault:()=>prevented++});m.handlers.keydown({key:'ArrowRight',preventDefault:()=>prevented++});

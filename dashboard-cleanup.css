@@ -1,0 +1,17 @@
+/* Keep the default view focused on the straight and optional parlay builder. */
+.parlay-options-row{grid-template-columns:minmax(0,1fr)!important}
+#parlayControls .smooth-control-row{flex-wrap:wrap}
+#parlayControls .smooth-control-row>.quality-settings{flex:0 0 110px!important;width:110px!important}
+#parlayControls>.section-head,#parlayControls .no-market-options{display:none!important}
+#nflLinesWrap .nfl-line-toggle:has(#nflAltToggle){display:none}
+.alt-short-note,.pick-reason{display:block;color:var(--muted);font-size:12px;line-height:1.4;margin-top:5px}
+.selection-mode-help{margin-top:4px;font-size:12px;color:var(--muted)}
+.selection-mode-help>summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+#filterPolicies>details{margin:8px 0}
+#filterPolicies>details>summary{min-height:44px;display:flex;align-items:center;cursor:pointer}
+.empty-lead{margin:0!important;color:var(--text)}
+#results>.empty{padding:14px!important}
+#results>.empty>details{margin-top:6px;text-align:left}
+#results>.empty>details>summary{min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#results>.empty>details>p{font-size:12px}
+[hidden]{display:none!important}
