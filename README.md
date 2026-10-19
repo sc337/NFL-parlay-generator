@@ -82,6 +82,15 @@ are disabled when real quotes are unavailable; unsupported/ambiguous identities
 are excluded. Reference lines are the nearest-to-50% exchange threshold, not a
 verified sportsbook main. Nearby ALT props support overs only.
 
+NBA's Lines selector sits outside the collapsed NBA Markets menu. New sessions
+use Standard + ALT; Standard only and ALT only are remembered independently of
+other sports. Existing saved line preferences are preserved. Quoted alternatives
+support spreads within 7 points and totals within 15 points of the reference;
+player limits are 5 points, 2 rebounds/assists, 1 three/steal/block, 7 PRA/PR/PA,
+and 4 RA. ALT player unders are excluded. Featured picks, parlay legs and extra
+picks use the same filter and show ALT labels. No thresholds or prices are
+invented; normal model, freshness, participation and quality checks still apply.
+
 NBA refreshes in an isolated worker. Preseason, thin history, uncertain player
 availability, unstable minutes, stale prices and unmatched schedules yield a
 pass. No model is promoted to validated without the existing later-event

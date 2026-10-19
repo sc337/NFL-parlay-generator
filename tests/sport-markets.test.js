@@ -5,3 +5,10 @@ test('saved selections preserve independent sports and intentional empty choices
 test('controls disable unavailable quotes and show only the active sport',()=>{const app=runtime();let renders=0;app.api.sync('mlb',[{kind:'moneyline',future:true,ask:.5},{kind:'spread',future:false,ask:.5},{kind:'total',series:'KXMLBTEAMTOTAL',future:true,ask:.6}],()=>renders++);assert.equal(app.buttons[0].disabled,false);assert.equal(app.buttons[1].disabled,true);assert.equal(app.buttons[2].disabled,true);assert.equal(app.buttons[3].disabled,false);app.api.set('mlb',[]);assert.equal(renders,1);assert.match(app.note.textContent,/Select at least one/);app.window.__ACTIVE_SPORT='ufc';app.api.activate();assert.equal(app.host.hidden,true)});
 
 test('UFC availability uses the verified card timing policy when contracts lack individual start times',()=>{const app=runtime(undefined,'ufc');app.window.__ACTIVE_SPORT='ufc';app.window.UFC_DASHBOARD={isPregame:m=>m.cardVerified};app.api.sync('ufc',[{kind:'moneyline',cardVerified:true,ask:.6}],()=>{});assert.equal(app.buttons[0].disabled,false);app.api.sync('ufc',[{kind:'moneyline',cardVerified:false,ask:.6}],()=>{});assert.equal(app.buttons[0].disabled,true)});
+test('standalone NBA line filter follows sport navigation',()=>{
+ const app=runtime(),lines={hidden:true},original=app.api;
+ const document={querySelector:s=>s==='#nbaLineFilters'?lines:null};
+ vm.runInNewContext(fs.readFileSync('sport-markets.js','utf8'),{window:app.window,document,localStorage:{getItem:()=>null}});
+ app.window.__ACTIVE_SPORT='nba';app.window.SPORT_MARKETS.activate();assert.equal(lines.hidden,false);
+ app.window.__ACTIVE_SPORT='nfl';app.window.SPORT_MARKETS.activate();assert.equal(lines.hidden,true);original.activate();
+});
