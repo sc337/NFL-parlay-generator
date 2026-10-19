@@ -15,3 +15,10 @@ test('SGP and multi-game use distinct builders', () => {
   assert.match(source, /function buildSgp\(/);
   assert.match(source, /function buildMulti\(/);
 });
+
+test('empty SGP reports counts and filter rejection reasons', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  for(const phrase of ['SGP diagnostics:', 'quoted markets', 'player props', 'parlay-eligible', 'selected by filters', 'passed individual scoring']){
+    assert.ok(source.includes(phrase), 'Missing diagnostic: '+phrase);
+  }
+});
