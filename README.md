@@ -91,6 +91,15 @@ and 4 RA. ALT player unders are excluded. Featured picks, parlay legs and extra
 picks use the same filter and show ALT labels. No thresholds or prices are
 invented; normal model, freshness, participation and quality checks still apply.
 
+NBA also supports Same Game and Multi-Game parlay modes. Same Game uses the
+chosen matchup on the selected date, with one selection per player, one team
+side (moneyline or spread), and one game total at most. Opposing/repeated
+contracts and impossible points-over/game-total-under combinations are excluded.
+It returns a full compatible build or a pass. Multi-Game keeps one leg per game.
+Mode and matchup are saved independently from NFL. NBA SGP combined odds must
+be checked at the sportsbook; the app does not multiply correlated leg prices
+or claim a joint probability. Both modes honor the NBA market and ALT filters.
+
 NBA refreshes in an isolated worker. Preseason, thin history, uncertain player
 availability, unstable minutes, stale prices and unmatched schedules yield a
 pass. No model is promoted to validated without the existing later-event

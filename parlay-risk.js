@@ -87,7 +87,7 @@ function summarize(s,entries,{sgp=false,offer=null,checkedAt=null}={}){
  return {pass:true,modelP,conservativeP,bounds,scenario,profile:modelP==null?'Unrated':profile(modelP),breakEven,valueVerified,priceStatus,
   method:sgp?(scenario?'Experimental shared-game scenarios':'Joint model unavailable'):'Product of leg estimates; assumes independence',
   minimumOdds:conservativeP>0?Math.round(conservativeP>=.5?-100*conservativeP/(1-conservativeP):100*(1-conservativeP)/conservativeP):null,
-  warning:sgp?(scenario?.empiricalPairs?'Historical pair relationships; full SGP remains unvalidated. ':'Assumed correlations; historical pair evidence collecting. ')+'Sensitivity range is not a confidence interval. No validated SGP edge.':'Separate games do not guarantee independence. Combined forecast is unvalidated.',checks};
+  warning:sgp?(scenario?(scenario.empiricalPairs?'Historical pair relationships; full SGP remains unvalidated. ':'Assumed correlations; historical pair evidence collecting. ')+'Sensitivity range is not a confidence interval. No validated SGP edge.':'Joint win probability unavailable. Verify the current combined sportsbook price.'):'Separate games do not guarantee independence. Combined forecast is unvalidated.',checks};
 }
 // Details stay collapsed to preserve the compact phone layout. Entered prices
 // belong to this exact rendered build; they never overwrite any feed quote.

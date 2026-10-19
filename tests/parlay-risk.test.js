@@ -16,6 +16,14 @@ test('duplicate games fail multi-game checks; no weak leg can enter a parlay',()
 test('independent builds use a buffered likelihood and need an actual current offer',()=>{const w=setup(),e=fixture(w);e[1].game={...e[1].game,id:'other'};e[1].market.gameId='other';const x=w.PARLAY_RISK.summarize('nfl',e);assert.equal(x.modelP,.64**2);assert.ok(x.conservativeP<x.modelP);assert.equal(x.breakEven,null);assert.equal(x.valueVerified,false);assert.equal(w.PARLAY_RISK.summarize('nfl',e,{offer:400,checkedAt:new Date(Date.now()-16*60000).toISOString()}).breakEven,null);assert.match(w.PARLAY_RISK.summarize('nfl',e,{offer:-200,checkedAt:new Date().toISOString()}).priceStatus,/does not clear/)});
 test('missing role or team identification never produces an invented joint estimate',()=>{const w=setup(),e=fixture(w);e[1].market.team='Unknown';const x=w.PARLAY_RISK.summarize('nfl',e,{sgp:true});assert.equal(x.modelP,null);assert.equal(x.scenario,null);assert.equal(x.valueVerified,false)});
 test('risk categories reflect estimated likelihood, not offered payout',()=>{const w=setup();assert.equal(w.PARLAY_RISK.profile(.4),'Conservative');assert.equal(w.PARLAY_RISK.profile(.2),'Balanced');assert.equal(w.PARLAY_RISK.profile(.08),'Lotto')});
+test('NBA same-game risk keeps joint probability and value unavailable at an entered book price',()=>{
+ const w=setup(),start=new Date(Date.now()+86400000).toISOString(),at=new Date().toISOString();
+ const entries=['total','moneyline'].map((kind,i)=>({market:{ticker:'nba'+i,game_id:'g',kind,game_time:start,game_status:'pre',price:100,quotedAt:at},forecast:{modelP:.64,coverage:.8,uncertainty:.3}}));
+ w.PICK_QUALITY.prepare('nba',entries.map(e=>e.market),{games:{g:{season_type:2}}},[],at);
+ const risk=w.PARLAY_RISK.summarize('nba',entries,{sgp:true,offer:400,checkedAt:at});
+ assert.equal(risk.pass,true);assert.equal(risk.modelP,null);assert.equal(risk.scenario,null);assert.equal(risk.conservativeP,null);assert.equal(risk.valueVerified,false);
+ assert.equal(risk.priceStatus,'SGP value unverified');assert.equal(risk.method,'Joint model unavailable');assert.match(risk.warning,/Joint win probability unavailable/);
+});
 test('historical pair rules replace assumed relationships only with sufficient held-out evidence',()=>{
  const w=setup(),entries=fixture(w);vm.runInNewContext(fs.readFileSync('model-learning.js','utf8'),{window:w,Date});
  const version=w.MODEL_LEARNING.VERSION,key=w.MODEL_LEARNING.pairKey({marketFamily:'player_pass_yds',direction:'over',player:'QB',team:'Home'},{marketFamily:'player_reception_yds',direction:'over',player:'WR',team:'Home'});
