@@ -75,6 +75,7 @@ function emptyMessage(report,count,state){
  const ideas=active(state),n=report?.eligible.length||0;
  const lead='No '+count+'-leg '+(ideas?'matchup idea':'value-screened parlay')+' for these filters. ';
  if(!report?.checked)return lead+'No selections available for the selected date and markets.';
+ if(ideas&&report.props===0&&count>2)return lead+'Player props are unavailable in this feed; moneyline/spread and total can fill at most two compatible legs. Select 2 legs and Standard + ALT, or another game. '+(n?n+' selections passed individual checks.':report.checked+' selections checked; '+(report.reasons[0]?.[0]||'none qualified')+'.');
  if(!n)return lead+report.checked+' selections checked; none passed '+(ideas?'the context and data-quality checks.':'the value screen. ')+(ideas?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
  return lead+n+' eligible selections'+(report.props?' across '+report.players+' players':'')+'. Try fewer legs or different markets; compatible legs are still required.';
 }

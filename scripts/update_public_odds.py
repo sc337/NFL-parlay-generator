@@ -239,7 +239,9 @@ def enrich(sport, snapshot, events, ctx, now):
                 target = found[0]['markets']
             else:
                 new_game = {'id': metadata['game_id'], **participants(game), 'commence_time': game['game_time'],
-                            'game_status': 'pre', 'dataSource': 'Public reference', 'markets': []}
+                            'game_status': 'pre', 'dataSource': 'Public reference',
+                            'event_date': instant(game['game_time']).astimezone(ZoneInfo('America/Los_Angeles')).date().isoformat(),
+                            'markets': []}
                 native.append(new_game); target = new_game['markets']
         else:
             target = native
@@ -292,6 +294,17 @@ def main(sport):
         ctx = json.loads(context_path.read_text()) if context_path.exists() else {}
         result = enrich(sport, snapshot, events, ctx, now)
         temp = path.with_suffix('.json.tmp'); temp.write_text(json.dumps(result, separators=(',', ':')) + '\n'); temp.replace(path)
+        if sport == 'nfl' and any(not (g.get('context') or {}).get('available') for g in result.get('games', [])):
+            # The native context pass runs before public gap filling. New ESPN
+            # games need their own real context pass; never fabricate evidence.
+            try:
+                try:
+                    from .enrich_snapshot_context import main as enrich_nfl_context
+                except ImportError:
+                    from enrich_snapshot_context import main as enrich_nfl_context
+                enrich_nfl_context(only_missing=True)
+            except (OSError, ValueError, TypeError, KeyError) as exc:
+                print('NFL fallback context unavailable; gates remain enforced:', exc)
         print(sport.upper(), 'ESPN slate:', len(result['slate']['games']), 'events;', result['slate']['reference_markets'], 'gap-filling reference prices')
         return True
     except (OSError, ValueError, TypeError, KeyError) as exc:

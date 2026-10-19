@@ -1,6 +1,7 @@
 import json, re
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -86,11 +87,20 @@ def weather_context(comp,summary):
     precip=w.get('precipitation') or w.get('precipitationProbability')
     return {'available':bool(w) or indoor is not None,'indoor':indoor,'temperature_f':temp,'wind_mph':wind,'precipitation':precip,'condition':w.get('displayValue') or w.get('conditionId') or w.get('condition')}
 
-def main():
+def main(only_missing=False):
     if not SNAPSHOT.exists():raise SystemExit('Snapshot not found')
     data=json.loads(SNAPSHOT.read_text());ids=team_index();score_cache={};summary_cache={};form_cache={};now=datetime.now(timezone.utc)
     for g in data.get('games') or []:
+        if only_missing and (g.get('context') or {}).get('available'):
+            continue
         day=g.get('event_date')
+        if not day:
+            try:
+                day=datetime.fromisoformat(str(g.get('commence_time')).replace('Z','+00:00')).astimezone(ZoneInfo('America/Los_Angeles')).date().isoformat()
+                g['event_date']=day
+            except (ValueError, TypeError):
+                g['context']={'available':False}
+                continue
         if day not in score_cache:score_cache[day]=scoreboard(day)
         ev=extract_event(score_cache[day],g.get('away'),g.get('home')) if day else None
         if not ev:

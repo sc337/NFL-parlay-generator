@@ -40,3 +40,8 @@ test('current Bills-Rams snapshot produces deterministic ideas with actual quote
 test('TD drawer respects selected game and selected week even with no TD parlay chip',()=>{
  const r=setup(),td={type:'td',tdExperimental:true,_rosterVerified:true,modelProbability:.6,marketProbability:.55,name:'Selected TD',tdOpportunity:{games:4,ten_rush:3,ten_target:1}};r.g.markets=[td];const other={...r.g,id:'other',markets:[{...td,name:'Wrong game TD',modelProbability:.9}]};let selected='fixture';const host={innerHTML:''};r.ctx.$=s=>s==='#tdMarketOptions'?host:s==='#gameSelect'?{value:selected}:null;r.ctx.nflSlate=()=>[r.g,other];r.window.MARKET_GUARDS={esc:x=>x};vm.runInContext(app.slice(app.indexOf('function renderTdMarkets(){'),app.indexOf('function countPlayerProps(')),r.ctx);r.ctx.renderTdMarkets();assert.match(host.innerHTML,/Selected TD/);assert.doesNotMatch(host.innerHTML,/Wrong game TD/);r.ctx.nflSlate=()=>[other];r.ctx.renderTdMarkets();assert.doesNotMatch(host.innerHTML,/Selected TD|Wrong game TD/);
 });
+test('team-only fallback explains why three or four legs cannot be filled',()=>{
+ const r=setup(),report={checked:6,props:0,players:0,eligible:[{},{}],reasons:[]};
+ assert.match(r.window.NFL_PARLAY_IDEAS.emptyMessage(report,4,r.ctx.state),/at most two compatible legs/);
+ assert.match(r.window.NFL_PARLAY_IDEAS.emptyMessage(report,4,r.ctx.state),/Select 2 legs/);
+});
