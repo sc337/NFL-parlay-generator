@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-19",
-  "updated_at": "2026-10-19T13:46:29.825Z",
+  "updated_at": "2026-10-19T13:46:53.996Z",
   "sports": {
     "mlb": {
-      "captured": 0,
+      "captured": 4,
       "passes": [
         {
           "mode": "multi",
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T13:26:30.652153+00:00"
+      "snapshotAt": "2026-10-19T13:46:31.913506+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T13:46:28.440595+00:00"
+      "snapshotAt": "2026-10-19T13:36:28.789632+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T13:26:49.879293+00:00"
+      "snapshotAt": "2026-10-19T13:46:52.321231+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T13:26:50.058076+00:00"
+      "snapshotAt": "2026-10-19T13:46:44.850605+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -198,7 +198,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T13:26:28.673911+00:00"
+      "snapshotAt": "2026-10-19T13:46:28.675463+00:00"
     }
   },
   "records": [
@@ -1533,6 +1533,74 @@
       "result": null
     },
     {
+      "id": "2026-10-19|mlb|straight|featured|1||learning-20261015|1a535fc37203c729",
+      "day": "2026-10-19",
+      "sport": "mlb",
+      "mode": "straight",
+      "profile": "featured",
+      "requestedLegs": 1,
+      "actualLegs": 1,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T12:16:52.530Z",
+      "snapshotAt": "2026-10-19T12:16:30.801131+00:00",
+      "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
+      "priceEstimate": -163,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.76675,
+        "conservativeP": 0.6752980000000001,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.76675,
+          "upper": 0.76675,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "mlb|KXMLBTOTAL-26OCT192008CLETB-6|yes",
+          "ticker": "KXMLBTOTAL-26OCT192008CLETB-6",
+          "side": "yes",
+          "eventId": "849815",
+          "event": "Cleveland Guardians at Tampa Bay Rays",
+          "eventTime": "2026-10-20T00:08:00Z",
+          "closeTime": "2026-10-23T00:08:00Z",
+          "selection": "Over 5.5 runs scored",
+          "market": "total",
+          "line": 5.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.62,
+          "referenceAmericanOdds": null,
+          "marketP": 0.62,
+          "modelP": 0.76675,
+          "rawModelP": 0.76675,
+          "coverage": 0.5024000000000001,
+          "confidence": 54,
+          "forecastType": "experimental",
+          "projectedLine": 8,
+          "projectedTotal": 8,
+          "projectedMargin": null,
+          "projectedAway": 4,
+          "projectedHome": 4,
+          "isAltLine": true,
+          "altReferenceLine": 6.5,
+          "altDistance": 1,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-19|nhl|multi|balanced|2||learning-20261015|dc3ba14f83cda02d",
       "day": "2026-10-19",
       "sport": "nhl",
@@ -1546,7 +1614,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T12:26:30.021Z",
+      "capturedAt": "2026-10-19T12:26:53.895Z",
       "snapshotAt": "2026-10-19T12:16:16.693486+00:00",
       "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
       "priceEstimate": 225,
@@ -1646,7 +1714,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T12:26:30.021Z",
+      "capturedAt": "2026-10-19T12:26:53.895Z",
       "snapshotAt": "2026-10-19T12:16:16.693486+00:00",
       "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
       "priceEstimate": 564,
@@ -1765,74 +1833,6 @@
       "result": null
     },
     {
-      "id": "2026-10-19|mlb|straight|featured|1||learning-20261015|1a535fc37203c729",
-      "day": "2026-10-19",
-      "sport": "mlb",
-      "mode": "straight",
-      "profile": "featured",
-      "requestedLegs": 1,
-      "actualLegs": 1,
-      "filters": {
-        "lines": "both",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-19T12:36:30.273Z",
-      "snapshotAt": "2026-10-19T12:16:30.801131+00:00",
-      "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
-      "priceEstimate": -163,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.76675,
-        "conservativeP": 0.6752980000000001,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.76675,
-          "upper": 0.76675,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "mlb|KXMLBTOTAL-26OCT192008CLETB-6|yes",
-          "ticker": "KXMLBTOTAL-26OCT192008CLETB-6",
-          "side": "yes",
-          "eventId": "849815",
-          "event": "Cleveland Guardians at Tampa Bay Rays",
-          "eventTime": "2026-10-20T00:08:00Z",
-          "closeTime": "2026-10-23T00:08:00Z",
-          "selection": "Over 5.5 runs scored",
-          "market": "total",
-          "line": 5.5,
-          "player": null,
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.62,
-          "referenceAmericanOdds": null,
-          "marketP": 0.62,
-          "modelP": 0.76675,
-          "rawModelP": 0.76675,
-          "coverage": 0.5024000000000001,
-          "confidence": 54,
-          "forecastType": "experimental",
-          "projectedLine": 8,
-          "projectedTotal": 8,
-          "projectedMargin": null,
-          "projectedAway": 4,
-          "projectedHome": 4,
-          "isAltLine": true,
-          "altReferenceLine": 6.5,
-          "altDistance": 1,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
       "id": "2026-10-19|ncaaf|multi|best|3||learning-20261015|033e53e9ad048b5c",
       "day": "2026-10-19",
       "sport": "ncaaf",
@@ -1846,7 +1846,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T12:56:29.872Z",
+      "capturedAt": "2026-10-19T12:36:52.429Z",
       "snapshotAt": "2026-10-19T12:36:50.856019+00:00",
       "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
       "priceEstimate": 460,
@@ -1978,7 +1978,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T12:56:29.872Z",
+      "capturedAt": "2026-10-19T12:36:52.429Z",
       "snapshotAt": "2026-10-19T12:36:50.856019+00:00",
       "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
       "priceEstimate": 934,
@@ -2137,6 +2137,74 @@
           "isAltLine": true,
           "altReferenceLine": -10.5,
           "altDistance": 3,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|mlb|straight|featured|1||learning-20261015|221cbf286d152536",
+      "day": "2026-10-19",
+      "sport": "mlb",
+      "mode": "straight",
+      "profile": "featured",
+      "requestedLegs": 1,
+      "actualLegs": 1,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T13:46:53.996Z",
+      "snapshotAt": "2026-10-19T13:46:31.913506+00:00",
+      "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
+      "priceEstimate": -285,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.888,
+        "conservativeP": 0.796548,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.888,
+          "upper": 0.888,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "mlb|KXMLBTEAMTOTAL-26OCT192008CLETB-CLE2|yes",
+          "ticker": "KXMLBTEAMTOTAL-26OCT192008CLETB-CLE2",
+          "side": "yes",
+          "eventId": "849815",
+          "event": "Cleveland Guardians at Tampa Bay Rays",
+          "eventTime": "2026-10-20T00:08:00Z",
+          "closeTime": "2026-10-23T00:08:00Z",
+          "selection": "Will Cleveland score over 1.5 runs?",
+          "market": "total",
+          "line": 1.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.74,
+          "referenceAmericanOdds": null,
+          "marketP": 0.74,
+          "modelP": 0.888,
+          "rawModelP": 0.888,
+          "coverage": 0.5024000000000001,
+          "confidence": 54,
+          "forecastType": "experimental",
+          "projectedLine": 4,
+          "projectedTotal": 8.1,
+          "projectedMargin": null,
+          "projectedAway": 4,
+          "projectedHome": 4,
+          "isAltLine": true,
+          "altReferenceLine": 2.5,
+          "altDistance": 1,
           "result": null
         }
       ],
