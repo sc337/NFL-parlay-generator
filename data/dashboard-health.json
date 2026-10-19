@@ -1,18 +1,20 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-19T06:54:14.698Z",
+  "updated_at": "2026-10-19T06:54:38.537Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-10-19T06:44:00.867205+00:00",
-      "ageMinutes": 10,
-      "markets": 61,
-      "quotedMarkets": 61,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-10-19T06:54:01.222839+00:00",
+      "ageMinutes": 1,
+      "markets": 47,
+      "quotedMarkets": 47,
+      "playerMarkets": 14,
       "families": {
         "moneyline": 4,
         "spread": 8,
-        "total": 49
+        "total": 21,
+        "strikeouts": 7,
+        "home_runs": 7
       },
       "futureEvents": [
         {
@@ -25,12 +27,12 @@
         }
       ],
       "playerCounts": {
-        "849815": 7
+        "849815": 14
       }
     },
     "nba": {
       "snapshotAt": "2026-10-19T06:53:54.009846+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 3188,
       "quotedMarkets": 3188,
       "playerMarkets": 826,
@@ -227,15 +229,15 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-19T06:44:22.138176+00:00",
-      "ageMinutes": 10,
-      "markets": 5116,
-      "quotedMarkets": 5116,
+      "snapshotAt": "2026-10-19T06:54:21.321448+00:00",
+      "ageMinutes": 0,
+      "markets": 5117,
+      "quotedMarkets": 5117,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 467,
+        "moneyline": 466,
         "spread": 2503,
-        "total": 2146
+        "total": 2148
       },
       "futureEvents": [
         {
@@ -594,17 +596,18 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-19T06:44:08.900189+00:00",
-      "ageMinutes": 10,
-      "markets": 1324,
-      "quotedMarkets": 1324,
-      "playerMarkets": 48,
+      "snapshotAt": "2026-10-19T06:54:09.199135+00:00",
+      "ageMinutes": 0,
+      "markets": 1158,
+      "quotedMarkets": 1158,
+      "playerMarkets": 386,
       "families": {
         "h2h": 30,
-        "td": 40,
-        "totals": 532,
         "spreads": 714,
-        "passing": 8
+        "receiving": 300,
+        "passing": 78,
+        "rushing": 8,
+        "totals": 28
       },
       "futureEvents": [
         {
@@ -669,8 +672,8 @@
         }
       ],
       "playerCounts": {
-        "kalshi-san-francisco-49ers-washington-commanders": 28,
-        "kalshi-chicago-bears-new-england-patriots": 20
+        "kalshi-san-francisco-49ers-washington-commanders": 180,
+        "kalshi-chicago-bears-new-england-patriots": 206
       }
     },
     "nhl": {
@@ -881,8 +884,8 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-19T06:43:59.892757+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-10-19T06:54:00.847092+00:00",
+      "ageMinutes": 1,
       "markets": 22,
       "quotedMarkets": 22,
       "playerMarkets": 0,
@@ -940,30 +943,26 @@
   },
   "alerts": [
     {
-      "id": "mlb:props-missing",
-      "sport": "mlb",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-19T06:34:39.607Z",
-      "changedAt": "2026-10-19T06:34:39.607Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "3173 upcoming markets lack verified start times.",
+      "message": "3175 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "mlb:props-missing",
+      "resolvedAt": "2026-10-19T06:54:38.537Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39201863782",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-10-19T06:44:39.390413+00:00"
+      "at": "2026-10-19T06:54:38.512822+00:00"
     },
     "nba": {
       "ok": true,
@@ -971,11 +970,11 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-19T06:44:39.390413+00:00"
+      "at": "2026-10-19T06:54:38.512822+00:00"
     },
     "nfl": {
       "ok": true,
-      "at": "2026-10-19T06:44:39.390413+00:00"
+      "at": "2026-10-19T06:54:38.512822+00:00"
     },
     "nhl": {
       "ok": true,
@@ -983,7 +982,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-19T06:44:39.390413+00:00"
+      "at": "2026-10-19T06:54:38.512822+00:00"
     }
   }
 }
