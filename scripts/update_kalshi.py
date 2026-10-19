@@ -95,6 +95,10 @@ def finalize(g):
   k=(x.get('marketKey'),x.get('player') or x.get('team'),x.get('side'),x.get('point'))
   if k not in seen and x.get('price') is not None:seen.add(k);out.append(x)
  g['markets']=out;return g
+def candidate_day(day,now):
+ # Compare calendar dates, not midnight to the current instant. Evening US
+ # events remain candidates after UTC midnight; ESPN kickoff/status is final.
+ return (now-timedelta(days=1)).date()<=day<=(now+timedelta(days=14)).date()
 def main():
  now=datetime.now(timezone.utc);limit=now+timedelta(days=14);games={};counts={}
  for s in SERIES:
@@ -102,8 +106,7 @@ def main():
   for m in ms:
    info=matchup(m);day=event_date_from_ticker(m)
    if not info or not day:continue
-   ds=datetime(day.year,day.month,day.day,tzinfo=timezone.utc)
-   if ds>limit or ds<now-timedelta(days=1):continue
+   if not candidate_day(day,now):continue
    g=games.setdefault(info['key'],game_obj(info,day));p=prob(m)
    if s=='KXNFLGAME' and p is not None:
     suffix=str(m.get('ticker') or '').upper().rsplit('-',1)[-1];team=next((name for code,name in ALL_CODES.items() if suffix==code),None)
