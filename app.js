@@ -1151,9 +1151,12 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
         ? `Value-screened SGPs • ${propCount} quoted props`
         : 'Value-screened SGPs';
     }
-    if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
+    // A missing FanDuel prop feed must not suppress independently quoted team
+    // markets (e.g. Kalshi). The normal quality and compatibility gates still apply.
+    // Requiring a player prop remains an explicit user choice, not an API-key side effect.
+    if(state.requirePlayerProp && propCount===0){
       render([]);
-      $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
+      $('#results').innerHTML='<div class="empty">No verified player props are available for this game. Turn off Require player prop in Filters to evaluate available team markets.</div>';
       return;
     }
     parlays=[];
