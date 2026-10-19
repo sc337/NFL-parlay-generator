@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-19T00:12:56.178Z",
+  "updated_at": "2026-10-19T00:22:37.232Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:12:28.117930+00:00"
+      "snapshotAt": "2026-10-19T00:12:25.373342+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T00:01:16.942953+00:00"
+      "snapshotAt": "2026-10-19T00:22:35.541441+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T00:12:11.657757+00:00"
+      "snapshotAt": "2026-10-19T00:12:42.170271+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:12:27.428686+00:00"
+      "snapshotAt": "2026-10-19T00:12:40.948136+00:00"
     },
     "nhl": {
       "captured": 6,
@@ -174,7 +174,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:12:28.388694+00:00"
+      "snapshotAt": "2026-10-19T00:09:00.224005+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -204,7 +204,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:12:28.970479+00:00"
+      "snapshotAt": "2026-10-19T00:12:23.128705+00:00"
     }
   },
   "records": [
@@ -23601,6 +23601,106 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|nba|multi|best|2||learning-20261015|3d3891e9d8299ac7",
+      "day": "2026-10-18",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T00:22:37.232Z",
+      "snapshotAt": "2026-10-19T00:22:35.541441+00:00",
+      "sourceVersion": "0d706c773b15b88bc9e5e034eab93d22ad8df740",
+      "priceEstimate": 225,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.44525724002379025,
+        "conservativeP": 0.35025917051065664,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3357928408270343,
+          "upper": 0.6391146835409888,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBA3PT-26OCT20PHINYK-NYKKTOWNS32-2|no",
+          "ticker": "KXNBA3PT-26OCT20PHINYK-NYKKTOWNS32-2",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Karl-Anthony Towns Under 1.5 Threes",
+          "market": "threes",
+          "line": 1.5,
+          "player": "Karl-Anthony Towns",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.6966781572860457,
+          "rawModelP": 0.6966781572860457,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.1064229568965516,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBASPREAD-26OCT21GSWLAL-LAL9|no",
+          "ticker": "KXNBASPREAD-26OCT21GSWLAL-LAL9",
+          "side": "no",
+          "eventId": "401909092",
+          "event": "Warriors vs Lakers",
+          "eventTime": "2026-10-22T02:00Z",
+          "closeTime": "2026-10-24T02:00:00Z",
+          "selection": "Warriors +8.5 Spread",
+          "market": "spread",
+          "line": 8.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.53,
+          "referenceAmericanOdds": null,
+          "marketP": 0.515,
+          "modelP": 0.6391146835409888,
+          "rawModelP": 0.6391146835409888,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 229.72493380231947,
+          "projectedMargin": 4.226880517842801,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 8.5,
+          "altDistance": 0,
           "result": null
         }
       ],
