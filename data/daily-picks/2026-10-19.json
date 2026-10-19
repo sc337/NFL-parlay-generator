@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-19",
-  "updated_at": "2026-10-19T14:46:52.479Z",
+  "updated_at": "2026-10-19T14:56:30.278Z",
   "sports": {
     "mlb": {
-      "captured": 0,
+      "captured": 4,
       "passes": [
         {
           "mode": "multi",
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T14:46:30.755187+00:00"
+      "snapshotAt": "2026-10-19T14:36:31.858194+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T14:36:28.391050+00:00"
+      "snapshotAt": "2026-10-19T14:56:28.945474+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T14:46:50.856658+00:00"
+      "snapshotAt": "2026-10-19T14:36:50.703979+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,17 +156,11 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T14:46:44.751033+00:00"
+      "snapshotAt": "2026-10-19T14:36:46.202763+00:00"
     },
     "nhl": {
-      "captured": 6,
+      "captured": 7,
       "passes": [
-        {
-          "mode": "multi",
-          "profile": "balanced",
-          "requestedLegs": 3,
-          "reason": "No qualifying build"
-        },
         {
           "mode": "multi",
           "profile": "balanced",
@@ -174,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T14:36:16.753363+00:00"
+      "snapshotAt": "2026-10-19T14:46:16.953108+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -204,7 +198,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T14:46:28.624145+00:00"
+      "snapshotAt": "2026-10-19T14:36:29.727556+00:00"
     }
   },
   "records": [
@@ -2685,6 +2679,238 @@
           "isAltLine": true,
           "altReferenceLine": -10.5,
           "altDistance": 3,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nhl|multi|balanced|2||learning-20261015|4560c699fb6d2631",
+      "day": "2026-10-19",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T14:56:30.278Z",
+      "snapshotAt": "2026-10-19T14:46:16.953108+00:00",
+      "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
+      "priceEstimate": 214,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.43844992756108025,
+        "conservativeP": 0.33485711566184095,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3243692731791421,
+          "upper": 0.6559745339992734,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT20LAWSH-WSH|yes",
+          "ticker": "KXNHLGAME-26OCT20LAWSH-WSH",
+          "side": "yes",
+          "eventId": "401892542",
+          "event": "Kings vs Capitals",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Capitals ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.59,
+          "referenceAmericanOdds": null,
+          "marketP": 0.585,
+          "modelP": 0.6683947391798687,
+          "rawModelP": 0.6683947391798687,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.991021728841387,
+          "projectedMargin": null,
+          "projectedAway": 2.4596540982193855,
+          "projectedHome": 3.531367630622002,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLPTS-26OCT19SJTOR-SJAWENNBERG21-1|no",
+          "ticker": "KXNHLPTS-26OCT19SJTOR-SJAWENNBERG21-1",
+          "side": "no",
+          "eventId": "401892537",
+          "event": "Sharks vs Maple Leafs",
+          "eventTime": "2026-10-19T23:30Z",
+          "closeTime": "2026-10-21T23:30:00Z",
+          "selection": "Alexander Wennberg Under 0.5 Points",
+          "market": "points",
+          "line": 0.5,
+          "player": "Alexander Wennberg",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.6559745339992734,
+          "rawModelP": 0.6559745339992734,
+          "coverage": 0.5571428571428572,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.44465694761709257,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nhl|multi|balanced|3||learning-20261015|542081f992d52dbb",
+      "day": "2026-10-19",
+      "sport": "nhl",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T14:56:30.278Z",
+      "snapshotAt": "2026-10-19T14:46:16.953108+00:00",
+      "sourceVersion": "5fe56cb82b976e19a16477bf886c1fb346ecc482",
+      "priceEstimate": 481,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.2778331594714916,
+        "conservativeP": 0.18149412643805263,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6336713544850269,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nhl|KXNHLGAME-26OCT20LAWSH-WSH|yes",
+          "ticker": "KXNHLGAME-26OCT20LAWSH-WSH",
+          "side": "yes",
+          "eventId": "401892542",
+          "event": "Kings vs Capitals",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Capitals ML",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.59,
+          "referenceAmericanOdds": null,
+          "marketP": 0.585,
+          "modelP": 0.6683947391798687,
+          "rawModelP": 0.6683947391798687,
+          "coverage": 0.55,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 5.991021728841387,
+          "projectedMargin": null,
+          "projectedAway": 2.4596540982193855,
+          "projectedHome": 3.531367630622002,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLPTS-26OCT19SJTOR-SJAWENNBERG21-1|no",
+          "ticker": "KXNHLPTS-26OCT19SJTOR-SJAWENNBERG21-1",
+          "side": "no",
+          "eventId": "401892537",
+          "event": "Sharks vs Maple Leafs",
+          "eventTime": "2026-10-19T23:30Z",
+          "closeTime": "2026-10-21T23:30:00Z",
+          "selection": "Alexander Wennberg Under 0.5 Points",
+          "market": "points",
+          "line": 0.5,
+          "player": "Alexander Wennberg",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.6559745339992734,
+          "rawModelP": 0.6559745339992734,
+          "coverage": 0.5571428571428572,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.44465694761709257,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nhl|KXNHLPTS-26OCT19COLPHI-PHIMMICHKOV39-1|no",
+          "ticker": "KXNHLPTS-26OCT19COLPHI-PHIMMICHKOV39-1",
+          "side": "no",
+          "eventId": "401892536",
+          "event": "Avalanche vs Flyers",
+          "eventTime": "2026-10-19T23:00Z",
+          "closeTime": "2026-10-21T23:00:00Z",
+          "selection": "Matvei Michkov Under 0.5 Points",
+          "market": "points",
+          "line": 0.5,
+          "player": "Matvei Michkov",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": null,
+          "marketP": 0.52,
+          "modelP": 0.6336713544850269,
+          "rawModelP": 0.6336713544850269,
+          "coverage": 0.5666666666666667,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 0.48326048225238605,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
+          "altDistance": 0,
           "result": null
         }
       ],
