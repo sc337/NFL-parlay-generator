@@ -61,7 +61,19 @@ test('Win Chance packages a compatible three-leg SGP that Value rejects at the s
  vm.runInContext(app.slice(app.indexOf('function correlation('),app.indexOf('function renderNflStraight(')),r.ctx);
  const p=r.ctx.buildSgp(r.g,3,50,'safe',[]);assert.ok(p);assert.equal(p.legs.length,3);assert.equal(p.likelihoodTier,true);assert.equal(p.name,'Win Chance');
  assert.ok(p.legs.every(m=>rows.includes(m)));assert.equal(p.risk.pass,true);assert.equal(p.risk.validated,false);
+ r.ctx.state.requirePlayerProp=true;assert.ok(r.ctx.buildSgp(r.g,2,50,'safe',[]).legs.some(m=>m.player));
+ const teamOnly=[rows[2],{...rows[2],ticker:'ml',type:'h2h',marketKey:'h2h',team:'Home',point:null,name:'Home ML'}];r.g.markets=teamOnly;r.window.PICK_QUALITY.prepare('nfl',teamOnly,{},[r.g],'2026-10-12T04:59:00Z');
+ assert.equal(r.ctx.buildSgp(r.g,2,50,'safe',[]),null);r.ctx.state.requirePlayerProp=false;assert.ok(r.ctx.buildSgp(r.g,2,50,'safe',[]));r.g.markets=rows;r.window.PICK_QUALITY.prepare('nfl',rows,{},[r.g],'2026-10-12T04:59:00Z');
  r.ctx.state.recommendationTier='screened';assert.equal(r.ctx.buildSgp(r.g,3,50,'safe',[]),null);
+});
+test('required-prop control restores its saved state, persists changes and regenerates',()=>{
+ const events={},writes=[],state={recommendationTier:'screened',requirePlayerProp:true,selectedMarkets:new Set()},select={addEventListener:(k,fn)=>events.select=fn},checkbox={addEventListener:(k,fn)=>events.checkbox=fn},small={};let field,generated=0;
+ const anchor={before:n=>field=n},document={readyState:'complete',querySelector:s=>s==='#nflWeekWrap'?anchor:s==='#nflRecommendationTierWrap'?field:null,createElement:()=>({querySelector:s=>s==='select'?select:s==='#nflRequireProp'?checkbox:s==='small'?small:null})};
+ const window={NFL_PARLAY_STATE:state,DASHBOARD_UI:{put:(...args)=>writes.push(args)},generate:()=>generated++};
+ vm.runInNewContext(fs.readFileSync('kalshi-parlay-ideas.js','utf8'),{window,document,Date});
+ assert.equal(checkbox.checked,true);events.checkbox({target:{checked:false}});assert.equal(state.requirePlayerProp,false);assert.deepEqual(writes.at(-1),['nfl','requireProp','off']);assert.equal(generated,1);
+ events.checkbox({target:{checked:true}});assert.equal(state.requirePlayerProp,true);assert.deepEqual(writes.at(-1),['nfl','requireProp','on']);assert.equal(generated,2);
+ const msg=window.NFL_PARLAY_IDEAS.emptyMessage({checked:10,eligible:[{market:{type:'totals'}}],reasons:[]},2,state);assert.match(msg,/Require a player prop is enabled/);
 });
 test('TD drawer respects selected game and selected week even with no TD parlay chip',()=>{
  const r=setup(),td={type:'td',tdExperimental:true,_rosterVerified:true,modelProbability:.6,marketProbability:.55,name:'Selected TD',tdOpportunity:{games:4,ten_rush:3,ten_target:1}};r.g.markets=[td];const other={...r.g,id:'other',markets:[{...td,name:'Wrong game TD',modelProbability:.9}]};let selected='fixture';const host={innerHTML:''};r.ctx.$=s=>s==='#tdMarketOptions'?host:s==='#gameSelect'?{value:selected}:null;r.ctx.nflSlate=()=>[r.g,other];r.window.MARKET_GUARDS={esc:x=>x};vm.runInContext(app.slice(app.indexOf('function renderTdMarkets(){'),app.indexOf('function countPlayerProps(')),r.ctx);r.ctx.renderTdMarkets();assert.match(host.innerHTML,/Selected TD/);assert.doesNotMatch(host.innerHTML,/Wrong game TD/);r.ctx.nflSlate=()=>[other];r.ctx.renderTdMarkets();assert.doesNotMatch(host.innerHTML,/Selected TD|Wrong game TD/);

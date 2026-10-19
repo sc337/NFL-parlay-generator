@@ -7,6 +7,9 @@ snapshot = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(snapshot)
 
 class AltSnapshotTest(unittest.TestCase):
+    def test_receptions_series_has_its_own_category(self):
+        self.assertEqual(snapshot.PROP_SERIES['KXNFLREC'][0], 'receptions')
+        self.assertEqual(snapshot.PROP_SERIES['KXNFLRECYDS'][0], 'receiving')
     def test_retains_quoted_ladders_and_skips_unquoted_sides(self):
         def quote(ticker, ask, bid):
             return {'ticker':ticker,'yes_ask_dollars':ask,'yes_bid_dollars':bid}

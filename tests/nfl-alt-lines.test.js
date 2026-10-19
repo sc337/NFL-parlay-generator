@@ -1,4 +1,11 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+test('NFL prop keys route old snapshots into exact categories without changing quotes',()=>{
+ const {api:a}=setup(),rec={player:'P',type:'receiving',marketKey:'player_receptions',point:5.5,price:-117};
+ const quote=JSON.stringify([rec.point,rec.price]);a.classify({markets:[rec]});assert.equal(rec.type,'receptions');assert.equal(JSON.stringify([rec.point,rec.price]),quote);
+ assert.equal(a.selected(rec,new Set(['receiving'])),false);assert.equal(a.selected(rec,new Set(['receptions'])),true);
+ for(const key of ['player_pass_attempts','player_pass_completions','player_rush_attempts','player_pass_tds','player_pass_interceptions'])assert.equal(a.selected({player:'P',type:key.startsWith('player_rush')?'rushing':'passing',marketKey:key},new Set(['passing','rushing','receiving','receptions'])),false,key);
+ for(const [key,type]of Object.entries({player_pass_yds:'passing',player_rush_yds:'rushing',player_reception_yds:'receiving'}))assert.equal(a.selected({player:'P',type:'wrong',marketKey:key+'_alternate'},new Set([type])),true,key);
+});
 function setup(){const window={};const env=vm.createContext({window,Math,Number,Map});vm.runInContext(fs.readFileSync('nfl-alt-lines.js','utf8'),env);return {api:window.NFL_ALT_LINES,window,env};}
 test('exchange ladders use one balanced reference and keep both sides at that threshold',()=>{
  const {api}=setup();const game={markets:[19.5,39.5,59.5].flatMap((point,i)=>['over','under'].map(side=>({source:'Kalshi',type:'rushing',marketKey:'player_rush_yds',player:'RB',point,side,marketProbability:side==='over'?[.8,.51,.25][i]:[.2,.49,.75][i],price:-110})))};

@@ -1,4 +1,9 @@
 (()=>{'use strict';
+const propTypes={player_pass_yds:'passing',player_rush_yds:'rushing',player_reception_yds:'receiving',player_receptions:'receptions'};
+const propKey=m=>String(m?.marketKey||'').toLowerCase().replace(/_alternate$/,'');
+function normalize(m){const type=propTypes[propKey(m)];if(type)m.type=type;return m}
+function supportedProp(m){const key=propKey(m);return key?!!propTypes[key]:['passing','rushing','receiving','receptions'].includes(m?.type)}
+function selected(m,markets){normalize(m);return (!m.player||supportedProp(m))&&markets.has(m.type)}
 const supported=m=>['spreads','totals'].includes(m.type)||['player_pass_yds','player_rush_yds','player_reception_yds'].includes(String(m.marketKey||'').replace(/_alternate$/,''));
 const point=m=>m.point==null||m.point===''?null:Number.isFinite(Number(m.point))?Number(m.point):null;
 const family=m=>[m.player||'',String(m.marketKey||m.type).replace(/_alternate$/,''),m.type==='spreads'?m.team||'':''].join('|');
@@ -20,6 +25,7 @@ function reference(m,game){
 }
 function classify(game){
  const groups=new Map();
+ for(const m of game.markets||[])normalize(m);
  for(const m of game.markets||[]){m.isAltLine=/_alternate$/.test(m.marketKey||'');m.altReference=false;m.cushionPoints=0;if(!supported(m)||point(m)===null)continue;const key=family(m)+'|'+venue(m);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(m)}
  for(const rows of groups.values()){
   // Exchanges do not label a main line: select the threshold nearest 50%.
@@ -68,7 +74,7 @@ function comparisonText(m,game){
  const note=m.altReference?'Reference (nearest 50% quote)':'Standard';
  return note+' '+lineText(r)+' · '+quoteText(r)+' / ALT '+lineText(alt)+' · '+quoteText(alt)+' · '+(easier(alt,r)?'More cushion; compare payout':'Harder threshold')+'. Quotes are source references, not verified Caesars offers.';
 }
-window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonText,unsupportedIncrement};
+window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonText,unsupportedIncrement,normalize,supportedProp,selected};
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';

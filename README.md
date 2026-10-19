@@ -109,6 +109,17 @@ them. Prices remain source quotes, not a guarantee of Caesars availability.
 
 ### Pick quality policy (October 15, 2026)
 
+The NFL prop routing correction maps reception counts to Receptions at ingestion
+and normalizes older cached snapshots before projection. Pass Yds, Rush Yds and
+Rec Yds use exact market keys; attempts, completions and unsupported passing-TD/
+interception markets cannot enter those parlay categories. Existing quoted
+thresholds and prices are preserved. Conservative legs require buffered model
+likelihood of at least 55%, rather than a separate 55% price-implied floor;
+the Value buffer and complete-build risk/category checks remain in force.
+Require a player prop is remembered independently, defaults off, and applies to
+all NFL selection modes and both game modes. Enabled builds must contain at
+least one qualifying player prop or return a pass, without adding an unsafe leg.
+
 NFL selection modes are labeled Value, Matchups and Win Chance. Existing saved
 Value/Matchups choices retain their internal identifiers and behavior. Win
 Chance returns one complete build using buffered leg estimates and input

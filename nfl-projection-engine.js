@@ -68,6 +68,7 @@
     return null;
   }
   function marketProjection(game,m){
+    window.NFL_ALT_LINES?.normalize?.(m);
     // Use the quoted midpoint as the forecast baseline; the offered ask/price
     // remains the separate payout input for expected value.
     const marketP=num(m.prob)??num(m.marketProbability)??(typeof impliedProbability==='function'?impliedProbability(m.price):null);

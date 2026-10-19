@@ -132,6 +132,7 @@ function unsupportedAltUnder(m){
  return player&&alternate&&under;
 }
 function assess(s,m,f={},options={}){
+ if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
  const likelihoodMode=s==='nfl'&&f.selectionMode==='likelihood';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
@@ -200,7 +201,9 @@ function assess(s,m,f={},options={}){
  }
  const tier=anchored?'suggestion':warnings.length?'conditional':'value';
  if(anchored)warnings.push('Context-supported suggestion; value unverified');
- if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(m.marketKey))reason='Caesars straight only';
+ const parlayKey=String(m.marketKey||'').replace(/_alternate$/,'');
+ if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(parlayKey))reason='Caesars straight only';
+ else if(options.parlay&&s==='nfl'&&['player_pass_tds','player_pass_interceptions'].includes(parlayKey))reason='Unsupported SGP player market';
  if(!reason&&likelihoodMode&&conservativeP<.5)reason='Win Chance needs a buffered estimate of at least 50%';
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  const dataReason=reason,dataPass=!dataReason;

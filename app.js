@@ -3,6 +3,7 @@ const state = {
   nflWeek:window.DASHBOARD_UI?.get('nfl','week','')||'',
   lineMode:['standard','alt','both'].includes(window.DASHBOARD_UI?.get('nfl','lines','standard'))?window.DASHBOARD_UI.get('nfl','lines','standard'):'standard',
   moreCushion:window.DASHBOARD_UI?.get('nfl','cushion','off')==='on',
+  requirePlayerProp:window.DASHBOARD_UI?.get('nfl','requireProp','off')==='on',
   risk:50,
   recommendationTier:window.DASHBOARD_UI?.get('nfl','tier','screened')||'screened',
   selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
@@ -291,6 +292,7 @@ const STRAIGHT_ONLY_MARKETS = new Set([
 ]);
 
 function isParlayEligible(m){
+  if(m?.player&&window.NFL_ALT_LINES?.supportedProp&&!window.NFL_ALT_LINES.supportedProp(m))return false;
   // TD scorer estimates remain experimental until prospective validation.
   const altUnder=window.PICK_QUALITY?.unsupportedAltUnder?.(m)??((!!m?.player||String(m?.marketKey||'').startsWith('player_'))&&(m?.isAltLine===true||/_alternate$/.test(m?.marketKey||''))&&m?.side==='under');
   return !altUnder&&m?.type!=='td'&&!STRAIGHT_ONLY_MARKETS.has(String(m?.marketKey||'').toLowerCase());
@@ -616,7 +618,7 @@ function marketQuality(m,variant){
 function profileSelectionScore(q,variant){
   if(q.selectionMode==='likelihood')return 200+100*Math.log(q.conservativeP)+q.coverage*4-(q.juicePenalty||0);
   const p=q.quote.p,likelihood=q.validated?q.conservativeP:Math.min(q.conservativeP,p);
-  if(variant==='safe'&&(p<.55||q.conservativeP<.55))return -999;
+  if(variant==='safe'&&q.conservativeP<.55)return -999;
   // Price discipline is a profile policy, not a measured confidence limit.
   if(variant==='balanced'&&(p<.45||p>.78))return -999;
   if(variant==='long'&&p>.70)return -999;
@@ -829,7 +831,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
   const ideas=!!window.NFL_PARLAY_IDEAS?.active?.(state);
   const scores=new Map();
   const pool=game.markets.filter(m=>{
-    if(!isParlayEligible(m)||!state.selectedMarkets.has(m.type))return false;
+    if(!isParlayEligible(m)||!(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type)))return false;
     const score=candidateScore(m,risk,variant);scores.set(m,score);return score>-900;
   }).sort((a,b)=>scores.get(b)-scores.get(a)||String(a.ticker||a.name).localeCompare(String(b.ticker||b.name)));
   // Preserve market-family and team paths instead of enforcing a prop quota.
@@ -853,7 +855,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       const n=paths.get(key)||0;if(n>=4)continue;paths.set(key,n+1);beams.push(beam);if(beams.length>=120)break;
     }
   }
-  const candidates=beams.filter(b=>b.legs.length===count).slice(0,24).map(b=>{
+  const candidates=beams.filter(b=>b.legs.length===count&&(!state.requirePlayerProp||b.legs.some(m=>m.player))).slice(0,24).map(b=>{
     const p=packageParlay(b.legs,variant,true,{deferRisk:true});
     if(!p)return null;
     p.risk=sgpCombinationRisk(p.legs,game,ideas);
@@ -902,7 +904,7 @@ function buildMulti(count,risk,variant,previous=[]){
   for(const g of nflSlate()){
     window.NFL_ALT_LINES?.classify?.(g);
     for(const m of g.markets){
-      if(!state.selectedMarkets.has(m.type) || !isParlayEligible(m)) continue;
+      if(!(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type)) || !isParlayEligible(m)) continue;
       const score=candidateScore(m,targetRisk,variant);
       if(score<=-900) continue;
       all.push({m,g,score});
@@ -933,6 +935,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   if(ideas){if(!window.NFL_PARLAY_IDEAS.checkBuild(legs,state).pass)return null;}
   else if(window.PICK_QUALITY&&!window.PICK_QUALITY.checkBuild('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m)})),isSgp).pass)return null;
   if(!legs?.length || legs.length>4 || legs.some(m=>!isParlayEligible(m))) return null;
+  if(state.requirePlayerProp&&!legs.some(m=>m.player))return null;
   const players=legs.map(l=>l.player).filter(Boolean);
   if(new Set(players).size!==players.length)return null;
   let decimal=1;
@@ -1020,7 +1023,7 @@ function render(parlays){
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
     wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
     if(window.PICK_QUALITY){
-      const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
+      const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
       if(singles.length){const esc=window.MARKET_GUARDS.esc;wrap.innerHTML+='<article class="parlay-card"><div class="parlay-top"><div><span class="grade">SINGLES</span><h3 class="parlay-name">Available straight picks</h3></div></div><p class="summary">These picks qualify individually. The requested parlay could not be filled.</p><div class="legs">'+singles.map(x=>'<div class="leg" data-caesars-id="'+(window.CAESARS_COMPARE?.register('nfl',x.m)||'')+'"><div class="leg-title">'+esc(x.m.name)+'</div><div class="leg-sub">'+esc(nflMatchup(x.g.away+' @ '+x.g.home)+' · '+nflKickoff(x.g.commence_time))+'</div><div class="leg-quote">'+esc(window.PICK_QUALITY.quoteLabel('nfl',x.m))+'</div><div class="leg-reason">'+esc(x.q.warnings.join(' · ')||'Model-screened; verify current sportsbook line')+'</div></div>').join('')+'</div></article>';}
     }
@@ -1080,7 +1083,7 @@ function renderNflExtras(parlays,featured){
   if(!window.EXTRA_PICKS)return;
   let games=nflSlate();
   if(state.mode==='sgp'){const game=games.find(g=>g.id===$('#gameSelect').value)||games[0];games=game?[game]:[]}
-  const rows=games.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode)))
+  const rows=games.flatMap(g=>(g.markets||[]).filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode)))
     .map(m=>({market:m,forecast:nflQualityForecast(m),game:g})));
   window.EXTRA_PICKS?.show('nfl',{rows,selected:[...parlays.filter(Boolean).flatMap(p=>p.legs),featured].filter(Boolean),
     event:m=>{const g=games.find(g=>(g.markets||[]).includes(m));return g?nflMatchup(g.away+' @ '+g.home):''},media:m=>window.SPORT_MEDIA?.nfl(m)||''});

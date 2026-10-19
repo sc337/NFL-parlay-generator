@@ -64,7 +64,7 @@ function scopedGames(games,state,selected){
 function report(games,state){
  const reasons=new Map(),eligible=[],priceWatch=[];let checked=0,props=0,dataReady=0;
  for(const game of games)for(const m of game.markets||[]){
-  if(!state.selectedMarkets.has(m.type)||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
+  if(!(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
   if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game.commence_time))continue;
   checked++;if(m.player)props++;
   const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{selectionMode:likelihood(state)?'likelihood':'screened',modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
@@ -86,6 +86,7 @@ function diagnostics(report){
 function emptyMessage(report,count,state){
  const ideas=active(state),n=report?.eligible.length||0;
  const lead='No '+count+'-leg '+(ideas?'Matchups build':likelihood(state)?'Win Chance build':'value-screened parlay')+' for these filters. ';
+ if(state.requirePlayerProp&&!report?.eligible?.some(x=>x.market.player))return lead+'Require a player prop is enabled, but no player prop passed these filters. Select supported prop markets or review the exclusions below.';
  if(!report?.checked)return lead+'No selections available for the selected date and markets.';
  if(ideas&&report.props===0&&count>2)return lead+'Player props are unavailable in this feed; moneyline/spread and total can fill at most two compatible legs. Select 2 legs and Standard + ALT, or another game. '+(n?n+' selections passed individual checks.':report.checked+' selections checked; '+(report.reasons[0]?.[0]||'none qualified')+'.');
  if(!n)return lead+report.checked+' selections checked; none passed '+(ideas||likelihood(state)?'the likelihood and data-quality checks.':'the value screen. ')+(ideas||likelihood(state)?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
@@ -95,15 +96,17 @@ function refresh(){
  const host=document.querySelector('#nflRecommendationTierWrap'),s=window.NFL_PARLAY_STATE;if(!host||!s)return;
  host.hidden=(window.__ACTIVE_SPORT||'nfl')!=='nfl';
  host.querySelector('select').value=s.recommendationTier||'screened';
+ const required=host.querySelector('#nflRequireProp');if(required)required.checked=s.requirePlayerProp===true;
  const ideas=host.querySelector('option[value="ideas"]');if(ideas)ideas.disabled=!!s.apiKey;
  host.querySelector('small').textContent=likelihood(s)?'Prioritizes buffered model estimates with data, availability and compatibility checks. At least 50% per leg after the buffer; reference price no higher than 85¢. Estimates are unvalidated and can be poor value. Returns one best build.':active(s)?'Ranks supported matchups using reference prices and recent context. Value and win chance unverified. Verify each line and combined price on Caesars.':'Requires the buffered estimate to beat the quoted price. Models remain unvalidated; Value may return no qualifying picks.';
 }
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;
  const field=document.createElement('div');field.id='nflRecommendationTierWrap';field.className='field';
- field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="screened">Value</option><option value="ideas">Matchups</option><option value="likelihood">Win Chance</option></select><small id="nflIdeasNote"></small>';
+ field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="screened">Value</option><option value="ideas">Matchups</option><option value="likelihood">Win Chance</option></select><small id="nflIdeasNote"></small><label class="nfl-require-prop" for="nflRequireProp"><input id="nflRequireProp" type="checkbox"><span>Require a player prop</span></label>';
  anchor.before(field);
  field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);refresh();window.generate?.()});
+ field.querySelector('#nflRequireProp').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.requirePlayerProp=e.target.checked;window.DASHBOARD_UI?.put('nfl','requireProp',s.requirePlayerProp?'on':'off');window.generate?.()});
  // TD suggestions are not a parlay market. Preserve a separate scoped drawer.
  document.querySelector('#marketChips [data-market="td"]')?.remove();
  window.NFL_PARLAY_STATE?.selectedMarkets.delete('td');

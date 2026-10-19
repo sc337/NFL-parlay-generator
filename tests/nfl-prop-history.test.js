@@ -6,3 +6,9 @@ test('stale, same-day, insufficient or missing history cannot bypass the project
 test('historical forecasts still respect roster and injury gates and straight-only attempts',()=>{for(const patch of [{_rosterVerified:false},{contextSignals:{injury_checked:true,injury_status:'out'}},{contextSignals:{injury_checked:true,injury_status:'questionable'}}]){const r=setup(patch),f=r.window.NFL_MODEL_V3.evaluate(r.g,r.m);assert.equal(r.window.PICK_QUALITY.assess('nfl',r.m,f,{game:r.g}).pass,false)}const r=setup({price:-186,marketProbability:.65,prob:.65});r.m.marketKey='player_rush_attempts';r.m.point=10.5;r.m.propHistory.metrics.player_rush_attempts=[19,21,18,20];const f=r.window.NFL_MODEL_V3.evaluate(r.g,r.m);assert.equal(r.window.PICK_QUALITY.assess('nfl',r.m,f,{game:r.g}).pass,true);assert.equal(r.window.PICK_QUALITY.assess('nfl',r.m,f,{game:r.g,parlay:true}).reason,'Caesars straight only')});
 
 test('a history estimate with missing role context must clear the wider buffer',()=>{const r=setup({point:70.5}),f=r.window.NFL_MODEL_V3.evaluate(r.g,r.m),q=r.window.PICK_QUALITY.assess('nfl',r.m,f,{game:r.g});assert.equal(q.pass,false);assert.equal(q.reason,'Edge does not clear uncertainty buffer');assert.equal(q.validated,false);assert.equal(q.valueQualified,false)});
+test('legacy reception snapshots use count variance and preserve the quoted line and price',()=>{
+ const r=setup({type:'receiving',marketKey:'player_receptions',point:5.5});r.run('nfl-alt-lines.js');
+ r.m.propHistory.metrics={player_receptions:[4,5,4,5]};r.m.propHistory.opportunities={targets:[6,6,6,6]};
+ const price=r.m.price,f=r.window.NFL_MODEL_V3.evaluate(r.g,r.m);
+ assert.equal(r.m.type,'receptions');assert.ok(f.sd>=1.2&&f.sd<2);assert.equal(r.m.point,5.5);assert.equal(r.m.price,price);
+});

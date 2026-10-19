@@ -26,4 +26,13 @@ test('real shared gates and multi-game builder produce ordered distinct profiles
 test('a slate containing only extreme juice yields Conservative, not forced Balanced or Lotto',()=>{
  const b=builder();for(const g of b.games)g.markets=g.markets.slice(0,1);const safe=b.run(4,'safe');assert.ok(safe);assert.equal(b.run(4,'balanced',[safe]),null);assert.equal(b.run(4,'long',[safe]),null);
 });
+test('Conservative accepts value-screened lower-price legs based on buffered likelihood',()=>{
+ const c=core();assert.ok(c.profileSelectionScore({...q(.51),conservativeP:.58},'safe')>-900);
+ assert.equal(c.profileSelectionScore({...q(.8),conservativeP:.54},'safe'),-999);
+});
+test('requiring a player prop prevents a team-only multi-game fallback',()=>{
+ const b=builder();assert.ok(b.run(2,'safe'));b.ctx.state.requirePlayerProp=true;
+ for(const profile of ['safe','balanced','long'])assert.equal(b.run(2,profile),null);
+ b.ctx.state.requirePlayerProp=false;assert.ok(b.run(2,'safe'));
+});
 test('profile history freezes quotes, deduplicates and never invents SGP returns',()=>{const storage=new Map(),window={NFL_PARLAY_STATE:{games:[]},PICK_QUALITY:{odds:o=>Math.abs(o)>=100,decimal:o=>o>0?1+o/100:1+100/Math.abs(o)}};vm.runInNewContext(fs.readFileSync('nfl-profile-history.js','utf8'),{window,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},Date});const legs=['a','b'].map(name=>({name,gameId:name,type:'h2h',team:name,price:100,modelProbability:.6,kickoff:new Date(Date.now()+3600000).toISOString()}));const p={profile:'safe',legs};window.NFL_PROFILE_HISTORY.record([p],'sgp');window.NFL_PROFILE_HISTORY.record([p],'sgp');assert.equal(window.NFL_PROFILE_HISTORY.rows().length,1);legs[0].price=500;assert.equal(window.NFL_PROFILE_HISTORY.rows()[0].legs[0].odds,100);window.NFL_MODEL_TRACKER={rows:()=>window.NFL_PROFILE_HISTORY.rows()[0].legs.map(l=>({id:l.id,result:'win'}))};const m=window.NFL_PROFILE_HISTORY.metrics().safe;assert.equal(m.hitRate,1);assert.equal(m.referenceROI,null)});
