@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-19",
-  "updated_at": "2026-10-19T18:35:46.471Z",
+  "updated_at": "2026-10-19T18:45:29.512Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T18:35:21.314418+00:00"
+      "snapshotAt": "2026-10-19T18:25:21.267133+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T18:25:28.409952+00:00"
+      "snapshotAt": "2026-10-19T18:45:28.367794+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T18:35:44.688346+00:00"
+      "snapshotAt": "2026-10-19T18:25:44.941401+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,12 +156,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T18:35:28.539562+00:00"
+      "snapshotAt": "2026-10-19T18:25:27.894202+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-19T18:25:06.085982+00:00"
+      "snapshotAt": "2026-10-19T18:35:06.030499+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -191,7 +191,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T18:35:20.988165+00:00"
+      "snapshotAt": "2026-10-19T18:25:19.834616+00:00"
     }
   },
   "records": [
@@ -4147,7 +4147,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T17:45:48.683Z",
+      "capturedAt": "2026-10-19T17:45:29.648Z",
       "snapshotAt": "2026-10-19T17:35:09.197765+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 176,
@@ -4234,6 +4234,106 @@
       "result": null
     },
     {
+      "id": "2026-10-19|nba|multi|best|2||learning-20261015|362c13b2e11993be",
+      "day": "2026-10-19",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T18:05:29.703Z",
+      "snapshotAt": "2026-10-19T18:05:28.414030+00:00",
+      "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
+      "priceEstimate": -135,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.7211734354401002,
+        "conservativeP": 0.5986490112127592,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.7010091697935641,
+          "upper": 0.803764735834686,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10|yes",
+          "ticker": "KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10",
+          "side": "yes",
+          "eventId": "401909090",
+          "event": "Thunder vs Spurs",
+          "eventTime": "2026-10-21T01:30Z",
+          "closeTime": "2026-10-23T01:30:00Z",
+          "selection": "De'Aaron Fox Over 9.5 Points",
+          "market": "points",
+          "line": 9.5,
+          "player": "De'Aaron Fox",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.81,
+          "referenceAmericanOdds": null,
+          "marketP": 0.775,
+          "modelP": 0.8972444339588782,
+          "rawModelP": 0.8972444339588782,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 16.367677797756045,
+          "projectedTotal": 232.39306671492938,
+          "projectedMargin": 2.643041431967603,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": 14.5,
+          "altDistance": 5,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBASPREAD-26OCT21MILWAS-WAS12|no",
+          "ticker": "KXNBASPREAD-26OCT21MILWAS-WAS12",
+          "side": "no",
+          "eventId": "401909835",
+          "event": "Bucks vs Wizards",
+          "eventTime": "2026-10-21T23:00Z",
+          "closeTime": "2026-10-23T23:00:00Z",
+          "selection": "Bucks +11.5 Spread",
+          "market": "spread",
+          "line": 11.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.71,
+          "referenceAmericanOdds": null,
+          "marketP": 0.6950000000000001,
+          "modelP": 0.803764735834686,
+          "rawModelP": 0.803764735834686,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 233.80154543065703,
+          "projectedMargin": 1.2382563371235022,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": 4.5,
+          "altDistance": 7,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
       "id": "2026-10-19|nhl|multi|balanced|2||learning-20261015|6bb6d79e2f8cef79",
       "day": "2026-10-19",
       "sport": "nhl",
@@ -4247,7 +4347,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:05:46.469Z",
+      "capturedAt": "2026-10-19T18:05:29.703Z",
       "snapshotAt": "2026-10-19T17:55:07.082170+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 130,
@@ -4347,7 +4447,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:05:46.469Z",
+      "capturedAt": "2026-10-19T18:05:29.703Z",
       "snapshotAt": "2026-10-19T17:55:07.082170+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 289,
@@ -4479,7 +4579,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:05:46.469Z",
+      "capturedAt": "2026-10-19T18:05:29.703Z",
       "snapshotAt": "2026-10-19T17:55:07.082170+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 621,
@@ -4630,106 +4730,6 @@
       "result": null
     },
     {
-      "id": "2026-10-19|nba|multi|best|2||learning-20261015|362c13b2e11993be",
-      "day": "2026-10-19",
-      "sport": "nba",
-      "mode": "multi",
-      "profile": "best",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-19T18:15:46.681Z",
-      "snapshotAt": "2026-10-19T18:05:28.414030+00:00",
-      "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
-      "priceEstimate": -135,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.7211734354401002,
-        "conservativeP": 0.5986490112127592,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.7010091697935641,
-          "upper": 0.803764735834686,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nba|KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10|yes",
-          "ticker": "KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10",
-          "side": "yes",
-          "eventId": "401909090",
-          "event": "Thunder vs Spurs",
-          "eventTime": "2026-10-21T01:30Z",
-          "closeTime": "2026-10-23T01:30:00Z",
-          "selection": "De'Aaron Fox Over 9.5 Points",
-          "market": "points",
-          "line": 9.5,
-          "player": "De'Aaron Fox",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.81,
-          "referenceAmericanOdds": null,
-          "marketP": 0.775,
-          "modelP": 0.8972444339588782,
-          "rawModelP": 0.8972444339588782,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": 16.367677797756045,
-          "projectedTotal": 232.39306671492938,
-          "projectedMargin": 2.643041431967603,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": true,
-          "altReferenceLine": 14.5,
-          "altDistance": 5,
-          "result": null
-        },
-        {
-          "id": "nba|KXNBASPREAD-26OCT21MILWAS-WAS12|no",
-          "ticker": "KXNBASPREAD-26OCT21MILWAS-WAS12",
-          "side": "no",
-          "eventId": "401909835",
-          "event": "Bucks vs Wizards",
-          "eventTime": "2026-10-21T23:00Z",
-          "closeTime": "2026-10-23T23:00:00Z",
-          "selection": "Bucks +11.5 Spread",
-          "market": "spread",
-          "line": 11.5,
-          "player": null,
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.71,
-          "referenceAmericanOdds": null,
-          "marketP": 0.6950000000000001,
-          "modelP": 0.803764735834686,
-          "rawModelP": 0.803764735834686,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 233.80154543065703,
-          "projectedMargin": 1.2382563371235022,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": true,
-          "altReferenceLine": 4.5,
-          "altDistance": 7,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
       "id": "2026-10-19|nba|multi|best|2||learning-20261015|a7c4356c4aa48556",
       "day": "2026-10-19",
       "sport": "nba",
@@ -4743,7 +4743,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:25:46.677Z",
+      "capturedAt": "2026-10-19T18:15:29.501Z",
       "snapshotAt": "2026-10-19T18:15:28.416535+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 101,
@@ -4843,7 +4843,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:25:46.677Z",
+      "capturedAt": "2026-10-19T18:25:30.096Z",
       "snapshotAt": "2026-10-19T18:15:06.483164+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": -335,
@@ -4911,7 +4911,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:25:46.677Z",
+      "capturedAt": "2026-10-19T18:25:30.096Z",
       "snapshotAt": "2026-10-19T18:15:06.483164+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": -103,
@@ -5011,7 +5011,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:25:46.677Z",
+      "capturedAt": "2026-10-19T18:25:30.096Z",
       "snapshotAt": "2026-10-19T18:15:06.483164+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 234,
@@ -5143,7 +5143,7 @@
         "card": null,
         "gameId": null
       },
-      "capturedAt": "2026-10-19T18:25:46.677Z",
+      "capturedAt": "2026-10-19T18:25:30.096Z",
       "snapshotAt": "2026-10-19T18:15:06.483164+00:00",
       "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
       "priceEstimate": 518,
@@ -5288,6 +5288,106 @@
           "isAltLine": false,
           "altReferenceLine": 0.5,
           "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nba|multi|best|2||learning-20261015|519f79a271911a2f",
+      "day": "2026-10-19",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T18:45:29.512Z",
+      "snapshotAt": "2026-10-19T18:45:28.367794+00:00",
+      "sourceVersion": "2aff7022e1bdfe5ca23bdbf92deb74ec88e5be49",
+      "priceEstimate": -221,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.8548644910699957,
+        "conservativeP": 0.7211097995024985,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.8500109920060637,
+          "upper": 0.8972444339588782,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBAREB-26OCT20BOSDET-BOSJTATUM0-6|yes",
+          "ticker": "KXNBAREB-26OCT20BOSDET-BOSJTATUM0-6",
+          "side": "yes",
+          "eventId": "401909088",
+          "event": "Celtics vs Pistons",
+          "eventTime": "2026-10-20T19:00Z",
+          "closeTime": "2026-10-22T19:00:00Z",
+          "selection": "Jayson Tatum Over 5.5 Rebounds",
+          "market": "rebounds",
+          "line": 5.5,
+          "player": "Jayson Tatum",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.85,
+          "referenceAmericanOdds": null,
+          "marketP": 0.84,
+          "modelP": 0.9527665580471856,
+          "rawModelP": 0.9527665580471856,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 11.666378835978835,
+          "projectedTotal": 228.8579493843801,
+          "projectedMargin": 2.066621512484403,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": 7.5,
+          "altDistance": 2,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10|yes",
+          "ticker": "KXNBAPTS-26OCT20OKCSAS-SASDFOX4-10",
+          "side": "yes",
+          "eventId": "401909090",
+          "event": "Thunder vs Spurs",
+          "eventTime": "2026-10-21T01:30Z",
+          "closeTime": "2026-10-23T01:30:00Z",
+          "selection": "De'Aaron Fox Over 9.5 Points",
+          "market": "points",
+          "line": 9.5,
+          "player": "De'Aaron Fox",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.81,
+          "referenceAmericanOdds": null,
+          "marketP": 0.775,
+          "modelP": 0.8972444339588782,
+          "rawModelP": 0.8972444339588782,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 16.367677797756045,
+          "projectedTotal": 232.39306671492938,
+          "projectedMargin": 2.643041431967603,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": 14.5,
+          "altDistance": 5,
           "result": null
         }
       ],
