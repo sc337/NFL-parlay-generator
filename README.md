@@ -4,7 +4,9 @@ A static dashboard for NFL, MLB, NCAAF, UFC, and NHL picks and parlay ideas. [Op
 
 ## What it shows
 
-Each sport opens with a shared Today / Next slate / Choose date filter and Pick of the Day. The same date applies to straights and parlays. Parlay controls are grouped in Parlay options, with labeled Conservative / Balanced / Lotto buttons where multiple profiles are supported. Settings offers American, decimal, or Kalshi-cent odds display while preserving source labels. Empty Extra Picks sections are hidden.
+Each sport opens with a shared Today / Next slate / Choose date filter and Pick of the Day. The same date applies to straights and parlays. NFL shows Game mode, Selection mode, Legs and Game directly. Lines, markets and Require a player prop live in collapsed Filters. The duplicate ALT toggle and More cushion control are removed; saved cushion preferences no longer apply. Other sports retain Parlay options. Settings offers American, decimal, or Kalshi-cent odds display while preserving source labels. Empty Extra Picks sections are hidden.
+
+NFL features one qualifying build: Balanced when available, otherwise Conservative, then Lotto. These names remain on the collapsed View alternatives cards. Win Chance continues to return its single likelihood-ranked build. The featured card uses the selected mode as its title. Exact lines and reference prices stay visible, SGP payout still requires a sportsbook offer, and model details live under Why these picks? Missing profiles are explained inside alternatives. No screening or eligibility gates are relaxed.
 
 - A featured pick, sport-specific recommendations, and a parlay builder for the selected sport. NFL also has same-game and multi-game modes.
 - Moneyline, spread, total, and supported player-prop markets when those markets are available. Picks show their game or fight, and team or player imagery where available.

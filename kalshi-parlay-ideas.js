@@ -96,9 +96,9 @@ function refresh(){
  const host=document.querySelector('#nflRecommendationTierWrap'),s=window.NFL_PARLAY_STATE;if(!host||!s)return;
  host.hidden=(window.__ACTIVE_SPORT||'nfl')!=='nfl';
  host.querySelector('select').value=s.recommendationTier||'screened';
- const required=host.querySelector('#nflRequireProp');if(required)required.checked=s.requirePlayerProp===true;
+ const required=host.querySelector('#nflRequireProp')||document.querySelector('#nflRequireProp');if(required)required.checked=s.requirePlayerProp===true;
  const ideas=host.querySelector('option[value="ideas"]');if(ideas)ideas.disabled=!!s.apiKey;
- host.querySelector('small').textContent=likelihood(s)?'Prioritizes buffered model estimates with data, availability and compatibility checks. At least 50% per leg after the buffer; reference price no higher than 85¢. Estimates are unvalidated and can be poor value. Returns one best build.':active(s)?'Ranks supported matchups using reference prices and recent context. Value and win chance unverified. Verify each line and combined price on Caesars.':'Requires the buffered estimate to beat the quoted price. Models remain unvalidated; Value may return no qualifying picks.';
+ host.querySelector('small').textContent=likelihood(s)?'Favors buffered win estimates. Value unchecked.':active(s)?'Uses recent matchup context. Value unverified.':'Requires buffered value. May return no build.';
 }
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;

@@ -77,7 +77,7 @@ function selectionParts(value,sub=''){
   return {subject:text,market:'Pick',line:''};
 }
 function compactSummaries(){
-  document.querySelectorAll(':is(#results,#analysisSecondary)>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
+  document.querySelectorAll(':is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card:not(.td-watch)>.summary').forEach(full=>{
     const card=full.closest('.parlay-card'),sport=document.body.dataset.sport||'nfl';
     if(sport==='nfl'){
       const short=(full.dataset.shortText||'').replace('Lower-scoring control game','Low scoring').replace('Favorite controls the game','Favorite control').replace('Underdog forced to throw','Underdog passing');
@@ -90,13 +90,13 @@ function compactSummaries(){
       full.before(thesis);
     }
     const details=document.createElement('details'),label=document.createElement('summary');
-    details.className='card-explanation';label.textContent='Details';details.open=false;
+    details.className='card-explanation';label.textContent=sport==='nfl'?'Why these picks?':'Details';details.open=false;
     const footer=card.querySelector('.card-footer');if(footer)footer.after(details);else card.append(details);
     details.append(label,full);
   });
 }
 function compactParlays(){
-  document.querySelectorAll(':is(#results,#analysisSecondary)>.parlay-card:not(.td-watch):not([data-compact])').forEach(card=>{
+  document.querySelectorAll(':is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card:not(.td-watch):not([data-compact])').forEach(card=>{
     const sport=document.body.dataset.sport||'nfl',legs=[...card.querySelectorAll(':scope>.legs>.leg')],details=card.querySelector('.card-explanation');
     if(!details)return;
     card.dataset.compact='1';const estimate=card.querySelector('.odds');if(estimate&&/^[+−-]\d+$/.test(estimate.textContent.trim())&&window.ODDS_DISPLAY)estimate.textContent=window.ODDS_DISPLAY.number(estimate.textContent.trim().replace('−','-'));

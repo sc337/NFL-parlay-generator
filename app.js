@@ -2,7 +2,7 @@ const state = {
   mode:window.DASHBOARD_UI?.get('nfl','mode','sgp')||'sgp',
   nflWeek:window.DASHBOARD_UI?.get('nfl','week','')||'',
   lineMode:['standard','alt','both'].includes(window.DASHBOARD_UI?.get('nfl','lines','standard'))?window.DASHBOARD_UI.get('nfl','lines','standard'):'standard',
-  moreCushion:window.DASHBOARD_UI?.get('nfl','cushion','off')==='on',
+  moreCushion:false,
   requirePlayerProp:window.DASHBOARD_UI?.get('nfl','requireProp','off')==='on',
   risk:50,
   recommendationTier:window.DASHBOARD_UI?.get('nfl','tier','screened')||'screened',
@@ -1015,13 +1015,13 @@ function render(parlays){
   if(document.body.classList.contains('prediction-only')){const rows=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
-  const valid=parlays.filter(Boolean);
+  const valid=parlays.filter(Boolean).sort((a,b)=>['balanced','safe','long'].indexOf(a.profile)-['balanced','safe','long'].indexOf(b.profile));
   updateNflProfileAvailability(parlays);
   if(!valid.length){
     const count=Number($('#legsSelect')?.value)||2;
     let scoped=nflSlate();if(state.mode==='sgp')scoped=scoped.filter(g=>g.id===$('#gameSelect').value);
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
-    wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
+    wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_UI?.emptyMessage(report,count,state)||window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
     if(window.PICK_QUALITY){
       const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
@@ -1029,10 +1029,12 @@ function render(parlays){
     }
     return;
   }
-  for(const p of valid){
+  let alternatives;
+  for(const [index,p] of valid.entries()){
     const node=tpl.content.cloneNode(true);
+    node.querySelector('.parlay-card').dataset.nflProfile=p.profile;
     node.querySelector('.grade').textContent=p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
-    node.querySelector('.parlay-name').textContent=p.name;
+    node.querySelector('.parlay-name').textContent=index===0?(p.likelihoodTier?'Win Chance':p.ideaTier?'Matchups':'Value'):p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
     const sources=new Set(p.legs.map(m=>window.PICK_QUALITY?.quote('nfl',m)?.source||m.source));
@@ -1043,7 +1045,7 @@ function render(parlays){
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration.':'');
     const matchup=nflMatchup(p.gameLabel);
     node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(nflKickoff(p.kickoff)?nflKickoff(p.kickoff)+' · ':'')+(matchup||'Same game'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
-      (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');
+      (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'')+'. '+(p.likelihoodTier?'Favors buffered win estimates; value unchecked.':p.ideaTier?'Recent matchup context checked; value unverified.':'Each leg clears the buffered value screen; estimates unvalidated.');
     if(state.mode==='sgp'&&p.gameLabel){const teams=p.gameLabel.split(/\s+@\s+/);if(teams.length===2){node.querySelector('.summary').dataset.away=teams[0];node.querySelector('.summary').dataset.home=teams[1]}}
     node.querySelector('.score').textContent=p.likelihoodTier?'Win Chance estimate · Value unchecked':p.ideaTier?'Reference-market idea · Not verified value':`Rating ${p.score}/100 · Not win chance`;
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? 'Joint value unverified' : `${p.legs.length} games/legs`;
@@ -1075,7 +1077,16 @@ function render(parlays){
     });
     
     if(!p.ideaTier)window.PARLAY_RISK?.attach(node.querySelector('.parlay-card'),'nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m),game:window.PICK_QUALITY?.gameFor('nfl',m)})),{sgp:state.mode==='sgp'});
-    wrap.appendChild(node);
+    if(index===0)wrap.appendChild(node);
+    else{
+      if(!alternatives){alternatives=document.createElement('details');alternatives.id='nflParlayAlternatives';alternatives.className='nfl-parlay-alternatives';alternatives.innerHTML='<summary>View alternatives</summary>';wrap.appendChild(alternatives);}
+      alternatives.appendChild(node);
+    }
+  }
+  const availability=$('#profileAvailability');
+  if(availability&&!availability.hidden){
+    if(!alternatives){alternatives=document.createElement('details');alternatives.id='nflParlayAlternatives';alternatives.className='nfl-parlay-alternatives';alternatives.innerHTML='<summary>View alternatives</summary>';wrap.appendChild(alternatives);}
+    const note=document.createElement('p');note.className='profile-availability';note.textContent=availability.textContent;alternatives.appendChild(note);availability.hidden=true;
   }
 }
 

@@ -78,14 +78,11 @@ window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonTe
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';
- field.innerHTML='<label class="nfl-line-toggle"><input id="nflAltToggle" type="checkbox"> Include ALT lines</label><label class="nfl-line-toggle"><input id="nflCushionToggle" type="checkbox"> More cushion</label><label for="nflLinesSelect">Line filter</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><details class="nfl-line-policy"><summary>ALT rules</summary><small id="nflLinesNote">Player ALT props: overs only; yardage in 10-yard milestones. Cushion is a small preference, not guaranteed value. ALT · Check book means Caesars availability is unverified. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small></details>';
+ field.innerHTML='<label for="nflLinesSelect">Lines</label><select id="nflLinesSelect" aria-describedby="nflLinesNote"><option value="standard">Standard only</option><option value="alt">ALT only</option><option value="both">Standard + ALT</option></select><details class="nfl-line-policy"><summary>ALT rules</summary><small id="nflLinesNote">Player ALT props: overs only; yardage in 10-yard milestones. Confirm Caesars availability. Kalshi reference = nearest 50% quote, not a sportsbook main line.</small></details>';
  host.after(field);
- const select=field.querySelector('select'),toggle=field.querySelector('#nflAltToggle'),cushion=field.querySelector('#nflCushionToggle');
- const s=window.NFL_PARLAY_STATE;select.value=s?.lineMode||'standard';toggle.checked=select.value!=='standard';cushion.checked=!!s?.moreCushion;
- function update(){if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;const s=window.NFL_PARLAY_STATE;s.lineMode=select.value;s.moreCushion=cushion.checked;window.DASHBOARD_UI?.put('nfl','lines',s.lineMode);window.DASHBOARD_UI?.put('nfl','cushion',s.moreCushion?'on':'off');window.generate?.()}
- select.addEventListener('change',()=>{toggle.checked=select.value!=='standard';if(!toggle.checked)cushion.checked=false;update()});
- toggle.addEventListener('change',()=>{select.value=toggle.checked?'both':'standard';if(!toggle.checked)cushion.checked=false;update()});
- cushion.addEventListener('change',()=>{if(cushion.checked){toggle.checked=true;if(select.value==='standard')select.value='both'}update()});
+ const select=field.querySelector('select');
+ const s=window.NFL_PARLAY_STATE;select.value=s?.lineMode||'standard';if(s)s.moreCushion=false;
+ select.addEventListener('change',()=>{if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;const s=window.NFL_PARLAY_STATE;s.lineMode=select.value;window.DASHBOARD_UI?.put('nfl','lines',s.lineMode);window.generate?.()});
 }
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();
