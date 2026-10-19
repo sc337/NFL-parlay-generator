@@ -1,18 +1,19 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-19T08:44:14.490Z",
+  "updated_at": "2026-10-19T08:44:39.097Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-10-19T08:34:01.168120+00:00",
-      "ageMinutes": 10,
-      "markets": 33,
-      "quotedMarkets": 33,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-10-19T08:44:01.724464+00:00",
+      "ageMinutes": 1,
+      "markets": 80,
+      "quotedMarkets": 80,
+      "playerMarkets": 19,
       "families": {
         "moneyline": 4,
         "spread": 8,
-        "total": 21
+        "total": 49,
+        "hits": 19
       },
       "futureEvents": [
         {
@@ -25,12 +26,12 @@
         }
       ],
       "playerCounts": {
-        "849815": 97
+        "849815": 19
       }
     },
     "nba": {
       "snapshotAt": "2026-10-19T08:43:53.858378+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 3186,
       "quotedMarkets": 3186,
       "playerMarkets": 826,
@@ -227,8 +228,8 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-19T08:34:22.426472+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-10-19T08:44:21.572054+00:00",
+      "ageMinutes": 0,
       "markets": 5165,
       "quotedMarkets": 5165,
       "playerMarkets": 0,
@@ -594,17 +595,17 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-19T08:34:12.510262+00:00",
-      "ageMinutes": 10,
-      "markets": 1402,
-      "quotedMarkets": 1402,
-      "playerMarkets": 122,
+      "snapshotAt": "2026-10-19T08:44:08.750712+00:00",
+      "ageMinutes": 1,
+      "markets": 1296,
+      "quotedMarkets": 1296,
+      "playerMarkets": 16,
       "families": {
         "h2h": 30,
-        "td": 40,
         "totals": 534,
         "spreads": 716,
-        "passing": 82
+        "rushing": 8,
+        "passing": 8
       },
       "futureEvents": [
         {
@@ -669,8 +670,8 @@
         }
       ],
       "playerCounts": {
-        "kalshi-san-francisco-49ers-washington-commanders": 66,
-        "kalshi-chicago-bears-new-england-patriots": 56
+        "kalshi-san-francisco-49ers-washington-commanders": 12,
+        "kalshi-chicago-bears-new-england-patriots": 4
       }
     },
     "nhl": {
@@ -881,8 +882,8 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-19T08:34:00.742682+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-10-19T08:43:59.588852+00:00",
+      "ageMinutes": 1,
       "markets": 22,
       "quotedMarkets": 22,
       "playerMarkets": 0,
@@ -940,15 +941,6 @@
   },
   "alerts": [
     {
-      "id": "mlb:props-missing",
-      "sport": "mlb",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-19T08:34:40.782Z",
-      "changedAt": "2026-10-19T08:34:40.782Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -958,12 +950,17 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "mlb:props-missing",
+      "resolvedAt": "2026-10-19T08:44:39.097Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39201863782",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-10-19T08:34:40.759347+00:00"
+      "at": "2026-10-19T08:44:39.074143+00:00"
     },
     "nba": {
       "ok": true,
@@ -971,11 +968,11 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-19T08:34:40.759347+00:00"
+      "at": "2026-10-19T08:44:39.074143+00:00"
     },
     "nfl": {
       "ok": true,
-      "at": "2026-10-19T08:34:40.759347+00:00"
+      "at": "2026-10-19T08:44:39.074143+00:00"
     },
     "nhl": {
       "ok": true,
@@ -983,7 +980,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-19T08:34:40.759347+00:00"
+      "at": "2026-10-19T08:44:39.074143+00:00"
     }
   }
 }
