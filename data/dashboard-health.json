@@ -1,18 +1,19 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-19T10:04:13.773Z",
+  "updated_at": "2026-10-19T10:04:38.811Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-10-19T09:54:00.919401+00:00",
-      "ageMinutes": 10,
-      "markets": 33,
-      "quotedMarkets": 33,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-10-19T10:04:00.969767+00:00",
+      "ageMinutes": 1,
+      "markets": 40,
+      "quotedMarkets": 40,
+      "playerMarkets": 7,
       "families": {
         "moneyline": 4,
         "spread": 8,
-        "total": 21
+        "total": 21,
+        "strikeouts": 7
       },
       "futureEvents": [
         {
@@ -30,7 +31,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-19T10:03:53.517256+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 3188,
       "quotedMarkets": 3188,
       "playerMarkets": 826,
@@ -227,14 +228,14 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-19T09:54:22.140121+00:00",
-      "ageMinutes": 10,
-      "markets": 5162,
-      "quotedMarkets": 5162,
+      "snapshotAt": "2026-10-19T10:04:21.893782+00:00",
+      "ageMinutes": 0,
+      "markets": 5161,
+      "quotedMarkets": 5161,
       "playerMarkets": 0,
       "families": {
         "moneyline": 466,
-        "spread": 2534,
+        "spread": 2533,
         "total": 2162
       },
       "futureEvents": [
@@ -594,18 +595,17 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-19T09:54:10.456522+00:00",
-      "ageMinutes": 10,
-      "markets": 1698,
-      "quotedMarkets": 1698,
-      "playerMarkets": 418,
+      "snapshotAt": "2026-10-19T10:04:08.203160+00:00",
+      "ageMinutes": 1,
+      "markets": 1154,
+      "quotedMarkets": 1154,
+      "playerMarkets": 378,
       "families": {
         "h2h": 30,
-        "td": 40,
-        "totals": 534,
         "spreads": 716,
         "receiving": 300,
-        "passing": 78
+        "passing": 78,
+        "totals": 30
       },
       "futureEvents": [
         {
@@ -670,8 +670,8 @@
         }
       ],
       "playerCounts": {
-        "kalshi-san-francisco-49ers-washington-commanders": 192,
-        "kalshi-chicago-bears-new-england-patriots": 226
+        "kalshi-san-francisco-49ers-washington-commanders": 172,
+        "kalshi-chicago-bears-new-england-patriots": 206
       }
     },
     "nhl": {
@@ -882,8 +882,8 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-19T09:54:03.250316+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-10-19T10:03:59.590266+00:00",
+      "ageMinutes": 1,
       "markets": 22,
       "quotedMarkets": 22,
       "playerMarkets": 0,
@@ -941,15 +941,6 @@
   },
   "alerts": [
     {
-      "id": "mlb:props-missing",
-      "sport": "mlb",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-19T09:54:39.604Z",
-      "changedAt": "2026-10-19T09:54:39.604Z"
-    },
-    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -959,12 +950,17 @@
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "mlb:props-missing",
+      "resolvedAt": "2026-10-19T10:04:38.811Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39201863782",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-10-19T09:54:39.581063+00:00"
+      "at": "2026-10-19T10:04:38.788546+00:00"
     },
     "nba": {
       "ok": true,
@@ -972,11 +968,11 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-19T09:54:39.581063+00:00"
+      "at": "2026-10-19T10:04:38.788546+00:00"
     },
     "nfl": {
       "ok": true,
-      "at": "2026-10-19T09:54:39.581063+00:00"
+      "at": "2026-10-19T10:04:38.788546+00:00"
     },
     "nhl": {
       "ok": true,
@@ -984,7 +980,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-19T09:54:39.581063+00:00"
+      "at": "2026-10-19T10:04:38.788546+00:00"
     }
   }
 }
