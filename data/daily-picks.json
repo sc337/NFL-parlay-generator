@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-19T00:22:45.451Z",
+  "updated_at": "2026-10-19T00:32:44.929Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:22:25.476809+00:00"
+      "snapshotAt": "2026-10-19T00:32:25.873935+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T00:11:00.763542+00:00"
+      "snapshotAt": "2026-10-19T00:22:35.541441+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T00:22:42.132801+00:00"
+      "snapshotAt": "2026-10-19T00:32:40.814907+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:22:44.113958+00:00"
+      "snapshotAt": "2026-10-19T00:32:43.448963+00:00"
     },
     "nhl": {
       "captured": 6,
@@ -174,7 +174,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:09:00.224005+00:00"
+      "snapshotAt": "2026-10-19T00:13:06.508336+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -204,7 +204,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T00:22:24.633717+00:00"
+      "snapshotAt": "2026-10-19T00:32:24.474770+00:00"
     }
   },
   "records": [
@@ -23601,6 +23601,284 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|nba|multi|best|2||learning-20261015|3d3891e9d8299ac7",
+      "day": "2026-10-18",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T00:32:44.929Z",
+      "snapshotAt": "2026-10-19T00:22:35.541441+00:00",
+      "sourceVersion": "0d706c773b15b88bc9e5e034eab93d22ad8df740",
+      "priceEstimate": 225,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.44525724002379025,
+        "conservativeP": 0.35025917051065664,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.3357928408270343,
+          "upper": 0.6391146835409888,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBA3PT-26OCT20PHINYK-NYKKTOWNS32-2|no",
+          "ticker": "KXNBA3PT-26OCT20PHINYK-NYKKTOWNS32-2",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Karl-Anthony Towns Under 1.5 Threes",
+          "market": "threes",
+          "line": 1.5,
+          "player": "Karl-Anthony Towns",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.6966781572860457,
+          "rawModelP": 0.6966781572860457,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.1064229568965516,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 1.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBASPREAD-26OCT21GSWLAL-LAL9|no",
+          "ticker": "KXNBASPREAD-26OCT21GSWLAL-LAL9",
+          "side": "no",
+          "eventId": "401909092",
+          "event": "Warriors vs Lakers",
+          "eventTime": "2026-10-22T02:00Z",
+          "closeTime": "2026-10-24T02:00:00Z",
+          "selection": "Warriors +8.5 Spread",
+          "market": "spread",
+          "line": 8.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.53,
+          "referenceAmericanOdds": null,
+          "marketP": 0.515,
+          "modelP": 0.6391146835409888,
+          "rawModelP": 0.6391146835409888,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 229.72493380231947,
+          "projectedMargin": 4.226880517842801,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 8.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-18|ncaaf|multi|best|4||learning-20261015|8b66d78837db42bb",
+      "day": "2026-10-18",
+      "sport": "ncaaf",
+      "mode": "multi",
+      "profile": "best",
+      "requestedLegs": 4,
+      "actualLegs": 4,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-19T00:32:44.929Z",
+      "snapshotAt": "2026-10-19T00:32:40.814907+00:00",
+      "sourceVersion": "0d706c773b15b88bc9e5e034eab93d22ad8df740",
+      "priceEstimate": 892,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.19497216692761285,
+        "conservativeP": 0.11836040763108144,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0,
+          "upper": 0.6279593994594834,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261015"
+      },
+      "legs": [
+        {
+          "id": "ncaaf|KXNCAAFSPREAD-26OCT24TXAMALA-ALA18|no",
+          "ticker": "KXNCAAFSPREAD-26OCT24TXAMALA-ALA18",
+          "side": "no",
+          "eventId": "401856727",
+          "event": "Texas A&M Aggies at Alabama Crimson Tide",
+          "eventTime": "2026-10-24T19:30Z",
+          "closeTime": "2026-10-26T19:30:00Z",
+          "selection": "Texas A&M +17.5",
+          "market": "spread",
+          "line": 17.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.6,
+          "referenceAmericanOdds": null,
+          "marketP": 0.575,
+          "modelP": 0.6885788658586235,
+          "rawModelP": 0.6885788658586235,
+          "coverage": 0.85,
+          "confidence": 42,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 53.5,
+          "projectedMargin": 7.8,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": -14.5,
+          "altDistance": 3,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFSPREAD-26OCT22LIBKENN-LIB14|no",
+          "ticker": "KXNCAAFSPREAD-26OCT22LIBKENN-LIB14",
+          "side": "no",
+          "eventId": "401871056",
+          "event": "Liberty Flames at Kennesaw State Owls",
+          "eventTime": "2026-10-22T23:00Z",
+          "closeTime": "2026-10-24T23:00:00Z",
+          "selection": "Kennesaw St. +13.5",
+          "market": "spread",
+          "line": 13.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.56,
+          "referenceAmericanOdds": null,
+          "marketP": 0.55,
+          "modelP": 0.6709510879808769,
+          "rawModelP": 0.6709510879808769,
+          "coverage": 0.85,
+          "confidence": 48,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 48.5,
+          "projectedMargin": -6,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": -10.5,
+          "altDistance": 3,
+          "result": null
+        },
+        {
+          "id": "ncaaf|KXNCAAFSPREAD-26OCT23ARMYTLSA-TLSA3|no",
+          "ticker": "KXNCAAFSPREAD-26OCT23ARMYTLSA-TLSA3",
+          "side": "no",
+          "eventId": "401862808",
+          "event": "Army Black Knights at Tulsa Golden Hurricane",
+          "eventTime": "2026-10-24T00:30Z",
+          "closeTime": "2026-10-26T00:30:00Z",
+          "selection": "Army +2.5",
+          "market": "spread",
+          "line": 2.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.55,
+          "referenceAmericanOdds": null,
+          "marketP": 0.53,
+          "modelP": 0.6279593994594834,
+          "rawModelP": 0.6279593994594834,
+          "coverage": 0.85,
+          "confidence": 44,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 54.2,
+          "projectedMargin": -4.3,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": -1.5,
+          "altDistance": 1,
+          "result": null
+        },
+        {
+          "id": "ncaaf|ESPN:401858497:100:total:over:40.5|yes",
+          "ticker": "ESPN:401858497:100:total:over:40.5",
+          "side": "yes",
+          "eventId": "401858497",
+          "event": "Iowa Hawkeyes at Minnesota Golden Gophers",
+          "eventTime": "2026-10-24T19:30:00+00:00",
+          "closeTime": "2026-10-24T19:30:00+00:00",
+          "selection": "Over 40.5 points scored",
+          "market": "total",
+          "line": 40.5,
+          "player": null,
+          "settlement": {
+            "provider": "ESPN",
+            "sport": "ncaaf",
+            "eventId": "401858497",
+            "teams": [
+              "135",
+              "2294"
+            ],
+            "teamId": null,
+            "kind": "total",
+            "line": 40.5,
+            "direction": "over",
+            "scope": "full_game",
+            "eventTime": "2026-10-24T19:30:00.000Z"
+          },
+          "referenceOnly": true,
+          "ask": 0.5454545454545454,
+          "referenceAmericanOdds": -120,
+          "marketP": 0.5454545454545454,
+          "modelP": 0.6720421345045507,
+          "rawModelP": 0.6720421345045507,
+          "coverage": 0.85,
+          "confidence": 30,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 49.8,
+          "projectedMargin": -3.3,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 40.5,
+          "altDistance": 0,
           "result": null
         }
       ],
