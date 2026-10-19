@@ -30,7 +30,7 @@ function captureRecord(sport,build,snapshot,now,version){
  const legs=build.legs.map(entry=>legRecord(sport,entry,snapshot,now));
  if(legs.some(l=>!l))return null;
  const mode=build.mode||'multi',day=dayKey(now),signature=legs.map(l=>[l.id,l.selection,l.line]).sort().map(x=>JSON.stringify(x)).join('|');
- const id=[day,sport,mode,build.profile||'best',build.requestedLegs||legs.length,build.card||build.gameId||'','learning-20261015',crypto.createHash('sha256').update(signature).digest('hex').slice(0,16)].join('|');
+ const id=[day,sport,mode,build.profile||'best',build.requestedLegs||legs.length,build.card||build.gameId||'','learning-20261019',crypto.createHash('sha256').update(signature).digest('hex').slice(0,16)].join('|');
  const independent=mode!=='sgp'&&new Set(legs.map(l=>l.eventId||l.event)).size===legs.length;
  const decimal=independent?legs.reduce((value,l)=>value/l.ask,1):null;
  return {id,day,sport,mode,profile:build.profile||'best',requestedLegs:build.requestedLegs||legs.length,actualLegs:legs.length,
@@ -39,7 +39,7 @@ function captureRecord(sport,build,snapshot,now,version){
   priceEstimate:decimal===null?null:Math.round(decimal>=2?(decimal-1)*100:-100/(decimal-1)),
   priceNote:independent?'Combined reference asks; excludes fees.':'Same-game price unavailable; verify sportsbook quote.',
   risk:build.risk?.pass?{modelP:build.risk.modelP,conservativeP:build.risk.conservativeP,profile:build.risk.profile,
-    method:build.risk.method,scenario:build.risk.scenario,bounds:build.risk.bounds,version:'learning-20261015'}:null,legs,result:null};
+    method:build.risk.method,scenario:build.risk.scenario,bounds:build.risk.bounds,version:'learning-20261019'}:null,legs,result:null};
 }
 function mergeRecords(old,records){const seen=new Set(old.map(r=>r.id));return [...old,...records.filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true})]}
 function settle(records,audit){

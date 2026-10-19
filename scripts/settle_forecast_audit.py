@@ -40,11 +40,11 @@ def final_total(event_id):
         return None
 
 
-def add_nfl_totals(records, fetch=final_total, now=None):
+def add_nfl_totals(records, fetch=final_total, now=None, limit=100):
     now = now or datetime.now(timezone.utc)
     cache = {}
     changed = 0
-    for row in records:
+    for row in sorted(records, key=lambda r: r.get("scoreAttemptAt") or ""):
         if row.get('sport') != 'nfl' or row.get('marketGroup') != 'totals' or \
            row.get('actualTotal') is not None or not row.get('eventId'):
             continue
@@ -56,11 +56,18 @@ def add_nfl_totals(records, fetch=final_total, now=None):
             continue
         event = (row.get('settlement') or {}).get('eventId') or row['eventId']
         if event not in cache:
+            if len(cache) >= limit:
+                continue
+            retry=row.get('scoreRetryAt')
+            if retry and datetime.fromisoformat(retry)>now:
+                continue
             try:
                 cache[event] = fetch(event)
             except Exception as error:
                 print('NFL score lookup deferred:', event, error)
                 cache[event] = None
+        row['scoreAttemptAt']=now.isoformat()
+        row['scoreRetryAt']=(now+timedelta(hours=12)).isoformat()
         if cache[event] is not None:
             row['actualTotal'] = cache[event]
             changed += 1
@@ -73,7 +80,7 @@ def main():
     payload = json.loads(FILE.read_text())
     records = payload.get('records', [])
     changed = settle_records(records, limit=100) + settle_references(records, limit=100) + add_nfl_totals(records)
-    if changed:
+    if changed or any(r.get('settlementAttemptAt') or r.get('scoreAttemptAt') for r in records):
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()
         FILE.write_text(json.dumps(payload, indent=2) + '\n')
     print('Audit outcomes updated', changed)

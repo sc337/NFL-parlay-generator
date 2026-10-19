@@ -10,7 +10,7 @@ test('all sports screen extras, omit main picks and duplicates, and rank indepen
   const a=setup(sport),main={ticker:'main',name:'Main'},best={ticker:'best',name:'Best',rank:90},other={ticker:'other',name:'Other',rank:70},blocked={ticker:'bad',pass:false};
   const game={id:'g'},forecast={coverage:.8};a.api.show(sport,{rows:[main,other,blocked,best,best].map(m=>({market:m,forecast,game})),selected:[{...main}]});
   assert.deepEqual([...a.api.choose(sport,[other,best].map(m=>({market:m})))].map(r=>r.market.name),['Best','Other']);
-  assert.match(a.host.innerHTML,/Extra Picks <span>2/);assert.doesNotMatch(a.host.innerHTML,/>Main</);assert.doesNotMatch(a.host.innerHTML,/bad/);assert.equal(a.calls[0].o.game,game);assert.match(a.host.innerHTML,/value unverified/);
+  assert.match(a.host.innerHTML,/Straight alternatives <span>2/);assert.doesNotMatch(a.host.innerHTML,/>Main</);assert.doesNotMatch(a.host.innerHTML,/bad/);assert.equal(a.calls[0].o.game,game);assert.match(a.host.innerHTML,/value unverified/);
  }
 });
 test('extra picks include straight-only markets, escape labels, and clear stale output during navigation',()=>{
@@ -21,7 +21,7 @@ test('extra picks include straight-only markets, escape labels, and clear stale 
 test('opposing outcomes and different lines remain distinct and output is bounded',()=>{
  const a=setup(),base={ticker:'shared',name:'Player prop'};
  assert.notEqual(a.api.key({...base,side:'over'}),a.api.key({...base,side:'under'}));assert.notEqual(a.api.key({...base,point:20}),a.api.key({...base,point:30}));
- const rows=Array.from({length:20},(_,i)=>({market:{ticker:String(i),rank:i}}));assert.equal(a.api.choose('nfl',rows).length,12);assert.equal(a.api.choose('nfl',rows)[0].market.rank,19);
+ const rows=Array.from({length:20},(_,i)=>({market:{ticker:String(i),rank:i}}));assert.equal(a.api.choose('nfl',rows).length,2);assert.equal(a.api.choose('nfl',rows)[0].market.rank,19);
 });
 test('selector and all sport entry points honor the four-leg cap, including saved six-leg preferences',()=>{
  const events={},window={};vm.runInNewContext(fs.readFileSync('dashboard-smooth.js','utf8'),{window,document:{addEventListener:(k,f)=>events[k]=f},localStorage:{getItem:()=>JSON.stringify({nfl:{legs:6},mlb:{legs:5}}),setItem(){} }});

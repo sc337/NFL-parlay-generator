@@ -4,7 +4,7 @@ function runtime(patch={},dataPatch={},storage){
  let daily,refreshes=0,tick,now=Date.now();
  class Clock extends Date {constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
  const window={setInterval:fn=>{tick=fn},__ACTIVE_SPORT:'nhl',__SPORT_TOKEN:1,SPORT_LEGS:{mount(){}},SPORT_MEDIA:{nhl:()=>''},PICK_OF_DAY:{today:()=>true,show:(_s,p)=>daily=p},COMPACT_UI:{refresh:()=>refreshes++}};
- const make=(id)=>({kind:'moneyline',label:'Bruins ML',selection_id:id+'|yes',event_ticker:'KXNHLGAME-'+id,game_id:id,game_time:new Date(Date.now()+3600000).toISOString(),game_label:'Bruins vs Rangers',game_status:'pre',yes_bid:.58,yes_ask:.60,probability:.59,volume:1000,spread:.02});
+ const make=(id)=>({kind:'moneyline',label:'Bruins ML',selection_id:id+'|yes',event_ticker:'KXNHLGAME-'+id,game_id:id,game_label:'Away '+id+' vs Home '+id,game_time:new Date(Date.now()+3600000).toISOString(),game_label:'Bruins '+id+' vs Rangers '+id,game_status:'pre',yes_bid:.58,yes_ask:.60,probability:.59,volume:1000,spread:.02});
  const a={...make('10'),...patch},b=make('20');
  const data={updated_at:new Date().toISOString(),markets:[a,{...a,kind:'total',label:'Over 5.5 goals',selection_id:'total|yes'},b],...dataPatch};
  const context=vm.createContext({window,document,Date:Clock,console,localStorage:storage,fetch:async()=>({ok:true,json:async()=>data})});
@@ -16,7 +16,7 @@ test('NHL shows compact market-only picks and one leg per distinct game',async()
  const html=app.nodes.get('#results').innerHTML;
  assert.match(html,/MARKET ONLY/);assert.match(html,/Quote quality/);assert.match(html,/Kalshi 60¢/);
  assert.equal((html.match(/data-event-time=/g)||[]).length,2);
- assert.equal((html.match(/data-matchup="Bruins vs Rangers"/g)||[]).length,2);
+ assert.equal((html.match(/data-matchup="Bruins \d+ vs Rangers \d+"/g)||[]).length,2);
  assert.equal(app.daily().market.game_id,'10');
  assert.match(app.daily().note,/Market only/);
  app.window.NHL_DASHBOARD.setLegs(6);assert.match(app.nodes.get('#results').innerHTML,/2 of 4/);
@@ -90,7 +90,7 @@ test('scheduled NHL history can record a featured forecast without browser widge
 
 test('NHL Generate keeps the highest-ranked distinct games for the selected leg count',async()=>{
  const app=runtime();
- const more={...app.b,game_id:'30',event_ticker:'KXNHLGAME-30',selection_id:'30|yes',label:'Third ML',spread:.05,yes_bid:.55};
+ const more={...app.b,game_id:'30',game_label:'Third Away vs Third Home',event_ticker:'KXNHLGAME-30',selection_id:'30|yes',label:'Third ML',spread:.05,yes_bid:.55};
  app.data.markets.push(more);await app.window.NHL_DASHBOARD.load();
  const first=app.nodes.get('#results').innerHTML;
  for(let i=0;i<4;i++){app.window.NHL_DASHBOARD.setLegs(2);assert.equal(app.nodes.get('#results').innerHTML,first)}
@@ -166,7 +166,7 @@ test('NHL prop ranking discounts weak coverage and keeps market-only props label
 });
 
 test('NHL Standard / ALT / Both filter all recommendations and preserve stable generation',async()=>{
- const app=runtime(),spread=(id,line,label)=>({...app.a,game_id:id,event_ticker:'KXNHLGAME-'+id,selection_id:id+'-'+line,kind:'spread',line,label});
+ const app=runtime(),spread=(id,line,label)=>({...app.a,game_id:id,game_label:'Away '+id+' vs Home '+id,event_ticker:'KXNHLGAME-'+id,selection_id:id+'-'+line,kind:'spread',line,label});
  app.data.markets=[spread('1',1.5,'Standard 1'),spread('1',2.5,'ALT 1'),spread('2',1.5,'Standard 2'),spread('2',2.5,'ALT 2')];
  app.window.NHL_MODEL={estimate:()=>({modelP:.75,coverage:.5})};
  await app.window.NHL_DASHBOARD.load();app.window.NHL_DASHBOARD.setLineMode('alt');
@@ -225,7 +225,7 @@ test('one qualifying future NHL ALT remains a straight pick without filling a pa
  assert.equal(app.daily(),undefined);assert.match(app.nodes.get('#results').innerHTML,/No ALT lines meet quality checks/);
 });
 test('NHL team-line ranking balances price advantage against raw win chance',async()=>{
- const app=runtime(),make=(id,p,ask)=>({...app.a,kind:'total',line:5.5,game_id:id,event_ticker:'Game-'+id,selection_id:id,label:'Pick '+id,yes_ask:ask,yes_bid:ask-.02,forecast:{modelP:p,coverage:.5}});
+ const app=runtime(),make=(id,p,ask)=>({...app.a,kind:'total',line:5.5,game_id:id,game_label:'Away '+id+' vs Home '+id,event_ticker:'Game-'+id,selection_id:id,label:'Pick '+id,yes_ask:ask,yes_bid:ask-.02,forecast:{modelP:p,coverage:.5}});
  app.data.markets=[make('expensive',.85,.84),make('value',.76,.6)];app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
  assert.equal(app.daily().market.game_id,'value');assert.ok(app.nodes.get('#results').innerHTML.indexOf('Pick value')<app.nodes.get('#results').innerHTML.indexOf('Pick expensive'));
 });

@@ -4,7 +4,7 @@ This evaluates forecasts, not placed wagers. Postponed, canceled, tied-moneyline
 shortened baseball and mismatched events remain pending for rule review.
 """
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from urllib.request import Request, urlopen
 try:
     from .update_public_odds import PATHS, instant, number
@@ -66,7 +66,7 @@ def grade(contract, summary):
 
 def settle_references(records, fetch=fetch_summary, now=None, limit=60):
     now = now or datetime.now(timezone.utc);cache = {};changed = 0
-    for row in records:
+    for row in sorted(records, key=lambda r: r.get("settlementAttemptAt") or ""):
         c = row.get('settlement') or {}
         if row.get('result') or c.get('provider') != 'ESPN' or c.get('sport') not in PATHS:
             continue
@@ -77,10 +77,16 @@ def settle_references(records, fetch=fetch_summary, now=None, limit=60):
         if key not in cache:
             if len(cache) >= limit:
                 continue
+            retry = instant(row.get('settlementRetryAt'))
+            if retry and retry > now:
+                continue
             try:
                 cache[key] = fetch(*key)
             except (OSError, ValueError):
                 cache[key] = {}
+        row['settlementAttemptAt'] = now.isoformat()
+        row['settlementAttempts'] = int(row.get('settlementAttempts') or 0) + 1
+        row['settlementRetryAt'] = (now + timedelta(hours=min(24, 2 ** min(row['settlementAttempts'], 5)))).isoformat()
         result = grade(c, cache[key])
         if result:
             row.update(result=result, settledAt=now.isoformat(), settlementSource='ESPN verified final score; full-game reference rules')

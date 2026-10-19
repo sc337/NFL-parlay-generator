@@ -108,7 +108,7 @@ def main():
             collected[series] = get(series)
         except Exception as error:
             print(series, error)
-            collected[series] = []
+            raise RuntimeError("Market family unavailable: " + series) from error
         counts[series] = len(collected[series])
     teams = teams_by_event(collected["KXNCAAFGAME"])
     for series, markets in collected.items():

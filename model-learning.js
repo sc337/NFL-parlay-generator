@@ -1,7 +1,7 @@
 // Shared browser/training math. Training is offline; the browser only applies
 // dated, held-out rules for the exact model version.
 (function(factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(typeof window!=='undefined')window.MODEL_LEARNING=api;})(()=>{'use strict';
-const VERSION='learning-20261015',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const VERSION='learning-20261019',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const finite=v=>typeof v==='number'&&Number.isFinite(v),mean=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
 const median=a=>{const x=[...a].sort((a,b)=>a-b);return x.length?(x[Math.floor((x.length-1)/2)]+x[Math.floor(x.length/2)])/2:null};
 function roleChange(values){
@@ -75,6 +75,6 @@ function learnedBuffer(s,group,p){
 }
 function correlation(s,a,b){const key=pairKey(a,b),r=payload()?.sports?.[s]?.pairs?.[key];return key&&ready(r)&&finite(r.rho)?{rho:r.rho,key,trainingEvents:r.trainingEvents,validationEvents:r.validationEvents}:null}
 function baselineApproved(s,group){return ready(payload()?.sports?.[s]?.report?.groups?.[group]?.baselineGate)}
-function describe(s){const x=payload()?.sports?.[s];return {version:VERSION,updatedAt:payload()?.updated_at||null,buffers:Object.values(x?.buffers||{}).filter(r=>ready(r)).length,pairs:Object.values(x?.pairs||{}).filter(r=>ready(r)).length,report:x?.report||null};}
+function describe(s){const x=payload()?.modelVersion===VERSION?payload()?.sports?.[s]:null;return {version:VERSION,updatedAt:payload()?.updated_at||null,buffers:Object.values(x?.buffers||{}).filter(r=>ready(r)).length,pairs:Object.values(x?.pairs||{}).filter(r=>ready(r)).length,report:x?.report||null};}
 return {VERSION,finite,mean,median,roleChange,opportunity,eventKey,day,clean,split,eventScore,compare,cdf,quantile,both,pairKey,ready,learnedBuffer,correlation,baselineApproved,describe};
 });

@@ -15,9 +15,10 @@ function estimate(m,ctx){
  const line=window.PICK_QUALITY?.line(m);if(!(line>=.5&&line%1===.5))return null;
  const mean=opportunity.projection,avg=opportunity.simpleMean,variance=rows.reduce((s,r)=>s+(r[stat]-avg)**2,0)/Math.max(1,rows.length-1);
  function under(mu){const shape=variance>mu?Math.max(.5,mu*mu/(variance-mu)):null;let mass=shape?Math.pow(shape/(shape+mu),shape):Math.exp(-mu),sum=mass;for(let k=1;k<line;k++){mass*=shape?(k-1+shape)/k*mu/(shape+mu):mu/k;sum+=mass}return Math.max(0,Math.min(1,sum));}
+ const sensitivity={policy:'advisory',scenarios:[.8,1,1.2].map(factor=>({name:exposure+' '+Math.round(opportunity.projectedExposure*factor),modelP:(m.side==='no'||m.side==='under')?under(mean*factor):1-under(mean*factor)}))};
  const low=m.side==='no'||m.side==='under',p=under(mean),simple=under(avg);
  return {modelP:low?p:1-p,rawModelP:low?p:1-p,marketP:m.probability,baselines:{market:m.probability,simpleMean:low?simple:1-simple},
-  projectedLine:mean,playerId:pid,player:name,opportunity,roleChange:opportunity.role,coverage:.5,experimental:true,uncertainty:.6,betEV:null,
+  projectedLine:mean,sensitivity,playerId:pid,player:name,opportunity,roleChange:opportunity.role,coverage:.5,experimental:true,uncertainty:.6,betEV:null,
   context:{coverage:.5,why:exposure+' × observed production per opportunity'},method:'Recent same-team '+exposure+' × production per opportunity'};
 }
 window.MLB_PROP_MODEL={estimate};

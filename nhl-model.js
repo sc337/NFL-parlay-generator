@@ -35,8 +35,22 @@ function matchup(m,context){
  }
  const rest=side=>num(g.rest_hours?.[side])!==null&&g.rest_hours[side]<36?.98:1;
  const special=side=>{const opposite=side==='home'?'away':'home',a=context.teams?.[g[side]],b=context.teams?.[g[opposite]],ap=a?.current?.games>=15?a.current:a?.prior,bp=b?.current?.games>=15?b.current:b?.prior;const pp=num(ap?.powerplay_pct),pk=num(bp?.penaltykill_pct);return pp!==null&&pk!==null?clamp(1+(pp-20+(80-pk))*.0015,.97,1.03):1};
- const away=clamp(rates.away.off*rates.home.def/avg*(g.neutral?1:.97)*rest('away')*special('away'),1,6),home=clamp(rates.home.off*rates.away.def/avg*(g.neutral?1:1.03)*rest('home')*special('home'),1,6);
- return {g,away,home,rates,league:avg,leagueShots:shots,coverage:clamp(.5+.25*Math.min(rates.away.games,rates.home.games)/30,.5,.75)};
+ let away=clamp(rates.away.off*rates.home.def/avg*(g.neutral?1:.97)*rest('away')*special('away'),1,6),home=clamp(rates.home.off*rates.away.def/avg*(g.neutral?1:1.03)*rest('home')*special('home'),1,6);
+ const evidence=window.STARTER_STATUS?.evidence?.('nhl',m,context),adjustments={};
+ for(const side of ['home','away']){
+  const confirmed=evidence?.sides?.find(r=>r.team===g[side]&&r.status==='confirmed');
+  const names=confirmed?.players||[];
+  const roster=(context.rosters||[]).filter(p=>p.team===g[side]&&p.position==='G'&&names.includes(p.name));
+  if(roster.length!==1)continue;
+  const profile=context.goalies?.[roster[0].id],current=profile?.current,prior=profile?.prior;
+  const shots=(current?.shotsAgainst||0)+(prior?.shotsAgainst||0),saves=(current?.saves||0)+(prior?.saves||0);
+  if(shots<300||saves>shots)continue;
+  const leagueRate=avg/context.league.shots_for;
+  const rate=(shots-saves+500*leagueRate)/(shots+500);
+  adjustments[side]=clamp(rate/leagueRate,.85,1.15);
+ }
+ away*=adjustments.home||1;home*=adjustments.away||1;
+ return {g,away,home,rates,goalieAdjusted:Object.keys(adjustments).length===2,goalieAdjustments:adjustments,league:avg,leagueShots:shots,coverage:clamp(.5+.25*Math.min(rates.away.games,rates.home.games)/30,.5,.75)};
 }
 function scoreForecast(m,match){
  const a=distribution(match.away,null,25),h=distribution(match.home,null,25);if(!a||!h)return null;
@@ -98,7 +112,7 @@ function estimate(m,context){
   uncertainty:clamp(.4+(match.g.goaliesConfirmed===true?0:.12)+(m.player&&context.players?.[String(m.player_id)]?.lineConfirmed!==true?.08:0),.4,.75),
   estimatedEV:ask>0&&ask<1?p/ask-1:null,edge:marketP>0&&marketP<1?p-marketP:null,
   projectedLine:result.projectedLine??(m.kind==='total'?result.projectedTotal:null),
-  sources:context.source,goalieNote:'Team-average goaltending; starters unconfirmed',
+  sources:context.source,goalieAdjusted:match.goalieAdjusted,goalieNote:match.goalieAdjusted?'Confirmed goalie save rates, shrunk toward league average':'Team-average or partial goalie evidence; confirm starters',
   method:PROPS.includes(m.kind)?'Negative-binomial player counts':'Poisson team scores; tied score resolved 50/50 with one deciding goal'};
 }
 window.NHL_MODEL={estimate,matchup,distribution,PROPS};
