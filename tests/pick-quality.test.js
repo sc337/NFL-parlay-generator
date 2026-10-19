@@ -15,6 +15,32 @@ test('book compatibility blocks ALT player unders on straight, featured, extra a
  assert.equal(r.Q.unsupportedAltUnder({...m,player:null,type:'totals',marketKey:'totals'}),false);
 });
 test('all selections need independent coverage and edge beyond a named uncertainty buffer',()=>{const r=runtime(),{m,f}=fixture(r);assert.equal(r.Q.assess('nfl',m,f).pass,true);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.49}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.53}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,coverage:.1}).reason,'Independent projection too thin');assert.equal(r.Q.assess('nfl',m,{...f,modelP:.5}).reason,'Market-only estimate');assert.ok(r.Q.assess('nfl',m,f).conservativeP<f.modelP)});
+test('NFL measured stable opportunity history resolves its missing-role penalty without overriding known instability',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{player:'Runner',type:'rushing',_rosterVerified:true,contextSignals:{injury_checked:true,injury_status:'none_reported'},propHistory:{source:'nflverse completed plays',played:5,games:5,opportunities:{player_rush_attempts:[12,13,12,14,13]}}});
+ const forecast={...f,roleStability:.8};g.context={updated_at:new Date(r.now()).toISOString()};
+ const stable=r.Q.assess('nfl',m,forecast);assert.ok(!stable.context.missing.includes('Stable recent role'));assert.equal(stable.pass,true);
+ const incomplete={...m,propHistory:{...m.propHistory,opportunities:{}}};const missing=r.Q.assess('nfl',incomplete,forecast);
+ assert.ok(missing.context.missing.includes('Stable recent role'));assert.ok(Math.abs(missing.buffer-stable.buffer-.008)<1e-12);
+ const explicit={...m,propHistory:{...m.propHistory,roleStable:false}};assert.ok(r.Q.assess('nfl',explicit,forecast).context.missing.includes('Stable recent role'));
+ assert.equal(r.Q.assess('nfl',m,{...forecast,roleStability:.4}).reason,'Playing time uncertain');
+ assert.equal(r.Q.assess('nfl',m,{...forecast,roleChange:{status:'falling'}}).dataPass,false);
+});
+test('screen separates hard eligibility from price-only rejection and reports exact buffer components',()=>{
+ const r=runtime(),{m,f}=fixture(r);const x=r.Q.assess('nfl',m,{...f,modelP:.55});
+ assert.equal(x.dataPass,true);assert.equal(x.pricePass,false);assert.equal(x.pass,false);assert.equal(x.dataReason,null);assert.ok(x.priceGap>0);
+ assert.ok(Math.abs(Object.values(x.bufferParts).reduce((a,b)=>a+b,0)-x.buffer)<1e-12);
+ const stale=r.Q.assess('nfl',{...m,quotedAt:new Date(r.now()-31*60000).toISOString()},{...f,modelP:.55});
+ assert.equal(stale.dataPass,false);assert.equal(stale.dataReason,'Quote older than 30 minutes');
+ const unavailable=r.Q.assess('nfl',{...m,injury_status:'out'},{...f,modelP:.55});assert.equal(unavailable.dataPass,false);assert.equal(unavailable.reason,'Player unavailable');
+});
+test('minimum acceptable whole-number American odds strictly clear the buffered estimate',()=>{
+ const r=runtime(),{m,f}=fixture(r);
+ for(const modelP of [.52,.55,.6,.64,.7]){
+  const x=r.Q.assess('nfl',m,{...f,modelP}),o=x.minimumOdds;
+  assert.ok(r.Q.implied(o)<x.conservativeP);const worse=o===100?-100:o-1;
+  if(r.Q.odds(worse))assert.ok(r.Q.implied(worse)>=x.conservativeP);
+ }
+});
 test('NCAAF sensitivity labels are advisory for straights, featured picks and parlays',()=>{
  const r=runtime(),m={ticker:'college',kind:'spread',game_id:'1',game_time:new Date(r.now()+4*3600000).toISOString(),yes_ask:.56,probability:.56,game_status:'pre'};
  r.Q.prepare('ncaaf',[m],{},[],new Date(r.now()).toISOString());

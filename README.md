@@ -109,6 +109,20 @@ them. Prices remain source quotes, not a guarantee of Caesars availability.
 
 ### Pick quality policy (October 15, 2026)
 
+The October 19 value-screen review separates non-price eligibility from the
+price comparison. All freshness, availability, role, longshot and compatibility
+checks run before a rejection is labeled price-only. NFL missing-role penalties
+recognize a stable role measured from at least three completed nflverse
+opportunity observations; missing samples, explicit instability and actual role
+changes remain unresolved. The probability estimates and base buffers are
+unchanged. Buffer components are exposed separately. Minimum acceptable
+whole-number American odds strictly beat the buffered estimate, including
+rounding at break-even. NFL empty results show data-ready versus value-passing
+counts and up to three distinct price-watch selections. Watch entries remain
+unqualified and never enter generated builds. Targets hold the current estimate
+fixed; updated prices require new model and availability checks. This change
+does not validate an edge or guarantee that more picks will qualify.
+
 All six sports use the same price-age, event-start, compatibility, evidence and
 uncertainty checks. Market-supported NFL estimates no longer bypass the edge
 buffer. Missing sport context widens that buffer without adding a favorable

@@ -61,15 +61,26 @@ function scopedGames(games,state,selected){
  return state.mode==='sgp'?games.filter(g=>g.id===selected):games;
 }
 function report(games,state){
- const reasons=new Map(),eligible=[];let checked=0,props=0;
+ const reasons=new Map(),eligible=[],priceWatch=[];let checked=0,props=0,dataReady=0;
  for(const game of games)for(const m of game.markets||[]){
   if(!state.selectedMarkets.has(m.type)||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
   if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game.commence_time))continue;
   checked++;if(m.player)props++;
   const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
   if(result.pass)eligible.push({market:m,game});else reasons.set(result.reason,(reasons.get(result.reason)||0)+1);
+  if(!active(state)&&result.dataPass){dataReady++;if(!result.pricePass&&result.minimumOdds!=null)priceWatch.push({market:m,game,quality:result});}
  }
- return {eligible,checked,props,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+ const seen=new Set(),watch=priceWatch.sort((a,b)=>a.quality.priceGap-b.quality.priceGap||String(a.market.ticker).localeCompare(String(b.market.ticker))).filter(({market:m,game:g})=>{const key=g.id+'|'+(m.player||m.type);if(seen.has(key))return false;seen.add(key);return true}).slice(0,3);
+ return {eligible,checked,props,screened:!active(state),dataReady,priceWatch:watch,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+}
+function diagnostics(report){
+ if(!report)return '';
+ const esc=window.MARKET_GUARDS.esc,fmt=o=>(o>0?'+':'')+o;
+ const reasons=report.reasons?.length?'<details><summary>Why selections were excluded</summary>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'';
+ const watch=report.priceWatch||[],summary=report.screened?'<p>Data and availability checks: '+report.dataReady+' of '+report.checked+' passed. Value screen: '+report.eligible.length+' passed.</p>':'';
+ if(!watch.length)return summary+reasons;
+ const labels={modelStatus:'Model validation',limitedCoverage:'Limited coverage',modelUncertainty:'Model uncertainty',missingInputs:'Missing inputs',empirical:'Learned buffer'};
+ return summary+reasons+'<details><summary>Price watch · '+watch.length+' selections</summary><p>Passed the non-price checks. These are not qualified picks. Targets hold the current estimate fixed; refreshing prices can change that estimate. Recheck the model, availability and exact same line before using a new price.</p>'+watch.map(({market:m,quality:q})=>'<div class="leg"><div class="leg-title">'+esc(m.name||m.label||m.player||m.type)+'</div><div class="leg-sub">Current '+esc(fmt(q.quote.odds))+' · Minimum acceptable '+esc(fmt(q.minimumOdds))+' · Price gap '+(q.priceGap*100).toFixed(1)+' percentage points</div><div class="leg-reason">Selection buffer '+(q.buffer*100).toFixed(1)+' points: '+Object.entries(q.bufferParts).filter(([,value])=>value>0).map(([key,value])=>esc(labels[key]||key)+' '+(value*100).toFixed(1)).join(' · ')+'</div></div>').join('')+'</details>';
 }
 function emptyMessage(report,count,state){
  const ideas=active(state),n=report?.eligible.length||0;
@@ -98,6 +109,6 @@ function mount(){
  if(td&&results){const drawer=document.createElement('details');drawer.className='market-filter-details';drawer.id='nflTdStraightDrawer';drawer.innerHTML='<summary>TD straight-only ideas</summary>';drawer.append(td);results.after(drawer)}
  refresh();
 }
-window.NFL_PARLAY_IDEAS={active,assess,checkBuild,scopedGames,report,emptyMessage,refresh};
+window.NFL_PARLAY_IDEAS={active,assess,checkBuild,scopedGames,report,emptyMessage,diagnostics,refresh};
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();

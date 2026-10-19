@@ -1016,7 +1016,7 @@ function render(parlays){
     const count=Number($('#legsSelect')?.value)||2;
     let scoped=nflSlate();if(state.mode==='sgp')scoped=scoped.filter(g=>g.id===$('#gameSelect').value);
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
-    wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(report?.reasons.length?'<details><summary>Why selections were excluded</summary>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'')+'</div>';
+    wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
     if(window.PICK_QUALITY){
       const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);

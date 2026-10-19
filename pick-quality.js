@@ -6,6 +6,13 @@ const odds=o=>num(o)!=null&&Math.abs(Number(o))>=100&&Math.abs(Number(o))<=10000
 const decimal=o=>o>0?1+o/100:1+100/Math.abs(o);
 const implied=o=>odds(o)?1/decimal(Number(o)):null;
 const american=p=>p>=.5?Math.round(-100*p/(1-p)):Math.round(100*(1-p)/p);
+function acceptableOdds(p){
+ if(!(p>0&&p<1))return null;
+ let o=Math.ceil(p>=.5?-100*p/(1-p):100*(1-p)/p);
+ if(o>-100&&o<100)o=100;
+ while(odds(o)&&implied(o)>=p){o++;if(o>-100&&o<100)o=100;}
+ return odds(o)?o:null;
+}
 function group(s,m){const family=s==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?m.marketKey||m.type:m.type==='h2h'?'moneyline':m.type):m.kind;return family+(m.referenceOnly?':public':'')}
 function line(m){
  if(num(m.point)!=null)return num(m.point);
@@ -94,7 +101,14 @@ function contextEvidence(s,m,f={},game){
   if(m.player){add(p?.availability_checked===true,'Availability check');add(Number.isFinite(f.projectedMinutes),'Projected minutes');add(Number.isFinite(f.usageRate),'Recent usage');}
  }else if(s==='nfl'){
   add(g?.context?.weather?.available||g?.context?.weather?.indoor===true,'Weather');
-  if(m.player){add(m.contextSignals?.injury_checked===true,'Availability check');add(m.propHistory?.played>=3,'Recent opportunities');add(m.propHistory?.roleStable===true,'Stable recent role');}
+  if(m.player){
+   add(m.contextSignals?.injury_checked===true,'Availability check');add(m.propHistory?.played>=3,'Recent opportunities');
+   const role=f.roleChange??m.roleChange,history=m.propHistory;
+   const metric=m.type==='rushing'?'player_rush_attempts':['receiving','receptions'].includes(m.type)?'targets':'player_pass_attempts',samples=history?.opportunities?.[metric]||history?.metrics?.[metric];
+   const measuredRole=Array.isArray(samples)&&samples.length>=3&&samples.every(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0)&&samples.some(v=>v>0);
+   const modeledStable=measuredRole&&history?.source==='nflverse completed plays'&&history.played>=3&&history.games>=3&&num(f.roleStability??m.roleStability)>=.6&&!['rising','falling'].includes(role?.status);
+   add(history?.roleStable===true||history?.roleStable==null&&modeledStable,'Stable recent role');
+  }
  }else if(s==='ncaaf'){
   const event=ctx.games?.[String(m.game_id)];
   add(event?.home?.form?.opponent_adjusted_margin!=null&&event?.away?.form?.opponent_adjusted_margin!=null,'Opponent strength');
@@ -127,7 +141,8 @@ function assess(s,m,f={},options={}){
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
  const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
- const buffer=learned?learned.buffer+context.penalty:(validated ? .015 : .05)+(1-coverage)*.02+uncertainty*.015+context.penalty;
+ const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .05),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
+ const buffer=Object.values(bufferParts).reduce((sum,value)=>sum+value,0);
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
  if(window.SLATE_UI&&!window.SLATE_UI.matches(s,m,gameFor(s,m,options.game)?.commence_time))return {pass:false,rank:-Infinity,reason:'Outside selected date',warnings:[],quote:q};
@@ -157,7 +172,6 @@ function assess(s,m,f={},options={}){
  if(!reason&&['falling','rising'].includes(roleChange?.status))reason='Recent opportunity changed; waiting for a stable role';
  const clearsValue=ev>0&&conservativeEV>0;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
- if(!reason&&!clearsValue)reason='Edge does not clear uncertainty buffer';
  let sensitivity=null;
  if(s==='ncaaf'&&f.sensitivity){
   const scenarios=(f.sensitivity.scenarios||[]).map(row=>{
@@ -186,13 +200,16 @@ function assess(s,m,f={},options={}){
  const tier=anchored?'suggestion':warnings.length?'conditional':'value';
  if(anchored)warnings.push('Context-supported suggestion; value unverified');
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(m.marketKey))reason='Caesars straight only';
+ const dataReason=reason,dataPass=!dataReason;
+ if(!reason&&!clearsValue)reason='Edge does not clear uncertainty buffer';
+ const minimumOdds=acceptableOdds(conservativeP);
  const valueQualified=validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
  const rankingP=validated?conservativeP:Math.min(conservativeP,q.p);
  // Ranking preference only: don't reject good evidence simply because the price
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelP:p,conservativeP,rankingP,buffer,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,sensitivity,minimumOdds:conservativeP>0?american(conservativeP):null,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
+ return {pass:!reason,reason,dataPass,dataReason,pricePass:clearsValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?rankingP*100+coverage*8+(validated?8:0)-Math.min(warnings.length,4)+Math.min(Math.max(conservativeEV||0,0),.15)*10-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
@@ -217,6 +234,6 @@ function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketA
  const tier=anchored?'Market-supported suggestion':!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Needs odds better than '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'','Minimum acceptable odds '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line','Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
 window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
