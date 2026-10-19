@@ -104,7 +104,7 @@ function refresh(){
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;
  const field=document.createElement('div');field.id='nflRecommendationTierWrap';field.className='field';
- field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="screened">Value</option><option value="ideas">Matchups</option><option value="likelihood">Win Chance</option></select><small id="nflIdeasNote"></small><label class="nfl-require-prop" for="nflRequireProp"><input id="nflRequireProp" type="checkbox"><span>Require a player prop</span></label>';
+ field.innerHTML='<select id="nflRecommendationTier" hidden aria-label="Recommendation view"><option value="screened">Recommended picks</option><option value="ideas">Other picks</option></select><small id="nflIdeasNote" hidden></small><label class="nfl-require-prop" for="nflRequireProp"><input id="nflRequireProp" type="checkbox"><span>Require a player prop</span></label>';
  anchor.before(field);
  field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);refresh();window.generate?.()});
  field.querySelector('#nflRequireProp').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.requirePlayerProp=e.target.checked;window.DASHBOARD_UI?.put('nfl','requireProp',s.requirePlayerProp?'on':'off');window.generate?.()});

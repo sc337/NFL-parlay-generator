@@ -2,8 +2,7 @@
 const $=s=>document.querySelector(s);
 function emptyMessage(report,count,state){
  if(!report)return '';
- const mode={screened:'Value',ideas:'Matchups',likelihood:'Win Chance'}[state.recommendationTier]||'Value';
- const lead='No '+count+'-leg '+mode+' build. ';
+ const lead=state.recommendationTier==='ideas'?'No compatible '+count+'-leg ideas. ':'No qualifying picks for a '+count+'-leg parlay. ';
  if(!report.checked)return lead+'No selections for this date and filters. Try Next slate.';
  if(state.requirePlayerProp&&!report.eligible?.some(x=>x.market?.player))return lead+'No player prop passed. Review the exclusions or choose another game.';
  const n=report.eligible?.length||0;
