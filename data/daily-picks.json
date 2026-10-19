@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-18",
-  "updated_at": "2026-10-19T01:22:36.779Z",
+  "updated_at": "2026-10-19T01:22:45.982Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T01:11:43.554160+00:00"
+      "snapshotAt": "2026-10-19T01:22:26.279959+00:00"
     },
     "nba": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T01:22:35.692178+00:00"
+      "snapshotAt": "2026-10-19T01:12:35.491517+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-19T01:11:34.399440+00:00"
+      "snapshotAt": "2026-10-19T01:22:40.377072+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T01:11:43.082209+00:00"
+      "snapshotAt": "2026-10-19T01:22:44.274494+00:00"
     },
     "nhl": {
       "captured": 6,
@@ -204,7 +204,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-19T01:11:44.266152+00:00"
+      "snapshotAt": "2026-10-19T01:22:24.730308+00:00"
     }
   },
   "records": [
@@ -23878,120 +23878,6 @@
           "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": 40.5,
-          "altDistance": 0,
-          "result": null
-        }
-      ],
-      "result": null
-    },
-    {
-      "id": "2026-10-18|nba|multi|best|2||learning-20261015|99179c20427ea3af",
-      "day": "2026-10-18",
-      "sport": "nba",
-      "mode": "multi",
-      "profile": "best",
-      "requestedLegs": 2,
-      "actualLegs": 2,
-      "filters": {
-        "lines": "standard",
-        "date": "all",
-        "card": null,
-        "gameId": null
-      },
-      "capturedAt": "2026-10-19T01:22:36.779Z",
-      "snapshotAt": "2026-10-19T01:22:35.692178+00:00",
-      "sourceVersion": "0d706c773b15b88bc9e5e034eab93d22ad8df740",
-      "priceEstimate": 253,
-      "priceNote": "Combined reference asks; excludes fees.",
-      "risk": {
-        "modelP": 0.4272203871679202,
-        "conservativeP": 0.3343575121988725,
-        "profile": "Conservative",
-        "method": "Product of leg estimates; assumes independence",
-        "scenario": null,
-        "bounds": {
-          "lower": 0.3074633391143382,
-          "upper": 0.6417021802046053,
-          "method": "Dependence bounds; joint model unvalidated"
-        },
-        "version": "learning-20261015"
-      },
-      "legs": [
-        {
-          "id": "nba|KXNBAREB-26OCT20PHINYK-PHIJEMBIID21-8|yes",
-          "ticker": "KXNBAREB-26OCT20PHINYK-PHIJEMBIID21-8",
-          "side": "yes",
-          "eventId": "401909089",
-          "event": "76ers vs Knicks",
-          "eventTime": "2026-10-20T23:00Z",
-          "closeTime": "2026-10-22T23:00:00Z",
-          "selection": "Joel Embiid Over 7.5 Rebounds",
-          "market": "rebounds",
-          "line": 7.5,
-          "player": "Joel Embiid",
-          "settlement": null,
-          "referenceOnly": false,
-          "ask": 0.53,
-          "referenceAmericanOdds": null,
-          "marketP": 0.515,
-          "modelP": 0.6417021802046053,
-          "rawModelP": 0.6417021802046053,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": 8.965824506822614,
-          "projectedTotal": 228.28972806051536,
-          "projectedMargin": 2.916708987829921,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": 7.5,
-          "altDistance": 0,
-          "result": null
-        },
-        {
-          "id": "nba|ESPN:401909094:100:spread:away:7.5|no",
-          "ticker": "ESPN:401909094:100:spread:away:7.5",
-          "side": "no",
-          "eventId": "401909094",
-          "event": "Denver Nuggets at Oklahoma City Thunder",
-          "eventTime": "2026-10-23T01:30:00+00:00",
-          "closeTime": "2026-10-23T01:30:00+00:00",
-          "selection": "Denver Nuggets +7.5",
-          "market": "spread",
-          "line": 7.5,
-          "player": null,
-          "settlement": {
-            "provider": "ESPN",
-            "sport": "nba",
-            "eventId": "401909094",
-            "teams": [
-              "25",
-              "7"
-            ],
-            "teamId": "7",
-            "kind": "spread",
-            "line": 7.5,
-            "direction": null,
-            "scope": "full_game",
-            "eventTime": "2026-10-23T01:30:00.000Z"
-          },
-          "referenceOnly": true,
-          "ask": 0.5348837209302325,
-          "referenceAmericanOdds": -115,
-          "marketP": 0.5348837209302325,
-          "modelP": 0.6657611589097328,
-          "rawModelP": 0.6657611589097328,
-          "coverage": 0.544,
-          "confidence": null,
-          "forecastType": "experimental",
-          "projectedLine": null,
-          "projectedTotal": 235.42228202277977,
-          "projectedMargin": 2.361142928261458,
-          "projectedAway": null,
-          "projectedHome": null,
-          "isAltLine": false,
-          "altReferenceLine": 7.5,
           "altDistance": 0,
           "result": null
         }
