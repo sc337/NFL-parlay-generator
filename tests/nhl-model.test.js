@@ -54,3 +54,11 @@ test('count distributions are normalized and deterministic',()=>{
   const a=model.distribution(3,shape),b=model.distribution(3,shape);assert.deepEqual(a,b);assert.ok(Math.abs(a.reduce((x,y)=>x+y,0)-1)<1e-12);assert.ok(a.every(p=>p>=0&&p<=1));
  }
 });
+test('confirmed goalies affect team forecasts only with sufficient official save samples',()=>{
+ const {context,market}=fixture(),base=model.estimate(market,context).modelP;
+ context.rosters.push({id:'g1',name:'Away Goalie',team:'BOS',position:'G'},{id:'g2',name:'Home Goalie',team:'NYR',position:'G'});
+ context.goalies={g1:{prior:{shotsAgainst:1200,saves:1128}},g2:{prior:{shotsAgainst:1200,saves:1056}}};
+ ctx.window.STARTER_STATUS={evidence:()=>({sides:[{team:'BOS',status:'confirmed',players:['Away Goalie']},{team:'NYR',status:'confirmed',players:['Home Goalie']}]})};
+ const f=model.estimate(market,context);assert.equal(f.goalieAdjusted,true);assert.ok(f.modelP>base);
+ ctx.window.STARTER_STATUS.evidence=()=>({sides:[]});assert.equal(model.estimate(market,context).modelP,base);delete ctx.window.STARTER_STATUS;
+});

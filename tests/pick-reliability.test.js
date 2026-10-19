@@ -21,13 +21,13 @@ test('the real Southern Miss estimate cannot become a featured recommendation or
  const troy={...m,label:'Troy',title:'Troy wins',probability:.775,yes_ask:.78};
  assert.equal(w.PICK_QUALITY.assess('ncaaf',troy,w.NCAAF_MODEL.estimate(troy,context)).pass,false);
 });
-test('likely qualifying selections outrank higher-return underdogs across sports',()=>{
+test('Value ranks buffered advantage while Win Chance ranks likelihood across sports',()=>{
  for(const s of ['nfl','mlb','ncaaf','ufc','nhl']){
   const w=runtime(),Q=w.PICK_QUALITY,underdog=selection(w,s,.45,.58),favorite=selection(w,s,.70,.81);
   const a=Q.assess(s,underdog.m,underdog.f),b=Q.assess(s,favorite.m,favorite.f);
-  assert.equal(a.pass,true,s);assert.equal(b.pass,true,s);assert.ok(a.conservativeEV>b.conservativeEV);assert.ok(b.rank>a.rank,s);
+  assert.equal(a.pass,true,s);assert.equal(b.pass,true,s);assert.ok(a.conservativeEV>b.conservativeEV);assert.ok(a.rank>b.rank,s);assert.ok(Q.assess(s,favorite.m,{...favorite.f,selectionMode:'likelihood'}).rank>Q.assess(s,underdog.m,{...underdog.f,selectionMode:'likelihood'}).rank,s);
   assert.equal(b.valueQualified,false);assert.equal(b.evidence,'Unvalidated model');
-  assert.equal(Q.assess(s,underdog.m,underdog.f,{featured:true}).pass,false);
+  assert.equal(Q.assess(s,underdog.m,underdog.f,{featured:true}).pass,true);
   assert.equal(Q.assess(s,favorite.m,favorite.f,{featured:true}).pass,true);
  }
 });

@@ -33,9 +33,9 @@ def code(sport, team, ctx):
     return CODES.get(sport, {}).get(raw, raw)
 
 
-def same_time(a, b):
+def same_time(a, b, tolerance=300):
     x, y = instant(a), instant(b)
-    return bool(x and y and abs((x-y).total_seconds()) <= 300)
+    return bool(x and y and abs((x-y).total_seconds()) <= tolerance)
 
 
 def resolve(sport, game, snapshot, ctx):
@@ -55,7 +55,7 @@ def resolve(sport, game, snapshot, ctx):
             return None
     elif sport == 'mlb':
         matches = [g for g in ctx.get('games', []) if norm(g.get('home')) == norm(home['displayName'])
-                   and norm(g.get('away')) == norm(away['displayName']) and same_time(g.get('gameDate'), start)]
+                   and norm(g.get('away')) == norm(away['displayName']) and same_time(g.get('gameDate'), start, tolerance=900)]
         if len(matches) == 1:
             metadata['game_id'] = str(matches[0]['gamePk'])
         else:

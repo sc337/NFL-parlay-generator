@@ -25,7 +25,7 @@ function loading(){const host=$('#pickOfDayContent');if(host)host.textContent='C
 function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;const host=$('#pickOfDayContent');if(!host)return;
   const slateDate=window.SLATE_UI?.date(sport);const selectedDate=slateDate||(['nhl','mlb','ncaaf'].includes(sport)&&options.date&&options.date!=='all'?options.date:null);
   const matchesDate=time=>{const d=new Date(time);return Number.isFinite(+d)&&d>new Date()&&(selectedDate?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')===selectedDate:today(time))};
-  const title=$('#pickOfDayTitle');if(title)title.textContent=window.SLATE_UI?'Pick of the Day':selectedDate?'Featured Pick':'Pick of the Day';
+  const title=$('#pickOfDayTitle');if(title)title.textContent='Best Straight';
   const status=$('#dataStatus')?.textContent||'',age=/updated\s+(\d+)m/i.exec(status),tooOld=sport==='nfl'&&age&&Number(age[1])>120;
   host.replaceChildren();
   if(!pick||!matchesDate(pick.eventTime)||tooOld){const note=document.createElement('p');note.className='pick-pass';note.textContent=window.SLATE_UI?window.SLATE_UI.empty(sport,status,tooOld):tooOld?'Feed delayed · Pass':/unavailable|stale|failed/i.test(status)?'Feed unavailable · Pass':selectedDate?'No pick for selected date · Pass':'No pick today · Pass';host.append(note);return}

@@ -8,6 +8,7 @@ function assess(m,game,state){
  const q=window.PICK_QUALITY.quote('nfl',m),now=Date.now(),start=Date.parse(game?.commence_time||''),at=Date.parse(q.checkedAt||''),contextAt=Date.parse(game?.context?.updated_at||'');
  const key=String(m.marketKey||m.type).replace(/_alternate$/,''),injury=String(m.contextSignals?.injury_status||'').toLowerCase();
  let reason=null,coverage=0;
+ if(window.SELECTION_UI?.excluded?.('nfl',m))return {pass:false,reason:'Selection excluded by you',rank:-999,coverage:0,quote:q};
  if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game?.commence_time))reason='Outside selected date';
  else if(!active(state))reason='Matchup ideas require reference-feed mode';
  else if(m.context_unmatched===true)reason='Matchup context unverified';

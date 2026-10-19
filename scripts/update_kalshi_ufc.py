@@ -148,7 +148,9 @@ def official_profile(name):
             r'c-stat-compare__number[^>]*>\s*([0-9.]+)\s*</div>\s*<div class="c-stat-compare__label">\s*([^<]+)</div>',html,re.I))
         accuracy=re.search(r'<title>Striking accuracy\s+(\d+)%</title>',html,re.I)
         if not record or 'sig. str. landed' not in metric:return None
-        return {'name':name,'url':url,'source':'UFC.com','identity_verified':True,'fetched_at':now.isoformat(),
+        division=re.search(r'hero-profile__division-title[^>]*>(.*?)</',html,re.I|re.S)
+        weight_class=re.sub(r'<[^>]+>','',division[1]).strip() if division else None
+        return {'weight_class':weight_class,'name':name,'url':url,'source':'UFC.com','identity_verified':True,'fetched_at':now.isoformat(),
                 'wins':int(record[1]),'losses':int(record[2]),'draws':int(record[3]),
                 'slpm':metric.get('sig. str. landed'),'sapm':metric.get('sig. str. absorbed'),
                 'str_acc':float(accuracy[1]) if accuracy else None,

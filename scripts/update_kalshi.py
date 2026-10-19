@@ -11,10 +11,22 @@ PROP_SERIES={'KXNFLRECYDS':('receiving','player_reception_yds','receiving yards'
 def fetch_json(url,timeout=20):
  req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.1','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
 def fetch_series(s):
+ # An unavailable family must fail the refresh so the worker retains the
+ # original snapshot and timestamp. Empty successful responses remain valid.
  for base in BASES:
-  try:return fetch_json(base+'?'+urlencode({'status':'open','limit':1000,'series_ticker':s,'mve_filter':'exclude'})).get('markets',[])
+  try:
+   rows=[];cursor=None;seen=set()
+   while True:
+    params={'status':'open','limit':1000,'series_ticker':s,'mve_filter':'exclude'}
+    if cursor:params['cursor']=cursor
+    payload=fetch_json(base+'?'+urlencode(params))
+    if not isinstance(payload.get('markets'),list):raise ValueError('Invalid market response')
+    rows.extend(payload['markets']);cursor=payload.get('cursor')
+    if not cursor:return rows
+    if cursor in seen:raise ValueError('Repeated market cursor')
+    seen.add(cursor)
   except Exception as e:last=e
- print('WARN',s,last,file=sys.stderr);return []
+ raise RuntimeError('Market family unavailable: '+s) from last
 def prob(m):
  vals=[]
  for k in ('yes_bid_dollars','yes_ask_dollars'):
@@ -134,6 +146,6 @@ def main():
   if ko>limit:continue
   g['commence_time']=ko.isoformat().replace('+00:00','Z');g['game_status']='pre';g['status_detail']=ev.get('detail') or '';g=finalize(g)
   if g['markets']:out.append(g)
- out.sort(key=lambda x:x['commence_time']);payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(counts.values()),'series_counts':counts,'filters':{'started_or_live_removed':started,'espn_unmatched_removed':unmatched}}
+ out.sort(key=lambda x:x['commence_time']);payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(counts.values()),'series_counts':counts,'market_coverage':{key:{'status':'available' if value else 'unavailable','count':value,'checked_at':now.isoformat()} for key,value in counts.items()},'filters':{'started_or_live_removed':started,'espn_unmatched_removed':unmatched}}
  Path('data').mkdir(exist_ok=True);Path('data/kalshi-nfl.json').write_text(json.dumps(payload,separators=(',',':')));print('wrote',len(out),'games',sum(len(g['markets']) for g in out),'markets')
 if __name__=='__main__':main()

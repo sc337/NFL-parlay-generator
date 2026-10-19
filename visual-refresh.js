@@ -101,7 +101,7 @@ function compactParlays(){
     if(!details)return;
     card.dataset.compact='1';const estimate=card.querySelector('.odds');if(estimate&&/^[+−-]\d+$/.test(estimate.textContent.trim())&&window.ODDS_DISPLAY)estimate.textContent=window.ODDS_DISPLAY.number(estimate.textContent.trim().replace('−','-'));
     const title=card.querySelector('.parlay-name');
-    if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/\s+\d+-Leg$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(card.classList.contains('player-props-card')?(legs.length===1?'pick':'picks'):(legs.length===1?'leg':'legs'))}
+    if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/(?:\s*·\s*\d+ legs?|\s+\d+-Leg)$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(card.classList.contains('player-props-card')?(legs.length===1?'pick':'picks'):(legs.length===1?'leg':'legs'))}
     if(sport==='nfl'){
       const odds=card.querySelector('.odds'),label=card.querySelector('.odds-label');
       if(odds?.textContent.trim()==='—'){odds.textContent='Check book';odds.classList.add('quote-unavailable');if(label)label.textContent='SGP odds'}

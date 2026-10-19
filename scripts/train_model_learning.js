@@ -67,7 +67,7 @@ function build(rows,now=Date.now()){
  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
   const selected=cleaned.filter(r=>r.sport===sport),buffers={},dependence={},groups={};
   for(const family of new Set(selected.map(r=>r.marketGroup).filter(Boolean))){const rows=selected.filter(r=>r.marketGroup===family);buffers[family]=fitBuffer(rows);groups[family]={baselineGate:baselineGate(rows),walkForward:walkForward(rows)}}
-  if(sport==='nfl')for(const [key,part] of pairs(selected))dependence[key]=fitPair(part);
+  if(['nfl','nba'].includes(sport))for(const [key,part] of pairs(selected))dependence[key]=fitPair(part);
   sports[sport]={buffers,pairs:dependence,report:{groups,recordedVersionedOutcomes:selected.length,distinctEvents:new Set(selected.map(L.eventKey)).size,comparisons:L.compare(selected),walkForward:walkForward(selected),status:selected.length?'Collecting chronological evidence':'Waiting for settled forecasts from this model version'}};
  }
  return {schemaVersion:1,modelVersion:L.VERSION,updated_at:new Date(now).toISOString(),method:'Versioned pregame forecasts only; outcome availability enforced; whole events and UTC dates separated; event-weighted scores',sports};

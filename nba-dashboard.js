@@ -21,20 +21,20 @@ function compatibleSet(legs){
 function buildSameGame(rows,n,assess){
  if(!Number.isInteger(n)||n<2||n>4)return [];
  const groups=new Map(),candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank))
-  .sort((a,b)=>b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker)))
+  .sort((a,b)=>(Number(window.SELECTION_UI?.locked?.('nba',b.m))-Number(window.SELECTION_UI?.locked?.('nba',a.m)))*10000||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker)))
   .filter(({m})=>{const key=m.player_id||m.player||(['moneyline','spread'].includes(m.kind)?'team-side':m.kind),count=groups.get(key)||0;groups.set(key,count+1);return count<6}).slice(0,80);
  let beams=[{legs:[],score:0,minCoverage:1}];
  for(let i=0;i<n;i++){
   const next=[];
   for(const beam of beams)for(const {m,q} of candidates){
    const legs=[...beam.legs,m];if(!compatibleSet(legs))continue;
-   const minCoverage=Math.min(beam.minCoverage,q.coverage||0),score=beam.score+q.rank;
+   const minCoverage=Math.min(beam.minCoverage,q.coverage||0),score=beam.score+q.rank+(window.SELECTION_UI?.locked?.('nba',m)?10000:0);
    next.push({legs,minCoverage,score,objective:score-12*(1-minCoverage),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
   }
   const seen=new Set();beams=next.sort((a,b)=>b.objective-a.objective||a.signature.localeCompare(b.signature)).filter(b=>{if(seen.has(b.signature))return false;seen.add(b.signature);return true}).slice(0,64);
   if(!beams.length)return [];
  }
- return beams[0].legs;
+ return beams.find(b=>!window.SELECTION_UI?.accepts||window.SELECTION_UI.accepts('nba',b.legs))?.legs||[];
 }
 function model(m){const f=window.NBA_MODEL.estimate(m,context);return f?Q.forecast('nba',m,f):null}
 function eligible(m,featured=false){const f=model(m);return !!f&&G.pregame(m)&&m.game_status==='pre'&&(m.referenceOnly||(Number(m.volume)>=50&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=.08))&&window.SPORT_MARKETS.allowed('nba',m)&&window.NBA_ALT_LINES.allowed(m,lineMode)&&Q.assess('nba',m,f,{featured,parlay:!featured}).pass}
@@ -48,7 +48,7 @@ function render(){
  window.SPORT_MARKETS.sync('nba',markets,render);controls();
  const count=window.DASHBOARD_UI?.get('nba','legs',2)||2,pool=ranked(),sgp=buildMode==='sgp';
  const scoped=sgp?pool.filter(m=>String(m.game_id)===selectedGame):pool;
- const straight=pool.find(m=>eligible(m,true)&&(window.SLATE_UI?window.SLATE_UI.matches('nba',m):window.PICK_OF_DAY?.today?window.PICK_OF_DAY.today(m.game_time):new Date(m.game_time).toDateString()===new Date().toDateString()));
+ const straight=markets.filter(m=>eligible(m,true)).sort((a,b)=>Q.assess('nba',b,model(b)).rank-Q.assess('nba',a,model(a)).rank).find(m=>eligible(m,true)&&(window.SLATE_UI?window.SLATE_UI.matches('nba',m):window.PICK_OF_DAY?.today?window.PICK_OF_DAY.today(m.game_time):new Date(m.game_time).toDateString()===new Date().toDateString()));
  const assess=m=>Q.assess('nba',m,model(m),{parlay:true});
  const build=sgp?buildSameGame(scoped,count,assess):G.bestBuild(scoped,count,assess);
  const complete=build.length===count&&(sgp?compatibleSet(build):G.independent(build)),entries=complete?build.map(m=>({market:m,forecast:model(m)})):[];
@@ -75,18 +75,18 @@ function controls(){
   field.innerHTML='<div class="nhl-filter-fields"><div class="field"><label for="nbaModeSelect">Parlay type</label><select id="nbaModeSelect"><option value="sgp">Same Game</option><option value="multi">Multi-Game</option></select></div><div class="field"><label for="nbaLinesSelect">Lines</label><select id="nbaLinesSelect" aria-describedby="nbaLinesNote"><option value="both">Standard + ALT</option><option value="standard">Standard only</option><option value="alt">ALT only</option></select></div></div><div id="nbaGameField" class="field"><label for="nbaGameSelect">Game</label><select id="nbaGameSelect" aria-label="NBA same-game matchup"></select></div><details class="filter-policy"><summary>ALT rules</summary><small id="nbaLinesNote">Quoted spreads within 7 points, totals within 15; nearby player props, overs only. Reference = nearest 50% quoted threshold, not a verified sportsbook main line. Quality and availability checks still apply. Verify the exact line at your book.</small></details>';
   host.before(field);
   field.querySelector('#nbaLinesSelect').addEventListener('change',e=>{if(!['standard','alt','both'].includes(e.target.value))return;lineMode=e.target.value;window.DASHBOARD_UI?.put('nba','lines',lineMode);render()});
-  field.querySelector('#nbaModeSelect').addEventListener('change',e=>{if(!['sgp','multi'].includes(e.target.value))return;buildMode=e.target.value;window.DASHBOARD_UI?.put('nba','mode',buildMode);render()});
-  field.querySelector('#nbaGameSelect').addEventListener('change',e=>{selectedGame=e.target.value;window.DASHBOARD_UI?.put('nba','game',selectedGame);render()});
+  ($('#nbaModeSelect')||field.querySelector('#nbaModeSelect')).addEventListener('change',e=>{if(!['sgp','multi'].includes(e.target.value))return;buildMode=e.target.value;window.DASHBOARD_UI?.put('nba','mode',buildMode);render()});
+  ($('#nbaGameSelect')||field.querySelector('#nbaGameSelect')).addEventListener('change',e=>{selectedGame=e.target.value;window.DASHBOARD_UI?.put('nba','game',selectedGame);render()});
  }
  field.hidden=window.__ACTIVE_SPORT!=='nba';
- field.querySelector('#nbaLinesSelect').value=lineMode;field.querySelector('#nbaModeSelect').value=buildMode;
+ field.querySelector('#nbaLinesSelect').value=lineMode;($('#nbaModeSelect')||field.querySelector('#nbaModeSelect')).value=buildMode;
  const games=new Map();
  for(const m of markets)if(m.game_id&&G.pregame(m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m)))games.set(String(m.game_id),m);
  const options=[...games].sort((a,b)=>Date.parse(a[1].game_time)-Date.parse(b[1].game_time)||a[0].localeCompare(b[0]));
  if(!games.has(selectedGame))selectedGame=options[0]?.[0]||'';
- const select=field.querySelector('#nbaGameSelect'),html=options.length?options.map(([id,m])=>'<option value="'+esc(id)+'">'+esc(m.game_label||id)+' · '+esc(new Date(m.game_time).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))+'</option>').join(''):'<option value="">No games for selected date</option>';
+ const select=($('#nbaGameSelect')||field.querySelector('#nbaGameSelect')),html=options.length?options.map(([id,m])=>'<option value="'+esc(id)+'">'+esc(m.game_label||id)+' · '+esc(new Date(m.game_time).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))+'</option>').join(''):'<option value="">No games for selected date</option>';
  if(select.innerHTML!==html)select.innerHTML=html;select.value=selectedGame;select.disabled=!options.length;
- field.querySelector('#nbaGameField').hidden=buildMode!=='sgp';
+ ($('#nbaGameField')||field.querySelector('#nbaGameField')).hidden=buildMode!=='sgp';
 }
-window.NBA_DASHBOARD={load,refresh:render,setLegs,model,eligible,buildSameGame,compatibleSet,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
+window.NBA_DASHBOARD={availableCount:()=>loaded?G.unique(ranked(),Infinity).length:null,load,refresh:render,setLegs,model,eligible,buildSameGame,compatibleSet,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
 })();

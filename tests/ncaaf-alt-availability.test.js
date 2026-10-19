@@ -3,7 +3,7 @@ const {runtime}=require('../scripts/update_pick_history');
 test('ALT exclusions include early policy failures and Both requires an explicit action',async()=>{
  const now=Date.parse('2026-10-17T04:00:00Z'),at=new Date(now).toISOString(),start=new Date(now+4*3600000).toISOString(),r=runtime('ncaaf',{now}),listeners={},calls=[];
  r.ctx.document.addEventListener=(type,fn)=>{listeners[type]=fn};
- const row=(id,line,ask)=>({ticker:id,selection_id:id,game_id:id==='other'?'2':'1',game_label:'Away at Home',game_time:start,game_status:'pre',kind:'spread',
+ const row=(id,line,ask)=>({ticker:id,selection_id:id,game_id:id==='other'?'2':'1',game_label:id==='other'?'Other Away at Other Home':'Away at Home',game_time:start,game_status:'pre',kind:'spread',
   title:'Home wins by over '+line+' points',label:'Home -'+line,yes_bid:ask-.02,yes_ask:ask,probability:ask-.01,volume:2000,open_interest:1000,spread:.02,source:'Kalshi'});
  const snapshot={updated_at:at,markets:[row('standard',7.5,.5),row('near',5.5,.55),row('far',20.5,.65),row('other',7.5,.5)]};
  r.ctx.fetch=async url=>{calls.push(String(url));assert.ok(String(url).startsWith('data/'),'no external or paid request');const data=String(url).includes('kalshi-ncaaf')?snapshot:{};return {ok:true,json:async()=>data,text:async()=>JSON.stringify(data)}};

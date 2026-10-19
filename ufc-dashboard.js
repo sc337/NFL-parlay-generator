@@ -39,7 +39,10 @@ function matchup(m,profiles=stats){
  const adjustedA=value(a.opponentAdjusted,'rating'),adjustedB=value(b.opponentAdjusted,'rating');
  const opponentAdjusted=Number.isFinite(adjustedA)&&Number.isFinite(adjustedB)&&a.opponentAdjusted?.pregame===true&&b.opponentAdjusted?.pregame===true;
  if(opponentAdjusted)add(adjustedA-adjustedB,1,1.2,'opponent-adjusted performance');
- const weightClassVerified=!!m.weight_class&&a.weight_class===m.weight_class&&b.weight_class===m.weight_class;
+ const division=x=>String(x||'').toLowerCase().replace(/(?:men.s|women.s|division|\s)/g,'');
+ const weightClassVerified=!!m.weight_class&&division(a.weight_class)===division(m.weight_class)&&division(b.weight_class)===division(m.weight_class);
+ if(!opponentAdjusted)why.push('Opponent-strength evidence incomplete');
+ if(!weightClassVerified)why.push('Fight weight class unverified');
  const sample=Math.min(Number(a.recent5?.count)||0,Number(b.recent5?.count)||0);
  const edge=w?z/w:0,score=clamp(Math.round(50+edge*28),20,80);return {score,edge,coverage:clamp(w/10.15,0,1),sample,opponentAdjusted,weightClassVerified,why:why.slice(0,3)}
 }

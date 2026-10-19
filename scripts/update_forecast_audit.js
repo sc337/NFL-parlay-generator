@@ -53,7 +53,7 @@ function record(sport,entry,snapshot,now){
     sport==='ufc'?m.kind==='moneyline'&&coverage>0:false;
   const experimental=(sport==='nba'&&f.experimental===true&&coverage>=.45)||(sport==='nhl'&&f.experimental===true&&coverage>=.45)||
     (sport==='ncaaf'&&f.experimental===true&&coverage>=.6)||
-    (sport==='mlb'&&m.kind==='total'&&f.experimental===true&&coverage>=.45)||
+    (sport==='mlb'&&['total','strikeouts','hits','home_runs','rbi','total_bases','hrr'].includes(m.kind)&&f.experimental===true&&coverage>=.45)||
     (sport==='nfl'&&f.experimental===true&&(m.type==='td'?coverage>=.3:!!m.player&&coverage>=.45&&projectedLine!=null));
   const anchored=f.marketAnchored===true;
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;

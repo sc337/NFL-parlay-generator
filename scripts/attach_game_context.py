@@ -36,7 +36,7 @@ def scoreboard(sport,days):
  import urllib.request
  out=[]
  for day in sorted(days):
-  url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/scoreboard?dates={day.strftime("%Y%m%d")}&limit=1000'
+  url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/scoreboard?dates={day.strftime("%Y%m%d")}&limit=1000'+('&groups=80' if sport=='football/college-football' else '')
   try:
    with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'sports-dashboard/1.0'}),timeout=25) as response:d=json.load(response)
    out+=d.get('events',[])
@@ -81,7 +81,7 @@ def ncaa_scoreboard(days):
 def college_name(s):
  s=key(s).replace('state','st').replace('saint','st')
  return {'armywestpoint':'army','westernky':'westernkentucky','easternky':'easternkentucky',
-         'miamifl':'miami','miamioh':'miamiohio'}.get(s,s)
+         'miamifl':'miami','miamioh':'miamiohio','northernill':'northernillinois','southernmiss':'southernmississippi','appst':'appalachianst','ulmonroe':'louisianamonroe','ul':'louisiana'}.get(s,s)
 
 def attach_ncaaf():
  path=Path('data/kalshi-ncaaf.json');d=json.loads(path.read_text());rows=d['markets'];days={day for m in rows if (day:=date_code(m.get('event_ticker'))[0])}
@@ -89,10 +89,13 @@ def attach_ncaaf():
  events=scoreboard('football/college-football',upcoming)
  if not events:events=ncaa_scoreboard(upcoming)
  events=list({event.get('id'):event for event in events if event.get('id')}.values())
+ groups={}
+ for row in rows:
+  if row.get('kind')=='moneyline':groups.setdefault(row.get('event_ticker','').split('-',1)[-1],[]).append(row)
  for m in rows:
   day,_=date_code(m.get('event_ticker'))
   if not day:continue
-  group=[r for r in rows if r.get('event_ticker','').split('-',1)[-1]==m['event_ticker'].split('-',1)[-1] and r['kind']=='moneyline']
+  group=groups.get(m['event_ticker'].split('-',1)[-1],[])
   names={college_name(r.get('title','').removesuffix(' wins')) for r in group}
   if len(names)!=2:continue
   matches=[]
@@ -100,9 +103,11 @@ def attach_ncaaf():
    comps=(event.get('competitions') or [{}])[0].get('competitors',[])
    if len(comps)!=2:continue
    teamnames=[{college_name(x) for x in (c.get('team') or {}).values() if isinstance(x,str) and len(x)>2} for c in comps]
-   if not all(any(n in variants for variants in teamnames) for n in names):continue
+   a,b=sorted(names)
+   if not (a in teamnames[0] and b in teamnames[1] or b in teamnames[0] and a in teamnames[1]):continue
    start=event.get('date')
-   if start and abs((datetime.fromisoformat(start.replace('Z','+00:00')).date()-day).days)<=1:matches.append(event)
+   if (event.get('competitions') or [{}])[0].get('timeValid') is False:continue
+   if start and datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(ZoneInfo('America/New_York')).date()==day:matches.append(event)
   if len(matches)!=1:continue
   ev=matches[0];m['game_id']=ev['id'];m['game_time']=ev['date'];m['game_label']=ev.get('name') or ev.get('shortName');m['game_status']=(ev.get('status') or {}).get('type',{}).get('state');m['game_source']=ev.get('source') or 'ESPN'
  path.write_text(json.dumps(d,indent=2));print('NCAAF matched',sum(bool(m.get('game_time')) for m in rows),'of',len(rows))

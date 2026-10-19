@@ -31,7 +31,7 @@ function metrics(rows){
   const qualifiedPriced=qualified.filter(r=>r.ask>0&&r.ask<1);
   const rejectionReasons={};for(const r of rows)if(r.qualification?.pass===false){const reason=r.qualification.reason||'Other';rejectionReasons[reason]=(rejectionReasons[reason]||0)+1}
   const allBins=source=>[[0,.4],[.4,.6],[.6,.8],[.8,1]].map(([lo,hi])=>{const part=source.filter(r=>r.modelP>=lo&&r.modelP<hi);return {range:[lo,hi],count:part.length,predicted:part.length?round(part.reduce((s,r)=>s+r.modelP,0)/part.length):null,observed:part.length?round(part.filter(r=>r.result==='win').length/part.length):null}});
-  return {recorded:rows.length,independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+  return {recorded:rows.length,settlementHealth:{pending:rows.filter(r=>!r.result).length,overdue:rows.filter(r=>!r.result&&Date.parse(r.eventTime)<Date.now()-86400000).length,oldestPending:rows.filter(r=>!r.result&&Date.parse(r.eventTime)<Date.now()).map(r=>r.eventTime).sort()[0]||null},independentRecorded:rows.filter(r=>r.forecastType==='model').length,
     qualified:{recorded:rows.filter(r=>r.qualification?.pass===true).length,settled:qualified.length,distinctEvents:qualifiedEvents,
       winRate:qualified.length?round(qualified.filter(r=>r.result==='win').length/qualified.length):null,
       brier:qualified.length?round(qualified.reduce((s,r)=>s+(r.modelP-(r.result==='win'?1:0))**2,0)/qualified.length):null,
@@ -84,7 +84,7 @@ function build(rows,daily=[]){
     const selected=rows.filter(r=>r.sport===sport),groups={};
     for(const group of new Set(selected.map(r=>r.marketGroup).filter(Boolean)))
       groups[group]=metrics(selected.filter(r=>r.marketGroup===group));
-    sports[sport]={...metrics(selected),groups};
+    sports[sport]={...metrics(selected),groups,versions:Object.fromEntries([...new Set(selected.map(r=>r.modelVersion||'legacy'))].map(version=>[version,metrics(selected.filter(r=>(r.modelVersion||'legacy')===version))]))};
   }
   const pregameViolations=rows.filter(r=>!(Date.parse(r.recordedAt)<Date.parse(r.eventTime))||
     r.snapshotAt&&!(Date.parse(r.snapshotAt)<Date.parse(r.eventTime))).length;

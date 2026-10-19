@@ -57,6 +57,14 @@ def player_stats(rows):
             out[str(row['playerId'])] = stats
     return out
 
+def goalie_stats(rows):
+    out = {}
+    for row in rows:
+        shots, saves = finite(row.get('shotsAgainst')), finite(row.get('saves'))
+        if row.get('playerId') and shots and saves is not None and 0 <= saves <= shots:
+            out[str(row['playerId'])] = {'shotsAgainst': shots, 'saves': saves}
+    return out
+
 def roster_rows(roster, abbr):
     rows = []
     for group in ('forwards', 'defensemen', 'goalies'):
@@ -103,6 +111,7 @@ def collect(now, old=None):
             params = urlencode({'limit': -1, 'cayenneExp': f'seasonId={value} and gameTypeId=2'})
             tasks['team_'+key] = STATS+'/team/summary?'+params
             tasks['player_'+key] = STATS+'/skater/summary?'+params
+            tasks['goalie_'+key] = STATS+'/goalie/summary?'+params
     def fetch(item):
         key, url = item
         return key, get(url)
@@ -157,7 +166,13 @@ def collect(now, old=None):
             rosters = [player for abbr, roster in pool.map(fetch, urls) for player in roster_rows(roster, abbr)]
         if clubs and not clubs.issubset({row['team'] for row in rosters}):
             raise RuntimeError('Incomplete official NHL rosters')
-    return {'updated_at': now.isoformat(), 'stats_at': stats_at, 'season': season,
+    if reused:
+        goalies = old.get('goalies', {})
+    else:
+        gc = goalie_stats(results.get('goalie_current', {}).get('data', []))
+        gp = goalie_stats(results.get('goalie_prior', {}).get('data', []))
+        goalies = {pid: {'current': gc.get(pid), 'prior': gp.get(pid)} for pid in set(gc)|set(gp)}
+    return {'updated_at': now.isoformat(), 'stats_at': stats_at, 'season': season, 'goalies': goalies,
             'prior_season': previous, 'source': 'Official NHL schedule, rosters and regular-season statistics',
             'league': league, 'games': games, 'teams': teams, 'players': players,
             'rosters': rosters, 'roster_teams': sorted(clubs), 'status': 'ready'}

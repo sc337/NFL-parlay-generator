@@ -31,25 +31,26 @@ function vector(e){
  else return null;
  v['player:'+m.player]=.35;return v;
 }
-function fittedMatrix(entries){
+function fittedMatrix(entries,sport='nfl'){
  const L=window.MODEL_LEARNING;if(!L)return null;
- const describe=e=>({marketFamily:String(e.market.marketKey||e.market.type).replace(/_alternate$/,''),player:e.market.player,team:e.market.team,
+ const describe=e=>({marketFamily:String(e.market.marketKey||e.market.type||e.market.kind).replace(/_alternate$/,''),player:e.market.player,team:e.market.team||e.market.team_code,
   direction:e.market.side==='under'?'under':e.market.side==='over'?'over':e.market.quoteSide||e.market.side||'yes'});
  const matrix=entries.map((_,i)=>entries.map((_,j)=>i===j?1:0)),rules=[];
  for(let i=0;i<entries.length;i++)for(let j=i+1;j<entries.length;j++){
-  const rule=L.correlation('nfl',describe(entries[i]),describe(entries[j]));if(!rule)return null;
+  const rule=L.correlation(sport,describe(entries[i]),describe(entries[j]));if(!rule)return null;
   matrix[i][j]=matrix[j][i]=rule.rho;rules.push(rule);
  }
  return {matrix,rules};
 }
 function cholesky(matrix){const n=matrix.length,out=matrix.map(()=>Array(n).fill(0));for(let i=0;i<n;i++)for(let j=0;j<=i;j++){let sum=matrix[i][j];for(let k=0;k<j;k++)sum-=out[i][k]*out[j][k];if(i===j){if(sum<=1e-8)return null;out[i][j]=Math.sqrt(sum)}else out[i][j]=sum/out[j][j]}return out}
-function scenarios(entries,checks,trials=TRIALS){
+function scenarios(entries,checks,trials=TRIALS,sport='nfl'){
  trials=Math.max(1000,Math.min(TRIALS,Math.floor(trials)||TRIALS));
  if(checks.length!==entries.length||checks.some(q=>!Number.isFinite(q.modelP)||q.modelP<=0||q.modelP>=1))return null;
- const vectors=entries.map(vector);if(vectors.some(v=>!v))return null;
+ const fitted=fittedMatrix(entries,sport);
+ if(sport!=='nfl'&&!fitted)return null;
+ const vectors=sport==='nfl'?entries.map(vector):entries.map(()=>({individual:1,sign:1}));if(vectors.some(v=>!v))return null;
  const ps=checks.map(q=>q.modelP),thresholds=ps.map(p=>quantile(1-p));
- const fitted=fittedMatrix(entries);
- const key=JSON.stringify([entries.map(e=>window.PICK_QUALITY.id('nfl',e.market)),ps,fitted?.matrix,trials]);
+ const key=JSON.stringify([entries.map(e=>window.PICK_QUALITY.id(sport,e.market)),ps,fitted?.matrix,trials]);
  if(cache.has(key))return cache.get(key);
  const factors=[...new Set(vectors.flatMap(v=>Object.keys(v).filter(k=>k!=='sign')))];
  const outcomes=[];
@@ -74,7 +75,7 @@ function scenarios(entries,checks,trials=TRIALS){
 function summarize(s,entries,{sgp=false,offer=null,checkedAt=null}={}){
  const Q=window.PICK_QUALITY,gate=Q.checkBuild(s,entries,sgp);
  if(!gate.pass)return {pass:false,reason:gate.reason};
- const checks=gate.checks,independent=!sgp,scenario=sgp&&s==='nfl'?scenarios(entries,checks):null;
+ const checks=gate.checks,independent=!sgp,scenario=sgp&&['nfl','nba'].includes(s)?scenarios(entries,checks,TRIALS,s):null;
  const modelP=independent?checks.reduce((p,x)=>p*x.modelP,1):scenario?.modelP??null;
  const conservativeP=independent?checks.reduce((p,x)=>p*x.conservativeP,1):null;
  const bounds=Q.joint(checks),at=Date.parse(checkedAt||'');
@@ -95,6 +96,8 @@ function attach(host,s,entries,options={}){
  if(!host?.appendChild||typeof document==='undefined')return;
  const risk=summarize(s,entries,options);if(!risk.pass)return;
  const detail=document.createElement('details');detail.className='card-explanation parlay-risk';
+ if(window.SELECTION_UI){const actions=document.createElement('details');actions.className='leg-actions';const title=document.createElement('summary');title.textContent='Change a leg';actions.append(title);for(const {market:m} of entries){const b=document.createElement('button');b.type='button';b.textContent='Replace '+(m.label||m.name||'selection');b.addEventListener('click',()=>window.SELECTION_UI.exclude(s,m));actions.append(b);const lock=document.createElement('button');lock.type='button';lock.textContent=(window.SELECTION_UI.locked(s,m)?'Unlock ':'Keep ')+(m.label||m.name||'selection');lock.addEventListener('click',()=>window.SELECTION_UI.lock(s,m));actions.append(lock)}host.append(actions);}
+
  const summary=document.createElement('summary');summary.textContent='Risk & price check';
  const text=document.createElement('p'),status=document.createElement('p');
  const format=o=>(o>0?'+':'')+o;
