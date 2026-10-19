@@ -1040,7 +1040,7 @@ function render(parlays){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.parlay-card').dataset.nflProfile=p.profile;
     node.querySelector('.grade').textContent=p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
-    node.querySelector('.parlay-name').textContent=index===0?(p.likelihoodTier?'Win Chance':p.ideaTier?'Matchups':'Value'):p.name;
+    node.querySelector('.parlay-name').textContent=index===0?(p.ideaTier?'Other picks · Value unverified':'Recommended parlay'):p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
     const sources=new Set(p.legs.map(m=>window.PICK_QUALITY?.quote('nfl',m)?.source||m.source));

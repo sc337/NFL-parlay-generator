@@ -29,7 +29,7 @@ test('Win Chance reports its own eligibility and never presents a price-watch en
  Object.assign(r.m,{modelProbability:.67,rawModelProbability:.67,projectionCoverage:.7,modelUncertainty:.3,roleStability:.8});r.m.propHistory.roleStable=true;
  let report=api.report([r.g],r.ctx.state);assert.equal(report.eligible.length,1);assert.equal(report.screened,false);assert.equal(report.priceWatch.length,0);
  r.m.contextSignals.injury_status='out';report=api.report([r.g],r.ctx.state);assert.equal(report.eligible.length,0);assert.match(api.emptyMessage(report,2,r.ctx.state),/Win Chance/);assert.doesNotMatch(api.emptyMessage(report,2,r.ctx.state),/value screen/);
- const src=fs.readFileSync('kalshi-parlay-ideas.js','utf8');for(const label of ['Value','Matchups','Win Chance'])assert.ok(src.includes('>'+label+'</option>'));
+ const src=fs.readFileSync('kalshi-parlay-ideas.js','utf8');assert.ok(src.includes('id="nflRecommendationTier" hidden'));assert.ok(!src.includes('>Win Chance</option>'));
 });
 test('ideas reject stale quotes, started games, unverified roles, uncertain injury and thin history',()=>{
  const changes=[r=>r.m.quotedAt='2026-10-12T04:00:00Z',r=>r.g.commence_time='2026-10-12T01:00:00Z',r=>r.m._rosterVerified=false,r=>r.m.team='Other',r=>r.m.contextSignals.injury_status='questionable',r=>r.m.contextSignals.injury_checked=false,r=>r.m.propHistory.played=2,r=>r.m.propHistory.metrics.player_rush_yds=[1,2],r=>r.m.propHistory.latest_game='2026-10-12',r=>r.g.context.updated_at='2026-10-11T01:00:00Z',r=>r.m.price=-1000,r=>r.m.propHistory.source='market breadth'];

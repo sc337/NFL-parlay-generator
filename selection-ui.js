@@ -1,22 +1,24 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),sport=()=>window.__ACTIVE_SPORT||'nfl';
 const exclusions=new Map(),locks=new Map();
+const straightViews=new Set();
 const selectionKey=(s,m)=>window.PICK_QUALITY.id(s,m);
 function excluded(s,m){return exclusions.get(s)?.has(selectionKey(s,m))===true;}
 function locked(s,m){return locks.get(s)?.has(selectionKey(s,m))===true;}
 function lock(s,m){if(!locks.has(s))locks.set(s,new Set());const set=locks.get(s),key=selectionKey(s,m);set.has(key)?set.delete(key):set.add(key);refresh();}
 function accepts(s,rows){const keys=new Set(rows.map(m=>selectionKey(s,m)));return [...(locks.get(s)||[])].every(k=>keys.has(k));}
 function exclude(s,m){locks.get(s)?.delete(selectionKey(s,m));if(!exclusions.has(s))exclusions.set(s,new Set());exclusions.get(s).add(selectionKey(s,m));refresh();}
-const labels={screened:'Value',ideas:'Matchups',likelihood:'Win Chance'};
+const labels={screened:'Recommended picks',ideas:'Other picks · Value unverified'};
 function refresh(){const s=sport();if(s==='nfl')window.generate?.();else window[s.toUpperCase()+'_DASHBOARD']?.refresh?.();}
-function select(mode){const s=sport();window.DASHBOARD_UI?.put(s,'selectionMode',mode);if(s==='nfl'){const el=$('#nflRecommendationTier');if(el){el.value=mode;el.dispatchEvent(new Event('change',{bubbles:true}));return}}refresh();}
+function select(mode){const s=sport();mode=mode==='ideas'?'ideas':'screened';window.DASHBOARD_UI?.put(s,'selectionMode',mode);if(s==='nfl'){const el=$('#nflRecommendationTier');if(el){el.value=mode;el.dispatchEvent(new Event('change',{bubbles:true}));return}}refresh();}
 function mount(){
  const controls=$('#parlayControls');if(!controls)return;
  let panel=$('#sharedSelection');
- if(!panel){panel=document.createElement('div');panel.id='sharedSelection';panel.className='shared-selection field';panel.innerHTML='<label for="sharedSelectionMode">Selection</label><select id="sharedSelectionMode"><option value="screened">Value</option><option value="ideas">Matchups</option><option value="likelihood">Win Chance</option></select><small id="selectionExplanation"></small>';controls.prepend(panel);panel.querySelector('select').addEventListener('change',e=>select(e.target.value));}
- const s=sport();panel.hidden=s==='nfl';panel.querySelector('select').value=window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
- const descriptions={screened:'Estimated advantage after uncertainty adjustments.',ideas:'Matchup and role evidence. Price value may be unverified.',likelihood:'Estimated hit rate. Easier ALT lines may rank first.'};
- $('#selectionExplanation').textContent=descriptions[panel.querySelector('select').value];
+ if(!panel){panel=document.createElement('div');panel.id='sharedSelection';panel.className='shared-selection field';panel.innerHTML='<p>Other picks · Value unverified. These ideas have not passed the value screen.</p><button type="button">Back to recommended picks</button>';controls.prepend(panel);panel.querySelector('button').onclick=()=>select('screened');}
+ const s=sport(),exploring=(s==='nfl'?window.NFL_PARLAY_STATE?.recommendationTier:window.DASHBOARD_UI?.get(s,'selectionMode','screened'))==='ideas';panel.hidden=!exploring;
+ document.body.classList.toggle('exploring-picks',exploring);
+ let view=$('#pickView');if(!view){view=document.createElement('div');view.id='pickView';view.className='field';view.innerHTML='<label for="pickViewSelect">Build</label><select id="pickViewSelect"><option value="straight">Straights</option><option value="sgp">Same Game</option><option value="multi">Multi Game</option></select>';$('#pickOfDay').before(view);view.querySelector('select').onchange=e=>{const current=sport(),value=e.target.value;if(value==='straight')straightViews.add(current);else{straightViews.delete(current);if(current==='nfl')$('.mode-tabs [data-mode="'+value+'"]')?.click();else if(current==='nba'){const mode=$('#nbaModeSelect');mode.value=value;mode.dispatchEvent(new Event('change',{bubbles:true}));}}refresh();schedule();};}
+ const viewSelect=view.querySelector('select');viewSelect.querySelector('[value="sgp"]').disabled=!['nfl','nba'].includes(s);viewSelect.value=straightViews.has(s)?'straight':s==='nfl'?(window.NFL_PARLAY_STATE?.mode||'multi'):s==='nba'?($('#nbaModeSelect')?.value||'multi'):'multi';document.body.classList.toggle('straights-view',straightViews.has(s));
  let clear=$('#clearSelectionEdits');if(!clear){clear=document.createElement('button');clear.id='clearSelectionEdits';clear.type='button';clear.textContent='Clear locked / excluded picks';controls.append(clear);clear.onclick=()=>{exclusions.delete(sport());locks.delete(sport());refresh();};}clear.hidden=!(exclusions.get(s)?.size||locks.get(s)?.size);
  let gameControls=$('#sharedGameControls');if(!gameControls){gameControls=document.createElement('div');gameControls.id='sharedGameControls';panel.after(gameControls)}gameControls.hidden=s!=='nba';
  if(s==='nba')for(const el of [$('#nbaModeSelect')?.closest('.field'),$('#nbaGameField')])if(el&&el.parentElement!==gameControls)gameControls.append(el);
@@ -39,10 +41,11 @@ function mount(){
  const families=[...new Set(current.map(m=>m.marketKey||m.kind||m.type).filter(Boolean))];
  const coverageText=current.length+' current quoted selections across '+families.length+' market types for this date. '+(current.some(m=>m.player)?'Player props available.':'No player props in the current selection.')+' Freshness does not establish complete market coverage.';
  if(coverage.textContent!==coverageText)coverage.textContent=coverageText;
- const empty=$('#results > .empty');
+ const empty=straightViews.has(s)?$('#pickOfDayContent .pick-pass'):$('#results > .empty');
+ if(empty&&!exploring&&!empty.querySelector('.qualifying-heading')){const heading=document.createElement('strong');heading.className='qualifying-heading';heading.textContent='No qualifying picks';empty.prepend(heading);}
  if(empty&&!empty.querySelector('.empty-actions')){const actions=document.createElement('div');actions.className='empty-actions';
   if(Number($('#legsSelect')?.value)>2){const b=document.createElement('button');b.type='button';b.textContent='Try 2 legs';b.onclick=()=>{const el=$('#legsSelect');el.value='2';el.dispatchEvent(new Event('change',{bubbles:true}))};actions.append(b)}
-  if((s==='nfl'?window.NFL_PARLAY_STATE?.recommendationTier:panel.querySelector('select').value)==='screened'){const b=document.createElement('button');b.type='button';b.textContent='View Matchups';b.onclick=()=>select('ideas');actions.append(b)}
+  if(!exploring&&!(s==='nfl'&&window.NFL_PARLAY_STATE?.apiKey)){const b=document.createElement('button');b.type='button';b.textContent='Explore other picks';b.onclick=()=>select('ideas');actions.append(b)}
   if(actions.children.length)empty.append(actions);
  }
 }
