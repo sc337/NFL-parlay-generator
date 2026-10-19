@@ -109,6 +109,19 @@ them. Prices remain source quotes, not a guarantee of Caesars availability.
 
 ### Pick quality policy (October 15, 2026)
 
+NFL selection modes are labeled Value, Matchups and Win Chance. Existing saved
+Value/Matchups choices retain their internal identifiers and behavior. Win
+Chance returns one complete build using buffered leg estimates and input
+coverage, with the existing compatibility and availability checks. Each leg
+requires a buffered estimate of at least 50% and a quoted implied probability
+no higher than 85%; these are product policies, not measured accuracy. Its SGP
+search uses the existing lower experimental sensitivity scenario. It does not
+require positive estimated value and is always marked value unchecked. Stale
+quotes, unavailable players, unstable roles, insufficient evidence, unsupported
+ALT lines and Caesars straight-only markets remain excluded. Win Chance builds
+are excluded from the existing Value profile-history cohort. Pick of the Day
+retains its Value screen; additional suggestions carry explicit mode warnings.
+
 The October 19 value-screen review separates non-price eligibility from the
 price comparison. All freshness, availability, role, longshot and compatibility
 checks run before a rejection is labeled price-only. NFL missing-role penalties

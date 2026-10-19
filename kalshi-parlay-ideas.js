@@ -3,6 +3,7 @@
 const supported=new Set(['player_pass_yds','player_rush_yds','player_reception_yds','player_receptions']);
 const straightOnly=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
 const active=s=>!!s&&!s.apiKey&&(s.recommendationTier||'screened')==='ideas';
+const likelihood=s=>s?.recommendationTier==='likelihood';
 function assess(m,game,state){
  const q=window.PICK_QUALITY.quote('nfl',m),now=Date.now(),start=Date.parse(game?.commence_time||''),at=Date.parse(q.checkedAt||''),contextAt=Date.parse(game?.context?.updated_at||'');
  const key=String(m.marketKey||m.type).replace(/_alternate$/,''),injury=String(m.contextSignals?.injury_status||'').toLowerCase();
@@ -66,12 +67,12 @@ function report(games,state){
   if(!state.selectedMarkets.has(m.type)||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
   if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game.commence_time))continue;
   checked++;if(m.player)props++;
-  const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
+  const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{selectionMode:likelihood(state)?'likelihood':'screened',modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
   if(result.pass)eligible.push({market:m,game});else reasons.set(result.reason,(reasons.get(result.reason)||0)+1);
-  if(!active(state)&&result.dataPass){dataReady++;if(!result.pricePass&&result.minimumOdds!=null)priceWatch.push({market:m,game,quality:result});}
+  if(!active(state)&&!likelihood(state)&&result.dataPass){dataReady++;if(!result.pricePass&&result.minimumOdds!=null)priceWatch.push({market:m,game,quality:result});}
  }
  const seen=new Set(),watch=priceWatch.sort((a,b)=>a.quality.priceGap-b.quality.priceGap||String(a.market.ticker).localeCompare(String(b.market.ticker))).filter(({market:m,game:g})=>{const key=g.id+'|'+(m.player||m.type);if(seen.has(key))return false;seen.add(key);return true}).slice(0,3);
- return {eligible,checked,props,screened:!active(state),dataReady,priceWatch:watch,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+ return {eligible,checked,props,screened:!active(state)&&!likelihood(state),dataReady,priceWatch:watch,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
 }
 function diagnostics(report){
  if(!report)return '';
@@ -84,22 +85,23 @@ function diagnostics(report){
 }
 function emptyMessage(report,count,state){
  const ideas=active(state),n=report?.eligible.length||0;
- const lead='No '+count+'-leg '+(ideas?'matchup idea':'value-screened parlay')+' for these filters. ';
+ const lead='No '+count+'-leg '+(ideas?'Matchups build':likelihood(state)?'Win Chance build':'value-screened parlay')+' for these filters. ';
  if(!report?.checked)return lead+'No selections available for the selected date and markets.';
  if(ideas&&report.props===0&&count>2)return lead+'Player props are unavailable in this feed; moneyline/spread and total can fill at most two compatible legs. Select 2 legs and Standard + ALT, or another game. '+(n?n+' selections passed individual checks.':report.checked+' selections checked; '+(report.reasons[0]?.[0]||'none qualified')+'.');
- if(!n)return lead+report.checked+' selections checked; none passed '+(ideas?'the context and data-quality checks.':'the value screen. ')+(ideas?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
+ if(!n)return lead+report.checked+' selections checked; none passed '+(ideas||likelihood(state)?'the likelihood and data-quality checks.':'the value screen. ')+(ideas||likelihood(state)?'':report.reasons.length===1&&report.reasons[0][0]==='Edge does not clear uncertainty buffer'?'All failed the model uncertainty buffer.':'Expand the exclusions below for details.');
  return lead+n+' eligible selections'+(report.props?' across '+report.players+' players':'')+'. Try fewer legs or different markets; compatible legs are still required.';
 }
 function refresh(){
  const host=document.querySelector('#nflRecommendationTierWrap'),s=window.NFL_PARLAY_STATE;if(!host||!s)return;
- host.hidden=!!s.apiKey||(window.__ACTIVE_SPORT||'nfl')!=='nfl';
+ host.hidden=(window.__ACTIVE_SPORT||'nfl')!=='nfl';
  host.querySelector('select').value=s.recommendationTier||'screened';
- host.querySelector('small').textContent=active(s)?'Ranks supported matchups using Kalshi or ESPN/DraftKings reference prices and recent context. Value unverified. Verify each line and combined price on Caesars.':'Requires the probability estimate, after an uncertainty deduction, to beat the quoted price. Models remain unvalidated; this mode may return no qualifying picks.';
+ const ideas=host.querySelector('option[value="ideas"]');if(ideas)ideas.disabled=!!s.apiKey;
+ host.querySelector('small').textContent=likelihood(s)?'Prioritizes buffered model estimates with data, availability and compatibility checks. At least 50% per leg after the buffer; reference price no higher than 85¢. Estimates are unvalidated and can be poor value. Returns one best build.':active(s)?'Ranks supported matchups using reference prices and recent context. Value and win chance unverified. Verify each line and combined price on Caesars.':'Requires the buffered estimate to beat the quoted price. Models remain unvalidated; Value may return no qualifying picks.';
 }
 function mount(){
  const anchor=document.querySelector('#nflWeekWrap');if(!anchor)return;
  const field=document.createElement('div');field.id='nflRecommendationTierWrap';field.className='field';
- field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="ideas">Matchup ideas</option><option value="screened">Value-screened</option></select><small id="nflIdeasNote"></small>';
+ field.innerHTML='<label for="nflRecommendationTier">Selection mode</label><select id="nflRecommendationTier" aria-describedby="nflIdeasNote"><option value="screened">Value</option><option value="ideas">Matchups</option><option value="likelihood">Win Chance</option></select><small id="nflIdeasNote"></small>';
  anchor.before(field);
  field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);refresh();window.generate?.()});
  // TD suggestions are not a parlay market. Preserve a separate scoped drawer.
@@ -109,6 +111,6 @@ function mount(){
  if(td&&results){const drawer=document.createElement('details');drawer.className='market-filter-details';drawer.id='nflTdStraightDrawer';drawer.innerHTML='<summary>TD straight-only ideas</summary>';drawer.append(td);results.after(drawer)}
  refresh();
 }
-window.NFL_PARLAY_IDEAS={active,assess,checkBuild,scopedGames,report,emptyMessage,diagnostics,refresh};
+window.NFL_PARLAY_IDEAS={active,likelihood,assess,checkBuild,scopedGames,report,emptyMessage,diagnostics,refresh};
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();

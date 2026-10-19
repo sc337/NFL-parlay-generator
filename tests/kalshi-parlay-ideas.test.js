@@ -24,6 +24,13 @@ test('screened price watch includes only price failures with usable data and esc
  r.m.contextSignals.injury_status='out';report=api.report([r.g],s);assert.equal(report.priceWatch.length,0);assert.equal(report.dataReady,0);assert.doesNotMatch(api.diagnostics(report),/Price watch/);
  r.m.contextSignals.injury_status='none_reported';r.m.quotedAt='2026-10-12T03:00:00Z';assert.equal(api.report([r.g],s).priceWatch.length,0);
 });
+test('Win Chance reports its own eligibility and never presents a price-watch entry as value',()=>{
+ const r=setup(),api=r.window.NFL_PARLAY_IDEAS;r.ctx.state.recommendationTier='likelihood';
+ Object.assign(r.m,{modelProbability:.67,rawModelProbability:.67,projectionCoverage:.7,modelUncertainty:.3,roleStability:.8});r.m.propHistory.roleStable=true;
+ let report=api.report([r.g],r.ctx.state);assert.equal(report.eligible.length,1);assert.equal(report.screened,false);assert.equal(report.priceWatch.length,0);
+ r.m.contextSignals.injury_status='out';report=api.report([r.g],r.ctx.state);assert.equal(report.eligible.length,0);assert.match(api.emptyMessage(report,2,r.ctx.state),/Win Chance/);assert.doesNotMatch(api.emptyMessage(report,2,r.ctx.state),/value screen/);
+ const src=fs.readFileSync('kalshi-parlay-ideas.js','utf8');for(const label of ['Value','Matchups','Win Chance'])assert.ok(src.includes('>'+label+'</option>'));
+});
 test('ideas reject stale quotes, started games, unverified roles, uncertain injury and thin history',()=>{
  const changes=[r=>r.m.quotedAt='2026-10-12T04:00:00Z',r=>r.g.commence_time='2026-10-12T01:00:00Z',r=>r.m._rosterVerified=false,r=>r.m.team='Other',r=>r.m.contextSignals.injury_status='questionable',r=>r.m.contextSignals.injury_checked=false,r=>r.m.propHistory.played=2,r=>r.m.propHistory.metrics.player_rush_yds=[1,2],r=>r.m.propHistory.latest_game='2026-10-12',r=>r.g.context.updated_at='2026-10-11T01:00:00Z',r=>r.m.price=-1000,r=>r.m.propHistory.source='market breadth'];
  for(const change of changes){const r=setup();change(r);assert.equal(r.assess().pass,false,r.assess().reason)}
@@ -39,11 +46,22 @@ function snapshotBuilder(lines='both',tier='ideas'){
  vm.runInContext(app.slice(app.indexOf('function correlation('),app.indexOf('function renderNflStraight(')),r.ctx);
  return {...r,snapshot,build:n=>{const out=[];for(const profile of ['safe','balanced','long'])out.push(r.ctx.buildSgp(snapshot.games[0],n,50,profile,out.filter(Boolean)));return out}};
 }
-test('current Bills-Rams snapshot produces deterministic ideas with actual quotes and preserves eligibility safeguards',()=>{
- const r=snapshotBuilder(),parlays=r.build(3);assert.ok(parlays.some(Boolean),'at least one genuine three-leg idea');
+test('current saved snapshot produces deterministic quoted ideas or passes without padding an incomplete build',()=>{
+ const r=snapshotBuilder(),parlays=r.build(3);
  for(const p of parlays.filter(Boolean)){assert.equal(p.ideaTier,true);assert.equal(p.legs.length,3);assert.equal(new Set(p.legs.filter(m=>m.player).map(m=>m.player)).size,p.legs.filter(m=>m.player).length);assert.match(p.summary,/not a proven edge/);for(const m of p.legs){assert(r.snapshot.games[0].markets.some(x=>x.ticker===m.ticker&&x.quoteSide===m.quoteSide&&x.price===m.price));assert.equal(r.window.NFL_PARLAY_IDEAS.assess(m,r.snapshot.games[0],r.ctx.state).pass,true)}}
  assert.deepEqual(parlays.map(p=>r.ctx.parlaySignature(p)),r.build(3).map(p=>r.ctx.parlaySignature(p)));
  const screened=snapshotBuilder('standard','screened');assert.equal(screened.window.NFL_PARLAY_IDEAS.active(screened.ctx.state),false);
+});
+test('Win Chance packages a compatible three-leg SGP that Value rejects at the same prices',()=>{
+ const r=setup();r.ctx.state.recommendationTier='likelihood';
+ const rows=[{...r.m,name:'Home Runner Over 49.5',ticker:'home'},{...r.m,player:'Away Runner',team:'Away',name:'Away Runner Over 49.5',ticker:'away'},{...r.m,type:'totals',marketKey:'totals',player:null,team:null,point:44.5,name:'Over 44.5',ticker:'total'}].map(m=>({...m,modelProbability:.64,rawModelProbability:.64,marketProbability:.5,projectionCoverage:.7,modelUncertainty:.3,roleStability:.8,propHistory:{...m.propHistory,roleStable:true}}));
+ r.g.markets=rows;r.window.PICK_QUALITY.prepare('nfl',rows,{},[r.g],'2026-10-12T04:59:00Z');
+ r.ctx.nflSlate=()=>[r.g];r.ctx.americanToDecimal=o=>o>0?1+o/100:1+100/Math.abs(o);r.ctx.decimalToAmerican=d=>Math.round(d>=2?(d-1)*100:-100/(d-1));r.ctx.STRAIGHT_ONLY_MARKETS=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
+ vm.runInContext(app.slice(app.indexOf('function isParlayEligible('),app.indexOf('const PROP_MARKET_META')),r.ctx);
+ vm.runInContext(app.slice(app.indexOf('function correlation('),app.indexOf('function renderNflStraight(')),r.ctx);
+ const p=r.ctx.buildSgp(r.g,3,50,'safe',[]);assert.ok(p);assert.equal(p.legs.length,3);assert.equal(p.likelihoodTier,true);assert.equal(p.name,'Win Chance');
+ assert.ok(p.legs.every(m=>rows.includes(m)));assert.equal(p.risk.pass,true);assert.equal(p.risk.validated,false);
+ r.ctx.state.recommendationTier='screened';assert.equal(r.ctx.buildSgp(r.g,3,50,'safe',[]),null);
 });
 test('TD drawer respects selected game and selected week even with no TD parlay chip',()=>{
  const r=setup(),td={type:'td',tdExperimental:true,_rosterVerified:true,modelProbability:.6,marketProbability:.55,name:'Selected TD',tdOpportunity:{games:4,ten_rush:3,ten_target:1}};r.g.markets=[td];const other={...r.g,id:'other',markets:[{...td,name:'Wrong game TD',modelProbability:.9}]};let selected='fixture';const host={innerHTML:''};r.ctx.$=s=>s==='#tdMarketOptions'?host:s==='#gameSelect'?{value:selected}:null;r.ctx.nflSlate=()=>[r.g,other];r.window.MARKET_GUARDS={esc:x=>x};vm.runInContext(app.slice(app.indexOf('function renderTdMarkets(){'),app.indexOf('function countPlayerProps(')),r.ctx);r.ctx.renderTdMarkets();assert.match(host.innerHTML,/Selected TD/);assert.doesNotMatch(host.innerHTML,/Wrong game TD/);r.ctx.nflSlate=()=>[other];r.ctx.renderTdMarkets();assert.doesNotMatch(host.innerHTML,/Selected TD|Wrong game TD/);

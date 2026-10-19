@@ -614,6 +614,7 @@ function marketQuality(m,variant){
 }
 
 function profileSelectionScore(q,variant){
+  if(q.selectionMode==='likelihood')return 200+100*Math.log(q.conservativeP)+q.coverage*4-(q.juicePenalty||0);
   const p=q.quote.p,likelihood=q.validated?q.conservativeP:Math.min(q.conservativeP,p);
   if(variant==='safe'&&(p<.55||q.conservativeP<.55))return -999;
   // Price discipline is a profile policy, not a measured confidence limit.
@@ -811,6 +812,7 @@ function sgpLikelihood(p){
   return Math.min(raw,Number.isFinite(independent)?independent:raw,Number.isFinite(lower)?lower:raw);
 }
 function sgpProfileFits(p,variant,previous){
+  if(state.recommendationTier==='likelihood')return p?.risk?.pass===true;
   const probability=sgpLikelihood(p);
   if(!Number.isFinite(probability))return false;
   const category=window.PARLAY_RISK.profile(probability);
@@ -867,7 +869,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     p.gameLabel=`${game.away} @ ${game.home}`;p.kickoff=game.commence_time;
     p.teamMix=teamCounts(p.legs,game).every(n=>n>0)?'Both teams':'Concentrated';
     p.scriptName=ideas?'Reference-based joint scenario':'Experimental joint scenario';
-    p.summary='Complete SGP compared within its joint-risk band; no required prop mix. '+
+    p.summary=state.recommendationTier==='likelihood'?'Win Chance compares compatible same-game builds using the lower experimental sensitivity scenario. Joint estimates remain unvalidated; value is unchecked. Confirm exact lines and combined sportsbook price.':'Complete SGP compared within its joint-risk band; no required prop mix. '+
       (ideas?'Reference prices supply scenario inputs, not a validated win forecast. ':'Model inputs and same-game dependence remain experimental. ')+
       'At most two receiver props per offense; safer labels cannot rely on assumed correlation uplift. Profile ordering is approximate. Verify exact lines and combined SGP odds on Caesars; not a proven edge.';
     return p;
@@ -924,10 +926,10 @@ function buildMulti(count,risk,variant,previous=[]){
   return null;
 }
 
-function nflQualityForecast(m){return {modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,baselines:m.baselines,marketAnchored:m.marketAnchored===true,modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental};}
+function nflQualityForecast(m){return {selectionMode:state.recommendationTier==='likelihood'?'likelihood':'screened',modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,baselines:m.baselines,marketAnchored:m.marketAnchored===true,modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental};}
 function prepareNflQuality(){window.PICK_QUALITY?.prepare('nfl',(state.games||[]).flatMap(g=>(g.markets||[])),{},state.games,window.NFL_KALSHI?.snapshotAt?.()||null);}
 function packageParlay(legs,variant,isSgp,meta={}){
-  const ideas=window.NFL_PARLAY_IDEAS?.active?.(state);
+  const ideas=window.NFL_PARLAY_IDEAS?.active?.(state),likelihood=state.recommendationTier==='likelihood';
   if(ideas){if(!window.NFL_PARLAY_IDEAS.checkBuild(legs,state).pass)return null;}
   else if(window.PICK_QUALITY&&!window.PICK_QUALITY.checkBuild('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m)})),isSgp).pass)return null;
   if(!legs?.length || legs.length>4 || legs.some(m=>!isParlayEligible(m))) return null;
@@ -943,15 +945,15 @@ function packageParlay(legs,variant,isSgp,meta={}){
   const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'};
   const grades={safe:'CONSERVATIVE',balanced:'BEST FIT',long:'HIGHER PAYOUT'};
   const risk=!ideas&&!meta.deferRisk?window.PARLAY_RISK?.summarize('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m),game:window.PICK_QUALITY?.gameFor('nfl',m)})),{sgp:isSgp}):null;
-  if(risk?.pass&&risk.modelP!=null&&((variant==='safe'&&risk.profile!=='Conservative')||(variant==='balanced'&&risk.profile==='Lotto')||(variant==='long'&&risk.profile!=='Lotto')))return null;
+  if(!likelihood&&risk?.pass&&risk.modelP!=null&&((variant==='safe'&&risk.profile!=='Conservative')||(variant==='balanced'&&risk.profile==='Lotto')||(variant==='long'&&risk.profile!=='Lotto')))return null;
   return {
-    name:names[variant],profile:variant,grade:ideas?'PARLAY IDEA':grades[variant],legs,ideaTier:!!ideas,
+    name:likelihood?'Win Chance':names[variant],profile:likelihood?'likelihood':variant,grade:likelihood?'WIN CHANCE':ideas?'PARLAY IDEA':grades[variant],legs,ideaTier:!!ideas,likelihoodTier:likelihood,
     odds:decimalToAmerican(decimal),score:Math.round(avg),
     risk,
     corr,
     scriptName:ideas?'Reference-market idea':meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:ideas?({safe:'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Recent context checked, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
+    summary:likelihood?'Prioritizes buffered model likelihood, stable roles and evidence. Estimates are unvalidated; these selections can be poor value at the current price. Verify exact lines and the combined sportsbook offer.':ideas?({safe:'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Recent context checked, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
     ({safe:'Prioritizes buffered likelihood with a penalty for excessive juice.',balanced:'Balances evidence, buffered likelihood and price discipline; rejects legs above 78% quote-implied probability.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'Cushion is a small preference, not evidence of value. ':'')+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
       : 'One leg per game. Combined model probability remains unvalidated; separate games do not guarantee independence.')
@@ -1018,7 +1020,7 @@ function render(parlays){
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
     wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
     if(window.PICK_QUALITY){
-      const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
+      const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>state.selectedMarkets.has(m.type)&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
       if(singles.length){const esc=window.MARKET_GUARDS.esc;wrap.innerHTML+='<article class="parlay-card"><div class="parlay-top"><div><span class="grade">SINGLES</span><h3 class="parlay-name">Available straight picks</h3></div></div><p class="summary">These picks qualify individually. The requested parlay could not be filled.</p><div class="legs">'+singles.map(x=>'<div class="leg" data-caesars-id="'+(window.CAESARS_COMPARE?.register('nfl',x.m)||'')+'"><div class="leg-title">'+esc(x.m.name)+'</div><div class="leg-sub">'+esc(nflMatchup(x.g.away+' @ '+x.g.home)+' · '+nflKickoff(x.g.commence_time))+'</div><div class="leg-quote">'+esc(window.PICK_QUALITY.quoteLabel('nfl',x.m))+'</div><div class="leg-reason">'+esc(x.q.warnings.join(' · ')||'Model-screened; verify current sportsbook line')+'</div></div>').join('')+'</div></article>';}
     }
@@ -1026,7 +1028,7 @@ function render(parlays){
   }
   for(const p of valid){
     const node=tpl.content.cloneNode(true);
-    node.querySelector('.grade').textContent=p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
+    node.querySelector('.grade').textContent=p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
     node.querySelector('.parlay-name').textContent=p.name;
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
@@ -1040,7 +1042,7 @@ function render(parlays){
     node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(nflKickoff(p.kickoff)?nflKickoff(p.kickoff)+' · ':'')+(matchup||'Same game'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
       (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'');
     if(state.mode==='sgp'&&p.gameLabel){const teams=p.gameLabel.split(/\s+@\s+/);if(teams.length===2){node.querySelector('.summary').dataset.away=teams[0];node.querySelector('.summary').dataset.home=teams[1]}}
-    node.querySelector('.score').textContent=p.ideaTier?'Reference-market idea · Not verified value':`Rating ${p.score}/100 · Not win chance`;
+    node.querySelector('.score').textContent=p.likelihoodTier?'Win Chance estimate · Value unchecked':p.ideaTier?'Reference-market idea · Not verified value':`Rating ${p.score}/100 · Not win chance`;
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? 'Joint value unverified' : `${p.legs.length} games/legs`;
     const legs=node.querySelector('.legs');
     p.legs.forEach((l,i)=>{
@@ -1050,17 +1052,18 @@ function render(parlays){
       const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l));const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
+      if(p.likelihoodTier&&quality)metrics.push('Buffered estimate '+Math.round(quality.conservativeP*100)+'% · Not measured accuracy');
       if(p.ideaTier)metrics.push('Recent context checked · '+(l.source||'Reference')+' · Check Caesars');
       if(quality?.pass&&quality.warnings?.length)metrics.push(...quality.warnings);
       const lineComparison=window.NFL_ALT_LINES?.comparisonText?.(l,state.games.find(g=>g.id===l.gameId)||state.games.find(g=>(g.markets||[]).some(m=>m===l||m.ticker&&m.ticker===l.ticker)));
       if(lineComparison)metrics.push(lineComparison);
       if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
-      if(!p.ideaTier&&l.nflV3Tier==='model'&&quality?.tier!=='suggestion'){
+      if(!p.ideaTier&&!p.likelihoodTier&&l.nflV3Tier==='model'&&quality?.tier!=='suggestion'){
         if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
         if(Number.isFinite(mk))metrics.push('Market '+Math.round(mk*100)+'%');
         if(Number.isFinite(ed))metrics.push('Estimated edge '+(ed>=0?'+':'')+Math.round(ed*100)+'%');
         if(Number.isFinite(ev))metrics.push((quality?.validated?'EV ':'Estimated return ')+(ev>=0?'+':'')+Math.round(ev*100)+'%');
-      }else if(!p.ideaTier&&l.nflV3Tier==='market'){
+      }else if(!p.ideaTier&&!p.likelihoodTier&&l.nflV3Tier==='market'){
         metrics.push('Market-qualified');
         metrics.push('Input quality '+Math.round(Number(l.selectionConfidence)||Number(l.confidence)||0));
       }
@@ -1111,7 +1114,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   if(window.SLATE_UI)hydrateGames();
   const count=Math.max(2,Math.min(4,Math.floor(Number($('#legsSelect').value))||2));
   $('#legsSelect').value=String(count);
-  const variants=['safe','balanced','long'];
+  const variants=state.recommendationTier==='likelihood'?['safe']:['safe','balanced','long'];
   let parlays;
   if(state.mode==='sgp'){
     const slate=nflSlate();
@@ -1124,7 +1127,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
     if(state.apiKey && propCount===0 && game?.propStatus==='none'){
       $('#resultsTitle').textContent='No FanDuel player props posted yet';
     }else{
-      $('#resultsTitle').textContent=window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':propCount
+      $('#resultsTitle').textContent=state.recommendationTier==='likelihood'?'Win Chance · Estimates, value unchecked':window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':propCount
         ? `Value-screened SGPs • ${propCount} quoted props`
         : 'Value-screened SGPs';
     }
@@ -1146,7 +1149,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   }
   // Keep the best independent build for each risk profile in swipe order.
   // Repeated generation uses the same inputs; profiles never penalize each other.
-  if(current()){window.NFL_PROFILE_HISTORY?.record?.(parlays.filter(p=>p&&!p.ideaTier),state.mode);render(parlays);}
+  if(current()){window.NFL_PROFILE_HISTORY?.record?.(parlays.filter(p=>p&&!p.ideaTier&&!p.likelihoodTier),state.mode);render(parlays);}
 }
 
 window.generate=generate;
@@ -1160,7 +1163,7 @@ $$('.tab').forEach(btn=>btn.addEventListener('click',async()=>{
   state.mode=btn.dataset.mode;
   $('#gameChooserWrap').style.display=state.mode==='sgp'?'flex':'none';
   $('#modeTitle').textContent=state.mode==='sgp'?'Same Game Parlay':'Multi-Game Parlay';
-  $('#resultsTitle').textContent=window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':state.mode==='sgp'?'Value-screened SGPs':'Value-screened multi-game picks';
+  $('#resultsTitle').textContent=state.recommendationTier==='likelihood'?'Win Chance · Estimates, value unchecked':window.NFL_PARLAY_IDEAS?.active?.(state)?'Matchup ideas · Value unverified':state.mode==='sgp'?'Value-screened SGPs':'Value-screened multi-game picks';
   await generate();
 }));
 

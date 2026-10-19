@@ -8,7 +8,7 @@ function nfl(mode='multi'){
   buildMulti:(_n,_r,v)=>builds[v],buildSgp:(_g,_n,_r,v,prev)=>{previous.push(prev);return builds[v]},
   render:p=>output.push(p),parlaySignature:p=>p.legs.join('|')});
  vm.runInContext(source.slice(source.indexOf('async function generate(){'),source.indexOf('window.generate=generate;')),context);
- return {run:()=>context.generate(),builds,output,previous};
+ return {run:()=>context.generate(),builds,output,previous,state:context.state};
 }
 test('NFL Generate preserves Conservative, Balanced and Lotto swipe order and repeats each best build',async()=>{
  for(const mode of ['multi','sgp']){
@@ -16,6 +16,9 @@ test('NFL Generate preserves Conservative, Balanced and Lotto swipe order and re
   assert.deepEqual([...app.output[0]],[app.builds.safe,app.builds.balanced,app.builds.long]);assert.deepEqual([...app.output[1]],[...app.output[0]]);
   if(mode==='sgp')assert.deepEqual(app.previous.slice(0,3).map(p=>p.length),[0,1,2]);
  }
+});
+test('Win Chance generates one best build in either game mode without changing the existing profiles',async()=>{
+ for(const mode of ['multi','sgp']){const app=nfl(mode);app.state.recommendationTier='likelihood';await app.run();assert.equal(app.output[0].length,1);assert.equal(app.output[0][0],app.builds.safe);app.state.recommendationTier='screened';await app.run();assert.equal(app.output[1].length,3);}
 });
 test('NFL profiles remain separate when one produces a shorter fallback',async()=>{
  const app=nfl();app.builds.balanced.legs=[1,2];app.builds.balanced.score=99;

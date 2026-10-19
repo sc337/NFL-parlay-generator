@@ -15,6 +15,20 @@ test('book compatibility blocks ALT player unders on straight, featured, extra a
  assert.equal(r.Q.unsupportedAltUnder({...m,player:null,type:'totals',marketKey:'totals'}),false);
 });
 test('all selections need independent coverage and edge beyond a named uncertainty buffer',()=>{const r=runtime(),{m,f}=fixture(r);assert.equal(r.Q.assess('nfl',m,f).pass,true);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.49}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,modelP:.53}).pass,false);assert.equal(r.Q.assess('nfl',m,{...f,coverage:.1}).reason,'Independent projection too thin');assert.equal(r.Q.assess('nfl',m,{...f,modelP:.5}).reason,'Market-only estimate');assert.ok(r.Q.assess('nfl',m,f).conservativeP<f.modelP)});
+test('Win Chance can accept a price failure without treating it as qualified value',()=>{
+ const r=runtime(),{m,f}=fixture(r,{price:-150}),forecast={...f,selectionMode:'likelihood'};
+ const strict=r.Q.assess('nfl',m,f),chance=r.Q.assess('nfl',m,forecast);
+ assert.equal(strict.pass,false);assert.equal(strict.reason,'Edge does not clear uncertainty buffer');
+ assert.equal(chance.pass,true);assert.equal(chance.pricePass,false);assert.equal(chance.valueQualified,false);assert.equal(chance.selectionMode,'likelihood');assert.equal(chance.rankingP,chance.conservativeP);
+ assert.match(chance.warnings.join(' '),/poor value/);
+ assert.equal(r.Q.assess('nfl',m,{...forecast,modelP:.53}).reason,'Win Chance needs a buffered estimate of at least 50%');
+ const expensive={...m,price:-900,marketProbability:.88};assert.equal(r.Q.assess('nfl',expensive,{...forecast,modelP:.89,marketP:.88}).reason,'Price too short for Win Chance');
+ for(const patch of [{quotedAt:new Date(r.now()-31*60000).toISOString()},{injury_status:'out'},{game_status:'in'},{_invalidRoster:true}]){
+  assert.equal(r.Q.assess('nfl',{...m,...patch},forecast).pass,false);
+ }
+ assert.equal(r.Q.assess('nfl',{...m,marketKey:'player_rush_attempts'},forecast,{parlay:true}).reason,'Caesars straight only');
+ assert.equal(r.Q.assess('nfl',{...m,player:'Runner',type:'rushing',marketKey:'player_rush_yds',isAltLine:true,side:'under'},forecast).pass,false);
+});
 test('NFL measured stable opportunity history resolves its missing-role penalty without overriding known instability',()=>{
  const r=runtime(),{m,g,f}=fixture(r,{player:'Runner',type:'rushing',_rosterVerified:true,contextSignals:{injury_checked:true,injury_status:'none_reported'},propHistory:{source:'nflverse completed plays',played:5,games:5,opportunities:{player_rush_attempts:[12,13,12,14,13]}}});
  const forecast={...f,roleStability:.8};g.context={updated_at:new Date(r.now()).toISOString()};
