@@ -1,4 +1,13 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+test('compact layout keeps all NBA profile cards visible and removes old analysis clones',()=>{
+ let removed=0,cloned=0;
+ const cards=Array.from({length:3},()=>({style:{display:'none'},classList:{remove(){},contains(){return false}},cloneNode(){cloned++;return {dataset:{},classList:{add(){}}}}}));
+ const secondary={querySelectorAll:()=>[{remove(){removed++}}],appendChild(){}},drawer={querySelector:()=>secondary};
+ const document={body:{dataset:{}},readyState:'loading',addEventListener(){},querySelector:s=>s==='#moreAnalysis'?drawer:null,querySelectorAll:()=>cards};
+ const window={__ACTIVE_SPORT:'nba'},MutationObserver=class{};
+ vm.runInNewContext(fs.readFileSync('compact-ui.js','utf8'),{window,document,MutationObserver});window.COMPACT_UI.compactResults();
+ assert.equal(removed,1);assert.equal(cloned,0);assert.ok(cards.every(card=>card.style.display===''));
+});
 test('line buttons dispatch the original bubbling change and follow selected/disabled options',()=>{
  const nodes=new Map(),events=[];
  const source={id:'nbaLinesSelect',value:'both',options:['standard','alt','both'].map(value=>({value})),classList:{add(){}},after(group){nodes.set('#'+group.id,group)},dispatchEvent(event){events.push({value:this.value,bubbles:event.bubbles})}};
