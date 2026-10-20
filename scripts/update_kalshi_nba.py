@@ -21,13 +21,14 @@ API = 'https://external-api.kalshi.com/trade-api/v2'
 ESPN = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba'
 SERIES = {'KXNBAGAME': 'moneyline', 'KXNBASPREAD': 'spread', 'KXNBATOTAL': 'total',
           'KXNBAPTS': 'points', 'KXNBAREB': 'rebounds', 'KXNBAAST': 'assists',
-          'KXNBA3PT': 'threes', 'KXNBAPRA': 'pra', 'KXNBAPR': 'pr', 'KXNBAPA': 'pa',
-          'KXNBARA': 'ra', 'KXNBASTL': 'steals', 'KXNBABLK': 'blocks'}
+          'KXNBA3PT': 'threes', 'KXNBAPRA': 'pra', 'KXNBA2D': 'double_double',
+          'KXNBA3D': 'triple_double'}
 ALIASES = {'GS': 'GSW', 'NY': 'NYK', 'NO': 'NOP', 'SA': 'SAS', 'UTAH': 'UTA',
            'PHO': 'PHX', 'BKN': 'BKN', 'BRK': 'BKN', 'BK': 'BKN', 'CHO': 'CHA', 'WSH': 'WAS'}
 CODESET = set('ATL BOS BKN CHA CHI CLE DAL DEN DET GSW HOU IND LAC LAL MEM MIA MIL MIN NOP NYK OKC ORL PHI PHX POR SAC SAS TOR UTA WAS'.split()) | set(ALIASES)
 LABELS = {'points': 'Points', 'rebounds': 'Rebounds', 'assists': 'Assists', 'threes': 'Threes',
-          'pra': 'PRA', 'pr': 'Pts + Reb', 'pa': 'Pts + Ast', 'ra': 'Reb + Ast', 'steals': 'Steals', 'blocks': 'Blocks'}
+          'pra': 'Pts + Reb + Assist', 'double_double': 'Double Double', 'triple_double': 'Triple Double'}
+MILESTONES = {'double_double', 'triple_double'}
 
 def key(s):
     return ''.join(c for c in unicodedata.normalize('NFKD', str(s)).casefold() if c.isalnum() and not unicodedata.combining(c))
@@ -97,8 +98,8 @@ def normalize_market(m, series, events, ctx, now):
     teams = [{'code': code(sides[s].get('abbreviation')), 'id': str(sides[s].get('id')),
               'name': sides[s].get('displayName'), 'short': sides[s].get('shortDisplayName'),
               'logo': sides[s].get('logo', '')} for s in ('away', 'home')]
-    kind = SERIES[series]; line = threshold(m) if kind != 'moneyline' else None
-    if kind != 'moneyline' and line is None:
+    kind = SERIES[series]; line = threshold(m) if kind != 'moneyline' and kind not in MILESTONES else None
+    if kind != 'moneyline' and kind not in MILESTONES and line is None:
         return []
     tail = str(m.get('ticker') or '').rsplit('-', 1)[-1]
     selected = next((t for t in teams if any(re.fullmatch(re.escape(c)+r'\d*(?:\.\d+)?', tail) for c in CODESET if code(c) == t['code'])), None)
@@ -117,7 +118,7 @@ def normalize_market(m, series, events, ctx, now):
         if ask is None or bid is None or not 0 < bid <= ask < 1:
             continue
         team = next(t for t in teams if t != selected) if kind == 'spread' and side == 'no' else selected
-        label = team['short']+' ML' if kind == 'moneyline' else team['short']+' '+('-' if side == 'yes' else '+')+str(line)+' Spread' if kind == 'spread' else (player['name']+' ' if player else '')+('Over' if side == 'yes' else 'Under')+' '+str(line)+' '+LABELS.get(kind, 'points')
+        label = team['short']+' ML' if kind == 'moneyline' else team['short']+' '+('-' if side == 'yes' else '+')+str(line)+' Spread' if kind == 'spread' else (player['name']+' '+LABELS[kind]+' ('+side.title()+')' if kind in MILESTONES else (player['name']+' ' if player else '')+('Over' if side == 'yes' else 'Under')+' '+str(line)+' '+LABELS.get(kind, 'Points'))
         rows.append({'ticker': m['ticker'], 'event_ticker': m['event_ticker'], 'series': series,
                      'selection_id': m['ticker']+'|'+side, 'kind': kind, 'side': side, 'quoteSide': side,
                      'label': label, 'title': label, 'contract_title': m.get('title'), 'line': line,
