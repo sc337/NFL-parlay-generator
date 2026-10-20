@@ -1021,7 +1021,8 @@ function render(parlays){
   if(document.body.classList.contains('prediction-only')){const rows=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
-  const valid=parlays.filter(Boolean).sort((a,b)=>buildObjective(b)-buildObjective(a));
+  const profileOrder={safe:0,balanced:1,long:2};
+  const valid=parlays.filter(Boolean).sort((a,b)=>(profileOrder[a.profile]??9)-(profileOrder[b.profile]??9));
   updateNflProfileAvailability(parlays);
   if(!valid.length){
     const count=Number($('#legsSelect')?.value)||2;
@@ -1050,12 +1051,12 @@ function render(parlays){
     }
     return;
   }
-  let alternatives;
   for(const [index,p] of valid.entries()){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.parlay-card').dataset.nflProfile=p.profile;
     node.querySelector('.grade').textContent=p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
-    node.querySelector('.parlay-name').textContent=index===0?(p.ideaTier?'Other picks · Value unverified':'Recommended parlay'):p.name;
+    node.querySelector('.parlay-name').textContent=p.ideaTier?'Other picks · Value unverified':p.name;
+    node.querySelector('.parlay-card').dataset.profile=p.profile||'';
     const sb=node.querySelector('.script-badge');
     if(sb){ sb.textContent=p.scriptName||''; sb.style.display=p.scriptName?'inline-flex':'none'; }
     const sources=new Set(p.legs.map(m=>window.PICK_QUALITY?.quote('nfl',m)?.source||m.source));
@@ -1098,16 +1099,18 @@ function render(parlays){
     });
     
     if(!p.ideaTier)window.PARLAY_RISK?.attach(node.querySelector('.parlay-card'),'nfl',p.legs.map(m=>({market:m,forecast:nflQualityForecast(m),game:window.PICK_QUALITY?.gameFor('nfl',m)})),{sgp:state.mode==='sgp'});
-    if(index===0)wrap.appendChild(node);
-    else{
-      if(!alternatives){alternatives=document.createElement('details');alternatives.id='nflParlayAlternatives';alternatives.className='nfl-parlay-alternatives';alternatives.innerHTML='<summary>View alternatives</summary>';wrap.appendChild(alternatives);}
-      alternatives.appendChild(node);
-    }
+    wrap.appendChild(node);
   }
-  const availability=$('#profileAvailability');
-  if(availability&&!availability.hidden){
-    if(!alternatives){alternatives=document.createElement('details');alternatives.id='nflParlayAlternatives';alternatives.className='nfl-parlay-alternatives';alternatives.innerHTML='<summary>View alternatives</summary>';wrap.appendChild(alternatives);}
-    const note=document.createElement('p');note.className='profile-availability';note.textContent=availability.textContent;alternatives.appendChild(note);availability.hidden=true;
+  const availability=$('#profileAvailability');if(availability)availability.hidden=true;
+  if(valid.length&&parlays.length===3){
+    const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'},present=new Set(valid.map(p=>p.profile));
+    for(const profile of ['safe','balanced','long'])if(!present.has(profile)){
+      const card=document.createElement('article');card.className='parlay-card profile-pass';card.dataset.profile=profile;
+      card.innerHTML='<div class="parlay-top"><div><span class="grade">PASS</span><h3 class="parlay-name">'+names[profile]+'</h3></div></div><p class="summary">No qualifying '+names[profile]+' build passed the current filters and quality checks. Try fewer legs or review Filters.</p>';
+      wrap.appendChild(card);
+    }
+    const order={safe:0,balanced:1,long:2};
+    [...wrap.children].filter(card=>card.classList.contains('parlay-card')).sort((a,b)=>(order[a.dataset.profile]??9)-(order[b.dataset.profile]??9)).forEach(card=>wrap.appendChild(card));
   }
 }
 

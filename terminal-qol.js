@@ -15,11 +15,12 @@ function useBuilder(k){const m=find(k);if(!m)return;const game=$('#gameSelect');
 function why(card){if(!card)return;let note=card.querySelector('.supporting-note');if(note){note.remove();return}const m=find(card.dataset.k);if(!m)return;const ctx=m.gameContext||{},bits=[];if(m.team){const form=ctx.recent_form?.[m.team];if(form?.available)bits.push(esc(m.team)+': '+form.wins+' wins in last '+form.games+' games, '+form.avg_points_for+' points scored/game')}const injury=m.contextSignals?.injury_status;if(m.player&&injury&&injury!=='none_reported')bits.push(esc(m.player)+' injury status: '+esc(injury));const weather=ctx.weather||{};if(weather.indoor===true)bits.push('Indoor venue');else if(Number.isFinite(+weather.wind_mph)&&weather.wind_mph!==null)bits.push('Wind: '+esc(weather.wind_mph)+' mph');note=document.createElement('div');note.className='supporting-note';note.innerHTML='<b>Supporting context · ESPN</b><br>'+(bits.length?bits.join('<br>'):'No independent matchup detail is available for this selection.');(card.querySelector('.ticket-details')||card).appendChild(note)}
 function variants(){
  const grid=$('#results');if(!grid)return;
- const nfl=(window.__ACTIVE_SPORT||'nfl')==='nfl';
+ const sport=window.__ACTIVE_SPORT||'nfl',carouselSport=['nfl','nba'].includes(sport);
  const cards=[...grid.children].filter(x=>x.classList.contains('parlay-card'));
- const carousel=nfl&&cards.length>=2;
+ const carousel=carouselSport&&cards.length>=2;
  grid.classList.toggle('nfl-carousel',carousel);
- grid.setAttribute('aria-label',carousel?'NFL parlay ideas. Swipe left or right for Conservative, Balanced and Lotto.':'Recommendations');
+ grid.setAttribute('aria-label',carousel?sport.toUpperCase()+' parlay profiles. Swipe left or right for Conservative, Balanced and Lotto.':'Recommendations');
+ const signature=cards.map(card=>card.innerHTML).join('\u0000');if(grid.dataset.carouselSignature!==signature){grid.dataset.carouselSignature=signature;grid.scrollLeft=0;}
  cards.forEach(card=>card.classList.remove('variant-hidden'));
  const hint=$('#parlaySwipeHint');if(hint){hint.hidden=!carousel;if(carousel){
    if(!hint.querySelector('.carousel-position'))hint.innerHTML='<span class="carousel-instruction">Swipe parlays</span><span class="carousel-position" aria-live="polite"></span><span class="carousel-dots" role="group" aria-label="Parlay options"></span>';

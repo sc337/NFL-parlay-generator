@@ -25,6 +25,7 @@ function dashboard(saved){
 }
 test('NBA line filter is visible outside the collapsed markets and controls picks, cards and saved preference',async()=>{
  const r=dashboard();await r.w.NBA_DASHBOARD.load();assert.equal(r.select.value,'both');assert.equal(r.nodes.get('#nbaLineFilters').hidden,false);
+ assert.deepEqual([...new Set(r.captures.map(x=>x.profile))],['safe','balanced','long']);for(const profile of ['safe','balanced','long'])assert.match(r.nodes.get('#results').innerHTML,new RegExp('data-profile="'+profile+'"'));
  const alt=r.rows[1],standard=r.rows[0];assert.equal(r.w.NBA_DASHBOARD.eligible(alt),true);assert.equal(r.w.NBA_DASHBOARD.eligible(standard),true);
  r.select.change({target:{value:'alt'}});assert.equal(r.w.NBA_DASHBOARD.eligible(alt),true);assert.equal(r.w.NBA_DASHBOARD.eligible(standard),false);
  assert.match(r.nodes.get('#results').innerHTML,/data-alt-line="true"/);assert.match(r.nodes.get('#results').innerHTML,/class="alt-tag">ALT/);assert.deepEqual(r.writes.at(-1),['nba','lines','alt']);
