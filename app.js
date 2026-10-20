@@ -1017,7 +1017,7 @@ function buildObjective(build){
 function render(parlays){
   if((window.__ACTIVE_SPORT||'nfl')!=='nfl')return;
   window.NFL_PARLAY_IDEAS?.refresh?.();
-  const featured=renderNflStraight();renderTdMarkets();renderNflExtras(parlays,featured);
+  renderNflStraight();
   if(document.body.classList.contains('prediction-only')){const rows=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
@@ -1043,11 +1043,6 @@ function render(parlays){
       ];
       const why=!all.length?'No quoted markets loaded. Check the NFL feed and refresh.':!selected.length?'Filters excluded every eligible market. Review Filters.':scored.length<count?'Too few qualifying legs for this build. Try fewer legs or review Filters.':'Available legs could not satisfy combination, quality, or profile checks.';
       wrap.innerHTML+='<p class="summary" role="status">SGP diagnostics: '+esc(details.join(' · '))+'. '+esc(why)+'</p>';
-    }
-    if(window.PICK_QUALITY){
-      const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
-      const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
-      if(singles.length){const esc=window.MARKET_GUARDS.esc;wrap.innerHTML+='<article class="parlay-card"><div class="parlay-top"><div><span class="grade">SINGLES</span><h3 class="parlay-name">Available straight picks</h3></div></div><p class="summary">These picks qualify individually. The requested parlay could not be filled.</p><div class="legs">'+singles.map(x=>'<div class="leg" data-caesars-id="'+(window.CAESARS_COMPARE?.register('nfl',x.m)||'')+'"><div class="leg-title">'+esc(x.m.name)+'</div><div class="leg-sub">'+esc(nflMatchup(x.g.away+' @ '+x.g.home)+' · '+nflKickoff(x.g.commence_time))+'</div><div class="leg-quote">'+esc(window.PICK_QUALITY.quoteLabel('nfl',x.m))+'</div><div class="leg-reason">'+esc(x.q.warnings.join(' · ')||'Model-screened; verify current sportsbook line')+'</div></div>').join('')+'</div></article>';}
     }
     return;
   }

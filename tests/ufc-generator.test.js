@@ -29,7 +29,7 @@ for(const file of ['market-guards.js','data/model-calibration.js','model-calibra
  assert(options.some(o=>o.label.includes('UFC 332: Silva vs Wang')));
  assert(window.UFC_DASHBOARD.availableCount()>=2);
  const first=element('#results').innerHTML;
- assert.match(first,/Balanced 2-Leg/);
+ assert.match(first,/UFC 2-Leg Parlay/);
  assert.match(first,/Top-ranked qualified/);
  assert.match(first,/data-opponent="Opponent Bravo"/);
  assert.match(first,/Price est\./);
@@ -40,10 +40,10 @@ for(const file of ['market-guards.js','data/model-calibration.js','model-calibra
  window.UFC_DASHBOARD.setLegs(2);
  const next=element('#results').innerHTML;
  assert.equal(next,first,'Generate must retain the strongest qualified combination');
- window.UFC_DASHBOARD.setLegs(3);assert.match(element('#results').innerHTML,/Balanced 3-Leg/);
+ window.UFC_DASHBOARD.setLegs(3);assert.match(element('#results').innerHTML,/UFC 3-Leg Parlay/);
  window.UFC_DASHBOARD.setLegs(2);assert.equal(element('#results').innerHTML,first,'Returning to two legs restores the best two-leg build');
  window.UFC_DASHBOARD.selectCard('2026-09-29');
  assert.equal(window.UFC_DASHBOARD.availableCount(),0);
- assert.doesNotMatch(element('#results').innerHTML,/Balanced 2-Leg/);
+ assert.doesNotMatch(element('#results').innerHTML,/UFC 2-Leg Parlay/);
  console.log('UFC stable best parlay and official card labels passed');
 })().catch(e=>{console.error(e);process.exitCode=1});

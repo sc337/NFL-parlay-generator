@@ -43,20 +43,20 @@ test('NHL ALT parlay rows show a badge and an accessible ALT tile label',()=>{
  const card=slip(),app=display([card]);card.querySelector('.leg').dataset.altLine='true';app.run();
  const tile=card.querySelector('.market-tile');assert.equal(tile.querySelector('.alt-tag').textContent,'ALT');assert.match(tile.attributes['aria-label'],/^ALT Goals U 0.5/);
 });
-test('NHL uses the same primary-card and secondary-analysis structure as other sports',()=>{
+test('Non-profile sports keep one primary parlay without secondary analysis clones',()=>{
  const source=fs.readFileSync('compact-ui.js','utf8');
  for(const sport of ['nhl','mlb','ncaaf','ufc']){
   const cards=[slip(true),slip()],secondary=el('div','analysis-secondary'),analysis=el('details','more-analysis');cards[0].classList.remove('player-props-card');secondary.id='analysisSecondary';analysis.append(secondary);
   const window={__ACTIVE_SPORT:sport},document={body:{dataset:{}}},context=vm.createContext({window,document,$:()=>analysis,$$:()=>cards});
   vm.runInContext(source.slice(source.indexOf('function ensureAnalysis'),source.indexOf('function moveConsensus'))+source.slice(source.indexOf('function compactSportResults'),source.indexOf('function tidy')),context);
-  context.compactSportResults();assert.equal(cards[0].style.display,'');assert.equal(cards[1].style.display,'none');assert.equal(secondary.children.length,1);assert.equal(secondary.children[0].dataset.compactOrigin,'sport');
+  context.compactSportResults();assert.equal(cards[0].style.display,'');assert.equal(cards[1].style.display,'none');assert.equal(secondary.children.length,0);
  }
 });
-test('NHL props stay in the secondary drawer even when the main parlay passes',()=>{
+test('NHL extra prop cards stay hidden when no parlay qualifies',()=>{
  const source=fs.readFileSync('compact-ui.js','utf8'),card=slip(),secondary=el('div','analysis-secondary'),analysis=el('details','more-analysis');secondary.id='analysisSecondary';analysis.append(secondary);
  const context=vm.createContext({window:{__ACTIVE_SPORT:'nhl'},document:{body:{dataset:{}}},$:()=>analysis,$$:()=>[card]});
  vm.runInContext(source.slice(source.indexOf('function ensureAnalysis'),source.indexOf('function moveConsensus'))+source.slice(source.indexOf('function compactSportResults'),source.indexOf('function tidy')),context);
- context.compactSportResults();assert.equal(card.style.display,'none');assert.equal(secondary.children.length,1);
+ context.compactSportResults();assert.equal(card.style.display,'none');assert.equal(secondary.children.length,0);
 });
 test('NHL official player images use the shared photo class and reject unrelated hosts',()=>{
  const window={},context=vm.createContext({window});vm.runInContext(fs.readFileSync('sports-media.js','utf8'),context);

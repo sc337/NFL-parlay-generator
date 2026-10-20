@@ -28,10 +28,10 @@ test('Pick of the Day shows one pregame straight and never a stake',()=>{
 test('supported sport date filters show future featured picks with ALT tiles',()=>{
  const app=runtime(),future=new Date(Date.now()+2*86400000),key=future.getFullYear()+'-'+String(future.getMonth()+1).padStart(2,'0')+'-'+String(future.getDate()).padStart(2,'0');
  app.window.__ACTIVE_SPORT='nhl';const pick={market:{yes_ask:.7,isAltLine:true},eventTime:future,label:'Bruins +2.5 Puck line',event:'Bruins vs Jets'};
- app.window.PICK_OF_DAY.show('nhl',pick,{date:key});assert.equal(app.title.textContent,'Best Straight');assert.equal(app.host.children.length,2);assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT');
- app.window.PICK_OF_DAY.show('nhl',pick);assert.equal(app.title.textContent,'Best Straight');assert.match(app.host.children[0].textContent,/No pick today/);
+ app.window.PICK_OF_DAY.show('nhl',pick,{date:key});assert.equal(app.title.textContent,'Straight of the Day');assert.equal(app.host.children.length,2);assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT');
+ app.window.PICK_OF_DAY.show('nhl',pick);assert.equal(app.title.textContent,'Straight of the Day');assert.match(app.host.children[0].textContent,/No pick today/);
  app.window.PICK_OF_DAY.show('nhl',null,{date:key});assert.match(app.host.children[0].textContent,/selected date/);
- for(const sport of ['mlb','ncaaf']){app.window.__ACTIVE_SPORT=sport;app.window.PICK_OF_DAY.show(sport,pick,{date:key});assert.equal(app.title.textContent,'Best Straight');assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT')}
+ for(const sport of ['mlb','ncaaf']){app.window.__ACTIVE_SPORT=sport;app.window.PICK_OF_DAY.show(sport,pick,{date:key});assert.equal(app.title.textContent,'Straight of the Day');assert.equal(app.host.children[0].children[2].children[0].textContent,'ALT')}
  app.window.__ACTIVE_SPORT='nfl';app.window.PICK_OF_DAY.show('nfl',pick,{date:key});assert.match(app.host.children[0].textContent,/No pick today/);
 });
 
@@ -65,6 +65,6 @@ test('featured MLB and college team markets retain their actual line rather than
 test('shared date selection gives NFL a future straight with analysis, source timestamp and actual venue',()=>{
  const a=runtime(),future=new Date(Date.now()+2*86400000),key=future.getFullYear()+'-'+String(future.getMonth()+1).padStart(2,'0')+'-'+String(future.getDate()).padStart(2,'0');
  a.window.SLATE_UI={date:()=>key,empty:()=> 'No qualifying straight for this date · Pass'};a.window.PICK_QUALITY={quoteLabel:()=> 'FanDuel -110',quote:()=>({source:'FanDuel',checkedAt:new Date().toISOString()})};
- a.window.PICK_OF_DAY.show('nfl',{market:{price:-110},eventTime:future,label:'Team ML',note:'Confirm lineup/status. Model unvalidated.'});assert.equal(a.host.children.length,2);assert.equal(a.title.textContent,'Best Straight');const footer=a.host.children[1],details=footer.children[1];assert.match(footer.children[0].textContent,/FanDuel/);assert.equal(a.host.children[0].children[2].children[2].textContent,'-110');assert.equal(details.children[0].textContent,'Details');assert.match(details.children[2].textContent,/Confirm lineup/);assert.match(details.children[3].textContent,/FanDuel/);assert.doesNotMatch(details.children[3].textContent,/Caesars/);
+ a.window.PICK_OF_DAY.show('nfl',{market:{price:-110},eventTime:future,label:'Team ML',note:'Confirm lineup/status. Model unvalidated.'});assert.equal(a.host.children.length,2);assert.equal(a.title.textContent,'Straight of the Day');const footer=a.host.children[1],details=footer.children[1];assert.match(footer.children[0].textContent,/FanDuel/);assert.equal(a.host.children[0].children[2].children[2].textContent,'-110');assert.equal(details.children[0].textContent,'Details');assert.match(details.children[2].textContent,/Confirm lineup/);assert.match(details.children[3].textContent,/FanDuel/);assert.doesNotMatch(details.children[3].textContent,/Caesars/);
  a.window.PICK_OF_DAY.show('nfl',null);assert.match(a.host.children[0].textContent,/No qualifying straight/);
 });
