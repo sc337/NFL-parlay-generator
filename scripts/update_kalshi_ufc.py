@@ -134,29 +134,89 @@ def fighter_stats(name):
     except Exception as exc:
         print('UFCStats profile failed',name,exc);return None
 
+# Verified UFC.com display-name / URL differences, never surname-only matching.
+PROFILE_ALIASES = {
+    'abdulrakhmanyakhyaev': ('Abdul Rakhman Yakhyaev', 'abdulrakhman-yakhyaev'),
+    'alexvolkanovski': ('Alexander Volkanovski', 'alexander-volkanovski'),
+    'jasminlucindo': ('Iasmin Lucindo', 'iasmin-lucindo'),
+    'danielgustavosantos': ('Daniel Santos', 'daniel-santos'),
+    'abusupiyanmagomedov': ('Abus Magomedov', 'abus-magomedov'),
+    'cameronrowston': ('Cam Rowston', 'cam-rowston'),
+    'ramazonbektemirov': ('Ramazan Temirov', 'ramazan-temirov'),
+}
+PROFILE_VERSION = 2
+
+def official_identity(name):
+    return PROFILE_ALIASES.get(fighter_key(name), (name, None))[0]
+
+def official_recent_fights(page, url, at):
+    rows = []
+    for article in re.findall(r'<article[^>]*class="[^"]*c-card-event--athlete-results[^"]*"[^>]*>(.*?)</article>', page, re.I | re.S):
+        date = re.search(r'athlete-results__date[^>]*>(.*?)</', article, re.I | re.S)
+        if not date: continue
+        text = re.sub(r'<[^>]+>', '', date[1]).replace('.', '').strip()
+        try: day = datetime.strptime(text, '%b %d, %Y').replace(tzinfo=timezone.utc)
+        except ValueError: continue
+        if day.date() >= at.date(): continue
+        # Results belong to the image/link for this exact athlete, not the first plaque.
+        result = None
+        for css, body in re.findall(r'<div[^>]*class="([^"]*athlete-results__image[^"]*)"[^>]*>(.*?</a>)', article, re.I | re.S):
+            if not re.search(r'href="' + re.escape(url.rstrip('/')) + r'/?"', body, re.I): continue
+            if re.search(r'\bwin\b', css): result = 'W'
+            elif re.search(r'\bloss\b', css): result = 'L'
+            elif re.search(r'\bdraw\b', css): result = 'D'
+        if result:
+            rows.append({'date': day.date().isoformat(), 'result': result, 'source': url})
+    return rows
+
+def recent_summary(rows):
+    unique = {row['date']: row for row in rows}
+    rows = sorted(unique.values(), key=lambda row: row['date'], reverse=True)[:5]
+    wins = sum(row['result'] == 'W' for row in rows)
+    losses = sum(row['result'] == 'L' for row in rows)
+    return {'fights': rows, 'count': len(rows), 'wins': wins, 'losses': losses,
+            'winRate': round(wins / (wins + losses), 3) if wins + losses else None}
+
+def parse_official_profile(page, name, url, at):
+    identity = re.search(r'hero-profile__name[^>]*>(.*?)</(?:h1|div)>', page, re.I | re.S)
+    if not identity or fighter_key(identity[1]) != fighter_key(official_identity(name)): return None
+    record = re.search(r'hero-profile__division-body[^>]*>\s*(\d+)-(\d+)-(\d+)\s*\(W-L-D\)', page, re.I)
+    if not record: return None
+    # Percent values contain nested divs; the old adjacent-div parser dropped both defenses.
+    metric = {}
+    for value, markup, label in re.findall(r'c-stat-compare__number[^>]*>\s*([0-9.]+)(.*?)c-stat-compare__label[^>]*>\s*([^<]+)', page, re.I | re.S):
+        if len(markup) < 500: metric[html.unescape(label).strip().lower()] = float(value)
+    accuracy = re.search(r'<title>Striking accuracy\s+(\d+)%</title>', page, re.I)
+    division = re.search(r'hero-profile__division-title[^>]*>(.*?)</', page, re.I | re.S)
+    return {'profile_version': PROFILE_VERSION, 'weight_class': re.sub(r'<[^>]+>', '', division[1]).strip() if division else None,
+            'name': name, 'canonical_name': html.unescape(re.sub(r'<[^>]+>', '', identity[1])).strip(),
+            'url': url, 'source': 'UFC.com', 'identity_verified': True, 'fetched_at': at.isoformat(),
+            'wins': int(record[1]), 'losses': int(record[2]), 'draws': int(record[3]),
+            'slpm': metric.get('sig. str. landed'), 'sapm': metric.get('sig. str. absorbed'),
+            'str_acc': float(accuracy[1]) if accuracy else None, 'str_def': metric.get('sig. str. defense'),
+            'td_def': metric.get('takedown defense'), 'td_avg': metric.get('takedown avg'),
+            'sub_avg': metric.get('submission avg'), 'recent5': recent_summary(official_recent_fights(page, url, at))}
+
 def official_profile(name):
-    slug=unicodedata.normalize('NFKD',name).encode('ascii','ignore').decode().lower()
-    slug=re.sub(r'[^a-z0-9]+','-',slug).strip('-')
-    url='https://www.ufc.com/athlete/'+slug
+    canonical, slug = PROFILE_ALIASES.get(fighter_key(name), (name, None))
+    if not slug:
+        slug = unicodedata.normalize('NFKD', canonical).encode('ascii', 'ignore').decode().lower()
+        slug = re.sub(r'[^a-z0-9]+', '-', slug).strip('-')
+    url = 'https://www.ufc.com/athlete/' + slug
     try:
-        html=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=12).read().decode('utf-8','ignore')
-        if 'hero-profile__division-body' not in html:return None
-        identity=re.search(r'hero-profile__name[^>]*>(.*?)</(?:h1|div)>',html,re.I|re.S)
-        if not identity or fighter_key(identity[1])!=fighter_key(name):return None
-        record=re.search(r'hero-profile__division-body[^>]*>\s*(\d+)-(\d+)-(\d+)\s*\(W-L-D\)',html,re.I)
-        metric=dict((label.strip().lower(),float(value.strip())) for value,label in re.findall(
-            r'c-stat-compare__number[^>]*>\s*([0-9.]+)\s*</div>\s*<div class="c-stat-compare__label">\s*([^<]+)</div>',html,re.I))
-        accuracy=re.search(r'<title>Striking accuracy\s+(\d+)%</title>',html,re.I)
-        if not record or 'sig. str. landed' not in metric:return None
-        division=re.search(r'hero-profile__division-title[^>]*>(.*?)</',html,re.I|re.S)
-        weight_class=re.sub(r'<[^>]+>','',division[1]).strip() if division else None
-        return {'weight_class':weight_class,'name':name,'url':url,'source':'UFC.com','identity_verified':True,'fetched_at':now.isoformat(),
-                'wins':int(record[1]),'losses':int(record[2]),'draws':int(record[3]),
-                'slpm':metric.get('sig. str. landed'),'sapm':metric.get('sig. str. absorbed'),
-                'str_acc':float(accuracy[1]) if accuracy else None,
-                'td_avg':metric.get('takedown avg'),'sub_avg':metric.get('submission avg')}
+        page = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=12).read().decode('utf-8', 'ignore')
+        profile = parse_official_profile(page, name, url, now)
+        if not profile: return None
+        rows = profile['recent5']['fights']
+        if len(rows) < 5 and re.search(r'href="\?page=1"', page):
+            try:
+                older = urllib.request.urlopen(urllib.request.Request(url + '?page=1', headers={'User-Agent': 'Mozilla/5.0'}), timeout=12).read().decode('utf-8', 'ignore')
+                rows += official_recent_fights(older, url, now)
+            except Exception as exc: print('UFC history page unavailable', name, exc)
+        profile['recent5'] = recent_summary(rows)
+        return profile
     except Exception as exc:
-        print('UFC athlete page unavailable',name,exc);return None
+        print('UFC athlete page unavailable', name, exc); return None
 
 def validate_market_responses(counts, errors):
     # Empty open-market responses are normal after a card starts. Transport
@@ -237,13 +297,17 @@ for n in sorted(names):
     old=previous.get(n) or {}
     try:recent=(now-datetime.fromisoformat(old.get('fetched_at','').replace('Z','+00:00'))).total_seconds()<24*3600
     except ValueError:recent=False
-    if recent and old.get('identity_verified') is True:stats[n]=old
+    if recent and old.get('identity_verified') is True and old.get('profile_version') == PROFILE_VERSION:stats[n]=old
     else:pending.append(n)
 with ThreadPoolExecutor(max_workers=6) as pool:
     futures={pool.submit(official_profile,n):n for n in pending}
     for future in as_completed(futures):
         profile=future.result()
-        if profile:stats[futures[future]]=profile
+        name = futures[future]
+        if profile: stats[name] = profile
+        elif previous.get(name, {}).get('identity_verified') is True:
+            # Keep the actual old timestamp so the browser can still reject stale evidence.
+            stats[name] = previous[name]
 try:previous_cards=json.loads(Path('data/kalshi-ufc.json').read_text()).get('cards') or {}
 except (OSError,ValueError):previous_cards={}
 try:cards=official_cards()
