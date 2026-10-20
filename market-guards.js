@@ -30,17 +30,35 @@ function independent(rows){return rows.length>0&&rows.every((m,i)=>gameKey(m)&&!
 const unique=(rows,n)=>{const out=[],seen=new Set();for(const m of rows){const k=gameKey(m);if(!k||seen.has(k))continue;seen.add(k);out.push(m);if(out.length===n)break}return out};
 // Optimize a complete independent-game build. Never reuse a game or a player,
 // and penalize the weakest evidence instead of padding a requested leg count.
-function bestBuild(rows,n,assess){
+// Ranking policy, not a probability or fitted correlation. Penalize the weakest
+// buffered estimate, missing evidence and repeated same-game scoring drivers.
+function balancedPenalty(checks,markets=[]){
+ if(!checks.length)return 0;
+ const bounded=(x,fallback=0)=>Number.isFinite(x)?Math.max(0,Math.min(1,x)):fallback;
+ const ps=checks.map(q=>bounded(q.conservativeP??q.modelP)),coverages=checks.map(q=>bounded(q.coverage));
+ const weakest=Math.min(...ps),mean=ps.reduce((a,b)=>a+b,0)/ps.length;
+ const drivers=new Map();let shared=0;
+ for(const m of markets){
+  const family=m.kind||m.type,key=gameKey(m)||m.gameId;if(!key)continue;
+  const driver=['points','threes','assists','pra','total','totals'].includes(family)?'scoring':['passing','receiving','receptions'].includes(family)?'passing':family==='td'?'scoring':null;
+  if(!driver)continue;
+  const direction=['under','no'].includes(m.side)?'under':'over',group=key+'|'+driver+'|'+direction;
+  const count=drivers.get(group)||0;shared+=count;drivers.set(group,count+1);
+ }
+ return 70*(1-weakest)+40*(1-Math.min(...coverages))+30*(mean-weakest)+6*shared;
+}
+function bestBuild(rows,n,assess,{balanced=false}={}){
  if(!Number.isInteger(n)||n<2||n>4)return [];
  const perGame=new Map();
  const candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank)).sort((a,b)=>(Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,a.m))*-10000+Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,b.m))*10000)||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker))).filter(({m})=>{const key=gameKey(m),n=perGame.get(key)||0;if(n>=4)return false;perGame.set(key,n+1);return true}).slice(0,120);
- let beams=[{legs:[],score:0,minCoverage:1}];
+ let beams=[{legs:[],checks:[],score:0,minCoverage:1}];
  for(let i=0;i<n;i++){
   const next=[];
   for(const b of beams)for(const {m,q} of candidates){
    if(b.legs.some(x=>sameEvent(x,m)||m.player&&x.player===m.player)||!gameKey(m))continue;
    const legs=[...b.legs,m],minCoverage=Math.min(b.minCoverage,q.coverage||0),score=b.score+q.rank+(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,m)?10000:0);
-   next.push({legs,score,minCoverage,objective:score-12*(1-minCoverage),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
+   const checks=[...b.checks,q];
+   next.push({legs,checks,score,minCoverage,objective:score-(balanced?balancedPenalty(checks,legs):12*(1-minCoverage)),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
   }
   const seen=new Set();beams=next.sort((a,b)=>b.objective-a.objective||a.signature.localeCompare(b.signature)).filter(b=>{if(seen.has(b.signature))return false;seen.add(b.signature);return true}).slice(0,64);
   if(!beams.length)return [];
@@ -71,4 +89,4 @@ const estOdds=rows=>{if(!independent(rows))return null;let d=1;for(const m of ro
 function watchlist(rows,sport){const selected=unique(rows.filter(m=>m&&(m.label||m.title)&&quote(m)!==null).sort((a,b)=>(+b.volume||0)-(+a.volume||0)),8);
  if(!selected.length)return '<div class="empty">No current '+esc(sport)+' markets with available ask prices.</div>';
  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">WATCHLIST</span><h3 class="parlay-name">'+esc(sport)+' markets to review</h3></div></div><p class="summary">Market prices only. No independent positive EV has been established. Check your book’s odds before betting.</p><div class="legs">'+selected.map((m,i)=>'<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.label||m.title)+'</div><div class="leg-sub">'+esc(m.game_label||m.fight||'Upcoming event')+' · '+esc(window.PICK_QUALITY?.quoteLabel(sport.toLowerCase(),m)||'Reference price')+(m.referenceOnly?'':' · Volume '+Math.round(+m.volume||0))+'</div></div>').join('')+'</div></article>'}
-window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,sameEvent,reconcile,independent,unique,bestBuild,improveTypes,estOdds,watchlist};})();
+window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,sameEvent,reconcile,independent,unique,bestBuild,balancedPenalty,improveTypes,estOdds,watchlist};})();

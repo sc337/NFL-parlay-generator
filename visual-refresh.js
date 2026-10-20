@@ -11,6 +11,10 @@ function compactDate(value,dateOnly=false){
   return dateOnly?date:date+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(':00','').replace(/\s/g,'');
 }
 function sharedSource(sources){const first=sources[0];return sources.length>1&&['Kalshi','FanDuel','Caesars'].includes(first)&&sources.every(source=>source===first)?first:null}
+function estimateLabel(sources){
+ if(!sources.length||sources.some(source=>!source))return 'Reference est.';
+ const unique=[...new Set(sources)];return unique.length===1?unique[0]+' est.':'Mixed est.';
+}
 function shortMarket(value){
  const names={'receiving yards':'Rec Yds','reception yards':'Rec Yds','rushing yards':'Rush Yds','passing yards':'Pass Yds','shots on goal':'SOG','shots':'SOG','receptions':'Rec','passing touchdowns':'Pass TD','rushing touchdowns':'Rush TD','receiving touchdowns':'Rec TD','passing attempts':'Pass Att','rushing attempts':'Rush Att','passing completions':'Completions','pitcher strikeouts':'Ks','strikeouts':'Ks','total bases':'Total Bases','home runs':'HR','hits + runs + rbi':'H+R+RBI'};
  return names[String(value||'').trim().toLowerCase()]||value;
@@ -53,7 +57,7 @@ function compactBrief(sport,sub,opponent=''){
   return parts.join(' · ');
 }
 function selectionParts(value,sub=''){
-  const text=value.replace(/^\d+\.\s*/,'').trim();
+  const text=value.replace(/^\d+\.\s*/,'').trim().replace(/\s+(?:ALT|alternate)(?:\s+line)?$/i,'').trim();
   const total=text.match(/^([OU])\s+([\d.]+)$/i);
   if(total)return {subject:'Game total',market:'Total',line:total[1].toUpperCase()+' '+total[2]};
   const teamTotal=text.match(/^(.+?)\s+Team(?:\s+Total)?\s+([OU])\s+([\d.]+)$/i);
@@ -102,7 +106,7 @@ function compactParlays(){
     card.dataset.compact='1';const estimate=card.querySelector('.odds');if(estimate&&/^[+−-]\d+$/.test(estimate.textContent.trim())&&window.ODDS_DISPLAY)estimate.textContent=window.ODDS_DISPLAY.number(estimate.textContent.trim().replace('−','-'));
     const title=card.querySelector('.parlay-name');
     if(title){const name=title.textContent.replace('Best Balance','Balanced').replace(/(?:\s*·\s*\d+ legs?|\s+\d+-Leg)$/i,'').replace(/^Market$/i,'Market only');title.textContent=name+' · '+legs.length+' '+(card.classList.contains('player-props-card')?(legs.length===1?'pick':'picks'):(legs.length===1?'leg':'legs'))}
-    if(sport==='nfl'){
+    if(['nfl','nba'].includes(sport)){
       const odds=card.querySelector('.odds'),label=card.querySelector('.odds-label');
       if(odds?.textContent.trim()==='—'){odds.textContent='Check book';odds.classList.add('quote-unavailable');if(label)label.textContent='SGP odds'}
     }
@@ -148,7 +152,10 @@ function compactParlays(){
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
     if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating').replace(/^Rating/,'Model rating');
     if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.append(score);const note=document.createElement('small');note.textContent=['ncaaf','nhl'].includes(sport)?'Selection quality, not win probability.':'Model rating, not win probability.';definition.append(note);details.append(definition)}
-    if(footer&&!footer.children.length)footer.remove();const common=sharedSource(legs.map(leg=>leg.querySelector('.market-tile')?.dataset.quoteSource));if(common){const bar=document.createElement('div'),source=document.createElement('small');bar.className='card-quote-footer';source.className='shared-source-label';source.textContent='Prices: '+common;details.before(bar);bar.append(source,details);card.classList.add('shared-quote-source');}
+    if(footer&&!footer.children.length)footer.remove();
+    const sources=legs.map(leg=>leg.querySelector('.market-tile')?.dataset.quoteSource||leg.querySelector('.leg-quote')?.textContent.match(/^(Kalshi|FanDuel|Caesars|Reference)\s/)?.[1]);
+    const priceLabel=card.querySelector('.odds-label');if(priceLabel&&!card.querySelector('.quote-unavailable')){priceLabel.textContent=estimateLabel(sources);priceLabel.title='Estimate from the displayed source prices, not a current sportsbook parlay offer. Verify the same selections and combined price at your book.';}
+    const common=sharedSource(sources);if(common){const bar=document.createElement('div'),source=document.createElement('small');bar.className='card-quote-footer';source.className='shared-source-label';source.textContent='Prices: '+common;details.before(bar);bar.append(source,details);card.classList.add('shared-quote-source');}
   });
 }
 function dockMatchups(){
@@ -176,6 +183,6 @@ function mount(){
   syncCards();
   sync();
 }
-window.DISPLAY_COPY={sharedSource,shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
+window.DISPLAY_COPY={sharedSource,estimateLabel,shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();

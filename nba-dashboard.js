@@ -18,18 +18,19 @@ function compatibleSet(legs){
  }
  return true;
 }
-function buildSameGame(rows,n,assess){
+function buildSameGame(rows,n,assess,{balanced=false}={}){
  if(!Number.isInteger(n)||n<2||n>4)return [];
  const groups=new Map(),candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank))
   .sort((a,b)=>(Number(window.SELECTION_UI?.locked?.('nba',b.m))-Number(window.SELECTION_UI?.locked?.('nba',a.m)))*10000||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker)))
   .filter(({m})=>{const key=m.player_id||m.player||(['moneyline','spread'].includes(m.kind)?'team-side':m.kind),count=groups.get(key)||0;groups.set(key,count+1);return count<6}).slice(0,80);
- let beams=[{legs:[],score:0,minCoverage:1}];
+ let beams=[{legs:[],checks:[],score:0,minCoverage:1}];
  for(let i=0;i<n;i++){
   const next=[];
   for(const beam of beams)for(const {m,q} of candidates){
    const legs=[...beam.legs,m];if(!compatibleSet(legs))continue;
    const minCoverage=Math.min(beam.minCoverage,q.coverage||0),score=beam.score+q.rank+(window.SELECTION_UI?.locked?.('nba',m)?10000:0);
-   next.push({legs,minCoverage,score,objective:score-12*(1-minCoverage),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
+   const checks=[...beam.checks,q];
+   next.push({legs,checks,minCoverage,score,objective:score-(balanced?G.balancedPenalty(checks,legs):12*(1-minCoverage)),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
   }
   const seen=new Set();beams=next.sort((a,b)=>b.objective-a.objective||a.signature.localeCompare(b.signature)).filter(b=>{if(seen.has(b.signature))return false;seen.add(b.signature);return true}).slice(0,64);
   if(!beams.length)return [];
@@ -41,14 +42,15 @@ function eligible(m,featured=false){const f=model(m);return !!f&&G.pregame(m)&&m
 function ranked(){return markets.filter(m=>eligible(m)).sort((a,b)=>Q.assess('nba',b,model(b)).rank-Q.assess('nba',a,model(a)).rank||String(a.selection_id).localeCompare(String(b.selection_id)))}
 const PROFILES=[
  {key:'safe',name:'Conservative',allows:q=>q.profileP>=.52&&q.profileBufferedP>=.5,score:q=>q.rank+q.profileBufferedP*24,description:'Favors higher quote-implied likelihood. Experimental estimates remain unvalidated.'},
- {key:'balanced',name:'Balanced',allows:q=>q.profileP>=.35&&q.profileP<=.72,score:q=>q.rank-Math.abs(q.profileP-.55)*18,description:'Balances likelihood and payout. Experimental estimates remain unvalidated.'},
+ {key:'balanced',name:'Balanced',allows:q=>q.profileP>=.35&&q.profileP<=.72,score:q=>q.rank-Math.abs(q.profileP-.55)*18,description:'Balances the weakest buffered estimate, evidence and price. Shared scoring drivers receive a concentration penalty, not an independence claim. Estimates remain unvalidated.'},
  {key:'long',name:'Lotto',allows:q=>q.profileP<=.55,score:q=>q.rank+(1-q.profileP)*28,description:'Targets higher payouts and higher variance. Experimental estimates remain unvalidated.'}
 ];
 function profileBuild(rows,count,sgp,profile){
  const assess=m=>{const q=Q.assess('nba',m,model(m),{parlay:true}),price=Number(q.quote?.p??m.probability),buffered=Number(q.conservativeP??q.modelP??model(m)?.modelP??price);return {...q,profileP:Number.isFinite(price)?price:.5,profileBufferedP:Number.isFinite(buffered)?buffered:.5}};
  const candidates=rows.filter(m=>{const q=assess(m);return q.pass&&profile.allows(q)}).sort((a,b)=>profile.score(assess(b))-profile.score(assess(a))||String(a.selection_id||a.ticker).localeCompare(String(b.selection_id||b.ticker)));
  const shaped=m=>{const q=assess(m);return {...q,rank:profile.score(q)}};
- const build=sgp?buildSameGame(candidates,count,shaped):G.bestBuild(candidates,count,shaped);
+ const options={balanced:profile.key==='balanced'};
+ const build=sgp?buildSameGame(candidates,count,shaped,options):G.bestBuild(candidates,count,shaped,options);
  return build.length===count&&(sgp?compatibleSet(build):G.independent(build))?build:[];
 }
 function media(m){const team=(m.teams||[]).find(t=>t.code===m.team_code);return (m.headshot?'<img class="sport-photo" src="'+esc(m.headshot)+'" alt="'+esc(m.player)+' headshot">':'')+(team?.logo?'<img class="sport-logo" src="'+esc(team.logo)+'" alt="'+esc(team.short)+' logo">':'')}

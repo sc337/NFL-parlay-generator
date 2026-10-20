@@ -43,6 +43,18 @@ test('NHL ALT parlay rows show a badge and an accessible ALT tile label',()=>{
  const card=slip(),app=display([card]);card.querySelector('.leg').dataset.altLine='true';app.run();
  const tile=card.querySelector('.market-tile');assert.equal(tile.querySelector('.alt-tag').textContent,'ALT');assert.match(tile.attributes['aria-label'],/^ALT Goals U 0.5/);
 });
+test('NBA ALT team lines and player props use the same source-labeled tiles',()=>{
+ for(const [label,market,line,subject]of [['O 218.5 Points ALT','Total','O 218.5','Celtics vs Pistons'],['Spurs +4.5 Spread ALT','Spread','+4.5','Spurs'],['OG Anunoby Over 2.5 Threes ALT','Threes','O 2.5','OG Anunoby']]){
+  const card=slip(),leg=card.querySelector('.leg'),top=card.querySelector('.parlay-top');top.append(el('span','odds-label','Price est.'));
+  leg.querySelector('.leg-title').textContent=label;leg.querySelector('.leg-sub').textContent='Celtics vs Pistons · Experimental estimate 60%';leg.querySelector('.leg-quote').textContent='Kalshi +170';leg.dataset.altLine='true';
+  const app=display([card],'nba');app.run();const tile=leg.querySelector('.market-tile');
+  assert.ok(tile,label);assert.equal(tile.querySelector('.market-tile-heading').textContent,market);assert.equal(tile.querySelector('.market-tile-line').textContent,line);assert.equal(leg.querySelector('.leg-title').textContent,'1. '+subject);
+  assert.equal(tile.querySelectorAll('.alt-tag').length,1);assert.equal(card.querySelector('.odds-label').textContent,'Kalshi est.');assert.equal(leg.querySelector('.leg-quote'),null);
+ }
+});
+test('combined source labels distinguish one source, mixed sources and missing quotes',()=>{
+ const app=display([]);assert.equal(app.context.estimateLabel(['Kalshi','Kalshi']),'Kalshi est.');assert.equal(app.context.estimateLabel(['FanDuel','FanDuel']),'FanDuel est.');assert.equal(app.context.estimateLabel(['Kalshi','FanDuel']),'Mixed est.');assert.equal(app.context.estimateLabel(['Kalshi',null]),'Reference est.');
+});
 test('Non-profile sports keep one primary parlay without secondary analysis clones',()=>{
  const source=fs.readFileSync('compact-ui.js','utf8');
  for(const sport of ['nhl','mlb','ncaaf','ufc']){
