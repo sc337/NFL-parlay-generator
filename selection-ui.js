@@ -21,6 +21,37 @@ function mountLines(){
   for(const button of group.querySelectorAll('[data-line-mode]')){const option=[...source.options].find(option=>option.value===button.dataset.lineMode);button.disabled=source.disabled||!option||option.disabled;button.setAttribute('aria-pressed',String(source.value===button.dataset.lineMode))}
  }
 }
+function resetFilters(){
+ const s=sport(),api=window[s.toUpperCase()+'_DASHBOARD'];exclusions.delete(s);locks.delete(s);
+ if(s==='nfl'){const state=window.NFL_PARLAY_STATE,buttons=[...document.querySelectorAll('#marketChips [data-market]')],kinds=buttons.map(b=>b.dataset.market);if(state)state.selectedMarkets=new Set(kinds);buttons.forEach(b=>{b.classList.add('active');b.setAttribute('aria-pressed','true')});window.DASHBOARD_UI?.put(s,'markets',kinds)}
+ else if(s==='nhl')api?.setMarkets?.(['moneyline','spread','total','goals','assists','points','shots','saves']);
+ else if(window.SPORT_MARKETS?.options[s])window.SPORT_MARKETS.set(s,window.SPORT_MARKETS.options[s].map(x=>x[0]));
+ const lines=$('#'+s+'LinesSelect');if(lines){lines.value='both';lines.dispatchEvent(new Event('change',{bubbles:true}))}
+ refresh();
+}
+const shortMarkets={moneyline:'ML',h2h:'ML',total:'Total',totals:'Total',game_total:'Total',points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'3PT',pra:'PRA',strikeouts:'Strikeouts',hrr:'H+R+RBI',method_victory:'Win Method',method_finish:'Finish',round_finish:'Finish Round',distance:'Distance'};
+function tidyFilters(s){
+ const root=$(s==='nfl'?'#nflParlayFilters':'#sharedSportFilters');if(!root)return;
+ root.classList.add('simple-filters');
+ for(const details of root.querySelectorAll('.market-filter-details')){details.open=true;details.classList.add('flat-market-section')}
+ const host=$('#'+s+'MarketFilters'),grid=host?.querySelector('.chips');if(!grid)return;
+ grid.classList.add('filter-market-grid');
+ let heading=host.querySelector('.filter-section-title');if(!heading){heading=document.createElement('div');heading.className='filter-section-title';heading.textContent='Markets';grid.before(heading)}
+ const buttons=[...grid.querySelectorAll('button')];
+ for(const button of buttons){
+  const kind=button.dataset.sportMarket||button.dataset.nhlMarket||button.dataset.market;
+  if(shortMarkets[kind]&&button.textContent!==shortMarkets[kind]){if(!button.title)button.title=button.textContent;button.textContent=shortMarkets[kind]}
+  let unavailable=button.disabled;
+  if(s==='nfl'&&window.NFL_PARLAY_STATE?.games?.length){unavailable=!window.NFL_PARLAY_STATE.games.some(g=>(!window.SLATE_UI||window.SLATE_UI.matches('nfl',{},g.commence_time))&&g.markets?.some(m=>m.type===kind&&Number.isFinite(m.price)&&m.price!==0));}
+  button.hidden=unavailable;button.setAttribute('aria-pressed',String(button.classList.contains('active')));
+ }
+ const visible=buttons.filter(b=>!b.hidden),selected=visible.filter(b=>b.classList.contains('active'));
+ let empty=host.querySelector('.filter-markets-empty');if(!empty){empty=document.createElement('small');empty.className='filter-markets-empty';empty.textContent='No markets available for this selection.';grid.after(empty)}empty.hidden=visible.length>0;
+ const lines=$('#'+s+'LinesSelect'),lineLabel={both:'Both',standard:'Standard',alt:'ALT'}[lines?.value];
+ const summary=root.querySelector('summary'),marketLabel=!visible.length?'No markets':selected.length===visible.length?'All markets':selected.length+' markets';
+ const text=['Filters',lineLabel,marketLabel].filter(Boolean).join(' · ');if(summary.textContent!==text)summary.textContent=text;
+ let reset=root.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset';root.lastElementChild.append(reset)}reset.onclick=resetFilters;reset.textContent='Reset';reset.hidden=(!lines||lines.value==='both')&&selected.length===visible.length&&!exclusions.get(s)?.size&&!locks.get(s)?.size;
+}
 function mount(){
  const controls=$('#parlayControls');if(!controls)return;
  let panel=$('#sharedSelection');
@@ -40,6 +71,7 @@ function mount(){
   filters.querySelector('summary').textContent='Filters';
  }else if($('#sharedSportFilters'))$('#sharedSportFilters').hidden=true;
  mountLines();
+ tidyFilters(s);
  const count=window[s.toUpperCase()+'_DASHBOARD']?.availableCount?.();
  const legSelect=$('#legsSelect');if(legSelect){for(const option of legSelect.options){const impossible=s!=='nfl'&&!(s==='nba'&&$('#nbaModeSelect')?.value==='sgp')&&Number.isFinite(count)&&Number(option.value)>count;option.disabled=impossible;option.title=impossible?'Not enough qualified games or fights':'';}}
  // Legacy secondary surfaces stay out of the main dashboard.

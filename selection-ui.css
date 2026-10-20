@@ -32,3 +32,21 @@ select.line-options-source{display:none!important}
 #pickOfDayTitle{font-size:13px!important;line-height:1.3;margin:0 0 8px!important;color:var(--sport-accent,var(--text));white-space:normal!important}
 #pickOfDay .pick-name{font-size:15px}
 #pickOfDay .pick-meta{font-size:12px}
+
+/* Shared Lines / Markets drawer, using the original controls and handlers. */
+.simple-filters{border:1px solid var(--border,#34414f)!important;border-radius:14px!important;padding:10px 12px!important;margin:10px 0!important}
+.simple-filters>summary{min-height:32px!important;align-content:center;font-size:13px!important;font-weight:600;color:var(--text)!important;cursor:pointer}
+.simple-filters .shared-filter-body,.simple-filters .nfl-filter-content{display:grid;gap:14px;padding-top:10px}
+.simple-filters .flat-market-section{display:block!important;border:0!important;padding:0!important;margin:0!important}
+.simple-filters .flat-market-section>summary{display:none!important}
+.simple-filters .market-box{padding:0!important;margin:0!important;border:0!important;background:transparent!important}
+.simple-filters .filter-section-title,.simple-filters label:has(+select.line-options-source){display:block;margin:0 0 7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.simple-filters .nhl-filter-fields{grid-template-columns:1fr!important;gap:0!important}
+.simple-filters .field{margin:0!important}
+.simple-filters .filter-market-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.simple-filters .filter-market-grid button{width:100%!important;min-width:0!important;min-height:44px!important;padding:7px 6px!important;border:1px solid var(--border,#34414f)!important;border-radius:10px!important;background:var(--surface2,#202833)!important;color:var(--muted)!important;font-size:12px!important;font-weight:600;line-height:1.2;white-space:normal!important;box-shadow:none!important;justify-content:center;text-align:center}
+.simple-filters .filter-market-grid button[aria-pressed="true"]{background:var(--blue-bg,#263d59)!important;color:var(--blue,#8ab4ff)!important;border-color:var(--blue,#8ab4ff)!important}
+.simple-filters [data-market-note],.simple-filters #nhlMarketNote,.simple-filters .market-filter-details small:not(.filter-markets-empty){display:none!important}
+.simple-filters button[hidden],.simple-filters small[hidden]{display:none!important}
+.simple-filters .reset-filters{justify-self:end;width:auto;min-height:32px!important;padding:4px 0;border:0;background:transparent;color:var(--blue,#8ab4ff);font-size:12px;cursor:pointer}
+.simple-filters .filter-markets-empty{color:var(--muted);font-size:12px}
