@@ -53,7 +53,7 @@ function slateMarkup(){
  const status=stale?'Schedule reference expired':!quoted.length?'Schedule only · No quoted markets':qualifying.length?qualifying.length+' qualifying selections':reasons[0]||'No picks for current market/ALT filters';
  return '<div class="leg"><div class="leg-title">'+esc(g.game_label)+'</div><div class="leg-sub">'+esc(eventWhen(g))+' · '+esc(status)+'</div></div>';
  }).join('');
- return '<details class="parlay-card"><summary>Full NCAAF Slate · '+games.length+' games</summary><p class="summary">ESPN schedule · DraftKings reference odds where supplied · Checked '+esc(new Date(at).toLocaleString())+'</p><div class="legs">'+rows+'</div></details>';
+ return '<details class="parlay-card full-slate"><summary>Full NCAAF Slate · '+games.length+' games</summary><p class="summary">ESPN schedule · DraftKings reference odds where supplied · Checked '+esc(new Date(at).toLocaleString())+'</p><div class="legs">'+rows+'</div></details>';
 }
 function historyPicks(){return rank('bankroll').slice(0,1).map(m=>({market:m,forecast:projection(m)}))}
 async function bankrollCandidates(){
