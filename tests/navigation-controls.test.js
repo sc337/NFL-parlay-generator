@@ -43,12 +43,12 @@ test('shared builder reuses controls and keeps the same order across every sport
  }
  const controls=new Node('parlayControls'),quality=new Node(),nflMode=new Node(),nbaField=new Node(),source=new Node('nbaModeSelect');source.value='multi';source.options=[{value:'sgp',textContent:'Same Game'},{value:'multi',textContent:'Multi-Game'}];source.closest=()=>nbaField;source.dispatchEvent=e=>{source.changed=e.bubbles};nbaField.append(source);
  nodes.set('.quality-settings',quality);nodes.set('.mode-tabs',nflMode);
- controls.append(quality,nflMode,nbaField,new Node('nflParlayFilters'),new Node('sharedSportFilters'),new Node('generateBtn'),new Node('gameChooserWrap'),new Node('nbaGameField'));
+ controls.append(quality,nflMode,nbaField,new Node('nflParlayFilters'),new Node('sharedSportFilters'),new Node('generateBtn'),new Node('gameChooserWrap'),new Node('nbaGameField'),new Node('ufcCardWrap'));
  const document={readyState:'loading',addEventListener(){},querySelector:s=>nodes.get(s),createElement:()=>new Node()};const window={};
  vm.runInNewContext(fs.readFileSync('selection-ui.js','utf8'),{window,document,Event,requestAnimationFrame(){}});
  for(const sport of ['nfl','nba','mlb','ncaaf','nhl','ufc','nba','nfl']){
   window.SELECTION_UI.mountBuilder(sport);const shell=nodes.get('#sharedBuilder'),filters=nodes.get(sport==='nfl'?'#nflParlayFilters':'#sharedSportFilters');
-  assert.equal(shell.nextElementSibling,filters);assert.equal(filters.nextElementSibling,nodes.get('#generateBtn'));assert.equal(quality.parentElement,nodes.get('#builderLegs'));assert.equal(nflMode.hidden,sport!=='nfl');assert.equal(nbaField.hidden,sport!=='nba');
+  assert.equal(shell.nextElementSibling,filters);assert.equal(filters.nextElementSibling,nodes.get('#generateBtn'));assert.equal(quality.parentElement,nodes.get('#builderLegs'));assert.equal(nflMode.hidden,sport!=='nfl');assert.equal(nbaField.hidden,sport!=='nba');assert.equal(nodes.get('#ufcCardWrap').parentElement,nodes.get('#builderGame'));assert.equal(nodes.get('#ufcCardWrap').classes.has('builder-inactive-game'),sport!=='ufc');
  }
  const active=new Node();active.dataset.mode='sgp';nodes.set('.mode-tabs .tab.active',active);window.SELECTION_UI.mountBuilder('nfl');assert.equal(nodes.get('#gameChooserWrap').classes.has('builder-inactive-game'),false);active.dataset.mode='multi';window.SELECTION_UI.mountBuilder('nfl');assert.equal(nodes.get('#gameChooserWrap').classes.has('builder-inactive-game'),true);
  const group=source.nextElementSibling;assert.equal(group.children.length,2);group.click({target:{closest:()=>group.children[0]}});assert.equal(source.value,'sgp');assert.equal(source.changed,true);
