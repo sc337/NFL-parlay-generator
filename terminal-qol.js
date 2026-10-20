@@ -16,17 +16,18 @@ function why(card){if(!card)return;let note=card.querySelector('.supporting-note
 function variants(){
  const grid=$('#results');if(!grid)return;
  const sport=window.__ACTIVE_SPORT||'nfl',carouselSport=['nfl','nba'].includes(sport);
- const cards=[...grid.children].filter(x=>x.classList.contains('parlay-card'));
+ const cards=[...grid.children].filter(x=>x.classList.contains('parlay-card')&&(!carouselSport||!x.classList.contains('profile-pass')));
  const carousel=carouselSport&&cards.length>=2;
  grid.classList.toggle('nfl-carousel',carousel);
  grid.setAttribute('aria-label',carousel?sport.toUpperCase()+' parlay profiles. Swipe left or right for Conservative, Balanced and Lotto.':'Recommendations');
  if(!grid.__carouselCards||cards.length!==grid.__carouselCards.length||cards.some((card,i)=>card!==grid.__carouselCards[i])){grid.__carouselCards=cards;grid.scrollLeft=0;}
  cards.forEach(card=>card.classList.remove('variant-hidden'));
- const hint=$('#parlaySwipeHint');if(hint){hint.hidden=!carousel;if(carousel){
+ const hint=$('#parlaySwipeHint');if(hint){hint.hidden=!carouselSport||!cards.length;if(carouselSport&&cards.length){
+   hint.dataset.profileCount=String(cards.length);
    if(!hint.querySelector('.carousel-position'))hint.innerHTML='<span class="carousel-instruction">Swipe parlays</span><span class="carousel-position" aria-live="polite"></span><span class="carousel-dots" role="group" aria-label="Parlay options"></span>';
    const dots=hint.querySelector('.carousel-dots');
    if(dots.children.length!==cards.length)dots.replaceChildren(...cards.map((card,i)=>{const b=document.createElement('button');b.type='button';b.className='carousel-dot';b.setAttribute('aria-label','Show '+(card.querySelector('.parlay-name')?.textContent||'option '+(i+1)));b.addEventListener('click',()=>{const current=[...grid.children].filter(x=>x.classList.contains('parlay-card'))[i];if(!current)return;const left=current.getBoundingClientRect().left-grid.getBoundingClientRect().left+grid.scrollLeft;grid.scrollTo({left,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})});return b}));
-   const update=()=>{const current=[...grid.children].filter(x=>x.classList.contains('parlay-card'));if(!current.length)return;const active=current.reduce((best,card,i)=>Math.abs(card.getBoundingClientRect().left-grid.getBoundingClientRect().left)<Math.abs(current[best].getBoundingClientRect().left-grid.getBoundingClientRect().left)?i:best,0);const position=hint.querySelector('.carousel-position'),buttons=hint.querySelector('.carousel-dots')?.children;if(position)position.textContent=(active+1)+' of '+current.length;[...(buttons||[])].forEach((b,i)=>{b.classList.toggle('active',i===active);b.setAttribute('aria-current',i===active?'true':'false');b.setAttribute('aria-label','Show '+(current[i]?.querySelector('.parlay-name')?.textContent||'option '+(i+1)));const label=(current[i]?.querySelector('.parlay-name')?.textContent||'Option '+(i+1)).split(/ ·| \d/)[0];if(b.textContent!==label)b.textContent=label})};
+   const update=()=>{const current=[...grid.children].filter(x=>x.classList.contains('parlay-card'));if(!current.length)return;const active=current.reduce((best,card,i)=>Math.abs(card.getBoundingClientRect().left-grid.getBoundingClientRect().left)<Math.abs(current[best].getBoundingClientRect().left-grid.getBoundingClientRect().left)?i:best,0);const position=hint.querySelector('.carousel-position'),buttons=hint.querySelector('.carousel-dots')?.children;if(position){position.hidden=current.length<2;position.textContent=(active+1)+' of '+current.length;}[...(buttons||[])].forEach((b,i)=>{b.classList.toggle('active',i===active);b.setAttribute('aria-current',i===active?'true':'false');b.setAttribute('aria-label','Show '+(current[i]?.querySelector('.parlay-name')?.textContent||'option '+(i+1)));const label=(current[i]?.querySelector('.parlay-name')?.textContent||'Option '+(i+1)).split(/ ·| \d/)[0];if(b.textContent!==label)b.textContent=label})};
    if(!grid.dataset.positionListening){grid.dataset.positionListening='1';let frame=0;grid.addEventListener('scroll',()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;update()})},{passive:true})}requestAnimationFrame(update);
  }}
  $('#variantTabs')?.remove();
