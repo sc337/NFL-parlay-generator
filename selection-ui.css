@@ -105,3 +105,8 @@ body:is([data-sport="nfl"],[data-sport="nba"]) #sharedBuilder #builderFixedMode{
 body[data-sport] #sportDateDock,
 body[data-sport] #sportDateDock .sport-switch{position:static!important;top:auto!important}
 html{scroll-padding-top:0!important}
+
+/* Available profile labels share the row evenly at every option count. */
+#parlaySwipeHint .carousel-dots{display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);min-width:0;flex:1}
+#parlaySwipeHint .carousel-dot{width:100%!important;min-width:0;box-sizing:border-box;white-space:normal}
+#parlaySwipeHint[data-profile-count="1"] .carousel-position{display:none!important}

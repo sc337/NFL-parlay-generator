@@ -1006,11 +1006,8 @@ function nflKickoff(value,full=false){
 }
 window.NFL_DISPLAY={matchup:nflMatchup,team:nflTeamShort,kickoff:nflKickoff};
 
-function updateNflProfileAvailability(parlays){
-  const note=$('#profileAvailability');if(!note)return;
-  const missing=parlays.length===3?parlays.map((p,i)=>p?'':['Conservative','Balanced','Lotto'][i]).filter(Boolean):[];
-  note.hidden=!parlays.some(Boolean)||!missing.length;
-  note.textContent=missing.length?missing.join(' / ')+': no qualifying '+($('#legsSelect')?.value||2)+'-leg build. Try fewer legs.':'';
+function updateNflProfileAvailability(){
+  const note=$('#profileAvailability');if(note){note.hidden=true;note.textContent='';}
 }
 
 function buildObjective(build){
@@ -1026,7 +1023,8 @@ function render(parlays){
   const wrap=$('#results'); wrap.innerHTML='';
   const tpl=$('#parlayTemplate');
   const profileOrder={safe:0,balanced:1,long:2};
-  const valid=parlays.filter(Boolean).sort((a,b)=>(profileOrder[a.profile]??9)-(profileOrder[b.profile]??9));
+  const requestedCount=Number($('#legsSelect')?.value)||2;
+  const valid=parlays.filter(p=>p&&p.legs?.length===requestedCount).sort((a,b)=>(profileOrder[a.profile]??9)-(profileOrder[b.profile]??9));
   updateNflProfileAvailability(parlays);
   if(!valid.length){
     const count=Number($('#legsSelect')?.value)||2;
@@ -1101,16 +1099,7 @@ function render(parlays){
     wrap.appendChild(node);
   }
   const availability=$('#profileAvailability');if(availability)availability.hidden=true;
-  if(valid.length&&parlays.length===3){
-    const names={safe:'Conservative',balanced:'Balanced',long:'Lotto'},present=new Set(valid.map(p=>p.profile));
-    for(const profile of ['safe','balanced','long'])if(!present.has(profile)){
-      const card=document.createElement('article');card.className='parlay-card profile-pass';card.dataset.profile=profile;
-      card.innerHTML='<div class="parlay-top"><div><span class="grade">PASS</span><h3 class="parlay-name">'+names[profile]+'</h3></div></div><p class="summary">No qualifying '+names[profile]+' build passed the current filters and quality checks. Try fewer legs or review Filters.</p>';
-      wrap.appendChild(card);
-    }
-    const order={safe:0,balanced:1,long:2};
-    [...wrap.children].filter(card=>card.classList.contains('parlay-card')).sort((a,b)=>(order[a.dataset.profile]??9)-(order[b.dataset.profile]??9)).forEach(card=>wrap.appendChild(card));
-  }
+
 }
 
 function renderNflExtras(parlays,featured){
