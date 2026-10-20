@@ -97,3 +97,21 @@ body[data-sport] #results .odds-label{font-size:10px!important}
 body[data-sport]:not([data-sport="nfl"]) #sharedBuilder .mode-tabs{display:none!important}
 body[data-sport]:not([data-sport="nba"]) #sharedBuilder #builderModeOptions>.field:has(#nbaModeSelect){display:none!important}
 body:is([data-sport="nfl"],[data-sport="nba"]) #sharedBuilder #builderFixedMode{display:none!important}
+
+/* Compact the sticky dock only after scrolling; keep usable tap targets. */
+@media(max-width:600px), (max-width:940px) and (pointer:coarse) and (orientation:landscape){
+ body.dock-compact #sportDateDock{gap:2px;padding:2px 0;border-radius:10px}
+ body.dock-compact #sportDateDock .sport-switch{min-height:44px!important;padding:0!important;border-radius:10px!important}
+ body.dock-compact #sportDateDock .sport-switch button{min-height:44px!important;height:44px!important;padding:4px 1px!important;font-size:11px!important}
+ body.dock-compact #sportDateDock .slate-controls{min-height:44px!important;gap:4px}
+ body.dock-compact #sportDateDock .slate-controls button{min-height:44px!important;padding:4px 8px!important;font-size:12px!important}
+ body.dock-compact #sportDateDock .slate-date input{height:44px!important;min-height:44px!important;padding:4px 6px!important}
+ body.dock-compact #sportDateDock .slate-date-label{display:none!important}
+}
+@media(min-width:400px) and (max-width:600px){
+ body.dock-compact #sportDateDock{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:4px}
+ body.dock-compact #sportDateDock .slate-controls{display:block;min-width:0}
+ body.dock-compact #sportDateDock .slate-shortcuts{display:none}
+ body.dock-compact #sportDateDock .slate-date{width:100px;height:44px;padding:4px}
+ body.dock-compact #sportDateDock .slate-date-display{font-size:14px}
+}

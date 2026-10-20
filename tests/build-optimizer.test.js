@@ -18,3 +18,8 @@ test('Balanced penalizes shared same-game drivers without inventing cross-game c
  assert.equal(G.balancedPenalty(checks,legs)-G.balancedPenalty(checks,[legs[0],{...legs[1],game_id:'other'}]),6);
  assert.equal(G.balancedPenalty(checks,[legs[0],{...legs[1],kind:'rebounds'}]),G.balancedPenalty(checks,[]));
 });
+test('complete-build constraints search alternatives rather than relabeling the top result',()=>{
+ const G=api(),rows=[row('a','1',100),row('b','2',99),row('c','2',95)];
+ assert.deepEqual([...G.bestBuild(rows,2,assess,{acceptBuild:legs=>legs.some(m=>m.ticker==='c')}).map(m=>m.ticker)].sort(),['a','c']);
+ assert.equal(G.bestBuild(rows,2,assess,{acceptBuild:()=>false}).length,0);
+});
