@@ -10,9 +10,6 @@ function mount(){
   root.style.setProperty('--iphone-visible-top',Math.max(0,Math.round(v?.offsetTop||0))+'px');
   root.style.setProperty('--iphone-visible-height',Math.round(v?.height||window.innerHeight)+'px');
   root.style.setProperty('--iphone-keyboard-inset',Math.max(0,Math.round(window.innerHeight-(v?v.height+v.offsetTop:window.innerHeight)))+'px');
-  // Hysteresis prevents the dock's height change from toggling itself at the threshold.
-  if(window.scrollY>180)document.body.classList.add('dock-compact');
-  else if(window.scrollY<80)document.body.classList.remove('dock-compact');
  }
  function schedule(){if(frame!==null)return;frame=requestAnimationFrame(()=>{frame=null;viewport()})}
  function sync(){
@@ -25,7 +22,6 @@ function mount(){
  window.visualViewport?.addEventListener('resize',schedule,{passive:true});
  window.visualViewport?.addEventListener('scroll',schedule,{passive:true});
  window.addEventListener('resize',schedule,{passive:true});
- window.addEventListener('scroll',schedule,{passive:true});
  mobile.addEventListener('change',sync);
  viewport();sync();
 }
