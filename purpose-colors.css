@@ -1,0 +1,30 @@
+/* Neutral surfaces; each accent has one role in every sport and both themes. */
+:root{--teal:#65d5c5;--teal-bg:#173a36;--purple:#c4adff;--purple-bg:#33294b}
+html[data-theme="dark"] body{--teal:#65d5c5;--teal-bg:#173a36;--purple:#c4adff;--purple-bg:#33294b}
+html[data-theme="light"] body{--teal:#08766b;--teal-bg:#e1f5f1;--purple:#6d3aca;--purple-bg:#f0eaff}
+/* Featured straight: a quiet teal edge, not a green approval signal. */
+html[data-theme] body #pickOfDay{border-inline-start:3px solid var(--teal)!important;background:var(--surface)!important}
+html[data-theme] body #pickOfDayTitle{color:var(--teal)!important}
+/* Profile accents identify the chosen approach; all selections remain blue. */
+[data-color-profile="conservative"]{--profile-color:var(--teal)}
+[data-color-profile="balanced"]{--profile-color:var(--blue)}
+[data-color-profile="lotto"]{--profile-color:var(--purple)}
+html[data-theme] body #results>.parlay-card[data-color-profile]:not([data-color-profile=""]){border-top:3px solid var(--profile-color)!important}
+html[data-theme] #parlaySwipeHint .carousel-dot[data-color-profile]:not([data-color-profile=""]){border-top:3px solid var(--profile-color)!important}
+html[data-theme] .header-status:not(.is-loading):not(.is-delayed):not(.is-unavailable) .live-dot{background:var(--muted)!important}
+/* Labeled warnings and failures. Unsupported odds signs never assign a state. */
+html[data-theme] body [data-tone="warning"]{color:var(--amber)!important}
+html[data-theme] body [data-tone="danger"]{color:var(--red)!important}
+html[data-theme] body [data-tone="success"]{color:var(--green)!important}
+html[data-theme] body :is(.grade,.card-status)[data-tone="warning"]{background:var(--amber-bg)!important;border-color:var(--amber)!important}
+html[data-theme] body :is(.grade,.card-status)[data-tone="danger"]{background:var(--red-bg)!important;border-color:var(--red)!important}
+html[data-theme] body #results>.empty[data-tone="warning"]{border-inline-start:3px solid var(--amber)!important}
+html[data-theme] body #results>.empty[data-tone="danger"]{border-inline-start:3px solid var(--red)!important}
+html[data-theme] body :is(.price-check-status,.paper-result)[data-tone]{border-inline-start:3px solid currentColor;padding-inline-start:9px;font-size:12px;line-height:1.5}
+html[data-theme] body :is(.price-check-status,.paper-result)[data-tone="neutral"]{color:var(--muted)!important}
+/* Estimated numeric advantages are information, not verified outcomes. */
+html[data-theme] .model-strip :is(.positive,.negative){color:var(--text)!important}
+html[data-theme] body :is(.market-tile-line,.quote-price,.leg-quote,.odds,.pick-market-tile strong){color:var(--text)!important}
+html[data-theme] body :is(.market-tile-price,.pick-meta,.leg-brief,.odds-label){color:var(--muted)!important}
+/* A disabled action is visibly unavailable, with its existing explanation intact. */
+html[data-theme] body :is(#generateBtn,.line-options-buttons button,.filter-market-grid button):disabled{background:var(--surface2)!important;border-color:var(--border)!important;color:var(--muted)!important;box-shadow:none!important;opacity:.65;cursor:not-allowed}
