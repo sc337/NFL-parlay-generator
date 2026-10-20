@@ -34,7 +34,7 @@
    if(!current())return false;
    if(snapshotError){
     if(window.NFL_LIVE_RECOVERY?.load){setStatus('Recovering fresh NFL markets…');try{const recovered=preserveContext(await window.NFL_LIVE_RECOVERY.load(),data||warm);if(!current())return false;const recoveredGames=validate(recovered);data=recovered;games=recoveredGames;source='Kalshi live recovery'}catch(e){diag({source:'Kalshi live recovery',ok:false,error:String(e.message||e)})}}
-    if(!games){if(usable(warm)){const valid=warm.games.filter(isPregame);if(valid.length){data=warm;games=valid;source='Cached Kalshi · snapshot refresh failed'}}}
+    if(!games){if(usable(warm)&&Date.now()-Date.parse(warm.updated_at)<=30*60000){const valid=warm.games.filter(isPregame);if(valid.length){data=warm;games=valid;source='Cached Kalshi · snapshot refresh failed'}}}
     if(!games)throw snapshotError;
    }
    if(data.slate?.source==='ESPN')source='Kalshi + ESPN references';window.PUBLIC_SLATE?.set('nfl',data);saveCache(data);diag({source,ok:true,count:games.length,ms:Math.round(performance.now()-started),note:data.updated_at});
