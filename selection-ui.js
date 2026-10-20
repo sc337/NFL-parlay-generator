@@ -1,8 +1,6 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),sport=()=>window.__ACTIVE_SPORT||'nfl';
 const exclusions=new Map(),locks=new Map();
-const views=new Map();
-function isStraight(s){return (window.DASHBOARD_UI?.get(s,'pickView',views.get(s)||'straight')||'straight')==='straight'}
 const selectionKey=(s,m)=>window.PICK_QUALITY.id(s,m);
 function excluded(s,m){return exclusions.get(s)?.has(selectionKey(s,m))===true;}
 function locked(s,m){return locks.get(s)?.has(selectionKey(s,m))===true;}
@@ -29,8 +27,8 @@ function mount(){
  if(!panel){panel=document.createElement('div');panel.id='sharedSelection';panel.className='shared-selection field';panel.hidden=true;controls.prepend(panel);}
  const s=sport(),exploring=(s==='nfl'?window.NFL_PARLAY_STATE?.recommendationTier:window.DASHBOARD_UI?.get(s,'selectionMode','screened'))==='ideas';panel.hidden=true;
  document.body.classList.toggle('exploring-picks',exploring);
- let view=$('#pickView');if(!view){view=document.createElement('div');view.id='pickView';view.className='pick-view';view.setAttribute('role','group');view.setAttribute('aria-label','Choose Straight of the Day or Parlays');view.innerHTML='<button type="button" data-pick-view="straight">Straight of the Day</button><button type="button" data-pick-view="parlays">Parlays</button>';$('#pickOfDay').before(view);view.addEventListener('click',e=>{const button=e.target.closest('[data-pick-view]');if(!button)return;const current=sport(),straight=button.dataset.pickView==='straight';views.set(current,straight?'straight':'parlays');window.DASHBOARD_UI?.put(current,'pickView',straight?'straight':'parlays');document.body.classList.toggle('straights-view',straight);refresh();schedule()});}
- const straight=isStraight(s);view.querySelectorAll('[data-pick-view]').forEach(button=>{const active=button.dataset.pickView===(straight?'straight':'parlays');button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});document.body.classList.toggle('straights-view',straight);document.body.classList.toggle('parlays-view',!straight);
+ $('#pickView')?.remove();
+ document.body.classList.remove('straights-view','parlays-view');
  let clear=$('#clearSelectionEdits');if(!clear){clear=document.createElement('button');clear.id='clearSelectionEdits';clear.type='button';clear.textContent='Clear locked / excluded picks';controls.append(clear);clear.onclick=()=>{exclusions.delete(sport());locks.delete(sport());refresh();};}clear.hidden=!(exclusions.get(s)?.size||locks.get(s)?.size);
  let gameControls=$('#sharedGameControls');if(!gameControls){gameControls=document.createElement('div');gameControls.id='sharedGameControls';panel.after(gameControls)}gameControls.hidden=s!=='nba';
  if(s==='nba')for(const el of [$('#nbaModeSelect')?.closest('.field'),$('#nbaGameField')])if(el&&el.parentElement!==gameControls)gameControls.append(el);
@@ -46,7 +44,7 @@ function mount(){
  const legSelect=$('#legsSelect');if(legSelect){for(const option of legSelect.options){const impossible=s!=='nfl'&&!(s==='nba'&&$('#nbaModeSelect')?.value==='sgp')&&Number.isFinite(count)&&Number(option.value)>count;option.disabled=impossible;option.title=impossible?'Not enough qualified games or fights':'';}}
  // Legacy secondary surfaces stay out of the main dashboard.
  for(const id of ['sharedResearch','extraPicks','publicSlate','espnEvidencePanel','moreAnalysis','nflTdStraightDrawer']){const node=$('#'+id);if(node)node.hidden=true;}
- const empty=straight?$('#pickOfDayContent .pick-pass'):$('#results > .empty');
+ const empty=$('#results > .empty');
  if(empty&&!exploring&&!empty.querySelector('.qualifying-heading')){const heading=document.createElement('strong');heading.className='qualifying-heading';heading.textContent='No qualifying picks';empty.prepend(heading);}
  if(empty&&!empty.querySelector('.empty-actions')){const actions=document.createElement('div');actions.className='empty-actions';
   if(Number($('#legsSelect')?.value)>2){const b=document.createElement('button');b.type='button';b.textContent='Try 2 legs';b.onclick=()=>{const el=$('#legsSelect');el.value='2';el.dispatchEvent(new Event('change',{bubbles:true}))};actions.append(b)}
