@@ -35,6 +35,27 @@ def stamp(payload):
     except (ValueError, TypeError, AttributeError):
         return None
 
+def reconcile_evidence(candidate, existing, now=None):
+    """Keep fresh, richer UFC evidence when an older collector publishes new prices."""
+    if not isinstance(candidate.get('fighter_stats'), dict):
+        return candidate
+    now = time.time() if now is None else now
+    profiles = dict(candidate['fighter_stats'])
+    names = {m.get(key) for m in candidate.get('markets', []) for key in ('fighter1', 'fighter2')}
+    for name, prior in (existing.get('fighter_stats') or {}).items():
+        if name not in names or prior.get('identity_verified') is not True:
+            continue
+        at = stamp({'updated_at': prior.get('fetched_at')})
+        if at is None or not now - 48 * 3600 <= at <= now + 300:
+            continue
+        fresh = profiles.get(name) or {}
+        version, previous_version = fresh.get('profile_version') or 0, prior.get('profile_version') or 0
+        current_at = stamp({'updated_at': fresh.get('fetched_at')})
+        if (not fresh or fresh.get('identity_verified') is not True or previous_version > version
+                or previous_version == version and (current_at is None or current_at < at)):
+            profiles[name] = prior
+    return {**candidate, 'fighter_stats': profiles}
+
 def valid_snapshot(payload, sport, previous=None, now=None):
     now = time.time() if now is None else now
     at = stamp(payload)
@@ -147,6 +168,8 @@ def publish(names, results=None):
                     existing = json.loads(Path(name).read_text())
                 except (OSError, ValueError):
                     existing = {}
+                candidate = reconcile_evidence(candidate, existing)
+                raw = json.dumps(candidate).encode() if 'fighter_stats' in candidate else raw
                 new, old = stamp(candidate), stamp(existing)
                 if new is not None and old is not None and old >= new:
                     continue

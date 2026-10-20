@@ -55,5 +55,34 @@ class RefreshSafeguards(unittest.TestCase):
             self.assertFalse(replace_if_newer(source, target))
             self.assertEqual(json.loads(target.read_text())['updated_at'], '2026-10-06T06:00:00Z')
 
+class UfcEvidencePublication(unittest.TestCase):
+    def test_old_collector_can_refresh_quotes_without_downgrading_profiles(self):
+        now = worker.time.time()
+        at = worker.datetime.fromtimestamp(now - 3600, worker.timezone.utc).isoformat()
+        prior = {'fighter_stats': {'A': {'identity_verified': True, 'profile_version': 2, 'fetched_at': at, 'str_def': 65},
+                                  'B': {'identity_verified': True, 'profile_version': 2, 'fetched_at': at, 'td_def': 80}}}
+        candidate = {'updated_at': worker.datetime.fromtimestamp(now, worker.timezone.utc).isoformat(),
+                     'markets': [{'fighter1': 'A', 'fighter2': 'B', 'yes_ask': .6}],
+                     'fighter_stats': {'A': {'identity_verified': True, 'fetched_at': at, 'slpm': 4}}}
+        merged = worker.reconcile_evidence(candidate, prior, now)
+        self.assertEqual(merged['fighter_stats'], prior['fighter_stats'])
+        self.assertEqual(merged['markets'], candidate['markets'])
+        self.assertEqual(merged['updated_at'], candidate['updated_at'])
+        self.assertEqual(merged['fighter_stats']['A']['fetched_at'], at)
+        with tempfile.TemporaryDirectory() as folder:
+            source, target = Path(folder)/'candidate.json', Path(folder)/'current.json'
+            source.write_text(json.dumps(candidate))
+            target.write_text(json.dumps({**prior, 'updated_at': at}))
+            self.assertTrue(replace_if_newer(source, target))
+            self.assertEqual(json.loads(target.read_text())['fighter_stats'], prior['fighter_stats'])
+
+    def test_expired_or_wrong_identity_profiles_are_not_reintroduced(self):
+        now = worker.time.time()
+        expired = worker.datetime.fromtimestamp(now - 49*3600, worker.timezone.utc).isoformat()
+        prior = {'fighter_stats': {'A': {'identity_verified': True, 'profile_version': 2, 'fetched_at': expired},
+                                  'B': {'identity_verified': False, 'profile_version': 2}}}
+        candidate = {'markets': [{'fighter1': 'A', 'fighter2': 'B'}], 'fighter_stats': {}}
+        self.assertEqual(worker.reconcile_evidence(candidate, prior, now)['fighter_stats'], {})
+
 if __name__ == '__main__':
     unittest.main()

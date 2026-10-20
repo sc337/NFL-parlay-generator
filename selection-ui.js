@@ -66,7 +66,7 @@ function mountBuilder(s){
    group.addEventListener('click',e=>{const b=e.target.closest('[data-mode-value]');if(!b||b.disabled)return;source.value=b.dataset.modeValue;source.dispatchEvent(new Event('change',{bubbles:true}));schedule()});source.after(group)}
   source.classList.add('builder-mode-source');for(const b of group.children){b.setAttribute('aria-pressed',String(source.value===b.dataset.modeValue));b.disabled=source.disabled||[...source.options].find(o=>o.value===b.dataset.modeValue)?.disabled===true}
  }
- for(const id of ['gameChooserWrap','nbaGameField']){const game=$('#'+id);if(game&&game.parentElement!==gameHost)gameHost.append(game);if(game)game.classList.toggle('builder-inactive-game',id==='gameChooserWrap'?s!=='nfl'||$('.mode-tabs .tab.active')?.dataset.mode!=='sgp':s!=='nba')}
+ for(const id of ['gameChooserWrap','nbaGameField','ufcCardWrap']){const game=$('#'+id);if(game&&game.parentElement!==gameHost)gameHost.append(game);if(game)game.classList.toggle('builder-inactive-game',id==='gameChooserWrap'?s!=='nfl'||$('.mode-tabs .tab.active')?.dataset.mode!=='sgp':id==='nbaGameField'?s!=='nba':s!=='ufc')}
  const filters=$(s==='nfl'?'#nflParlayFilters':'#sharedSportFilters');if(filters&&shell.nextElementSibling!==filters)shell.after(filters);
  const generate=$('#generateBtn');if(generate&&filters&&filters.nextElementSibling!==generate)filters.after(generate);
 }

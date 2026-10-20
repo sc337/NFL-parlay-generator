@@ -92,3 +92,8 @@ body[data-sport] #results .market-tile{flex:0 0 78px!important;width:78px!import
 body[data-sport] #results .card-explanation>summary{font-size:13px!important;min-height:36px;align-content:center}
 body[data-sport] #results .odds-label{font-size:10px!important}
 @media(max-width:360px){#sharedBuilder .builder-main-row{grid-template-columns:minmax(0,1.5fr) minmax(82px,1fr);gap:6px}}
+
+/* Sport-specific visibility wins over legacy navigation display rules. */
+body[data-sport]:not([data-sport="nfl"]) #sharedBuilder .mode-tabs{display:none!important}
+body[data-sport]:not([data-sport="nba"]) #sharedBuilder #builderModeOptions>.field:has(#nbaModeSelect){display:none!important}
+body:is([data-sport="nfl"],[data-sport="nba"]) #sharedBuilder #builderFixedMode{display:none!important}
