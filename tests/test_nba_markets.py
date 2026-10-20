@@ -30,6 +30,16 @@ class NBAMarkets(unittest.TestCase):
         self.assertEqual(rows[0]['line'], 19.5)
         self.assertTrue(rows[0]['player_verified'])
         self.assertEqual(normalize_market(m, 'KXNBAPTS', [self.event], {}, self.now), [])
+    def test_double_and_triple_double_yes_no_markets(self):
+        ctx = {'players': {'p': {'id': 'p', 'name': 'Test Player', 'team': 'BOS'}}}
+        for series, kind, name in [('KXNBA2D', 'double_double', 'Double Double'), ('KXNBA3D', 'triple_double', 'Triple Double')]:
+            m = {**self.market, 'ticker': series+'-26OCT25BOSNY-TESTPLAYER1', 'event_ticker': series+'-26OCT25BOSNY', 'title': 'Test Player: '+name, 'yes_sub_title': 'Test Player', 'strike_type': 'greater', 'floor_strike': 0.5}
+            rows = normalize_market(m, series, [self.event], ctx, self.now)
+            self.assertEqual([r['kind'] for r in rows], [kind, kind])
+            self.assertEqual([r['side'] for r in rows], ['yes', 'no'])
+            self.assertTrue(all(r['line'] is None and r['player_verified'] for r in rows))
+            self.assertEqual(rows[0]['label'], 'Test Player '+name+' (Yes)')
+            self.assertEqual(rows[1]['label'], 'Test Player '+name+' (No)')
     def test_missing_crossed_and_zero_quotes_are_rejected(self):
         self.assertEqual(normalize_market({**self.market, 'yes_bid': 90, 'no_bid': 90}, 'KXNBASPREAD', [self.event], {}, self.now), [])
     def test_preseason_or_uncompleted_history_is_rejected(self):

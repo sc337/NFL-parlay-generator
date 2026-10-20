@@ -1,13 +1,13 @@
 (()=>{'use strict';
 const options={
- nba:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total'],['points','Points'],['rebounds','Rebounds'],['assists','Assists'],['threes','Threes'],['pra','Pts + Reb + Ast'],['pr','Pts + Reb'],['pa','Pts + Ast'],['ra','Reb + Ast'],['steals','Steals'],['blocks','Blocks']],
+ nba:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total'],['points','Points'],['rebounds','Rebounds'],['assists','Assist'],['threes','3pt FG'],['double_double','Double Double'],['triple_double','Triple Double'],['pra','Pts+Reb+Assist']],
  mlb:[['moneyline','Moneyline'],['spread','Run Line'],['game_total','Game Total'],['team_total','Team Total'],['strikeouts','Pitcher Strikeouts'],['hits','Hits'],['home_runs','Home Runs'],['rbi','RBI'],['total_bases','Total Bases'],['hrr','Hits + Runs + RBI']],
  ncaaf:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total']],
  ufc:[['moneyline','Fight Winner'],['method_victory','Method of Victory'],['method_finish','Method of Finish'],['round_finish','Round of Finish'],['distance','Goes the Distance']]
 };
 const key='sportsMarketSelectionsV1',selected={},rows={},callbacks={};let saved={};
 try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{}
-for(const [sport,list] of Object.entries(options))selected[sport]=new Set(Array.isArray(saved[sport])?saved[sport].filter(k=>list.some(o=>o[0]===k)):list.map(o=>o[0]));
+for(const [sport,list] of Object.entries(options)){const prior=Array.isArray(saved[sport])?saved[sport].filter(k=>list.some(o=>o[0]===k)):null;selected[sport]=new Set(prior||list.map(o=>o[0]));if(sport==='nba'&&prior){for(const k of ['double_double','triple_double'])prior.push(k);selected[sport]=new Set(prior)}}
 function marketKey(sport,m){return sport==='mlb'&&m.kind==='total'?(m.series==='KXMLBTEAMTOTAL'?'team_total':'game_total'):m.kind}
 function allowed(sport,m){return !selected[sport]||selected[sport].has(marketKey(sport,m))}
 function set(sport,kinds){if(!options[sport])return;selected[sport]=new Set(kinds.filter(k=>options[sport].some(o=>o[0]===k)));try{localStorage.setItem(key,JSON.stringify(Object.fromEntries(Object.entries(selected).map(([s,v])=>[s,[...v]]))))}catch{}controls(sport);callbacks[sport]?.();window.PARLAY_GENERATOR?.syncLabel?.();window.COMPACT_UI?.refresh?.()}
