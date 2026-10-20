@@ -96,7 +96,6 @@ function attach(host,s,entries,options={}){
  if(!host?.appendChild||typeof document==='undefined')return;
  const risk=summarize(s,entries,options);if(!risk.pass)return;
  const detail=document.createElement('details');detail.className='card-explanation parlay-risk';
- if(window.SELECTION_UI){const actions=document.createElement('details');actions.className='leg-actions';const title=document.createElement('summary');title.textContent='Change a leg';actions.append(title);for(const {market:m} of entries){const b=document.createElement('button');b.type='button';b.textContent='Replace '+(m.label||m.name||'selection');b.addEventListener('click',()=>window.SELECTION_UI.exclude(s,m));actions.append(b);const lock=document.createElement('button');lock.type='button';lock.textContent=(window.SELECTION_UI.locked(s,m)?'Unlock ':'Keep ')+(m.label||m.name||'selection');lock.addEventListener('click',()=>window.SELECTION_UI.lock(s,m));actions.append(lock)}host.append(actions);}
 
  const summary=document.createElement('summary');summary.textContent='Risk & price check';
  const text=document.createElement('p'),status=document.createElement('p');
