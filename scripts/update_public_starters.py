@@ -3,7 +3,7 @@
 NBA: RotoWire's dated, public lineup cards. NHL: Daily Faceoff's public
 page hydration (goalies and reported line combos). College confirmations are
 sourced manually: availability reports and depth charts alone are insufficient.
-Only normalized names/status/evidence metadata are retained, not article text.
+Only normalized public facts and evidence metadata are retained, not article text.
 """
 import argparse
 import json
@@ -120,6 +120,34 @@ def record(sport, gid, game, team, role, names, status, now, url, **extra):
                 source_url=url, method='public_page', **extra)
 
 
+def nba_card_context(card):
+    """Small public facts only; reference lines are not executable quotes."""
+    context = {}
+    officials = card.find('lineup__umpire')
+    if len(officials) == 1:
+        names = [n.text() for n in officials[0].walk()
+                 if n.tag == 'a' and n.attrs.get('href', '').startswith('/basketball/ref.php?')]
+        if 1 <= len(names) <= 3 and all(2 < len(n) < 80 for n in names):
+            context['referees'] = names
+    books = {'fanduel': 'FanDuel', 'draftkings': 'DraftKings', 'betmgm': 'BetMGM', 'pointsbet': 'PointsBet'}
+    references = {}
+    for item in card.find('lineup__odds-item'):
+        labels = [n.text().strip() for n in item.walk() if n.tag == 'b']
+        visible = [(n, book) for n in item.walk() if n.tag == 'span' and not n.has('hide')
+                   for cls, book in books.items() if n.has(cls)]
+        if len(labels) != 1 or len(visible) != 1:
+            continue
+        node, book = visible[0]; value = node.text().strip()
+        label = labels[0]
+        if label in ('LINE', 'SPREAD') and re.fullmatch(r'[A-Z]{2,3} [+-]\d+(?:\.\d+)?', value):
+            references['moneyline' if label == 'LINE' else 'spread'] = {'value': value, 'book': book}
+        elif label == 'O/U' and re.fullmatch(r'\d{2,3}(?:\.\d+)? Pts', value):
+            references['total'] = {'value': value, 'book': book}
+    if references:
+        context['reference_lines'] = references
+    return context
+
+
 def parse_nba(html, ctx, now, url=RW):
     page = Page(html).root
     dates = {n.attrs['data-gamedate'] for n in page.walk() if 'data-gamedate' in n.attrs}
@@ -139,17 +167,31 @@ def parse_nba(html, ctx, now, url=RW):
         if len(matches) != 1:
             continue
         gid, game = matches[0]
+        context = nba_card_context(card)
         for side, team in [('is-visit', away), ('is-home', home)]:
             lists = [n for n in card.find('lineup__list') if n.has(side)]
             if len(lists) != 1:
                 continue
             listing = lists[0]; statuses = listing.find('lineup__status')
+            roster = [p for p in ctx.get('players', {}).values() if p.get('team') == team]
+            # Explicit injury tags only, including bench players. CSS play percentages
+            # and vague availability text never become medical/participation evidence.
+            injuries = {'Out': 'out', 'Doubt': 'doubtful', 'Ques': 'questionable', 'Prob': 'probable'}
+            for child in listing.find('lineup__player'):
+                links = [n for n in child.walk() if n.tag == 'a' and n.attrs.get('title')]
+                tags = child.find('lineup__inj')
+                if len(links) != 1 or len(tags) != 1 or tags[0].text() not in injuries:
+                    continue
+                name = links[0].attrs['title']
+                if sum(key(p.get('name')) == key(name) for p in roster) == 1:
+                    out.append(record('nba', gid, game, team, 'availability', [name],
+                                      injuries[tags[0].text()], now, url))
             # Explicit class AND text required. 'Unconfirmed' cannot match.
             confirmed = len(statuses) == 1 and statuses[0].has('is-confirmed') and statuses[0].text().strip() == 'Confirmed Lineup'
             expected = len(statuses) == 1 and statuses[0].has('is-expected') and statuses[0].text().strip() == 'Expected Lineup'
             if not (confirmed or expected):
                 continue
-            names = []
+            names = []; positions = {}
             # Only the starters before the first secondary/MAY NOT PLAY section.
             for child in listing.children:
                 if child.has('lineup__title'):
@@ -157,13 +199,16 @@ def parse_nba(html, ctx, now, url=RW):
                 if child.has('lineup__player'):
                     links = [n for n in child.walk() if n.tag == 'a' and n.attrs.get('title')]
                     if len(links) == 1:
-                        names.append(links[0].attrs['title'])
+                        name = links[0].attrs['title']; names.append(name)
+                        pos = child.find('lineup__pos')
+                        if len(pos) == 1 and pos[0].text() in ('PG', 'SG', 'SF', 'PF', 'C'):
+                            positions[name] = pos[0].text()
             if len(names) != 5 or len({key(n) for n in names}) != 5:
                 continue
-            roster = [p for p in ctx.get('players', {}).values() if p.get('team') == team]
             if any(sum(key(p.get('name')) == key(name) for p in roster) != 1 for name in names):
                 continue
-            out.append(record('nba', gid, game, team, 'lineup', names, 'confirmed' if confirmed else 'projected', now, url))
+            out.append(record('nba', gid, game, team, 'lineup', names, 'confirmed' if confirmed else 'projected', now, url,
+                              positions=positions, game_context=context))
     return out
 
 
