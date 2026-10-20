@@ -31,7 +31,7 @@ test('carousel remains enabled for NFL/NBA and detail edits preserve swipe posit
 test('shared builder reuses controls and keeps the same order across every sport',()=>{
  const nodes=new Map();
  class Node{
-  constructor(id=''){this.id=id;this.children=[];this.dataset={};this.attributes={};this.classList={add(){},toggle(){}};if(id)nodes.set('#'+id,this)}
+  constructor(id=''){this.id=id;this.children=[];this.dataset={};this.attributes={};this.classes=new Set();this.classList={add(){},toggle:(k,on)=>on?this.classes.add(k):this.classes.delete(k)};if(id)nodes.set('#'+id,this)}
   append(...items){for(const node of items){node.remove();node.parentElement=this;this.children.push(node)}}
   prepend(node){node.remove();node.parentElement=this;this.children.unshift(node)}
   remove(){if(this.parentElement){this.parentElement.children=this.parentElement.children.filter(n=>n!==this);this.parentElement=null}}
@@ -50,5 +50,6 @@ test('shared builder reuses controls and keeps the same order across every sport
   window.SELECTION_UI.mountBuilder(sport);const shell=nodes.get('#sharedBuilder'),filters=nodes.get(sport==='nfl'?'#nflParlayFilters':'#sharedSportFilters');
   assert.equal(shell.nextElementSibling,filters);assert.equal(filters.nextElementSibling,nodes.get('#generateBtn'));assert.equal(quality.parentElement,nodes.get('#builderLegs'));assert.equal(nflMode.hidden,sport!=='nfl');assert.equal(nbaField.hidden,sport!=='nba');
  }
+ const active=new Node();active.dataset.mode='sgp';nodes.set('.mode-tabs .tab.active',active);window.SELECTION_UI.mountBuilder('nfl');assert.equal(nodes.get('#gameChooserWrap').classes.has('builder-inactive-game'),false);active.dataset.mode='multi';window.SELECTION_UI.mountBuilder('nfl');assert.equal(nodes.get('#gameChooserWrap').classes.has('builder-inactive-game'),true);
  const group=source.nextElementSibling;assert.equal(group.children.length,2);group.click({target:{closest:()=>group.children[0]}});assert.equal(source.value,'sgp');assert.equal(source.changed,true);
 });
