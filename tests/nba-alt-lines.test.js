@@ -71,6 +71,22 @@ test('NBA Balanced same-game builds account for shared scoring exposure',()=>{
  assert.deepEqual([...A.buildSameGame(rows,2,assess).map(m=>m.selection_id)].sort(),['a','b']);
  assert.deepEqual([...A.buildSameGame(rows,2,assess,{balanced:true}).map(m=>m.selection_id)].sort(),['a','c']);
 });
+test('NBA SGPs cap player props at two per team and search for qualified opponents',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,make=(id,team,rank)=>({game_id:'g',selection_id:id,ticker:id,player:id,team_code:team,kind:'points',side:'yes',line:15.5,rank});
+ const home=[make('a','NYK',100),make('b','NYK',99),make('c','NYK',98),make('d','NYK',97)],away=[make('e','PHI',50),make('f','PHI',49)],assess=m=>({pass:true,rank:m.rank,coverage:.8});
+ assert.equal(A.buildSameGame(home,4,assess).length,0);assert.equal(A.buildSameGame(home,3,assess).length,0);assert.equal(A.buildSameGame(home,2,assess).length,2);
+ const build=A.buildSameGame([...home,...away],4,assess);assert.equal(build.length,4);assert.equal(build.filter(m=>m.team_code==='NYK').length,2);assert.equal(build.filter(m=>m.team_code==='PHI').length,2);
+ assert.equal(A.buildSameGame([...home,...away],4,m=>({...assess(m),pass:m.team_code!=='PHI'})).length,0,'never fill with blocked opponents');
+ const lines=[{game_id:'g',selection_id:'total',ticker:'total',kind:'total',side:'yes',line:220.5,rank:20},{game_id:'g',selection_id:'spread',ticker:'spread',kind:'spread',team_code:'NYK',side:'yes',line:2.5,rank:20}];
+ assert.equal(A.buildSameGame([...home,...lines],4,assess).length,4,'team lines do not count as player props');
+});
+test('NBA empty states distinguish ALT shortage, team concentration and profile constraints',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,rows=['a','b','c','d'].map(player=>({game_id:'g',selection_id:player,ticker:player,player,team_code:'NYK',kind:'points',side:'yes',line:15.5}));
+ assert.match(A.unavailableBuild(rows,4,true,'both'),/Only 2 compatible qualifying legs.*NYK only; maximum two per team/);
+ assert.match(A.unavailableBuild(rows.slice(0,1),4,true,'alt'),/Only 1 compatible qualifying ALT leg.*Try Both lines or fewer legs/);
+ assert.match(A.unavailableBuild(rows.slice(0,2),2,true,'both'),/No distinct profile meets the risk and combination checks/);
+ assert.match(A.unavailableBuild([],3,true,'alt'),/Only 0 compatible qualifying ALT legs/);
+});
 test('NBA complete profile bands reject a lotto-like Balanced build and repeated exposures',()=>{
  const A=dashboard().w.NBA_DASHBOARD,legs=['a','b','c'].map((game_id,i)=>({game_id,kind:'points',player:'P'+i,side:'yes',line:20.5}));
  const checks=p=>legs.map(()=>({profileBufferedP:p}));
