@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-20",
-  "updated_at": "2026-10-20T22:12:47.156Z",
+  "updated_at": "2026-10-20T22:22:47.170Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,7 +32,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T21:52:21.822489+00:00"
+      "snapshotAt": "2026-10-20T22:02:22.858880+00:00"
     },
     "nba": {
       "captured": 12,
@@ -62,12 +62,12 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T22:12:45.191271+00:00"
+      "snapshotAt": "2026-10-20T22:22:45.191757+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-20T21:52:37.418149+00:00"
+      "snapshotAt": "2026-10-20T22:02:36.937265+00:00"
     },
     "nfl": {
       "captured": 13,
@@ -103,17 +103,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T21:53:21.056729+00:00"
+      "snapshotAt": "2026-10-20T22:02:20.002494+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-20T22:02:33.611027+00:00"
+      "snapshotAt": "2026-10-20T22:12:33.612190+00:00"
     },
     "ufc": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-20T21:52:21.282474+00:00"
+      "snapshotAt": "2026-10-20T22:02:19.851829+00:00"
     }
   },
   "records": [
@@ -3732,6 +3732,106 @@
           "projectedHome": null,
           "isAltLine": false,
           "altReferenceLine": 24.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-20|nba|multi|safe|2||learning-20261019|fdecfb84d65f2108",
+      "day": "2026-10-20",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "safe",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-20T22:22:47.170Z",
+      "snapshotAt": "2026-10-20T22:22:45.191757+00:00",
+      "sourceVersion": "69ce673551292cf4c9e6eb6bd8f1217287fd1c0f",
+      "priceEstimate": 192,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.5614352581979734,
+        "conservativeP": 0.46774431314960385,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.4986107074861479,
+          "upper": 0.7444830150926083,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3|no",
+          "ticker": "KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Jalen Brunson Under 2.5 Threes",
+          "market": "threes",
+          "line": 2.5,
+          "player": "Jalen Brunson",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.7444830150926083,
+          "rawModelP": 0.7444830150926083,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.748070622562674,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBA3PT-26OCT20OKCSAS-SASKJOHNSON3-1|yes",
+          "ticker": "KXNBA3PT-26OCT20OKCSAS-SASKJOHNSON3-1",
+          "side": "yes",
+          "eventId": "401909090",
+          "event": "Thunder vs Spurs",
+          "eventTime": "2026-10-21T01:30Z",
+          "closeTime": "2026-10-23T01:30:00Z",
+          "selection": "Keldon Johnson Over 0.5 Threes",
+          "market": "threes",
+          "line": 0.5,
+          "player": "Keldon Johnson",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.59,
+          "referenceAmericanOdds": null,
+          "marketP": 0.585,
+          "modelP": 0.7541276923935396,
+          "rawModelP": 0.7541276923935396,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.402942952586207,
+          "projectedTotal": 232.39306671492938,
+          "projectedMargin": 2.643041431967603,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 0.5,
           "altDistance": 0,
           "result": null
         }
