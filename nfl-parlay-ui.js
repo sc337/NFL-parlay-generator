@@ -26,7 +26,7 @@ function mount(){
  const quality=$('.quality-settings'),home=$('.parlay-options-row');
  function sync(){
   const nfl=(window.__ACTIVE_SPORT||'nfl')==='nfl';main.hidden=filters.hidden=!nfl;
-  if(quality){const target=nfl?main:home;if(target&&quality.parentElement!==target)target.append(quality);}
+  if(quality&&!$('#sharedBuilder')){const target=nfl?main:home;if(target&&quality.parentElement!==target)target.append(quality);}
  }
  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-sport']});sync();
 }

@@ -52,6 +52,36 @@ function tidyFilters(s){
  const text=['Filters',lineLabel,marketLabel].filter(Boolean).join(' · ');if(summary.textContent!==text)summary.textContent=text;
  let reset=root.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset';root.lastElementChild.append(reset)}reset.onclick=resetFilters;reset.textContent='Reset';reset.hidden=(!lines||lines.value==='both')&&selected.length===visible.length&&!exclusions.get(s)?.size&&!locks.get(s)?.size;
 }
+// Shared builder owns layout; sport modules continue to own values and events.
+function mountBuilder(s){
+ const controls=$('#parlayControls');let shell=$('#sharedBuilder');
+ if(!shell){shell=document.createElement('div');shell.id='sharedBuilder';shell.innerHTML='<div class="builder-main-row"><div id="builderMode" class="field"><label>Game mode</label><div id="builderModeOptions"></div></div><div id="builderLegs"></div></div><div id="builderGame"></div>';controls.prepend(shell)}
+ const modeHost=$('#builderModeOptions'),gameHost=$('#builderGame'),quality=$('.quality-settings');
+ if(quality&&quality.parentElement!==$('#builderLegs'))$('#builderLegs').append(quality);
+ const nflMode=$('.mode-tabs'),nbaMode=$('#nbaModeSelect')?.closest('.field');
+ if(nflMode&&nflMode.parentElement!==modeHost)modeHost.append(nflMode);
+ if(nbaMode&&nbaMode.parentElement!==modeHost)modeHost.append(nbaMode);
+ if(nflMode)nflMode.hidden=s!=='nfl';if(nbaMode)nbaMode.hidden=s!=='nba';
+ let fixed=$('#builderFixedMode');if(!fixed){fixed=document.createElement('div');fixed.id='builderFixedMode';fixed.className='builder-fixed-mode';modeHost.append(fixed)}
+ fixed.hidden=['nfl','nba'].includes(s);const fixedLabel=s==='ufc'?'Multi-Fight':'Multi-Game';if(fixed.textContent!==fixedLabel)fixed.textContent=fixedLabel;
+ const source=$('#nbaModeSelect');if(source){
+  let group=$('#nbaModeButtons');if(!group){group=document.createElement('div');group.id='nbaModeButtons';group.className='builder-mode-buttons';group.setAttribute('role','group');group.setAttribute('aria-label','Game mode');
+   for(const option of source.options){const b=document.createElement('button');b.type='button';b.dataset.modeValue=option.value;b.textContent=option.textContent;group.append(b)}
+   group.addEventListener('click',e=>{const b=e.target.closest('[data-mode-value]');if(!b||b.disabled)return;source.value=b.dataset.modeValue;source.dispatchEvent(new Event('change',{bubbles:true}));schedule()});source.after(group)}
+  source.classList.add('builder-mode-source');for(const b of group.children){b.setAttribute('aria-pressed',String(source.value===b.dataset.modeValue));b.disabled=source.disabled||[...source.options].find(o=>o.value===b.dataset.modeValue)?.disabled===true}
+ }
+ for(const id of ['gameChooserWrap','nbaGameField']){const game=$('#'+id);if(game&&game.parentElement!==gameHost)gameHost.append(game);if(game)game.classList.toggle('builder-inactive-game',id==='gameChooserWrap'?s!=='nfl'||$('.mode-tabs .tab.active')?.dataset.mode!=='sgp':s!=='nba')}
+ const filters=$(s==='nfl'?'#nflParlayFilters':'#sharedSportFilters');if(filters&&shell.nextElementSibling!==filters)shell.after(filters);
+ const generate=$('#generateBtn');if(generate&&filters&&filters.nextElementSibling!==generate)filters.after(generate);
+}
+function tidyCards(){
+ for(const card of document.querySelectorAll('#results>.parlay-card[data-compact]')){
+  const details=[...card.querySelectorAll('.card-explanation')];const primary=details.find(d=>!d.classList.contains('parlay-risk'))||details[0];if(!primary)continue;
+  const heading=primary.querySelector('summary');if(heading&&heading.textContent!=='Details')heading.textContent='Details';
+  for(const section of details)if(section!==primary&&!primary.contains(section)){section.classList.remove('card-explanation');primary.append(section)}
+  const actions=card.querySelector('.leg-actions');if(actions&&!primary.contains(actions))primary.append(actions);
+ }
+}
 function mount(){
  const controls=$('#parlayControls');if(!controls)return;
  let panel=$('#sharedSelection');
@@ -61,18 +91,17 @@ function mount(){
  $('#pickView')?.remove();
  document.body.classList.remove('straights-view','parlays-view');
  let clear=$('#clearSelectionEdits');if(!clear){clear=document.createElement('button');clear.id='clearSelectionEdits';clear.type='button';clear.textContent='Clear locked / excluded picks';controls.append(clear);clear.onclick=()=>{exclusions.delete(sport());locks.delete(sport());refresh();};}clear.hidden=!(exclusions.get(s)?.size||locks.get(s)?.size);
- let gameControls=$('#sharedGameControls');if(!gameControls){gameControls=document.createElement('div');gameControls.id='sharedGameControls';panel.after(gameControls)}gameControls.hidden=s!=='nba';
- if(s==='nba')for(const el of [$('#nbaModeSelect')?.closest('.field'),$('#nbaGameField')])if(el&&el.parentElement!==gameControls)gameControls.append(el);
  // Keep sport-specific controls and listeners intact inside one filter drawer.
  if(s!=='nfl'){
   let filters=$('#sharedSportFilters');if(!filters){filters=document.createElement('details');filters.id='sharedSportFilters';filters.innerHTML='<summary>Filters</summary><div class="shared-filter-body"></div>';panel.after(filters)}filters.hidden=false;
-  if(s==='nba'&&gameControls.nextElementSibling!==filters)filters.before(gameControls);
   for(const id of ['mlbLineFilters','ncaafLineFilters','nhlMarketFilters','nbaLineFilters','mlbMarketFilters','ncaafMarketFilters','nbaMarketFilters','ufcMarketFilters']){const el=$('#'+id);if(el&&el.parentElement!==filters.lastElementChild)filters.lastElementChild.append(el)}
   let reset=filters.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset filters';filters.lastElementChild.append(reset);reset.onclick=()=>{const current=sport();exclusions.delete(current);locks.delete(current);window.DASHBOARD_UI?.put(current,'lines','both');const api=window[current.toUpperCase()+'_DASHBOARD'];api?.setLineMode?.('both');if(window.SPORT_MARKETS?.options[current])window.SPORT_MARKETS.set(current,window.SPORT_MARKETS.options[current].map(x=>x[0]));const line=$('#'+current+'LinesSelect');if(line){line.value='both';line.dispatchEvent(new Event('change',{bubbles:true}))}if(current==='nhl')api?.setMarkets?.(['moneyline','spread','total','goals','assists','points','shots','saves']);refresh();};}
   filters.querySelector('summary').textContent='Filters';
  }else if($('#sharedSportFilters'))$('#sharedSportFilters').hidden=true;
  mountLines();
  tidyFilters(s);
+ mountBuilder(s);
+ tidyCards();
  const count=window[s.toUpperCase()+'_DASHBOARD']?.availableCount?.();
  const legSelect=$('#legsSelect');if(legSelect){for(const option of legSelect.options){const impossible=s!=='nfl'&&!(s==='nba'&&$('#nbaModeSelect')?.value==='sgp')&&Number.isFinite(count)&&Number(option.value)>count;option.disabled=impossible;option.title=impossible?'Not enough qualified games or fights':'';}}
  // Legacy secondary surfaces stay out of the main dashboard.
@@ -87,6 +116,6 @@ function mount(){
 let queued=false;function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;observer?.disconnect();mount();observe()})}
 let observer;function observe(){observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-sport']})}
 function init(){observer=new MutationObserver(schedule);mount();observe();}
-window.SELECTION_UI={select,refresh,labels,excluded,exclude,locked,lock,accepts,mountLines};
+window.SELECTION_UI={select,refresh,labels,excluded,exclude,locked,lock,accepts,mountLines,mountBuilder};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else init();
 })();

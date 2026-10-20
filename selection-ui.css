@@ -61,3 +61,34 @@ body[data-sport="nfl"] #nflParlayFilters #nflLinesWrap>label[for="nflLinesSelect
 #sharedGameControls{margin:10px 0}
 #sharedGameControls .field{min-width:0}
 #sharedGameControls select{width:100%;min-width:0;box-sizing:border-box}
+
+/* One builder and card language for every sport. */
+body[data-sport] #parlayControls{padding:12px!important;border-radius:14px!important}
+#sharedBuilder{display:grid;gap:10px;margin-bottom:10px;min-width:0}
+#sharedBuilder .builder-main-row{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(100px,1fr);gap:10px;align-items:start}
+#sharedBuilder :is(.field,.quality-settings){display:block!important;margin:0!important;padding:0!important;min-width:0;width:100%}
+#sharedBuilder label,#sharedBuilder .nfl-control-label{display:block!important;margin:0 0 6px!important;font-size:11px!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#sharedBuilder #builderModeOptions>.field>label,#sharedBuilder select.builder-mode-source{display:none!important}
+body[data-sport] #sharedBuilder :is(.mode-tabs,.builder-mode-buttons){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;margin:0!important;padding:3px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);min-width:0}
+body[data-sport] #sharedBuilder :is(.mode-tabs,.builder-mode-buttons) button{min-height:38px!important;min-width:0;padding:5px!important;border:0!important;border-radius:7px!important;box-shadow:none!important;font:inherit;font-size:12px!important;font-weight:600;line-height:1.2;white-space:normal;color:var(--muted);background:transparent}
+body[data-sport] #sharedBuilder :is(.mode-tabs button.active,.builder-mode-buttons button[aria-pressed="true"]){color:var(--blue)!important;background:var(--blue-bg)!important}
+#sharedBuilder select,#sharedBuilder .builder-fixed-mode{height:46px!important;min-height:46px!important;width:100%!important;min-width:0;padding:8px 10px!important;border:1px solid var(--border)!important;border-radius:10px!important;background:var(--surface2)!important;color:var(--text);font:inherit;font-size:14px!important;box-sizing:border-box}
+#sharedBuilder .builder-fixed-mode{display:flex;align-items:center;color:var(--muted)}
+body[data-sport] #sharedBuilder [hidden],#sharedBuilder .builder-inactive-game{display:none!important}
+#sharedBuilder #gameChooserWrap{grid-column:auto!important;gap:0!important}
+#sharedBuilder #builderGame:empty{display:none}
+body[data-sport] :is(#nflMainControls,#sharedGameControls,.parlay-options-row){display:none!important}
+body[data-sport] #parlayControls>.smooth-control-row{margin:0!important;gap:0!important}
+body[data-sport] #generateBtn{width:100%!important;min-height:46px!important;margin:10px 0 0!important;padding:10px 12px!important;border-radius:10px!important;font-size:14px!important;line-height:1.3}
+body[data-sport] #results>.parlay-card{padding:12px!important;border-radius:14px!important;border:1px solid var(--border)!important;box-sizing:border-box}
+body[data-sport] #results .parlay-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+body[data-sport] #results .parlay-name{font-size:16px!important;line-height:1.3!important;margin:0 0 6px!important}
+body[data-sport] #results .odds{font-size:24px!important;line-height:1.2}
+body[data-sport] #results .leg{padding:10px 0!important;min-width:0;gap:8px}
+body[data-sport] #results :is(.sport-visual-copy,.mlb-leg-copy){flex:1;min-width:0}
+body[data-sport] #results .leg-title{font-size:14px!important;line-height:1.35}
+body[data-sport] #results .leg-brief{font-size:12px!important;line-height:1.4}
+body[data-sport] #results .market-tile{flex:0 0 78px!important;width:78px!important;min-width:78px!important;padding:6px!important;box-sizing:border-box;border-radius:10px!important}
+body[data-sport] #results .card-explanation>summary{font-size:13px!important;min-height:36px;align-content:center}
+body[data-sport] #results .odds-label{font-size:10px!important}
+@media(max-width:360px){#sharedBuilder .builder-main-row{grid-template-columns:minmax(0,1.5fr) minmax(82px,1fr);gap:6px}}
