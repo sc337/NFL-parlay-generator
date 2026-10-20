@@ -144,7 +144,7 @@ function assess(s,m,f={},options={}){
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
  const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
- const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .05),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
+ const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .04),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
  const buffer=Object.values(bufferParts).reduce((sum,value)=>sum+value,0);
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
@@ -174,6 +174,7 @@ function assess(s,m,f={},options={}){
  const roleChange=f.roleChange??m.roleChange;
  if(!reason&&['falling','rising'].includes(roleChange?.status))reason='Recent opportunity changed; waiting for a stable role';
  const clearsValue=ev>0&&conservativeEV>0;
+  const potentialValue=ev>0&&!clearsValue&&!validated&&!anchored;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
  let sensitivity=null;
  if(f.sensitivity){
@@ -189,9 +190,9 @@ function assess(s,m,f={},options={}){
   if(!robust)warnings.push(sensitivity.label+'; review adverse scenarios in Details');
  }
  // Policy safeguards for provisional estimates, not measured confidence limits.
- if(!reason&&!validated&&(q.p<.35||p<.45))reason='Unvalidated longshot; insufficient reliability';
+ if(!reason&&!validated&&(q.p<.30||p<.45))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
- if(!reason&&!validated&&Math.abs(p-referenceP)>.15)reason='Model disagrees too strongly with market';
+ if(!reason&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
  if(!reason&&options.featured&&likelihoodMode&&conservativeP<.55)reason='Featured pick needs stronger likelihood';
  // Near kickoff there is no time to treat missing availability as a minor caveat.
@@ -209,17 +210,19 @@ function assess(s,m,f={},options={}){
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  if(!reason&&window.SELECTION_UI?.excluded?.(s,m))reason='Selection excluded by you';
  const dataReason=reason,dataPass=!dataReason;
+ if(potentialValue&&!likelihoodMode&&!matchupMode)warnings.push('Potential value only; positive raw EV does not clear uncertainty buffer');
  if(!reason&&!clearsValue&&!likelihoodMode&&!matchupMode)reason='Edge does not clear uncertainty buffer';
  if(likelihoodMode)warnings.push('Win Chance prioritizes estimated likelihood; price may be poor value');
  const minimumOdds=acceptableOdds(conservativeP);
  const valueQualified=!likelihoodMode&&!matchupMode&&validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
+  const provisionalValue=potentialValue&&!likelihoodMode&&!matchupMode;
  const rankingP=conservativeP;
  if(matchupMode)warnings.push('Matchup selection; positive price value is not established');
  // Ranking preference only: don't reject good evidence simply because the price
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,selectionMode,dataPass,dataReason,pricePass:clearsValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
+ return {pass:!reason,reason,selectionMode,dataPass,dataReason,pricePass:clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev,conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
