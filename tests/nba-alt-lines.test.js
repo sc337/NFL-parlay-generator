@@ -64,3 +64,9 @@ test('NBA same-game optimizer rejects conflicting, redundant and impossible comb
  assert.deepEqual([...build.map(x=>x.selection_id)],[...A.buildSameGame([...rows].reverse(),4,assess).map(x=>x.selection_id)]);
  assert.equal(A.buildSameGame([money,spread],2,assess).length,0);assert.equal(A.buildSameGame(rows,5,assess).length,0);
 });
+test('NBA Balanced same-game builds account for shared scoring exposure',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,rows=[{selection_id:'a',ticker:'a',game_id:'g',kind:'points',player:'One',rank:120},{selection_id:'b',ticker:'b',game_id:'g',kind:'points',player:'Two',rank:110},{selection_id:'c',ticker:'c',game_id:'g',kind:'rebounds',player:'Three',rank:108}];
+ const assess=m=>({pass:true,rank:m.rank,coverage:.8,conservativeP:.6});
+ assert.deepEqual([...A.buildSameGame(rows,2,assess).map(m=>m.selection_id)].sort(),['a','b']);
+ assert.deepEqual([...A.buildSameGame(rows,2,assess,{balanced:true}).map(m=>m.selection_id)].sort(),['a','c']);
+});

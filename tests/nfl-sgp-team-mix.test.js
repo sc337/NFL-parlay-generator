@@ -59,3 +59,11 @@ test('assumed correlation uplift alone cannot create a Conservative label',()=>{
  const r=build(),p={legs:[{name:'a'},{name:'b'},{name:'c'},{name:'d'}],risk:{referenceP:.38,independentP:.19,scenario:{sensitivity:[.31,.42]}}};
  assert.equal(r.ctx.sgpLikelihood(p),.19);assert.equal(r.ctx.sgpProfileFits(p,'safe',[]),false);assert.equal(r.ctx.sgpProfileFits(p,'balanced',[]),true);
 });
+test('NFL Balanced compares weakest-leg evidence inside the same joint-risk band',()=>{
+ const r=build({markets:[{type:'passing',player:'A',team:'Home',score:120,p:.7,c:.9},{type:'receiving',player:'B',team:'Away',score:119,p:.35,c:.6},{type:'receiving',player:'C',team:'Away',score:116,p:.6,c:.9}]});
+ r.game.id='verified-game';vm.runInContext(fs.readFileSync('market-guards.js','utf8'),r.ctx);
+ r.ctx.window.PICK_QUALITY.assess=(sport,m)=>({conservativeP:m.p,coverage:m.c});
+ r.ctx.sgpCombinationRisk=()=>({pass:true,modelP:.2,scenario:{sensitivity:[.18,.24]}});r.ctx.sgpProfileFits=()=>true;
+ assert.deepEqual([...r.run('safe',[],2).legs.map(m=>m.player)].sort(),['A','B']);
+ assert.deepEqual([...r.run('balanced',[],2).legs.map(m=>m.player)].sort(),['A','C']);
+});

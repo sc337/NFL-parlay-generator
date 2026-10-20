@@ -829,7 +829,8 @@ function sgpProfileFits(p,variant,previous){
 }
 function pickDistinctAlternative(game,count,risk,variant,previous){
   const ideas=!!window.NFL_PARLAY_IDEAS?.active?.(state);
-  const scores=new Map();
+  const scores=new Map(),checks=new Map();
+  const balancePenalty=legs=>variant==='balanced'&&window.MARKET_GUARDS?.balancedPenalty?window.MARKET_GUARDS.balancedPenalty(legs.map(m=>{if(!checks.has(m))checks.set(m,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true}));return checks.get(m)}),legs.map(m=>({...m,canonical_event_id:'nfl:'+game.id}))):0;
   const pool=game.markets.filter(m=>{
     if(!isParlayEligible(m)||!(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type)))return false;
     const score=candidateScore(m,risk,variant);scores.set(m,score);return score>-900;
@@ -846,9 +847,9 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
       const legs=[...beam.legs,m],signature=parlaySignature({legs});
       if(!sgpConcentrationPass(legs))continue;
       if(seen.has(signature))continue;seen.add(signature);
-      next.push({legs,score:beam.score+scores.get(m)});
+      const score=beam.score+scores.get(m);next.push({legs,score,objective:score-balancePenalty(legs)});
     }
-    next.sort((a,b)=>b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b)));
+    next.sort((a,b)=>b.objective-a.objective||parlaySignature(a).localeCompare(parlaySignature(b)));
     const paths=new Map();beams=[];
     for(const beam of next){
       const key=beam.legs.map(m=>m.type+':'+(m.side||'')).sort().join('|')+'|'+teamCounts(beam.legs,game).join(':');
@@ -860,11 +861,12 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     if(!p)return null;
     p.risk=sgpCombinationRisk(p.legs,game,ideas);
     p.searchScore=b.score/count;
+    p.balancePenalty=balancePenalty(b.legs);
     return p;
   }).filter(p=>p&&sgpProfileFits(p,variant,previous));
   // Within each risk band prefer the highest lower sensitivity scenario,
   // with individual evidence as a modest tie-breaker. No correlation bonus or EV claim.
-  candidates.sort((a,b)=>(b.risk.scenario.sensitivity[0]*100+b.searchScore*.03)-(a.risk.scenario.sensitivity[0]*100+a.searchScore*.03)||parlaySignature(a).localeCompare(parlaySignature(b)));
+  candidates.sort((a,b)=>(b.risk.scenario.sensitivity[0]*100+b.searchScore*.03-b.balancePenalty)-(a.risk.scenario.sensitivity[0]*100+a.searchScore*.03-a.balancePenalty)||parlaySignature(a).localeCompare(parlaySignature(b)));
   for(const p of candidates.slice(0,12)){
     p.risk=sgpCombinationRisk(p.legs,game,ideas,8000);
     if(!sgpProfileFits(p,variant,previous))continue;
@@ -898,6 +900,7 @@ function propFamily(m){
 
 function buildMulti(count,risk,variant,previous=[]){
   count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
+  const checks=new Map(),balancePenalty=legs=>variant==='balanced'&&window.MARKET_GUARDS?.balancedPenalty?window.MARKET_GUARDS.balancedPenalty(legs.map(m=>{const key=m.ticker||m.name;if(!checks.has(key))checks.set(key,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true}));return checks.get(key)}),legs):0;
   window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
   const all=[];
@@ -920,9 +923,10 @@ function buildMulti(count,risk,variant,previous=[]){
       const legs=[...beam.legs,{...x.m,gameLabel:`${x.g.away} @ ${x.g.home}`,kickoff:x.g.commence_time}];
       const signature=parlaySignature({legs});if(seen.has(signature))continue;seen.add(signature);
       const families=legs.map(propFamily),same=families.filter(f=>f===propFamily(x.m)).length;
-      next.push({legs,games:new Set([...beam.games,x.g.id]),score:beam.score+x.score-(x.m.player&&same>Math.ceil(count/2)?8:0)});
+      const score=beam.score+x.score-(x.m.player&&same>Math.ceil(count/2)?8:0);
+      next.push({legs,games:new Set([...beam.games,x.g.id]),score,objective:score-balancePenalty(legs)});
     }
-    next.sort((a,b)=>b.score-a.score||parlaySignature(a).localeCompare(parlaySignature(b)));beams=next.slice(0,160);
+    next.sort((a,b)=>b.objective-a.objective||parlaySignature(a).localeCompare(parlaySignature(b)));beams=next.slice(0,160);
   }
   for(const b of beams){if(b.legs.length!==count)continue;const p=packageParlay(b.legs,variant,false);if(p&&distinctProfileBuild(p,previous))return p;}
   return null;
