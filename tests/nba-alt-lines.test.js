@@ -38,15 +38,16 @@ test('NBA line filter is visible outside the collapsed markets and controls pick
 test('NBA reference lines use actual quoted ladders without inventing a sportsbook main',()=>{const window={};vm.runInNewContext(fs.readFileSync('nba-alt-lines.js','utf8'),{window});const A=window.NBA_ALT_LINES,base={game_id:'g',kind:'points',player_id:'p',player:'P',side:'yes'},rows=A.classify([{...base,line:19.5,probability:.5},{...base,line:14.5,probability:.8},{...base,line:9.5,probability:.9}]);assert.equal(rows[0].isAltLine,false);assert.equal(rows[1].isAltLine,true);assert.equal(A.allowed(rows[1],'both'),true);assert.equal(A.allowed(rows[2],'both'),false);assert.equal(A.allowed(rows[1],'standard'),false);assert.equal(A.allowed({...rows[1],side:'no'},'both'),false);assert.equal(A.allowed(rows[0],'alt'),false)});
 test('NBA mode and game controls scope SGP legs, preserve multi-game uniqueness, and never synthesize SGP odds',async()=>{
  const r=dashboard();
- r.rows.push(...['a','b'].map((game_id,i)=>({...r.rows[0],game_id,kind:'points',line:20.5,player:'Player '+i,player_id:'p'+i,selection_id:'p'+i})));
+ const latest=()=>r.captures.slice(-3).find(x=>x.legs.length)||r.captures.at(-1);
+ r.rows.push(...['a','b'].map((game_id,i)=>({...r.rows[0],game_id,kind:'points',probability:.6,line:20.5,player:'Player '+i,player_id:'p'+i,selection_id:'p'+i})));
  await r.w.NBA_DASHBOARD.load();assert.equal(r.modeSelect.value,'multi');assert.equal(r.gameField.hidden,true);
- assert.equal(new Set(r.captures.at(-1).legs.map(x=>x.market.game_id)).size,2);
+ assert.equal(new Set(latest().legs.map(x=>x.market.game_id)).size,2);
  r.modeSelect.change({target:{value:'sgp'}});assert.equal(r.gameField.hidden,false);assert.equal(r.captures.at(-1).mode,'sgp');
- assert.equal(r.captures.at(-1).legs.length,2);assert.equal(new Set(r.captures.at(-1).legs.map(x=>x.market.game_id)).size,1);
+ assert.equal(latest().legs.length,2);assert.equal(new Set(latest().legs.map(x=>x.market.game_id)).size,1);
  assert.match(r.nodes.get('#results').innerHTML,/Check book/);assert.equal(r.risks.at(-1).sgp,true);
- r.gameSelect.change({target:{value:'b'}});assert.ok(r.captures.at(-1).legs.every(x=>x.market.game_id==='b'));assert.deepEqual(r.writes.at(-1),['nba','game','b']);
+ r.gameSelect.change({target:{value:'b'}});assert.ok(latest().legs.every(x=>x.market.game_id==='b'));assert.deepEqual(r.writes.at(-1),['nba','game','b']);
  r.select.change({target:{value:'alt'}});assert.equal(r.captures.at(-1).legs.length,0,'never fill ALT SGP with standard player line');
- r.select.change({target:{value:'both'}});r.modeSelect.change({target:{value:'multi'}});assert.equal(r.risks.at(-1).sgp,false);assert.equal(new Set(r.captures.at(-1).legs.map(x=>x.market.game_id)).size,2);
+ r.select.change({target:{value:'both'}});r.modeSelect.change({target:{value:'multi'}});assert.equal(r.risks.at(-1).sgp,false);assert.equal(new Set(latest().legs.map(x=>x.market.game_id)).size,2);
  r.w.SLATE_UI.matches=()=>false;r.w.NBA_DASHBOARD.refresh();r.modeSelect.change({target:{value:'sgp'}});
  assert.equal(r.gameSelect.disabled,true);assert.equal(r.captures.at(-1).legs.length,0);assert.match(r.nodes.get('#results').innerHTML,/No upcoming NBA games for the selected date/);
  const restored=dashboard({mode:'sgp',game:'b'});await restored.w.NBA_DASHBOARD.load();assert.equal(restored.modeSelect.value,'sgp');assert.equal(restored.gameSelect.value,'b');
@@ -69,4 +70,24 @@ test('NBA Balanced same-game builds account for shared scoring exposure',()=>{
  const assess=m=>({pass:true,rank:m.rank,coverage:.8,conservativeP:.6});
  assert.deepEqual([...A.buildSameGame(rows,2,assess).map(m=>m.selection_id)].sort(),['a','b']);
  assert.deepEqual([...A.buildSameGame(rows,2,assess,{balanced:true}).map(m=>m.selection_id)].sort(),['a','c']);
+});
+test('NBA complete profile bands reject a lotto-like Balanced build and repeated exposures',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,legs=['a','b','c'].map((game_id,i)=>({game_id,kind:'points',player:'P'+i,side:'yes',line:20.5}));
+ const checks=p=>legs.map(()=>({profileBufferedP:p}));
+ assert.equal(A.profileFits(legs,checks(.70),{key:'safe'}),true);
+ assert.equal(A.profileFits(legs,checks(.60),{key:'balanced'}),true);
+ assert.equal(A.profileFits(legs,checks(.44),{key:'balanced'}),false);
+ assert.equal(A.profileFits(legs,checks(.44),{key:'long'}),true);
+ const previous=[{legs,risk:A.profileRisk(checks(.60))}];
+ assert.equal(A.profileFits(legs.map(m=>({...m,line:22.5})),checks(.44),{key:'long'},previous),false,'changing only thresholds is not a distinct exposure');
+ const changed=legs.map((m,i)=>i?{...m,player:'Other '+i,kind:'rebounds'}:m);
+ assert.equal(A.profileFits(changed,checks(.44),{key:'long'},previous),true);
+ assert.equal(A.profileFits(changed,checks(.52),{key:'long'},[{legs,risk:.16}]),false,'adjacent bands still need a three-point index gap');
+});
+test('NBA passes instead of filling every profile with the same risk',async()=>{
+ const r=dashboard();await r.w.NBA_DASHBOARD.load();
+ assert.ok(r.captures.find(x=>x.profile==='safe').legs.length);
+ assert.equal(r.captures.find(x=>x.profile==='balanced').legs.length,0);
+ assert.equal(r.captures.find(x=>x.profile==='long').legs.length,0);
+ assert.match(r.nodes.get('#results').innerHTML,/No distinct Balanced build meets the risk band/);
 });

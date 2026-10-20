@@ -19,6 +19,10 @@ class Element {
  cloneNode(){const copy=new Element(this.tagName,this.className);copy._text=this._text;copy.id=this.id;copy.dataset={...this.dataset};copy.style={...this.style};this.children.forEach(c=>copy.append(c.cloneNode()));return copy}
 }
 const el=(tag,cls,text)=>{const node=new Element(tag,cls);if(text)node.textContent=text;return node};
+test('PRA headings remain short without truncating the market meaning',()=>{
+ const app=display([]);for(const label of ['PRA','Pts + Reb + Assist','Pts + Reb + Assists','Points + Rebounds + Assists'])assert.equal(app.context.shortMarket(label),'PRA');
+ assert.equal(app.context.shortMarket('Points'),'Points');
+});
 function slip(withFooter=false){const card=el('article','parlay-card player-props-card'),top=el('div','parlay-top'),title=el('h3','parlay-name','NHL Props'),summary=el('p','summary','Experimental estimates, confirm participation.'),legs=el('div','legs'),leg=el('div','leg sport-visual-leg'),copy=el('div','sport-visual-copy');top.append(title);copy.append(el('div','leg-title','Andrew Copp Under 0.5 Goals'),el('div','leg-sub','Rangers vs Red Wings · Experimental estimate 89% · If playing'));leg.dataset.eventTime='2026-10-02T22:30:00Z';leg.dataset.matchup='Rangers vs Red Wings';leg.append(copy,el('div','leg-quote','Kalshi 79¢'));legs.append(leg);card.append(top,summary,legs);if(withFooter)card.append(el('div','card-footer'));return card}
 function display(cards,sport='nhl'){const roots=cards.map(c=>{const r=el('section','');r.append(c);return r}),document={body:{dataset:{sport}},createElement:tag=>el(tag,''),querySelectorAll:sel=>sel.endsWith('>.summary')?cards.flatMap(c=>c.children.filter(n=>n.classList.contains('summary'))):cards.filter(c=>!c.dataset.compact)};
  const context=vm.createContext({document,window:{},Date});const source=fs.readFileSync('visual-refresh.js','utf8');

@@ -30,3 +30,13 @@ test('Generate ignores repeated clicks and regenerates once for a changed leg co
 });
 
 test('new visits and removed Bankroll preferences open NFL while saved sports remain selected',()=>{assert.equal(setup().ui.getSport(),'nfl');assert.equal(setup({sport:'bankroll'}).ui.getSport(),'nfl');assert.equal(setup({sport:'nfl'}).ui.getSport(),'nfl')});
+test('successful generation closes filters for every sport without changing their selections',async()=>{
+ for(const sport of ['nfl','nba','mlb','ncaaf','nhl','ufc']){
+  const frames=[],filters={open:true,selection:'alt'},nodes={'#legsSelect':{value:'3'},'#sharedSportFilters':filters,'#nflParlayFilters':filters};
+  const window={__ACTIVE_SPORT:sport,__SPORT_TOKEN:1,generate:async()=>{},[sport.toUpperCase()+'_DASHBOARD']:{setLegs(){}}};
+  const document={readyState:'loading',addEventListener(){},querySelector:s=>nodes[s]};
+  vm.runInNewContext(fs.readFileSync('parlay-generator.js','utf8'),{window,document,requestAnimationFrame:f=>frames.push(f),console});
+  const done=window.PARLAY_GENERATOR.run();while(frames.length)frames.shift()();await done;
+  assert.equal(filters.open,false,sport);assert.equal(filters.selection,'alt');
+ }
+});

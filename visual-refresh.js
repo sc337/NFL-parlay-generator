@@ -16,6 +16,7 @@ function estimateLabel(sources){
  const unique=[...new Set(sources)];return unique.length===1?unique[0]+' est.':'Mixed est.';
 }
 function shortMarket(value){
+ if(/^(?:pra|pts\s*\+\s*reb\s*\+\s*assist(?:s)?|points\s*\+\s*rebounds\s*\+\s*assists)$/i.test(String(value||'').trim()))return 'PRA';
  const names={'receiving yards':'Rec Yds','reception yards':'Rec Yds','rushing yards':'Rush Yds','passing yards':'Pass Yds','shots on goal':'SOG','shots':'SOG','receptions':'Rec','passing touchdowns':'Pass TD','rushing touchdowns':'Rush TD','receiving touchdowns':'Rec TD','passing attempts':'Pass Att','rushing attempts':'Rush Att','passing completions':'Completions','pitcher strikeouts':'Ks','strikeouts':'Ks','total bases':'Total Bases','home runs':'HR','hits + runs + rbi':'H+R+RBI'};
  return names[String(value||'').trim().toLowerCase()]||value;
 }

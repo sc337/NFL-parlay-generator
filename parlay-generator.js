@@ -32,6 +32,9 @@ async function run(){
      if(!window.UFC_DASHBOARD?.setLegs)throw Error('UFC generator unavailable');
      window.UFC_DASHBOARD.setLegs(n);
    }
+   if(s===sport()&&token===window.__SPORT_TOKEN){
+     for(const id of ['nflParlayFilters','sharedSportFilters']){const filters=document.querySelector('#'+id);if(filters)filters.open=false;}
+   }
  }catch(e){
    if(s!==sport()||token!==window.__SPORT_TOKEN)return;
    console.error('Parlay generation failed',e);

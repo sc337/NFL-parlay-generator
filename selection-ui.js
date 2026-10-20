@@ -74,7 +74,7 @@ function tidyCards(){
  for(const card of document.querySelectorAll('#results>.parlay-card[data-compact]')){
   const details=[...card.querySelectorAll('.card-explanation')];const primary=details.find(d=>!d.classList.contains('parlay-risk'))||details[0];if(!primary)continue;
   const heading=primary.querySelector('summary');if(heading&&heading.textContent!=='Details')heading.textContent='Details';
-  for(const section of details)if(section!==primary&&!primary.contains(section)){section.classList.remove('card-explanation');primary.append(section)}
+  for(const section of details)if(section!==primary&&!primary.contains(section)&&!section.contains(primary)){section.classList.remove('card-explanation');primary.append(section)}
  }
 }
 function mount(){
