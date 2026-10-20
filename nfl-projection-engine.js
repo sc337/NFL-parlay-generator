@@ -2,6 +2,11 @@
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const num=v=>v==null||v===''?null:Number.isFinite(Number(v))?Number(v):null;
   const sigmoid=x=>1/(1+Math.exp(-x));
+  const normalCdf=x=>{const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2);
+    const p=1-d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>=0?p:1-p};
+  // Conservative provisional widths. Validate these against archived game
+  // outcomes before treating the resulting probabilities as a betting edge.
+  const TOTAL_SD=13.5, MARGIN_SD=13.5;
 
   function teamForm(game,team){
     const f=game?.context?.recent_form?.[team];
@@ -80,18 +85,30 @@
     }
     let z=0,coverage=0;
     const tp=teamProjection(game);
-    let totalLine=null;
+    let totalLine=null,marginLine=null,distributionP=null;
     if(tp){
       if(m.type==='totals'&&num(m.point)!=null){
-        const main=(game.markets||[]).find(x=>x.type==='totals'&&!x.isAltLine&&num(x.point)!=null);
+        const main=window.NFL_ALT_LINES?.mainLine?.(game,'totals');
         totalLine=totalForecast(game,tp,num(main?.point)??num(m.point));
-        const d=totalLine-num(m.point);z+=clamp(d/13,-.45,.45)*(m.side==='under'?-1:1);coverage+=tp.coverage;
+        if(totalLine!=null)distributionP=m.side==='under'?normalCdf((num(m.point)-totalLine)/TOTAL_SD):
+          1-normalCdf((num(m.point)-totalLine)/TOTAL_SD);
+        coverage+=tp.coverage;
       }else if(m.type==='spreads'&&num(m.point)!=null&&m.team){
+        const main=window.NFL_ALT_LINES?.mainLine?.(game,'spreads',m.team);
         const teamMargin=m.team===game.home?tp.homeMargin:-tp.homeMargin;
-        z+=clamp((teamMargin+num(m.point))/9,-.45,.45)*tp.games/(tp.games+8);coverage+=tp.coverage;
+        const anchor=num(main?.point)??num(m.point),weight=tp.games/(tp.games+8);
+        marginLine=-anchor+(teamMargin+anchor)*weight;
+        distributionP=normalCdf((marginLine+num(m.point))/MARGIN_SD);
+        coverage+=tp.coverage;
       }else if(m.type==='h2h'&&m.team){
         const teamMargin=m.team===game.home?tp.homeMargin:-tp.homeMargin;
-        z+=clamp(teamMargin/16,-.32,.32)*tp.games/(tp.games+8);coverage+=tp.coverage;
+        const spread=window.NFL_ALT_LINES?.mainLine?.(game,'spreads',m.team);
+        const anchor=num(spread?.point);
+        if(anchor!=null){
+          marginLine=-anchor+(teamMargin+anchor)*tp.games/(tp.games+8);
+          distributionP=normalCdf(marginLine/MARGIN_SD);
+        }else z+=clamp(teamMargin/16,-.32,.32)*tp.games/(tp.games+8);
+        coverage+=tp.coverage;
       }
     }
     if(m.player){
@@ -113,11 +130,14 @@
     // market probability remains the anchor, context can move it only modestly.
     const marketLogit=Math.log(clamp(marketP,.03,.97)/(1-clamp(marketP,.03,.97)));
     const core=window.MODEL_CORE?.evaluate({marketP,signal:z,coverage:clamp(coverage,0,1),quality:Number(m.sourceQuality)||65,odds:m.price,uncertainty:clamp(.58-coverage*.28,.25,.62),sample:Number(m.volume)||0,sport:'nfl',marketGroup:m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type,calibrate:coverage>=.2});
-    const modelP=core?.modelP??clamp(sigmoid(marketLogit+z),.04,.96);
+    const modelP=distributionP==null?(core?.modelP??clamp(sigmoid(marketLogit+z),.04,.96)):
+      clamp(distributionP,.03,.97);
     const edge=modelP-marketP;
     const upFinal=usageProjection(game,m);
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
-    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,marketP,rawModelP:core?.rawModelP??modelP,modelP,edge,ev:core?.ev??0,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,lineEdge};
+    const quotedP=typeof window.MODEL_CORE?.implied==='function'?window.MODEL_CORE.implied(m.price):null;
+    const ev=quotedP>0?modelP/quotedP-1:null;
+    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,forecastVersion:distributionP==null?null:'nfl-team-distribution-v1',probabilityMethod:distributionP==null?null:'Shared normal game distribution; provisional width',marketP,rawModelP:modelP,modelP,edge,ev,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,marginProjection:marginLine,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
@@ -132,6 +152,7 @@
       m.tdExperimental=m.type==='td'&&p.experimental===true;
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;
+      m.projectedMargin=p.marginProjection;m.forecastVersion=p.forecastVersion;m.probabilityMethod=p.probabilityMethod;
       m.modelEV=p.ev;m.modelConfidence=p.confidence;m.modelUncertainty=p.uncertainty;
     }
     enrichedRef=state.games;

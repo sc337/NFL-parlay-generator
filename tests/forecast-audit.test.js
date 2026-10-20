@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');
 const {record,mlbStart}=require('../scripts/update_forecast_audit');
-const {metrics,totals,build}=require('../scripts/build_forecast_report');
+const {metrics,totals,nflLineCalibration,build}=require('../scripts/build_forecast_report');
 const now=Date.parse('2026-09-27T18:00:00Z');
 const game={away:'Away',home:'Home',commence_time:'2026-09-28T00:00:00Z',context:{event_id:'123'}};
 const market={ticker:'KXNFLTOTAL-26SEP27AWAHOM-45',type:'totals',marketKey:'totals',side:'over',point:44.5,
@@ -10,6 +10,13 @@ const row=record('nfl',{market,forecast,game},{},now);
 assert.equal(row.forecastType,'model');
 assert.equal(row.projectedLine,45.8);
 assert.equal(row.eventId,'123');
+assert.equal(row.checkpoint,'6h');
+const early=record('nfl',{market,forecast,game},{updated_at:'2026-09-26T18:00:00Z'},Date.parse('2026-09-26T18:00:00Z'));
+assert.equal(early.checkpoint,null);
+const close=record('nfl',{market,forecast,game},{updated_at:'2026-09-27T19:00:00Z'},Date.parse('2026-09-27T19:00:00Z'));
+assert.equal(close.checkpoint,'6h');assert.notEqual(close.id,early.id,'pregame checkpoint cannot overwrite the first forecast');
+assert.equal(record('nfl',{market:{...market,quotedAt:'2026-09-28T00:00:01Z'},forecast,game},{},now),null,'reject post-kickoff quotes');
+assert.equal(record('nfl',{market:{...market,quotedAt:'2026-09-27T17:20:00Z'},forecast,game},{},now),null,'reject stale team-market quotes');
 assert(row.quotedEV>0);
 assert.equal(record('nfl',{market,forecast,game},{},Date.parse(game.commence_time)),null,'no kickoff leakage');
 assert.equal(record('nfl',{market:{...market,quoteProbability:null},forecast,game},{},now),null,'no missing quote');
@@ -46,6 +53,13 @@ const rows=[{...row,result:'win',actualTotal:42},{...row,id:'under',result:'loss
 assert.equal(metrics(rows).settled,3);
 assert.equal(totals(rows).games,2,'over and under of one game count once');
 assert.equal(totals(rows).modelMAE,2.9);
+const alt={...row,id:'alt',contractId:'nfl|ALT|yes',isAltLine:true,marketGroup:'totals',point:30.5,marketP:.9,modelP:.9,result:'win'};
+assert.equal(totals([...rows,alt]).games,2,'alternate thresholds do not add independent game forecasts');
+assert.equal(nflLineCalibration([...rows,alt])['totals|alt'].settled,1);
+assert.equal(nflLineCalibration([...rows,alt])['totals|standard'].settled,1,'one latest snapshot per contract');
+const scoreSettled={...row,result:null,actualTotal:50,point:44.5,direction:'over'};
+assert.equal(nflLineCalibration([scoreSettled])['totals|standard'].winRate,1,'final score evaluates an unsettled total');
+assert.equal(nflLineCalibration([scoreSettled,{...scoreSettled,checkpoint:'24h',recordedAt:'2026-09-27T17:00:00Z'}])['totals|standard'].settled,1);
 assert.equal(metrics(rows).independentEvents,2);
 assert.equal(metrics(rows).positiveEV.distinctEvents,2);
 assert.equal(build([{...row,snapshotAt:'2026-09-29T00:00:00Z'}]).pregameViolations,1);

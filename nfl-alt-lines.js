@@ -15,6 +15,17 @@ const quoted=m=>{
  return !q||(q.odds!==null&&q.checkedAt&&Date.now()-Date.parse(q.checkedAt)<=30*60000&&Date.now()-Date.parse(q.checkedAt)>=-60000);
 };
 const sameSide=(a,b)=>a.type==='spreads'?a.team===b.team:a.side===b.side&&['over','under'].includes(a.side);
+// A sportsbook's explicit main market wins. An exchange ladder has no main
+// label, so use the threshold whose over (or team spread) is nearest 50%.
+function mainLine(game,type,team){
+ const rows=(game?.markets||[]).filter(m=>m.type===type&&point(m)!==null&&
+  (type==='totals'?m.side==='over':m.team===team)&&quoted(m));
+ if(!rows.length)return null;
+ const explicit=rows.filter(m=>!m.isAltLine&&!/_alternate$/.test(m.marketKey||''));
+ const pool=explicit.length?explicit:rows;
+ return pool.sort((a,b)=>Math.abs(probability(a)-.5)-Math.abs(probability(b)-.5)||
+  (Number(b.volume)||0)-(Number(a.volume)||0)||String(a.ticker||'').localeCompare(String(b.ticker||'')))[0];
+}
 function easier(a,b){
  if(point(a)===null||point(b)===null)return false;
  return a.type==='spreads'?point(a)>point(b):a.side==='over'?point(a)<point(b):a.side==='under'&&point(a)>point(b);
@@ -74,7 +85,7 @@ function comparisonText(m,game){
  const note=m.altReference?'Reference (nearest 50% quote)':'Standard';
  return note+' '+lineText(r)+' · '+quoteText(r)+' / ALT '+lineText(alt)+' · '+quoteText(alt)+' · '+(easier(alt,r)?'More cushion; compare payout':'Harder threshold')+'. Quotes are source references, not verified Caesars offers.';
 }
-window.NFL_ALT_LINES={classify,matches,label,supported,cushionBonus,comparisonText,unsupportedIncrement,normalize,supportedProp,selected};
+window.NFL_ALT_LINES={classify,mainLine,matches,label,supported,cushionBonus,comparisonText,unsupportedIncrement,normalize,supportedProp,selected};
 function mount(){
  const host=document.querySelector('#nflWeekWrap');if(!host||document.querySelector('#nflLinesWrap'))return;
  const field=document.createElement('div');field.id='nflLinesWrap';field.className='field';

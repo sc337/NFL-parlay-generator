@@ -36,10 +36,15 @@ function record(sport,entry,snapshot,now){
   if(m.referenceOnly&&!referenceContract(sport,m,g,now))return null;
   const ticker=String(m.ticker||''),side=m.quoteSide==='no'||m.side==='no'?'no':'yes';
   const eventTime=start(sport,m,g,snapshot),closeTime=m.close_time||eventTime;
+  const snapshotAt=snapshot.updated_at||snapshot.generated_at||new Date(now).toISOString();
+  const quoteAt=m.quotedAt||snapshotAt;
   const marketP=finite(m.prob??m.probability??m.marketProbability);
   const ask=finite(sport==='nfl'?m.quoteProbability:m.yes_ask);
   if(!ticker||!Number.isFinite(Date.parse(eventTime))||Date.parse(eventTime)<=now||
      !Number.isFinite(Date.parse(closeTime))||Date.parse(closeTime)<=now||
+     !Number.isFinite(Date.parse(snapshotAt))||Date.parse(snapshotAt)>=Date.parse(eventTime)||
+     !Number.isFinite(Date.parse(quoteAt))||Date.parse(quoteAt)>=Date.parse(eventTime)||Date.parse(quoteAt)>now+60000||
+     (sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)&&now-Date.parse(quoteAt)>30*60000)||
      !(marketP>0&&marketP<1)||!(ask>0&&ask<1))return null;
   if(sport==='nfl'){
     if((finite(m.sourceQuality)||0)<60||m._invalidRoster===true)return null;
@@ -58,8 +63,10 @@ function record(sport,entry,snapshot,now){
   const anchored=f.marketAnchored===true;
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   const contractId=[sport,ticker,side].join('|'),version=[f.modelVersion,f.forecastVersion].filter(Boolean).join('|')||null;
+  const lead=Date.parse(eventTime)-now;
+  const checkpoint=sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)?lead<=6*3600000?'6h':lead<=24*3600000?'24h':null:null;
   const publicGroup=m.referenceOnly?':public':'';
-  return {id:version?contractId+'|'+version:contractId,contractId,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+  return {id:[contractId,version,checkpoint].filter(Boolean).join('|'),contractId,checkpoint,isAltLine:m.isAltLine===true,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||g.id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
     market:m.marketKey||m.kind||m.type,marketGroup:(sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind)+publicGroup,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
@@ -67,7 +74,7 @@ function record(sport,entry,snapshot,now){
     forecastType:hasModel?(anchored?'market_supported':experimental?'experimental':'model'):'market_only',ask,volume:finite(m.volume),
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
-    snapshotAt:snapshot.updated_at||snapshot.generated_at||null,
+    snapshotAt,
     modelVersion:f.modelVersion||'legacy',forecastVersion:f.forecastVersion||null,
     marginProjection:hasModel?finite(f.projectedMargin):null,probabilityMethod:f.probabilityMethod||null,errorSample:finite(f.errorSample),
     sensitivity:entry.qualification?.sensitivity||null,
@@ -76,7 +83,7 @@ function record(sport,entry,snapshot,now){
     direction:m.side==='under'?'under':m.side==='over'?'over':m.quoteSide||m.side||'yes',
     baselines:f.baselines||f.ablations?Object.fromEntries(Object.entries({...f.baselines,...f.ablations}).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
     roleChange:f.roleChange||null,opportunity:f.opportunity||null,sourceVersion:process.env.GITHUB_SHA||null,
-    priceSource:m.source||'Kalshi',quoteAt:m.quotedAt||snapshot.updated_at||snapshot.generated_at||null,
+    priceSource:m.source||'Kalshi',quoteAt,
     qualification:entry.qualification?{pass:entry.qualification.pass===true,reason:entry.qualification.reason||null,
       bufferMethod:entry.qualification.bufferMethod||null,buffer:finite(entry.qualification.buffer),conservativeP:finite(entry.qualification.conservativeP),
       minimumOdds:finite(entry.qualification.minimumOdds),validated:entry.qualification.validated===true,
