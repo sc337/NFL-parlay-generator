@@ -84,6 +84,8 @@ function compactSportResults(){
   if(sport==='nfl')return;
   const cards=[...$$('#results > .parlay-card, #results > .secondary-props-empty')];
   cards.forEach(c=>{c.style.display='';c.classList.remove('compact-secondary')});
+  // NBA profiles belong to the horizontal carousel, never the analysis drawer.
+  if(sport==='nba')return;
   cards.filter((c,i)=>i>0||c.classList.contains('player-props-card')||c.classList.contains('secondary-props-empty')).forEach(c=>{
     if(c.classList.contains('secondary-props-empty')){c.style.display='none';return}
     const clone=c.cloneNode(true);clone.dataset.compactOrigin='sport';clone.classList.add('compact-secondary');secondary.appendChild(clone);
@@ -124,5 +126,5 @@ async function refreshDiagnostics(){
 }
 function init(){obs.observe(document.body,{subtree:true,childList:true});tidy();$('#settingsDiagnostics')?.addEventListener('toggle',e=>{if(e.target.open)refreshDiagnostics()})}
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
-window.COMPACT_UI={refresh:tidy};
+window.COMPACT_UI={refresh:tidy,compactResults:compactSportResults};
 })();
