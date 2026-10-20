@@ -15,6 +15,7 @@ function resolve(s,gid,start,team,role,player){
  const conflicting=new Set(confirmed.map(names)).size>1||confirmed.some(r=>outs.some(o=>(o.players||[]).some(p=>(r.players||[]).some(n=>key(n)===key(p)))));
  if(conflicting)return {status:'conflicting',rows};
  if(outs.length)return {...outs.at(-1),rows};
+ if(role==='availability'){const uncertain=rows.filter(r=>['doubtful','questionable'].includes(r.status));if(uncertain.length)return {...uncertain.at(-1),rows};}
  const r=confirmed.at(-1)||rows.filter(r=>r.method==='manual').at(-1)||rows.at(-1);
  return r?{...r,rows}:{status:'unknown',rows:[]};
 }
@@ -25,18 +26,28 @@ function evidence(s,m,ctx){
  const confirmed=teams.length===2&&sides.every(r=>r.status==='confirmed'&&(s!=='nba'||r.players?.length===5));
  let own=null,line=null,powerplay=null,availability=null;
  if(m.player){
-  const team=m.team_code||ctx?.rosters?.find(p=>String(p.id)===String(m.player_id))?.team;
+  const team=m.team_code||ctx?.players?.[m.player_id]?.team||ctx?.rosters?.find(p=>String(p.id)===String(m.player_id))?.team;
   own=resolve(s,gid,start,team,role,m.player);availability=resolve(s,gid,start,team,'availability',m.player);
   if(s==='nhl'){line=resolve(s,gid,start,team,'line',m.player);powerplay=resolve(s,gid,start,team,'powerplay',m.player);}
  }
  const contains=r=>r?.players?.some(n=>key(n)===key(m.player));
  const confirmedPlayer=own?.status==='confirmed'&&contains(own)||availability?.status==='confirmed'&&contains(availability);
  const lineConfirmed=line?.status==='confirmed'&&contains(line),powerplayConfirmed=powerplay?.status==='confirmed'&&contains(powerplay);
- const unavailableStarter=sides.some(r=>(r.players||[]).some(name=>['out','conflicting'].includes(resolve(s,gid,start,r.team,'availability',name).status)));
+ const unavailableStarter=sides.some(r=>(r.players||[]).some(name=>['out','doubtful','conflicting'].includes(resolve(s,gid,start,r.team,'availability',name).status)));
  const roleBlocked=unavailableStarter?'Starter unavailable; confirm replacement':sides.some(r=>r.status==='out')?'Starting role unavailable; confirm replacement':null;
- const blocked=roleBlocked|| (availability?.status==='out'?'Player unavailable':availability?.status==='conflicting'?'Conflicting availability reports':sides.some(r=>r.status==='conflicting')||own?.status==='conflicting'||line?.status==='conflicting'||powerplay?.status==='conflicting'?'Conflicting starter reports':own?.status==='out'?'Player unavailable':line?.status==='out'?'Player unavailable':null);
+ const blocked=roleBlocked|| (['out','doubtful'].includes(availability?.status)?'Player unavailable':availability?.status==='questionable'?'Player availability uncertain':availability?.status==='conflicting'?'Conflicting availability reports':sides.some(r=>r.status==='conflicting')||own?.status==='conflicting'||line?.status==='conflicting'||powerplay?.status==='conflicting'?'Conflicting starter reports':own?.status==='out'?'Player unavailable':line?.status==='out'?'Player unavailable':null);
+ const notes=sides.filter(r=>r.status!=='unknown').map(r=>r.team+': '+r.status+(r.method==='manual'?' (user-confirmed)':''));
+ if(s==='nba'){
+  if(availability&&availability.status!=='unknown')notes.push('Availability: '+availability.status);
+  const position=Object.entries(own?.positions||{}).find(([name])=>key(name)===key(m.player))?.[1];
+  if(position)notes.push('Reported starter position: '+position);
+  const publicContext=sides.find(r=>r.method==='public_page'&&r.game_context)?.game_context;
+  if(publicContext?.referees?.length)notes.push('Referees: '+publicContext.referees.join(', '));
+  const refs=Object.entries(publicContext?.reference_lines||{}).map(([type,r])=>type+' '+r.value+' ('+r.book+')');
+  if(refs.length)notes.push('RotoWire reference only: '+refs.join(', '));
+ }
  return {confirmed,confirmedPlayer,lineConfirmed,powerplayConfirmed,blocked,sides,line,powerplay,
-  note:sides.filter(r=>r.status!=='unknown').map(r=>r.team+': '+r.status+(r.method==='manual'?' (user-confirmed)':'')).join('; ')};
+  note:notes.join('; ')};
 }
 function save(entry){
  const s=entry.sport,ctx=contexts.get(s)?.context,g=ctx?.games?.[String(entry.game_id)];

@@ -40,6 +40,34 @@ class PublicStarterTests(unittest.TestCase):
                'homeNewsStrengthName': 'Confirmed', 'awayNewsStrengthName': 'Unconfirmed', 'homeNewsCreatedAt': NOW.isoformat()}
         return ctx, row
 
+    def test_nba_public_injuries_and_positions_require_explicit_roster_match(self):
+        html, ctx = self.nba()
+        html = html.replace('<a title="BOS Player 0">', '<div class="lineup__pos">PG</div><a title="BOS Player 0">')
+        injury = '<li class="lineup__player"><a title="BOS Reserve">Reserve</a><span class="lineup__inj">Ques</span></li>'
+        ctx['players']['reserve'] = {'team': 'BOS', 'name': 'BOS Reserve'}
+        html = html.replace('</ul>', injury+'</ul>', 1)
+        rows = parse_nba(html, ctx, NOW)
+        self.assertEqual(rows[0]['role'], 'availability')
+        self.assertEqual(rows[0]['status'], 'questionable')
+        self.assertEqual(rows[0]['players'], ['BOS Reserve'])
+        self.assertEqual(rows[1]['positions'], {'BOS Player 0': 'PG'})
+        self.assertEqual(rows[1]['status'], 'projected')
+        self.assertNotIn('minutes', rows[1])
+        self.assertEqual(len(parse_nba(html.replace('Ques', 'Unknown'), ctx, NOW)), 2)
+        ctx['players']['reserve']['team'] = 'NYK'
+        self.assertEqual(len(parse_nba(html, ctx, NOW)), 2)
+
+    def test_nba_context_uses_visible_named_book_without_promoting_reference_prices(self):
+        html, ctx = self.nba()
+        extra = '<div class="lineup__umpire"><b>Referees:</b><a href="/basketball/ref.php?id=1">Ref One</a></div>'
+        extra += '<div class="lineup__odds-item"><b>SPREAD</b><span class="draftkings hide">NYK -5.5</span><span class="fanduel">NYK -4.5</span></div>'
+        html = html.replace('</div></main>', extra+'</div></main>')
+        context = parse_nba(html, ctx, NOW)[0]['game_context']
+        self.assertEqual(context, {'referees': ['Ref One'], 'reference_lines': {'spread': {'value': 'NYK -4.5', 'book': 'FanDuel'}}})
+        ambiguous = parse_nba(html.replace('draftkings hide', 'draftkings'), ctx, NOW)[0]['game_context']
+        self.assertNotIn('reference_lines', ambiguous)
+        self.assertEqual(parse_nba(html.replace('2026-10-16', '2026-10-17'), ctx, NOW), [])
+
     def test_goalie_confirmation_not_substring_or_stale_news(self):
         ctx, row = self.goalie_fixture(); rows, _ = parse_goalies(hydration({'data': [row]}), ctx, NOW, 'https://example.com')
         self.assertEqual([r['status'] for r in rows], ['confirmed', 'projected'])

@@ -15,3 +15,19 @@ test('reported NHL units do not confirm participation or powerplay',async()=>{co
 test('a manual player exclusion blocks a prop even with a confirmed starting five',async()=>{const r=runtime();r.setRows([row(r),row(r,{team:'NYK'})]);await r.S.load(true);r.S.save({...row(r),role:'availability',players:['One Name'],status:'out',attested:true});const prop={...r.m,player:'One Name',player_id:'a',player_verified:true};assert.equal(r.S.evidence('nba',prop,r.context).blocked,'Starter unavailable; confirm replacement');});
 test('college QB confirmation requires both game-specific teams; one report cannot clear the gate',()=>{const r=runtime(),ctx={games:{1:{kickoff:r.start,away:{name:'Away College'},home:{name:'Home College'}}}};r.S.register('ncaaf',[],ctx);for(const team of ['Away College','Home College']){r.S.save({sport:'ncaaf',game_id:'1',team,role:'qb',players:[team+' QB'],status:'confirmed',source_url:'https://school.edu/announcement',attested:true});const ev=r.S.evidence('ncaaf',r.m,ctx);assert.equal(ev.confirmed,team==='Home College');}});
 test('known unavailable college QB blocks early team picks until the role is resolved',()=>{const r=runtime(),ctx={games:{1:{kickoff:r.start,away:{name:'Away College'},home:{name:'Home College'}}}};r.S.register('ncaaf',[],ctx);r.S.save({sport:'ncaaf',game_id:'1',team:'Away College',role:'qb',players:['Absent Quarterback'],status:'out',source_url:'https://school.edu/announcement',attested:true});assert.equal(r.S.evidence('ncaaf',r.m,ctx).blocked,'Starting role unavailable; confirm replacement');});
+test('public injury tags screen props despite a clean context roster and expire with the report',async()=>{
+ const r=runtime(),prop={...r.m,player:'One Name',player_id:'a',player_verified:true},injury={role:'availability',players:['One Name'],method:'public_page'};
+ for(const status of ['questionable','doubtful','out']){
+  r.setRows([row(r),row(r,{team:'NYK'}),row(r,{...injury,status})]);await r.S.load(true);
+  const ev=r.S.evidence('nba',prop,r.context);assert.ok(ev.blocked);assert.match(ev.note,new RegExp('Availability: '+status));
+  assert.equal(r.w.PICK_QUALITY.assess('nba',prop,{modelP:.72,marketP:.61,coverage:.8,uncertainty:.2,roleStability:.9}).pass,false);
+ }
+ r.setRows([row(r),row(r,{team:'NYK'}),row(r,{...injury,status:'questionable',checked_at:new Date(r.now-31*60000).toISOString()})]);await r.S.load(true);assert.equal(r.S.evidence('nba',prop,r.context).blocked,null);
+ r.setRows([row(r),row(r,{team:'NYK'}),row(r,{...injury,status:'out',game_id:'2'})]);await r.S.load(true);assert.equal(r.S.evidence('nba',prop,r.context).blocked,null);
+});
+test('probable and public role context are informational and never confirm projected lineups',async()=>{
+ const r=runtime(),prop={...r.m,player:'One Name',player_id:'a'};
+ r.setRows([row(r,{status:'projected',method:'public_page',positions:{'One Name':'PG'},game_context:{referees:['Ref One'],reference_lines:{total:{value:'220.5 Pts',book:'FanDuel'}}}}),row(r,{role:'availability',players:['One Name'],status:'probable'})]);await r.S.load(true);
+ const ev=r.S.evidence('nba',prop,r.context);assert.equal(ev.confirmedPlayer,false);assert.equal(ev.confirmed,false);assert.equal(ev.blocked,null);assert.match(ev.note,/Availability: probable/);assert.match(ev.note,/position: PG/);assert.match(ev.note,/Referees: Ref One/);assert.match(ev.note,/reference only: total 220.5 Pts \(FanDuel\)/);
+ r.setRows([row(r,{status:'projected',method:'public_page',checked_at:new Date(r.now-31*60000).toISOString(),game_context:{referees:['Stale Ref']}})]);await r.S.load(true);assert.doesNotMatch(r.S.evidence('nba',prop,r.context).note,/Stale Ref/);
+});
