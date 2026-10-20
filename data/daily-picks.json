@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-19",
-  "updated_at": "2026-10-20T02:47:28.139Z",
+  "updated_at": "2026-10-20T02:56:36.410Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T02:37:01.253813+00:00"
+      "snapshotAt": "2026-10-20T02:56:16.356211+00:00"
     },
     "nba": {
-      "captured": 4,
+      "captured": 12,
       "passes": [],
       "snapshotAt": "2026-10-20T02:47:26.572036+00:00"
     },
     "ncaaf": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-20T02:37:16.184431+00:00"
+      "snapshotAt": "2026-10-20T02:56:32.049099+00:00"
     },
     "nfl": {
       "captured": 0,
@@ -156,7 +156,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T02:36:59.386568+00:00"
+      "snapshotAt": "2026-10-20T02:56:14.852612+00:00"
     },
     "nhl": {
       "captured": 7,
@@ -168,7 +168,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T02:37:18.505766+00:00"
+      "snapshotAt": "2026-10-20T02:47:20.360690+00:00"
     },
     "ufc": {
       "captured": 0,
@@ -198,7 +198,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-20T02:37:00.959532+00:00"
+      "snapshotAt": "2026-10-20T02:56:15.347949+00:00"
     }
   },
   "records": [
@@ -11827,6 +11827,306 @@
           "isAltLine": true,
           "altReferenceLine": -14.5,
           "altDistance": 1,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nba|multi|safe|2||learning-20261019|73dba8cfe04deed0",
+      "day": "2026-10-19",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "safe",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-20T02:56:36.410Z",
+      "snapshotAt": "2026-10-20T02:47:26.572036+00:00",
+      "sourceVersion": "5c91886b166db075c0ef19ac0e6a0d924bdd2aaa",
+      "priceEstimate": 178,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.5811964676044873,
+        "conservativeP": 0.4857703718102769,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.5251542403887162,
+          "upper": 0.7444830150926083,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3|no",
+          "ticker": "KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Jalen Brunson Under 2.5 Threes",
+          "market": "threes",
+          "line": 2.5,
+          "player": "Jalen Brunson",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.7444830150926083,
+          "rawModelP": 0.7444830150926083,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.748070622562674,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAPTS-26OCT20OKCSAS-SASSCASTLE5-15|yes",
+          "ticker": "KXNBAPTS-26OCT20OKCSAS-SASSCASTLE5-15",
+          "side": "yes",
+          "eventId": "401909090",
+          "event": "Thunder vs Spurs",
+          "eventTime": "2026-10-21T01:30Z",
+          "closeTime": "2026-10-23T01:30:00Z",
+          "selection": "Stephon Castle Over 14.5 Points",
+          "market": "points",
+          "line": 14.5,
+          "player": "Stephon Castle",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.62,
+          "referenceAmericanOdds": null,
+          "marketP": 0.615,
+          "modelP": 0.7806712252961079,
+          "rawModelP": 0.7806712252961079,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 17.831334274193548,
+          "projectedTotal": 232.39306671492938,
+          "projectedMargin": 2.643041431967603,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 14.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nba|multi|balanced|2||learning-20261019|2e135081f1a90027",
+      "day": "2026-10-19",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-20T02:56:36.410Z",
+      "snapshotAt": "2026-10-20T02:47:26.572036+00:00",
+      "sourceVersion": "5c91886b166db075c0ef19ac0e6a0d924bdd2aaa",
+      "priceEstimate": 259,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.4750084953768738,
+        "conservativeP": 0.3889063298857014,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.38252107069255525,
+          "upper": 0.638038055599947,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBATOTAL-26OCT20BOSDET-223|yes",
+          "ticker": "KXNBATOTAL-26OCT20BOSDET-223",
+          "side": "yes",
+          "eventId": "401909088",
+          "event": "Celtics vs Pistons",
+          "eventTime": "2026-10-20T19:00Z",
+          "closeTime": "2026-10-22T19:00:00Z",
+          "selection": "Over 222.5 Points",
+          "market": "total",
+          "line": 222.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.48,
+          "referenceAmericanOdds": null,
+          "marketP": 0.475,
+          "modelP": 0.638038055599947,
+          "rawModelP": 0.638038055599947,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 228.8579493843801,
+          "projectedTotal": 228.8579493843801,
+          "projectedMargin": 2.066621512484403,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 222.5,
+          "altDistance": 0,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3|no",
+          "ticker": "KXNBA3PT-26OCT20PHINYK-NYKJBRUNSON11-3",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Jalen Brunson Under 2.5 Threes",
+          "market": "threes",
+          "line": 2.5,
+          "player": "Jalen Brunson",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.58,
+          "referenceAmericanOdds": null,
+          "marketP": 0.5700000000000001,
+          "modelP": 0.7444830150926083,
+          "rawModelP": 0.7444830150926083,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 1.748070622562674,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 2.5,
+          "altDistance": 0,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-19|nba|multi|long|2||learning-20261019|2c57e0eef4464cce",
+      "day": "2026-10-19",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "long",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-20T02:56:36.410Z",
+      "snapshotAt": "2026-10-20T02:47:26.572036+00:00",
+      "sourceVersion": "5c91886b166db075c0ef19ac0e6a0d924bdd2aaa",
+      "priceEstimate": 529,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.29474494549476654,
+        "conservativeP": 0.2278814952586128,
+        "profile": "Balanced",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.08821611038937904,
+          "upper": 0.5079330606130612,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBATOTAL-26OCT20BOSDET-229|yes",
+          "ticker": "KXNBATOTAL-26OCT20BOSDET-229",
+          "side": "yes",
+          "eventId": "401909088",
+          "event": "Celtics vs Pistons",
+          "eventTime": "2026-10-20T19:00Z",
+          "closeTime": "2026-10-22T19:00:00Z",
+          "selection": "Over 228.5 Points",
+          "market": "total",
+          "line": 228.5,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.37,
+          "referenceAmericanOdds": null,
+          "marketP": 0.36,
+          "modelP": 0.5079330606130612,
+          "rawModelP": 0.5079330606130612,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 228.8579493843801,
+          "projectedTotal": 228.8579493843801,
+          "projectedMargin": 2.066621512484403,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": true,
+          "altReferenceLine": 222.5,
+          "altDistance": 6,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAPTS-26OCT20PHINYK-NYKJBRUNSON11-25|no",
+          "ticker": "KXNBAPTS-26OCT20PHINYK-NYKJBRUNSON11-25",
+          "side": "no",
+          "eventId": "401909089",
+          "event": "76ers vs Knicks",
+          "eventTime": "2026-10-20T23:00Z",
+          "closeTime": "2026-10-22T23:00:00Z",
+          "selection": "Jalen Brunson Under 24.5 Points",
+          "market": "points",
+          "line": 24.5,
+          "player": "Jalen Brunson",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.43,
+          "referenceAmericanOdds": null,
+          "marketP": 0.42,
+          "modelP": 0.580283049776318,
+          "rawModelP": 0.580283049776318,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 23.5989534045961,
+          "projectedTotal": 228.28972806051536,
+          "projectedMargin": 2.916708987829921,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 24.5,
+          "altDistance": 0,
           "result": null
         }
       ],
