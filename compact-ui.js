@@ -88,7 +88,6 @@ function compactSportResults(){
   if(sport==='nba')return;
   cards.filter((c,i)=>i>0||c.classList.contains('player-props-card')||c.classList.contains('secondary-props-empty')).forEach(c=>{
     if(c.classList.contains('secondary-props-empty')){c.style.display='none';return}
-    const clone=c.cloneNode(true);clone.dataset.compactOrigin='sport';clone.classList.add('compact-secondary');secondary.appendChild(clone);
     c.style.display='none';
   });
 }
