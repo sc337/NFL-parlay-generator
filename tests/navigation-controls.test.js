@@ -27,3 +27,28 @@ test('carousel remains enabled for NFL/NBA and detail edits preserve swipe posit
  window.__ACTIVE_SPORT='nba';window.TERMINAL_QOL.enhance();assert.equal(classes.has('nfl-carousel'),true);grid.children=[card(),card()];window.TERMINAL_QOL.enhance();assert.equal(grid.scrollLeft,0);
  window.__ACTIVE_SPORT='nhl';window.TERMINAL_QOL.enhance();assert.equal(classes.has('nfl-carousel'),false);
 });
+
+test('shared builder reuses controls and keeps the same order across every sport',()=>{
+ const nodes=new Map();
+ class Node{
+  constructor(id=''){this.id=id;this.children=[];this.dataset={};this.attributes={};this.classList={add(){},toggle(){}};if(id)nodes.set('#'+id,this)}
+  append(...items){for(const node of items){node.remove();node.parentElement=this;this.children.push(node)}}
+  prepend(node){node.remove();node.parentElement=this;this.children.unshift(node)}
+  remove(){if(this.parentElement){this.parentElement.children=this.parentElement.children.filter(n=>n!==this);this.parentElement=null}}
+  after(node){node.remove();const p=this.parentElement;node.parentElement=p;p.children.splice(p.children.indexOf(this)+1,0,node)}
+  get nextElementSibling(){const p=this.parentElement;return p?.children[p.children.indexOf(this)+1]}
+  set innerHTML(value){if(this.id==='sharedBuilder'){nodes.set('#sharedBuilder',this);const row=new Node();this.append(row,new Node('builderGame'));row.append(new Node('builderMode'),new Node('builderLegs'));nodes.get('#builderMode').append(new Node('builderModeOptions'))}}
+  setAttribute(k,v){this.attributes[k]=v}
+  addEventListener(k,v){this[k]=v}
+ }
+ const controls=new Node('parlayControls'),quality=new Node(),nflMode=new Node(),nbaField=new Node(),source=new Node('nbaModeSelect');source.value='multi';source.options=[{value:'sgp',textContent:'Same Game'},{value:'multi',textContent:'Multi-Game'}];source.closest=()=>nbaField;source.dispatchEvent=e=>{source.changed=e.bubbles};nbaField.append(source);
+ nodes.set('.quality-settings',quality);nodes.set('.mode-tabs',nflMode);
+ controls.append(quality,nflMode,nbaField,new Node('nflParlayFilters'),new Node('sharedSportFilters'),new Node('generateBtn'),new Node('gameChooserWrap'),new Node('nbaGameField'));
+ const document={readyState:'loading',addEventListener(){},querySelector:s=>nodes.get(s),createElement:()=>new Node()};const window={};
+ vm.runInNewContext(fs.readFileSync('selection-ui.js','utf8'),{window,document,Event,requestAnimationFrame(){}});
+ for(const sport of ['nfl','nba','mlb','ncaaf','nhl','ufc','nba','nfl']){
+  window.SELECTION_UI.mountBuilder(sport);const shell=nodes.get('#sharedBuilder'),filters=nodes.get(sport==='nfl'?'#nflParlayFilters':'#sharedSportFilters');
+  assert.equal(shell.nextElementSibling,filters);assert.equal(filters.nextElementSibling,nodes.get('#generateBtn'));assert.equal(quality.parentElement,nodes.get('#builderLegs'));assert.equal(nflMode.hidden,sport!=='nfl');assert.equal(nbaField.hidden,sport!=='nba');
+ }
+ const group=source.nextElementSibling;assert.equal(group.children.length,2);group.click({target:{closest:()=>group.children[0]}});assert.equal(source.value,'sgp');assert.equal(source.changed,true);
+});
