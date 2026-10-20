@@ -9,7 +9,7 @@ body[data-sport]:not(.explore-expanded) #parlayControls{display:block!important}
 body.straights-view .nfl-game-mode,body.straights-view #sharedGameControls{display:none!important}
 
 /* One native horizontal scroller for both NFL and NBA. */
-body[data-sport] #results.nfl-carousel{display:flex!important;overflow-x:auto!important;overflow-y:hidden!important;gap:12px;min-width:0;max-width:100%;scroll-snap-type:x mandatory;touch-action:pan-x pan-y pinch-zoom}
+body[data-sport]:not(.straights-view) #results.nfl-carousel{display:flex!important;overflow-x:auto!important;overflow-y:hidden!important;gap:12px;min-width:0;max-width:100%;scroll-snap-type:x mandatory;touch-action:pan-x pan-y pinch-zoom}
 body[data-sport] #results.nfl-carousel>.parlay-card{flex:0 0 100%!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box;scroll-snap-align:start}
 body.parlays-view[data-sport] #parlaySwipeHint:not([hidden]){display:flex!important}
 #publicSlate,.full-slate,.ufc-matchups:not(.pick-rejections),.filter-policy,.nfl-line-policy{display:none!important}
