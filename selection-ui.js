@@ -12,6 +12,17 @@ function exclude(s,m){locks.get(s)?.delete(selectionKey(s,m));if(!exclusions.has
 const labels={screened:'Recommended picks',ideas:'Other picks · Value unverified'};
 function refresh(){const s=sport();if(s==='nfl')window.generate?.();else window[s.toUpperCase()+'_DASHBOARD']?.refresh?.();}
 function select(mode){const s=sport();mode=mode==='ideas'?'ideas':'screened';window.DASHBOARD_UI?.put(s,'selectionMode',mode);if(s==='nfl'){const el=$('#nflRecommendationTier');if(el){el.value=mode;el.dispatchEvent(new Event('change',{bubbles:true}));return}}refresh();}
+function mountLines(){
+ for(const source of document.querySelectorAll('select[id$="LinesSelect"]')){
+  const id=source.id+'Buttons';let group=$('#'+id);
+  if(!group){group=document.createElement('div');group.id=id;group.className='line-options-buttons';group.setAttribute('role','group');group.setAttribute('aria-label','Line options');
+   for(const [value,label] of [['standard','Standard'],['alt','ALT'],['both','Both']])if([...source.options].some(option=>option.value===value)){const button=document.createElement('button');button.type='button';button.dataset.lineMode=value;button.textContent=label;group.append(button)}
+   group.addEventListener('click',event=>{const button=event.target.closest('[data-line-mode]');if(!button||button.disabled)return;source.value=button.dataset.lineMode;source.dispatchEvent(new Event('change',{bubbles:true}));mountLines()});source.after(group);
+  }
+  source.classList.add('line-options-source');
+  for(const button of group.querySelectorAll('[data-line-mode]')){const option=[...source.options].find(option=>option.value===button.dataset.lineMode);button.disabled=source.disabled||!option||option.disabled;button.setAttribute('aria-pressed',String(source.value===button.dataset.lineMode))}
+ }
+}
 function mount(){
  const controls=$('#parlayControls');if(!controls)return;
  let panel=$('#sharedSelection');
@@ -30,6 +41,7 @@ function mount(){
   let reset=filters.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset filters';filters.lastElementChild.append(reset);reset.onclick=()=>{const current=sport();exclusions.delete(current);locks.delete(current);window.DASHBOARD_UI?.put(current,'lines','both');const api=window[current.toUpperCase()+'_DASHBOARD'];api?.setLineMode?.('both');if(window.SPORT_MARKETS?.options[current])window.SPORT_MARKETS.set(current,window.SPORT_MARKETS.options[current].map(x=>x[0]));const line=$('#'+current+'LinesSelect');if(line){line.value='both';line.dispatchEvent(new Event('change',{bubbles:true}))}if(current==='nhl')api?.setMarkets?.(['moneyline','spread','total','goals','assists','points','shots','saves']);refresh();};}
   const active=filters.querySelectorAll('[aria-pressed="false"]:not([disabled])');filters.querySelector('summary').textContent='Filters'+(active.length?' · customized':'');
  }else if($('#sharedSportFilters'))$('#sharedSportFilters').hidden=true;
+ mountLines();
  const count=window[s.toUpperCase()+'_DASHBOARD']?.availableCount?.();
  const legSelect=$('#legsSelect');if(legSelect){for(const option of legSelect.options){const impossible=s!=='nfl'&&!(s==='nba'&&$('#nbaModeSelect')?.value==='sgp')&&Number.isFinite(count)&&Number(option.value)>count;option.disabled=impossible;option.title=impossible?'Not enough qualified games or fights':'';}}
  let research=$('#sharedResearch');if(!research){research=document.createElement('details');research.id='sharedResearch';research.className='parlay-card';research.innerHTML='<summary>Research & alternatives</summary><div class="research-content"></div>';$('#results')?.after(research)}
@@ -53,6 +65,6 @@ function mount(){
 let queued=false;function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;observer?.disconnect();mount();observe()})}
 let observer;function observe(){observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-sport']})}
 function init(){observer=new MutationObserver(schedule);mount();observe();}
-window.SELECTION_UI={select,refresh,labels,excluded,exclude,locked,lock,accepts};
+window.SELECTION_UI={select,refresh,labels,excluded,exclude,locked,lock,accepts,mountLines};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else init();
 })();

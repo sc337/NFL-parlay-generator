@@ -7,3 +7,14 @@ body[data-sport]:not(.explore-expanded) #parlayControls{display:block!important}
 .pick-view{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px;padding:4px;border:1px solid var(--border,#34414f);border-radius:14px;background:var(--surface2,#202833)}.pick-view button{min-height:44px;border:0;border-radius:10px;background:transparent;color:var(--muted,#a8b2bf);font:inherit;font-weight:700}.pick-view button.active{background:var(--surface,#111820);color:var(--text,#f5f7fa);box-shadow:0 1px 4px #0003}#nflRecommendationTierWrap{display:none!important}.qualifying-heading{display:block;margin-bottom:8px}body.straights-view #results,body.straights-view #resultsTitle,body.straights-view #generateBtn,body.straights-view .quality-settings,body.straights-view #carouselHint,body.straights-view #parlaySwipeHint{display:none!important}body.parlays-view #pickOfDay{display:none!important}body.exploring-picks #sharedSelection{border:1px solid var(--border,#34414f);padding:12px;border-radius:12px}#sharedSelection button{min-height:44px}
 
 body.straights-view .nfl-game-mode,body.straights-view #sharedGameControls{display:none!important}
+
+/* One native horizontal scroller for both NFL and NBA. */
+body[data-sport] #results.nfl-carousel{display:flex!important;overflow-x:auto!important;overflow-y:hidden!important;gap:12px;min-width:0;max-width:100%;scroll-snap-type:x mandatory;touch-action:pan-x pan-y pinch-zoom}
+body[data-sport] #results.nfl-carousel>.parlay-card{flex:0 0 100%!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box;scroll-snap-align:start}
+body.parlays-view[data-sport] #parlaySwipeHint:not([hidden]){display:flex!important}
+#publicSlate,.full-slate,.ufc-matchups:not(.pick-rejections),.filter-policy,.nfl-line-policy{display:none!important}
+select.line-options-source{display:none!important}
+.line-options-buttons{display:flex;gap:6px;min-width:0}
+.line-options-buttons button{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--border,#34414f);border-radius:10px;background:var(--surface2,#202833);color:var(--muted,#a8b2bf);font:inherit;font-size:13px;font-weight:600}
+.line-options-buttons button[aria-pressed="true"]{border-color:var(--blue,#8ab4ff);background:var(--blue-bg,#263d59);color:var(--blue,#8ab4ff)}
+.line-options-buttons button:disabled{opacity:.4}

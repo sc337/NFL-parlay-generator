@@ -20,7 +20,7 @@ function variants(){
  const carousel=carouselSport&&cards.length>=2;
  grid.classList.toggle('nfl-carousel',carousel);
  grid.setAttribute('aria-label',carousel?sport.toUpperCase()+' parlay profiles. Swipe left or right for Conservative, Balanced and Lotto.':'Recommendations');
- const signature=cards.map(card=>card.innerHTML).join('\u0000');if(grid.dataset.carouselSignature!==signature){grid.dataset.carouselSignature=signature;grid.scrollLeft=0;}
+ if(!grid.__carouselCards||cards.length!==grid.__carouselCards.length||cards.some((card,i)=>card!==grid.__carouselCards[i])){grid.__carouselCards=cards;grid.scrollLeft=0;}
  cards.forEach(card=>card.classList.remove('variant-hidden'));
  const hint=$('#parlaySwipeHint');if(hint){hint.hidden=!carousel;if(carousel){
    if(!hint.querySelector('.carousel-position'))hint.innerHTML='<span class="carousel-instruction">Swipe parlays</span><span class="carousel-position" aria-live="polite"></span><span class="carousel-dots" role="group" aria-label="Parlay options"></span>';
