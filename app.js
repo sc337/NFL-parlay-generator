@@ -1028,6 +1028,21 @@ function render(parlays){
     let scoped=nflSlate();if(state.mode==='sgp')scoped=scoped.filter(g=>g.id===$('#gameSelect').value);
     const report=window.NFL_PARLAY_IDEAS?.report?.(scoped,state),esc=window.MARKET_GUARDS.esc;
     wrap.innerHTML='<div class="empty">'+esc(window.NFL_PARLAY_UI?.emptyMessage(report,count,state)||window.NFL_PARLAY_IDEAS?.emptyMessage(report,count,state)||'No qualifying NFL '+count+'-leg parlay for these filters.')+(window.NFL_PARLAY_IDEAS?.diagnostics?.(report)||'')+'</div>';
+    if(state.mode==='sgp'){
+      const g=scoped[0],all=g?.markets||[];
+      const allowed=all.filter(isParlayEligible);
+      const selected=allowed.filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode)));
+      const scored=selected.filter(m=>candidateScore(m,state.risk,'balanced')>-900);
+      const details=[
+        all.length+' quoted markets',
+        all.filter(m=>m.player).length+' player props',
+        allowed.length+' parlay-eligible',
+        selected.length+' selected by filters',
+        scored.length+' passed individual scoring'
+      ];
+      const why=!all.length?'No quoted markets loaded. Check the NFL feed and refresh.':!selected.length?'Filters excluded every eligible market. Review Filters.':scored.length<count?'Too few qualifying legs for this build. Try fewer legs or review Filters.':'Available legs could not satisfy combination, quality, or profile checks.';
+      wrap.innerHTML+='<p class="summary" role="status">SGP diagnostics: '+esc(details.join(' · '))+'. '+esc(why)+'</p>';
+    }
     if(window.PICK_QUALITY){
       const choices=scoped.flatMap(g=>(g.markets||[]).filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))).map(m=>({g,m,q:window.PICK_QUALITY.assess('nfl',m,{...nflQualityForecast(m),selectionMode:'screened'},{game:g})}))).filter(x=>x.q.pass).sort((a,b)=>b.q.rank-a.q.rank||String(a.m.ticker).localeCompare(String(b.m.ticker)));
       const seen=new Set(),singles=choices.filter(x=>{if(seen.has(x.g.id))return false;seen.add(x.g.id);return true}).slice(0,3);
@@ -1151,9 +1166,12 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
         ? `Value-screened SGPs • ${propCount} quoted props`
         : 'Value-screened SGPs';
     }
-    if(state.apiKey && !String(game?.id||'').startsWith('demo-') && propCount===0){
+    // A missing FanDuel prop feed must not suppress independently quoted team
+    // markets (e.g. Kalshi). The normal quality and compatibility gates still apply.
+    // Requiring a player prop remains an explicit user choice, not an API-key side effect.
+    if(state.requirePlayerProp && propCount===0){
       render([]);
-      $('#results').innerHTML='<div class="empty">No live FanDuel player props are available for this game yet, so no SGP will be generated from team lines alone.</div>';
+      $('#results').innerHTML='<div class="empty">No verified player props are available for this game. Turn off Require player prop in Filters to evaluate available team markets.</div>';
       return;
     }
     parlays=[];
