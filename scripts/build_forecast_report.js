@@ -78,7 +78,9 @@ function totals(rows){
     marketBias:avg(r=>r.point-r.actualTotal)};
 }
 function nflLineCalibration(rows){
-  const eligible=rows.filter(r=>r.sport==='nfl'&&['totals','spreads','moneyline'].includes(r.marketGroup)&&
+  const propGroups=['player_pass_yds','player_rush_yds','player_reception_yds','player_receptions'];
+  const eligible=rows.filter(r=>r.sport==='nfl'&&(['totals','spreads','moneyline'].includes(r.marketGroup)||
+    (r.player&&propGroups.includes(r.marketGroup)))&&
     typeof r.isAltLine==='boolean'&&Date.parse(r.recordedAt)<Date.parse(r.eventTime)&&
     (!r.snapshotAt||Date.parse(r.snapshotAt)<Date.parse(r.eventTime)));
   // Multiple checkpoint snapshots of one contract must not multiply its weight.

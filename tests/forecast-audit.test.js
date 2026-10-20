@@ -60,6 +60,8 @@ assert.equal(nflLineCalibration([...rows,alt])['totals|standard'].settled,1,'one
 const scoreSettled={...row,result:null,actualTotal:50,point:44.5,direction:'over'};
 assert.equal(nflLineCalibration([scoreSettled])['totals|standard'].winRate,1,'final score evaluates an unsettled total');
 assert.equal(nflLineCalibration([scoreSettled,{...scoreSettled,checkpoint:'24h',recordedAt:'2026-09-27T17:00:00Z'}])['totals|standard'].settled,1);
+const propAlt={...alt,contractId:'nfl|PASS-ALT|yes',marketGroup:'player_pass_yds',player:'Quarterback',result:'loss',actualTotal:null};
+assert.equal(nflLineCalibration([propAlt])['player_pass_yds|alt'].settled,1,'settled player ALT legs get a separate calibration bin');
 assert.equal(metrics(rows).independentEvents,2);
 assert.equal(metrics(rows).positiveEV.distinctEvents,2);
 assert.equal(build([{...row,snapshotAt:'2026-09-29T00:00:00Z'}]).pregameViolations,1);
