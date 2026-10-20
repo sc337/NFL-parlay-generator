@@ -144,7 +144,7 @@ function assess(s,m,f={},options={}){
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
  const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
- const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .03),limitedCoverage:(1-coverage)*.015,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
+ const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .04),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
  const buffer=Object.values(bufferParts).reduce((sum,value)=>sum+value,0);
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
@@ -210,12 +210,12 @@ function assess(s,m,f={},options={}){
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  if(!reason&&window.SELECTION_UI?.excluded?.(s,m))reason='Selection excluded by you';
  const dataReason=reason,dataPass=!dataReason;
- if(!reason&&!clearsValue&&!potentialValue&&!likelihoodMode&&!matchupMode)reason='Edge does not clear uncertainty buffer';
-  if(!reason&&potentialValue&&!likelihoodMode&&!matchupMode)warnings.push('Potential value only; positive raw EV does not clear uncertainty buffer');
+ if(potentialValue&&!likelihoodMode&&!matchupMode)warnings.push('Potential value only; positive raw EV does not clear uncertainty buffer');
+ if(!reason&&!clearsValue&&!likelihoodMode&&!matchupMode)reason='Edge does not clear uncertainty buffer';
  if(likelihoodMode)warnings.push('Win Chance prioritizes estimated likelihood; price may be poor value');
  const minimumOdds=acceptableOdds(conservativeP);
  const valueQualified=!likelihoodMode&&!matchupMode&&validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
-  const provisionalValue=!reason&&!likelihoodMode&&!matchupMode&&potentialValue;
+  const provisionalValue=potentialValue&&!likelihoodMode&&!matchupMode;
  const rankingP=conservativeP;
  if(matchupMode)warnings.push('Matchup selection; positive price value is not established');
  // Ranking preference only: don't reject good evidence simply because the price
