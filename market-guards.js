@@ -47,7 +47,7 @@ function balancedPenalty(checks,markets=[]){
  }
  return 70*(1-weakest)+40*(1-Math.min(...coverages))+30*(mean-weakest)+6*shared;
 }
-function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true}={}){
+function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityBonus=0}={}){
  if(!Number.isInteger(n)||n<2||n>4)return [];
  const perGame=new Map();
  const candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank)).sort((a,b)=>(Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,a.m))*-10000+Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,b.m))*10000)||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker))).filter(({m})=>{const key=gameKey(m),n=perGame.get(key)||0;if(n>=4)return false;perGame.set(key,n+1);return true}).slice(0,120);
@@ -58,7 +58,7 @@ function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true}={}){
    if(b.legs.some(x=>sameEvent(x,m)||m.player&&x.player===m.player)||!gameKey(m))continue;
    const legs=[...b.legs,m],minCoverage=Math.min(b.minCoverage,q.coverage||0),score=b.score+q.rank+(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,m)?10000:0);
    const checks=[...b.checks,q];if(legs.length===n&&!acceptBuild(legs,checks))continue;
-   next.push({legs,checks,score,minCoverage,objective:score-(balanced?balancedPenalty(checks,legs):12*(1-minCoverage)),signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
+   next.push({legs,checks,score,minCoverage,objective:score-(balanced?balancedPenalty(checks,legs):12*(1-minCoverage))+diversityBonus*new Set(legs.map(x=>x.kind||x.type)).size,signature:legs.map(x=>x.selection_id||x.ticker).sort().join('|')});
   }
   const seen=new Set();beams=next.sort((a,b)=>b.objective-a.objective||a.signature.localeCompare(b.signature)).filter(b=>{if(seen.has(b.signature))return false;seen.add(b.signature);return true}).slice(0,64);
   if(!beams.length)return [];
