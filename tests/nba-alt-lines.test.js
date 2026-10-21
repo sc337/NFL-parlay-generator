@@ -92,12 +92,12 @@ test('NBA complete profile bands reject a lotto-like Balanced build and repeated
  const checks=p=>legs.map(()=>({profileBufferedP:p}));
  assert.equal(A.profileFits(legs,checks(.70),{key:'safe'}),true);
  assert.equal(A.profileFits(legs,checks(.60),{key:'balanced'}),true);
- assert.equal(A.profileFits(legs,checks(.44),{key:'balanced'}),false);
- assert.equal(A.profileFits(legs,checks(.44),{key:'long'}),true);
+ assert.equal(A.profileFits(legs,checks(.43),{key:'balanced'}),false);
+ assert.equal(A.profileFits(legs,checks(.43),{key:'long'}),true);
  const previous=[{legs,risk:A.profileRisk(checks(.60))}];
- assert.equal(A.profileFits(legs.map(m=>({...m,line:22.5})),checks(.44),{key:'long'},previous),false,'changing only thresholds is not a distinct exposure');
+ assert.equal(A.profileFits(legs.map(m=>({...m,line:22.5})),checks(.43),{key:'long'},previous),false,'changing only thresholds is not a distinct exposure');
  const changed=legs.map((m,i)=>i?{...m,player:'Other '+i,kind:'rebounds'}:m);
- assert.equal(A.profileFits(changed,checks(.44),{key:'long'},previous),true);
+ assert.equal(A.profileFits(changed,checks(.43),{key:'long'},previous),true);
  assert.equal(A.profileFits(changed,checks(.52),{key:'long'},[{legs,risk:.16}]),false,'adjacent bands still need a three-point index gap');
 });
 test('NBA passes instead of filling every profile with the same risk',async()=>{

@@ -62,3 +62,35 @@ test('2–4 leg favorite, underdog and mixed slates produce complete independent
   assert.equal(A.profileBuild(rows.slice(0,count-1),count,false,A.PROFILES[0]).length,0);
  }
 });
+test('thin-history spreads and totals use only matching complementary quotes at the exact line',()=>{
+ for(const kind of ['spread','total']){
+  const f=fixture([.55]);f.markets.forEach((m,i)=>Object.assign(m,{kind,line:kind==='spread'?3.5:225.5,ticker:'line',selection_id:'line|'+(i?'no':'yes'),side:i?'no':'yes'}));
+  const r=runtime(f),Q=r.w.PICK_QUALITY,M=r.w.NBA_MODEL,[yes,no]=f.markets,x=M.estimate(yes,f.ctx),y=M.estimate(no,f.ctx);
+  assert.ok(x.marketAnchored);assert.ok(Math.abs(x.modelP+y.modelP-1)<1e-12);assert.equal(x.projectedLine,null);assert.equal(x.projectedTotal,null);
+  const q=Q.assess('nba',yes,Q.forecast('nba',yes,x),{parlay:true,nbaProfile:'balanced'});assert.equal(q.pass,true);assert.equal(q.valueQualified,false);assert.equal(q.ev,null);
+  no.line+=1;assert.equal(M.estimate(yes,f.ctx),null,'different thresholds cannot supply a complementary quote');no.line-=1;no.ticker='other';assert.equal(M.estimate(yes,f.ctx),null,'different contracts cannot supply a complementary quote');
+ }
+});
+test('profile bands do not change when a moneyline is replaced by an equally likely spread or prop',()=>{
+ const A=runtime(fixture()).w.NBA_DASHBOARD;
+ for(const n of [2,3,4])for(const [p,key] of [[.70,'safe'],[.55,'balanced'],[.40,'long']]){
+  const checks=Array.from({length:n},()=>({profileBufferedP:p}));
+  for(const kind of ['moneyline','spread','total','rebounds'])assert.equal(A.profileFits(Array.from({length:n},(_,i)=>({game_id:'g'+i,kind})),checks,{key}),true,kind+' '+key+' '+n);
+ }
+});
+test('diversity preference chooses comparable alternatives without excluding ML-only or admitting weak legs',()=>{
+ const G=runtime(fixture()).w.MARKET_GUARDS,check=m=>({pass:!m.blocked,rank:m.rank,coverage:.8});
+ for(const n of [2,3,4]){
+  const rows=Array.from({length:n},(_,i)=>({selection_id:'ml'+i,game_id:'g'+i,kind:'moneyline',rank:100})),alt={selection_id:'spread',game_id:'g'+(n-1),kind:'spread',rank:99};
+  assert.ok(G.bestBuild([...rows,alt],n,check,{diversityBonus:3}).includes(alt));
+  assert.ok(G.bestBuild([...rows,{...alt,rank:85}],n,check,{diversityBonus:3}).every(m=>m.kind==='moneyline'));
+  assert.ok(G.bestBuild([...rows,{...alt,rank:110,blocked:true}],n,check,{diversityBonus:3}).every(m=>m.kind==='moneyline'));
+  assert.equal(G.bestBuild(rows,n,check,{diversityBonus:3}).length,n);
+ }
+});
+test('team-market profile rules cannot bypass player-prop price or availability checks',()=>{
+ const f=fixture([.55]),r=runtime(f),Q=r.w.PICK_QUALITY,m={...f.markets[0],kind:'points',player:'Player',player_id:'p',player_verified:true,line:20.5};
+ f.ctx.players.p={team:m.team_code,injury_status:''};const forecast={modelP:.55,rawModelP:.55,coverage:.7,experimental:true,roleStability:.8};
+ assert.equal(Q.assess('nba',m,forecast,{parlay:true,nbaProfile:'balanced'}).pass,false);
+ f.ctx.players.p.injury_status='Questionable';assert.match(Q.assess('nba',m,{...forecast,modelP:.8},{parlay:true,nbaProfile:'safe'}).reason,/availability uncertain/);
+});
