@@ -25,7 +25,7 @@ function resetFilters(){
  const lines=$('#'+s+'LinesSelect');if(lines){lines.value='both';lines.dispatchEvent(new Event('change',{bubbles:true}))}
  refresh();
 }
-const shortMarkets={moneyline:'ML',h2h:'ML',total:'Total',totals:'Total',game_total:'Total',points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'3PT',pra:'PRA',strikeouts:'Strikeouts',hrr:'H+R+RBI',method_victory:'Win Method',method_finish:'Finish',round_finish:'Finish Round',distance:'Distance'};
+const shortMarkets={moneyline:'ML',h2h:'ML',total:'Total',totals:'Total',game_total:'Total',points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'3PT',pr:'Pts + Reb',pa:'Pts + Ast',ra:'Reb + Ast',steals:'Steals',blocks:'Blocks',pra:'PRA',strikeouts:'Strikeouts',hrr:'H+R+RBI',method_victory:'Win Method',method_finish:'Finish',round_finish:'Finish Round',distance:'Distance'};
 function tidyFilters(s){
  const root=$(s==='nfl'?'#nflParlayFilters':'#sharedSportFilters');if(!root)return;
  root.classList.add('simple-filters');

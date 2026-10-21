@@ -27,8 +27,33 @@ ALIASES = {'GS': 'GSW', 'NY': 'NYK', 'NO': 'NOP', 'SA': 'SAS', 'UTAH': 'UTA',
            'PHO': 'PHX', 'BKN': 'BKN', 'BRK': 'BKN', 'BK': 'BKN', 'CHO': 'CHA', 'WSH': 'WAS'}
 CODESET = set('ATL BOS BKN CHA CHI CLE DAL DEN DET GSW HOU IND LAC LAL MEM MIA MIL MIN NOP NYK OKC ORL PHI PHX POR SAC SAS TOR UTA WAS'.split()) | set(ALIASES)
 LABELS = {'points': 'Points', 'rebounds': 'Rebounds', 'assists': 'Assists', 'threes': 'Threes',
-          'pra': 'Pts + Reb + Assist', 'double_double': 'Double Double', 'triple_double': 'Triple Double'}
+          'pra': 'Pts + Reb + Assist', 'pr': 'Pts + Reb', 'pa': 'Pts + Ast',
+          'ra': 'Reb + Ast', 'steals': 'Steals', 'blocks': 'Blocks',
+          'double_double': 'Double Double', 'triple_double': 'Triple Double'}
 MILESTONES = {'double_double', 'triple_double'}
+
+def discover_prop_series(payload):
+    """Use provider metadata, never guessed tickers or synthesized combo prices."""
+    found = {}
+    combinations = {frozenset(('points', 'rebounds')): 'pr',
+                    frozenset(('points', 'assists')): 'pa',
+                    frozenset(('rebounds', 'assists')): 'ra',
+                    frozenset(('steals',)): 'steals', frozenset(('blocks',)): 'blocks'}
+    for series in payload.get('series', []):
+        ticker = str(series.get('ticker') or '')
+        title = str(series.get('title') or '').lower()
+        if not ticker.startswith('KXNBA') or not re.search(r'\b(?:nba|basketball)\b', title):
+            continue
+        if re.search(r'quarter|half|season|leader|most|first|matchup|head.to.head|team|fantasy|turnover|\bor\b', title):
+            continue
+        stats = frozenset(name for name, pattern in {
+            'points': r'\b(?:points?|pts)\b', 'rebounds': r'\b(?:rebounds?|reb)\b',
+            'assists': r'\b(?:assists?|ast)\b', 'steals': r'\b(?:steals?|stl)\b',
+            'blocks': r'\b(?:blocks?|blk)\b'}.items() if re.search(pattern, title))
+        kind = combinations.get(stats)
+        if kind:
+            found[ticker] = kind
+    return found
 
 def key(s):
     return ''.join(c for c in unicodedata.normalize('NFKD', str(s)).casefold() if c.isalnum() and not unicodedata.combining(c))
@@ -231,6 +256,11 @@ def main():
     events = []
     for day in days: events.extend(get(ESPN+'/scoreboard?dates='+day+'&limit=100').get('events', []))
     events = list({str(e['id']): e for e in events}.values()); ctx = context(events, now); rows = []
+    # New prop families are enabled only when the provider advertises them.
+    try:
+        SERIES.update(discover_prop_series(get(API+'/series?category=Sports')))
+    except Exception as exc:
+        print('NBA prop discovery unavailable; existing series retained:', type(exc).__name__)
     for series in SERIES:
         cursor = None
         for _ in range(20):

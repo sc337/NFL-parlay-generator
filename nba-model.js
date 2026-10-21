@@ -1,8 +1,8 @@
 // Pregame basketball projections. Thin-history team markets use an explicitly labeled two-way market fallback.
 (()=>{'use strict';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),num=x=>x!=null&&x!==''&&Number.isFinite(+x)?+x:null;
-const PROPS=['points','rebounds','assists','threes','pra','double_double','triple_double'];
-const fields={points:['points'],rebounds:['rebounds'],assists:['assists'],threes:['threes'],pra:['points','rebounds','assists']};
+const PROPS=['points','rebounds','assists','threes','pr','pa','ra','steals','blocks','pra','double_double','triple_double'];
+const fields={points:['points'],rebounds:['rebounds'],assists:['assists'],threes:['threes'],pr:['points','rebounds'],pa:['points','assists'],ra:['rebounds','assists'],steals:['steals'],blocks:['blocks'],pra:['points','rebounds','assists']};
 const moneylineGroups=new WeakMap();
 const milestoneFields=['points','rebounds','assists','steals','blocks'];
 function cdf(z){const t=1/(1+.2316419*Math.abs(z)),d=.3989423*Math.exp(-z*z/2),p=1-d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>=0?p:1-p}

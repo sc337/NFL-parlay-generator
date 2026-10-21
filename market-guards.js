@@ -40,7 +40,7 @@ function balancedPenalty(checks,markets=[]){
  const drivers=new Map();let shared=0;
  for(const m of markets){
   const family=m.kind||m.type,key=gameKey(m)||m.gameId;if(!key)continue;
-  const driver=['points','threes','assists','pra','total','totals'].includes(family)?'scoring':['passing','receiving','receptions'].includes(family)?'passing':family==='td'?'scoring':null;
+  const driver=['points','threes','assists','pra','pr','pa','ra','total','totals'].includes(family)?'scoring':['passing','receiving','receptions'].includes(family)?'passing':family==='td'?'scoring':null;
   if(!driver)continue;
   const direction=['under','no'].includes(m.side)?'under':'over',group=key+'|'+driver+'|'+direction;
   const count=drivers.get(group)||0;shared+=count;drivers.set(group,count+1);
