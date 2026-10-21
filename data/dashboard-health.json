@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-21T16:22:45.627Z",
+  "updated_at": "2026-10-21T16:23:21.225Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-10-21T16:11:59.947367+00:00",
-      "ageMinutes": 11,
-      "markets": 107,
-      "quotedMarkets": 107,
-      "playerMarkets": 70,
+      "snapshotAt": "2026-10-21T16:22:00.403344+00:00",
+      "ageMinutes": 1,
+      "markets": 152,
+      "quotedMarkets": 152,
+      "playerMarkets": 87,
       "families": {
         "moneyline": 8,
         "spread": 7,
-        "total": 22,
+        "total": 50,
         "strikeouts": 16,
         "hits": 18,
-        "home_runs": 6,
-        "hrr": 30
+        "hrr": 30,
+        "total_bases": 23
       },
       "futureEvents": [
         {
@@ -37,12 +37,12 @@
         }
       ],
       "playerCounts": {
-        "849805": 70
+        "849805": 87
       }
     },
     "nba": {
       "snapshotAt": "2026-10-21T16:21:46.508018+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 6682,
       "quotedMarkets": 6682,
       "playerMarkets": 4706,
@@ -275,14 +275,14 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-21T16:12:19.206655+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-10-21T16:22:17.430353+00:00",
+      "ageMinutes": 1,
       "markets": 4895,
       "quotedMarkets": 4895,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 465,
-        "spread": 2370,
+        "moneyline": 464,
+        "spread": 2371,
         "total": 2060
       },
       "futureEvents": [
@@ -384,10 +384,6 @@
         },
         {
           "id": "401866452",
-          "time": "2026-10-31T16:00Z"
-        },
-        {
-          "id": "401859185",
           "time": "2026-10-31T16:00Z"
         },
         {
@@ -551,6 +547,10 @@
           "time": "2026-10-25T02:00:00+00:00"
         },
         {
+          "id": "401859185",
+          "time": "2026-10-31T16:00Z"
+        },
+        {
           "id": "401860905",
           "time": "2026-10-24T22:30:00+00:00"
         },
@@ -690,8 +690,8 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-21T16:12:14.343707+00:00",
-      "ageMinutes": 11,
+      "snapshotAt": "2026-10-21T16:21:57.069169+00:00",
+      "ageMinutes": 1,
       "markets": 3877,
       "quotedMarkets": 3877,
       "playerMarkets": 2573,
@@ -837,7 +837,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-21T16:21:51.204826+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 1022,
       "quotedMarkets": 1022,
       "playerMarkets": 472,
@@ -1045,13 +1045,14 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-10-21T16:11:57.365030+00:00",
-      "ageMinutes": 11,
-      "markets": 106,
-      "quotedMarkets": 106,
+      "snapshotAt": "2026-10-21T16:21:57.418492+00:00",
+      "ageMinutes": 1,
+      "markets": 112,
+      "quotedMarkets": 112,
       "playerMarkets": 0,
       "families": {
         "moneyline": 28,
+        "distance": 6,
         "method_finish": 24,
         "method_victory": 42,
         "round_finish": 12
@@ -1114,6 +1115,10 @@
           "time": "2026-10-24T16:00:00Z"
         },
         {
+          "id": "KXUFCDISTANCE-26OCT24LUCCAL",
+          "time": "2026-10-24T16:00:00Z"
+        },
+        {
           "id": "KXUFCMOF-26OCT24LUCCAL",
           "time": "2026-10-24T16:00:00Z"
         },
@@ -1126,6 +1131,10 @@
           "time": "2026-10-24T16:00:00Z"
         },
         {
+          "id": "KXUFCDISTANCE-26OCT24OKISAN",
+          "time": "2026-10-24T16:00:00Z"
+        },
+        {
           "id": "KXUFCMOF-26OCT24OKISAN",
           "time": "2026-10-24T16:00:00Z"
         },
@@ -1135,14 +1144,6 @@
         },
         {
           "id": "KXUFCROUNDS-26OCT24OKISAN",
-          "time": "2026-10-24T16:00:00Z"
-        },
-        {
-          "id": "KXUFCDISTANCE-26OCT24LUCCAL",
-          "time": "2026-10-24T16:00:00Z"
-        },
-        {
-          "id": "KXUFCDISTANCE-26OCT24OKISAN",
           "time": "2026-10-24T16:00:00Z"
         },
         {
@@ -1159,7 +1160,7 @@
       "sport": "ncaaf",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "3289 upcoming markets lack verified start times.",
+      "message": "3290 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
     }
@@ -1169,7 +1170,7 @@
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-10-21T16:13:22.489786+00:00"
+      "at": "2026-10-21T16:23:21.201774+00:00"
     },
     "nba": {
       "ok": true,
@@ -1177,11 +1178,11 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-21T16:13:22.489786+00:00"
+      "at": "2026-10-21T16:23:21.201774+00:00"
     },
     "nfl": {
       "ok": true,
-      "at": "2026-10-21T16:13:22.489786+00:00"
+      "at": "2026-10-21T16:23:21.201774+00:00"
     },
     "nhl": {
       "ok": true,
@@ -1189,7 +1190,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-21T16:13:22.489786+00:00"
+      "at": "2026-10-21T16:23:21.201774+00:00"
     }
   }
 }
