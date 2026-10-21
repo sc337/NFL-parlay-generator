@@ -108,3 +108,10 @@ test('NBA passes instead of filling every profile with the same risk',async()=>{
  assert.doesNotMatch(r.nodes.get('#results').innerHTML,/profile-pass|data-profile="(?:balanced|long)"/);
  r.rows.forEach(m=>m.blocked=true);r.w.NBA_DASHBOARD.refresh();assert.match(r.nodes.get('#results').innerHTML,/class="empty"/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/parlay-card/);
 });
+test('new NBA combo and defensive props cannot duplicate or overlap the same player in an SGP',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,base={game_id:'g',player:'Player',player_id:'p',team_code:'NYK',side:'yes',kind:'points',selection_id:'points',ticker:'points'};
+ for(const kind of ['pr','pa','ra','steals','blocks']){
+  const other={...base,kind,selection_id:kind,ticker:kind};assert.equal(A.compatibleSet([base,other]),false,kind);
+  assert.equal(A.compatibleSet([base,{...other,player:'Other',player_id:'q',team_code:'BOS'}]),true,kind);
+ }
+});

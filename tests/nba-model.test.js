@@ -10,3 +10,19 @@ test('low-count NBA props retain a discrete zero outcome',()=>{const api=setup()
 test('NBA rejects preseason, stale/future context, started games and thin samples',()=>{const api=setup();for(const change of ['preseason','old','future','started','thin']){const {m,ctx}=fixture();if(change==='preseason')ctx.games.g.season_type=1;if(change==='old')ctx.updated_at=new Date(now-5*3600000).toISOString();if(change==='future')ctx.updated_at=new Date(now+3600000).toISOString();if(change==='started')m.game_status='in';if(change==='thin')ctx.teams.A.games=ctx.teams.A.games.slice(0,4);assert.equal(api.estimate(m,ctx),null,change)}});
 test('NBA props reject uncertain availability and unstable/low minutes',()=>{const api=setup();for(const change of ['questionable','out','unstable','low']){const {m,ctx}=fixture(),p={...m,kind:'points',player_id:'p',player_verified:true,team_code:'A',line:20.5};if(['questionable','out'].includes(change))ctx.players.p.injury_status=change;else ctx.players.p.games.forEach((r,i)=>r.minutes=change==='low'?10:i%2?40:3);assert.equal(api.estimate(p,ctx),null,change)}});
 test('postgame and preseason box scores cannot enter NBA team projections',()=>{const api=setup(),{m,ctx}=fixture();const base=api.estimate(m,ctx).modelP;ctx.teams.A.games.push({date:new Date(now+3600000).toISOString(),season_type:2,points:180,allowed:70,possessions:100},{date:new Date(now-1000).toISOString(),season_type:1,points:180,allowed:70,possessions:100});assert.equal(api.estimate(m,ctx).modelP,base)});
+test('PR PA and RA sum paired same-game production with complementary over/under probabilities',()=>{
+ const api=setup(),{m,ctx}=fixture();for(const [kind,fields] of [['pr',['points','rebounds']],['pa',['points','assists']],['ra',['rebounds','assists']]]){
+  const market={...m,kind,player:'Player',player_id:'p',player_verified:true,team_code:'A',line:20.5},f=api.estimate(market,ctx);
+  const expected=ctx.players.p.games.reduce((sum,r)=>sum+fields.reduce((s,k)=>s+r[k],0),0)/ctx.players.p.games.reduce((sum,r)=>sum+r.minutes,0)*f.projectedMinutes*api.matchup(market,ctx).pace/100;
+  assert.ok(Math.abs(f.projectedLine-expected)<1e-8,kind);assert.ok(Math.abs(f.modelP+api.estimate({...market,side:'no'},ctx).modelP-1)<1e-8);assert.ok(api.estimate({...market,line:30.5},ctx).modelP<f.modelP);
+  const copy=JSON.parse(JSON.stringify(ctx));copy.players.p.games.forEach(r=>r[fields[1]]=null);assert.equal(api.estimate(market,copy),null,'missing combo inputs stay missing');
+ }
+});
+test('steals and blocks retain discrete zero outcomes and reject missing history or unconfirmed availability',()=>{
+ const api=setup();for(const kind of ['steals','blocks']){
+  const {m,ctx}=fixture(),market={...m,kind,player:'Player',player_id:'p',player_verified:true,team_code:'A',line:.5};ctx.players.p.games.forEach((r,i)=>r[kind]=i%3);
+  const f=api.estimate(market,ctx);assert.ok(f.modelP>0&&f.modelP<1);assert.ok(api.estimate({...market,line:1.5},ctx).modelP<f.modelP);assert.ok(Math.abs(f.modelP+api.estimate({...market,side:'no'},ctx).modelP-1)<1e-8);
+  ctx.players.p.games.forEach(r=>r[kind]=0);assert.ok(api.estimate(market,ctx).modelP<.05);ctx.players.p.games.forEach(r=>r[kind]=null);assert.equal(api.estimate(market,ctx),null);
+  ctx.players.p.games=fixture().ctx.players.p.games;ctx.players.p.injury_status='Questionable';assert.equal(api.estimate(market,ctx),null);
+ }
+});
