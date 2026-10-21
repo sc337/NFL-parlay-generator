@@ -81,7 +81,7 @@ function profileBuild(rows,count,sgp,profile,previous=[]){
  const assess=assessProfile;
  const candidates=rows.filter(m=>{const q=assess(m);return q.pass&&profile.allows(q)}).sort((a,b)=>profile.score(assess(b))-profile.score(assess(a))||String(a.selection_id||a.ticker).localeCompare(String(b.selection_id||b.ticker)));
  const shaped=m=>{const q=assess(m);return {...q,rank:profile.score(q)}};
- const options={balanced:profile.key==='balanced',acceptBuild:(legs,checks)=>profileFits(legs,checks,profile,previous)};
+ const options={balanced:profile.key==='balanced',diversityBonus:8,acceptBuild:(legs,checks)=>profileFits(legs,checks,profile,previous)};
  const build=sgp?buildSameGame(candidates,count,shaped,options):G.bestBuild(candidates,count,shaped,options);
  return build.length===count&&(sgp?compatibleSet(build):G.independent(build))?build:[];
 }
@@ -93,6 +93,9 @@ function render(){
  window.EXTRA_PICKS?.clear?.();Q.prepare('nba',markets,context,[],snapshotAt);
  window.SPORT_MARKETS.sync('nba',markets,render);controls();
  const count=window.DASHBOARD_UI?.get('nba','legs',2)||2,pool=ranked(),sgp=buildMode==='sgp';
+ const marketCounts=markets.reduce((acc,m)=>{if(G.pregame(m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m))){const key=m.kind||'unknown';acc[key]=(acc[key]||0)+1}return acc},{});
+ const eligibleCounts=pool.reduce((acc,m)=>{const key=m.kind||'unknown';acc[key]=(acc[key]||0)+1;return acc},{});
+ const marketSummary=Object.entries(marketCounts).map(([kind,n])=>kind+': '+(eligibleCounts[kind]||0)+'/'+n).join(' · ');
  const scoped=sgp?pool.filter(m=>String(m.game_id)===selectedGame):pool;
  const straight=markets.filter(m=>eligible(m,true)).sort((a,b)=>Q.assess('nba',b,model(b)).rank-Q.assess('nba',a,model(a)).rank).find(m=>eligible(m,true)&&(window.SLATE_UI?window.SLATE_UI.matches('nba',m):window.PICK_OF_DAY?.today?window.PICK_OF_DAY.today(m.game_time):new Date(m.game_time).toDateString()===new Date().toDateString()));
  const builds=[];
@@ -100,9 +103,10 @@ function render(){
  window.PICK_OF_DAY?.show('nba',straight&&{market:straight,eventTime:straight.game_time,label:straight.label,event:straight.game_label,media:media(straight),note:note(straight)});
  $('#resultsTitle').textContent='NBA Recommendations';
  $('#dataStatus').textContent='NBA · '+G.unique(pool,Infinity).length+' qualified games · Experimental';
+ const marketHost=$('#nbaMarketFilters');if(marketHost){const note=marketHost.querySelector('[data-market-note]');if(note)note.textContent='Eligible / quoted by type: '+(marketSummary||'No pregame markets')+'. Missing types cannot be generated; confirm available lines at your sportsbook.';}
  $('#modeTitle').textContent=sgp?'NBA Same Game Parlay':'NBA Multi-Game Parlay';
  builds.forEach(({profile,legs})=>window.RECOMMENDATION_CAPTURE?.('nba',{mode:buildMode,profile:profile.key,requestedLegs:count,legs:legs.map(m=>({market:m,forecast:model(m)}))}));
- const summary=sgp?'One matchup; related outcomes can move together. Verify the combined SGP price at your sportsbook. Joint win probability is unavailable.':'One leg per game. Pace, efficiency and minutes-based estimates are unvalidated. Confirm availability and your sportsbook price.';
+ const summary=sgp?'One matchup; related outcomes can move together. Verify the combined SGP price at your sportsbook. Joint win probability is unavailable.':'One leg per game. Market-family diversity is preferred only when comparable eligible alternatives exist; it is never guaranteed. Pace, efficiency and minutes-based estimates are unvalidated. Confirm availability and your sportsbook price.';
  const hasBuild=builds.some(({legs})=>legs.length===count);
  const empty=hasBuild?'':!markets.length?'No upcoming NBA quotes available.':sgp&&!selectedGame?'No upcoming NBA games for the selected date.':markets.some(m=>m.season_type===1)?'NBA preseason · Rotation uncertainty; no model-qualified picks.':unavailableBuild(scoped,count,sgp,lineMode)+' '+pendingAvailability(markets.filter(m=>(!sgp||String(m.game_id)===selectedGame)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m))),scoped);
  $('#results').innerHTML=builds.filter(({legs})=>legs.length===count).map(({profile,legs})=>{
