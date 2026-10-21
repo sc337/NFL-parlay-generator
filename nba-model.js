@@ -1,4 +1,4 @@
-// Pregame basketball projections. Thin-history moneylines use an explicitly labeled two-way market fallback.
+// Pregame basketball projections. Thin-history team markets use an explicitly labeled two-way market fallback.
 (()=>{'use strict';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),num=x=>x!=null&&x!==''&&Number.isFinite(+x)?+x:null;
 const PROPS=['points','rebounds','assists','threes','pra','double_double','triple_double'];
