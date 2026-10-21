@@ -134,7 +134,7 @@ function unsupportedAltUnder(m){
 }
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
- const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaProfile=nbaMoneyline?options.nbaProfile:null;
+ const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
  const selectionMode=nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
@@ -154,7 +154,7 @@ function assess(s,m,f={},options={}){
  if(!validated)warnings.push('Model unvalidated; value unverified');
  if(m.referenceOnly)warnings.push('Public reference odds; verify current sportsbook price');
  if(s==='nfl'&&m.player&&f.experimental&&!validated)warnings.push('Experimental player-history estimate');
- const anchored=(s==='nba'&&m.kind==='moneyline'||s==='nfl'&&!m.player)&&f.marketAnchored===true;
+ const anchored=(nbaTeam||s==='nfl'&&!m.player)&&f.marketAnchored===true;
  const quoteAge=Date.now()-Date.parse(q.checkedAt||'');
  const delayedReference=quoteAge>TTL&&quoteAge<=2*3600000;
  if(delayedReference)warnings.push('Delayed reference price; verify current line');
@@ -192,7 +192,7 @@ function assess(s,m,f={},options={}){
   if(!robust)warnings.push(sensitivity.label+'; review adverse scenarios in Details');
  }
  // Policy safeguards for provisional estimates, not measured confidence limits.
- if(!reason&&!validated&&(q.p<.30||p<.45)&&!(nbaMoneyline&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
+ if(!reason&&!validated&&(q.p<.30||p<.45)&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
  if(!reason&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
@@ -209,15 +209,15 @@ function assess(s,m,f={},options={}){
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(parlayKey))reason='Caesars straight only';
  else if(options.parlay&&s==='nfl'&&['player_pass_tds','player_pass_interceptions'].includes(parlayKey))reason='Unsupported SGP player market';
  if(!reason&&likelihoodMode&&conservativeP<.5)reason='Win Chance needs a buffered estimate of at least 50%';
- if(!reason&&nbaMoneyline&&q.p>.85)reason='NBA moneyline price too short';
- if(!reason&&nbaMoneyline&&matchupMode&&q.p-conservativeP>.10)reason='NBA moneyline price exceeds buffered likelihood by over 10 points';
+ if(!reason&&nbaTeam&&q.p>.85)reason='NBA team-market price too short';
+ if(!reason&&nbaTeam&&matchupMode&&q.p-conservativeP>.10)reason='NBA team-market price exceeds buffered likelihood by over 10 points';
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  if(!reason&&window.SELECTION_UI?.excluded?.(s,m))reason='Selection excluded by you';
  const dataReason=reason,dataPass=!dataReason;
  if(potentialValue&&!likelihoodMode&&!matchupMode)warnings.push('Potential value only; positive raw EV does not clear uncertainty buffer');
  if(!reason&&!clearsValue&&!likelihoodMode&&!matchupMode)reason='Edge does not clear uncertainty buffer';
  if(likelihoodMode)warnings.push('Win Chance prioritizes estimated likelihood; price may be poor value');
- const minimumOdds=nbaMoneyline&&anchored?null:acceptableOdds(conservativeP);
+ const minimumOdds=nbaTeam&&anchored?null:acceptableOdds(conservativeP);
  const valueQualified=!likelihoodMode&&!matchupMode&&validated&&!reason&&clearsValue&&!anchored&&!warnings.length;
   const provisionalValue=potentialValue&&!likelihoodMode&&!matchupMode;
  const rankingP=conservativeP;
@@ -226,7 +226,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,selectionMode,dataPass,dataReason,pricePass:!(nbaMoneyline&&anchored)&&clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:nbaMoneyline&&anchored?null:ev,conservativeEV:nbaMoneyline&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
+ return {pass:!reason,reason,selectionMode,dataPass,dataReason,pricePass:!(nbaTeam&&anchored)&&clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:nbaTeam&&anchored?null:ev,conservativeEV:nbaTeam&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
