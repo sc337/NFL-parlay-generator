@@ -8,7 +8,22 @@ function fresh(r,start){const at=Date.parse(r.checked_at),end=Date.parse(r.start
 function register(s,markets,context){if(['nba','nhl','ncaaf'].includes(s))contexts.set(s,{markets,context:context||{}})}
 function game(s,m,ctx){return ctx?.games?.[String(m.context_game_id||m.game_id)]}
 function teamList(s,g){return s==='ncaaf'?[g?.away?.name,g?.home?.name].filter(Boolean):[g?.away,g?.home].filter(Boolean)}
+function nbaLineup(gid,start,team){
+ const now=Date.now(),ctx=contexts.get('nba')?.context||{},roster=Object.values(ctx.players||{});
+ if(!Number.isFinite(start)||start<=now||!team)return {status:'unknown',basis:'unavailable',rows:[]};
+ const valid=r=>r.sport==='nba'&&r.role==='lineup'&&r.team===team&&safeURL(r.source_url)&&Array.isArray(r.players)&&r.players.length===5&&new Set(r.players.map(key)).size===5&&['confirmed','projected'].includes(r.status)&&Date.parse(r.checked_at)<=now+300000;
+ const rows=[...(payload.records||[]),...manual].filter(r=>valid(r)&&String(r.game_id)===String(gid)&&Math.abs(Date.parse(r.start_time)-start)<60000&&start>now&&now-Date.parse(r.checked_at)<=24*3600000);
+ if(rows.length){
+  const at=Math.max(...rows.map(r=>Date.parse(r.checked_at))),latest=rows.filter(r=>Date.parse(r.checked_at)===at);
+  if(new Set(latest.map(r=>r.players.map(key).sort().join('|'))).size>1)return {status:'conflicting',rows:latest};
+  const r=latest.at(-1),current=fresh(r,start)&&!r.retained;
+  return {...r,status:current?r.status:'projected',basis:current?(r.status==='confirmed'?'confirmed':'projected'):'cached',game_context:current?r.game_context:undefined,rows:latest};
+ }
+ const previous=[...(payload.nba_lineup_history||[])].filter(r=>valid(r)&&Date.parse(r.start_time)<now&&now-Date.parse(r.start_time)<=7*86400000&&r.players.every(name=>roster.filter(p=>p.team===team&&key(p.name)===key(name)).length===1)).sort((a,b)=>Date.parse(b.start_time)-Date.parse(a.start_time)||Date.parse(b.checked_at)-Date.parse(a.checked_at))[0];
+ return previous?{...previous,game_id:String(gid),start_time:new Date(start).toISOString(),previous_game_id:previous.game_id,status:'projected',basis:'previous',game_context:undefined,rows:[previous]}:{status:'unknown',basis:'unavailable',rows:[]};
+}
 function resolve(s,gid,start,team,role,player){
+ if(s==='nba'&&role==='lineup')return nbaLineup(gid,start,team);
  const rows=[...(payload.records||[]),...manual].filter(r=>r.sport===s&&String(r.game_id)===String(gid)&&r.team===team&&r.role===role&&(!['line','powerplay','availability'].includes(role)||!player||(r.players||[]).some(n=>key(n)===key(player)))&&fresh(r,start));
  const names=r=>(r.players||[]).map(key).sort().join('|');
  const confirmed=rows.filter(r=>r.status==='confirmed'),outs=rows.filter(r=>r.status==='out'&&(!player||(r.players||[]).some(p=>key(p)===key(player))));
@@ -23,7 +38,7 @@ function evidence(s,m,ctx){
  const g=game(s,m,ctx),gid=String(m.context_game_id||m.game_id||''),start=Date.parse(g?.start||g?.kickoff||m.game_time),teams=teamList(s,g);
  const role=s==='nba'?'lineup':s==='nhl'?'goalie':'qb';
  const sides=teams.map(team=>resolve(s,gid,start,team,role));
- const confirmed=teams.length===2&&sides.every(r=>r.status==='confirmed'&&(s!=='nba'||r.players?.length===5));
+ let confirmed=teams.length===2&&sides.every(r=>r.status==='confirmed'&&(s!=='nba'||r.players?.length===5));
  let own=null,line=null,powerplay=null,availability=null;
  if(m.player){
   const team=m.team_code||ctx?.players?.[m.player_id]?.team||ctx?.rosters?.find(p=>String(p.id)===String(m.player_id))?.team;
@@ -33,11 +48,15 @@ function evidence(s,m,ctx){
  const contains=r=>r?.players?.some(n=>key(n)===key(m.player));
  const confirmedPlayer=own?.status==='confirmed'&&contains(own)||availability?.status==='confirmed'&&contains(availability);
  const lineConfirmed=line?.status==='confirmed'&&contains(line),powerplayConfirmed=powerplay?.status==='confirmed'&&contains(powerplay);
- const unavailableStarter=sides.some(r=>(r.players||[]).some(name=>['out','doubtful','conflicting'].includes(resolve(s,gid,start,r.team,'availability',name).status)));
- const roleBlocked=unavailableStarter?'Starter unavailable; confirm replacement':sides.some(r=>r.status==='out')?'Starting role unavailable; confirm replacement':null;
+ const unavailableStarter=sides.some(r=>(r.players||[]).some(name=>['out','doubtful','conflicting'].includes(resolve(s,gid,start,r.team,'availability',name).status)||s==='nba'&&Object.values(ctx?.players||{}).some(p=>p.team===r.team&&key(p.name)===key(name)&&/\b(out|doubtful|inactive|suspended)\b/i.test(p.injury_status||''))));
+ if(s==='nba'&&unavailableStarter)confirmed=false;
+ const roleBlocked=s==='nba'?null:unavailableStarter?'Starter unavailable; confirm replacement':sides.some(r=>r.status==='out')?'Starting role unavailable; confirm replacement':null;
  const blocked=roleBlocked|| (['out','doubtful'].includes(availability?.status)?'Player unavailable':availability?.status==='questionable'?'Player availability uncertain':availability?.status==='conflicting'?'Conflicting availability reports':sides.some(r=>r.status==='conflicting')||own?.status==='conflicting'||line?.status==='conflicting'||powerplay?.status==='conflicting'?'Conflicting starter reports':own?.status==='out'?'Player unavailable':line?.status==='out'?'Player unavailable':null);
  const notes=sides.filter(r=>r.status!=='unknown').map(r=>r.team+': '+r.status+(r.method==='manual'?' (user-confirmed)':''));
+ const lineupLabel=confirmed?'Lineup confirmed':sides.some(r=>r.basis==='previous')?'Previous lineup · Not final':sides.some(r=>r.basis==='cached')?'Latest known lineup · Not final':sides.some(r=>r.status==='projected')?'Projected lineup · Not final':'Lineup pending · Not final';
  if(s==='nba'){
+  notes.unshift(lineupLabel);
+  for(const r of sides)if(r.checked_at)notes.push(r.team+' last checked '+r.checked_at+(r.changed_at?'; lineup changed '+r.changed_at:''));
   if(availability&&availability.status!=='unknown')notes.push('Availability: '+availability.status);
   const position=Object.entries(own?.positions||{}).find(([name])=>key(name)===key(m.player))?.[1];
   if(position)notes.push('Reported starter position: '+position);
@@ -46,7 +65,7 @@ function evidence(s,m,ctx){
   const refs=Object.entries(publicContext?.reference_lines||{}).map(([type,r])=>type+' '+r.value+' ('+r.book+')');
   if(refs.length)notes.push('RotoWire reference only: '+refs.join(', '));
  }
- return {confirmed,confirmedPlayer,lineConfirmed,powerplayConfirmed,blocked,sides,line,powerplay,
+ return {confirmed,confirmedPlayer,lineConfirmed,powerplayConfirmed,blocked,sides,line,powerplay,lineupLabel,
   note:notes.join('; ')};
 }
 function save(entry){

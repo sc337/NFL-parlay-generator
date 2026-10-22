@@ -80,10 +80,11 @@ function participation(s,m,f,game,warnings){
   if(m.player){
    const player=ctx.players?.[String(m.player_id)];
    if(!m.player_verified||!player||player.team!==m.team_code)return 'Roster unverified';
+   if(/\b(out|doubtful|inactive|suspended)\b/i.test(player.injury_status||''))return 'Player unavailable';
    if(/questionable|unknown/i.test(player.injury_status||''))return 'Player availability uncertain';
    if(!(num(f.roleStability)>=.6))return 'Playing time uncertain';
-   if(!starter?.confirmedPlayer)warnings.push('Confirm participation and projected minutes');
-  }else if(!starter?.confirmed)warnings.push('Starting lineups unconfirmed');
+   if(!starter?.confirmedPlayer)warnings.push((starter?.lineupLabel||'Lineup pending · Not final')+'; conditional on participation and projected minutes');
+  }else if(!starter?.confirmed)warnings.push(starter?.lineupLabel||'Lineup pending · Not final');
  }
  return null;
 }
@@ -197,9 +198,10 @@ function assess(s,m,f={},options={}){
  if(!reason&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
  if(!reason&&options.featured&&likelihoodMode&&conservativeP<.55)reason='Featured pick needs stronger likelihood';
- // Near kickoff there is no time to treat missing availability as a minor caveat.
+ // NBA lineup confirmation is advisory. Roster, injury and role exclusions above
+ // remain hard gates; other sports retain their near-start confirmation policy.
  const nearStart=Number.isFinite(start)&&start-Date.now()<=90*60000;
- if(!reason&&nearStart&&(options.featured||options.parlay)){
+ if(!reason&&nearStart&&(options.featured||options.parlay)&&s!=='nba'){
   const availability=warnings.some(w=>/unconfirmed|confirm participation|conditional on participation/i.test(w));
   if(availability)reason='Confirm starters, availability and role before kickoff';
  }
