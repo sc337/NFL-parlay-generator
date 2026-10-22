@@ -22,7 +22,8 @@ function propReport(game,state,forecast,isEligible=()=>true){
  for(const m of loaded){
   if(!isEligible(m)||!window.NFL_ALT_LINES?.selected(m,state.selectedMarkets)||!window.NFL_ALT_LINES.matches(m,state.lineMode))continue;
   selectedQuotes++;
-  const f=forecast(m),q=window.PICK_QUALITY.assess('nfl',m,f,{parlay:true,game});
+  const f=forecast(m),q={...window.PICK_QUALITY.assess('nfl',m,f,{parlay:true,game})};
+  if(q.pass&&window.NFL_ALT_IDEAS?.active?.(state)&&q.conservativeP<.55){q.pass=false;q.reason='Conservative ALT requires a buffered likelihood of at least 55%';}
   if(!groups.has(m.player))groups.set(m.player,[]);groups.get(m.player).push({m,f,q});
  }
  const players=[...groups].map(([player,rows])=>{
@@ -51,6 +52,7 @@ function renderPropCoverage(game,state,forecast,isEligible){
  summary.textContent='Player props · '+report.qualifiedPlayers+' qualifying player'+(report.qualifiedPlayers===1?'':'s');
  intro.textContent=report.loadedQuotes+' player quotes loaded; '+report.selectedQuotes+' match the selected markets and line rules. Every matching threshold is screened. '+(state.lineMode==='alt'?'ALT yardage uses quoted 10-yard milestones; player ALT unders are excluded.':'');
  for(const row of report.players){const item=document.createElement('li'),name=document.createElement('strong'),reason=document.createElement('p');name.textContent=row.player+' · '+row.category;reason.textContent=row.reason;item.append(name,reason);list.append(item);}
+ if(window.NFL_ALT_IDEAS?.active?.(state))summary.textContent='Player props · '+report.qualifiedPlayers+' eligible idea players · Value unchecked';
  const open=details.open;details.replaceChildren(summary,intro,list);details.open=open;
 }
 function mount(){
@@ -69,6 +71,7 @@ function mount(){
  const quality=$('.quality-settings'),home=$('.parlay-options-row');
  function sync(){
   const nfl=(window.__ACTIVE_SPORT||'nfl')==='nfl';main.hidden=filters.hidden=!nfl;
+  const manual=$('#nflManualAlt');if(manual)manual.hidden=!nfl||!window.NFL_ALT_IDEAS?.active?.(window.NFL_PARLAY_STATE);
   const coverage=$('#nflPropCoverage');if(coverage)coverage.hidden=!nfl||window.NFL_PARLAY_STATE?.mode!=='sgp';
   if(quality&&!$('#sharedBuilder')){const target=nfl?main:home;if(target&&quality.parentElement!==target)target.append(quality);}
  }
