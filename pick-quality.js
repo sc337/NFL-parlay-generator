@@ -146,8 +146,11 @@ function assess(s,m,f={},options={}){
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
  const context=contextEvidence(s,m,f,options.game);
+ const monitored=window.ESPN_EVIDENCE?.inspect(m),roleChange=f.roleChange??m.roleChange;
+ const increasedRole=roleChange?.status==='rising'||monitored?.role?.status==='rising';
  const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
  const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .04),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
+ if(increasedRole)bufferParts.changedRole=.015;
  const buffer=Object.values(bufferParts).reduce((sum,value)=>sum+value,0);
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
@@ -173,9 +176,9 @@ function assess(s,m,f={},options={}){
  else if(!(p>0&&p<1)||coverage<minCoverage)reason='Independent projection too thin';
  else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
  else reason=participation(s,m,f,g,warnings);
- const monitored=window.ESPN_EVIDENCE?.inspect(m);if(monitored){warnings.push(...monitored.warnings);if(!reason&&monitored.blocked)reason=monitored.blocked;}
- const roleChange=f.roleChange??m.roleChange;
- if(!reason&&['falling','rising'].includes(roleChange?.status))reason='Recent opportunity changed; waiting for a stable role';
+ if(monitored){warnings.push(...monitored.warnings);if(!reason&&monitored.blocked)reason=monitored.blocked;}
+ if(!reason&&roleChange?.status==='falling')reason='Recent opportunity decreased; waiting for a stable role';
+ if(increasedRole)warnings.push('Increased role · Not final; wider opportunity checks applied');
  const clearsValue=ev>0&&conservativeEV>0;
   const potentialValue=ev>0&&!clearsValue&&!validated&&!anchored;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
@@ -192,18 +195,23 @@ function assess(s,m,f={},options={}){
   sensitivity={pass:robust,label:valid?(robust?'Robust':'Sensitive to assumptions'):'Sensitivity unavailable',policy:'advisory',worstP,requiredP,scenarios,pricePenalty:.02};
   if(!robust)warnings.push(sensitivity.label+'; review adverse scenarios in Details');
  }
+ // A promotion is usable only when actual opportunity data and adverse
+ // exposure scenarios support it. ESPN-only changes cannot silently bypass a
+ // model that still assumes the old role. Decreased roles remain excluded.
+ if(!reason&&increasedRole&&!(f.opportunity?.sample>=5&&roleChange?.status==='rising'&&roleChange.ratio<=1.75&&sensitivity?.scenarios.length>=3&&sensitivity.pass))reason='Increased role needs a supported projection and robust opportunity scenarios';
  // Policy safeguards for provisional estimates, not measured confidence limits.
  if(!reason&&!validated&&(q.p<.30||p<.45)&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
  if(!reason&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
  if(!reason&&options.featured&&likelihoodMode&&conservativeP<.55)reason='Featured pick needs stronger likelihood';
- // NBA lineup confirmation is advisory. Roster, injury and role exclusions above
- // remain hard gates; other sports retain their near-start confirmation policy.
+ // Pending reports are advisory for every sport. Specific injury, roster,
+ // starter exclusions and role checks above remain hard gates. Missing inputs
+ // already widen the probability buffer; the clock alone is not new evidence.
  const nearStart=Number.isFinite(start)&&start-Date.now()<=90*60000;
- if(!reason&&nearStart&&(options.featured||options.parlay)&&s!=='nba'){
+ if(!reason&&nearStart&&(options.featured||options.parlay)){
   const availability=warnings.some(w=>/unconfirmed|confirm participation|conditional on participation/i.test(w));
-  if(availability)reason='Confirm starters, availability and role before kickoff';
+  if(availability)warnings.push('Lineup pending · Not final; confirm participation before game time');
  }
  const tier=anchored?'suggestion':warnings.length?'conditional':'value';
  if(anchored)warnings.push('Context-supported suggestion; value unverified');

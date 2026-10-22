@@ -11,6 +11,27 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.preserve_newer_snapshot import replace_if_newer
 
 class RefreshSafeguards(unittest.TestCase):
+    def test_metadata_refresh_does_not_roll_native_prices_back(self):
+        def snapshot(wrapper, primary, price, reference):
+            return {'updated_at': wrapper, 'primary_updated_at': primary, 'games': [
+                {'id': 'game', 'markets': [{'ticker': 'contract', 'quoteSide': 'yes',
+                 'price': price, 'quotedAt': primary}, {'referenceOnly': True, 'price': reference,
+                 'quotedAt': wrapper}]}]}
+        fresh = snapshot('2026-10-22T02:45:13Z', '2026-10-22T02:44:40Z', 130, 125)
+        slow = snapshot('2026-10-22T02:55:13Z', '2026-10-22T02:35:11Z', 144, 127)
+        merged = worker.reconcile_snapshot(slow, fresh)
+        self.assertEqual(merged['updated_at'], slow['updated_at'])
+        self.assertEqual(merged['primary_updated_at'], fresh['primary_updated_at'])
+        self.assertEqual(merged['games'][0]['markets'], [fresh['games'][0]['markets'][0], slow['games'][0]['markets'][1]])
+        self.assertEqual(worker.reconcile_snapshot(fresh, slow), merged)
+
+    def test_new_native_capture_does_not_resurrect_removed_contracts(self):
+        old = {'updated_at': '2026-10-22T02:55:00Z', 'primary_updated_at': '2026-10-22T02:35:00Z',
+               'games': [{'id': 'game', 'markets': [{'ticker': 'suspended'}]}]}
+        new = {'updated_at': '2026-10-22T02:54:00Z', 'primary_updated_at': '2026-10-22T02:54:00Z',
+               'games': [{'id': 'game', 'markets': []}]}
+        self.assertEqual(worker.reconcile_snapshot(new, old)['games'][0]['markets'], [])
+
     def test_expired_prices_cannot_be_relabelled(self):
         with self.assertRaises(ValueError):
             valid_snapshot({'updated_at': '2026-10-06T00:00:00Z', 'games': []},

@@ -1,5 +1,6 @@
 import importlib.util
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from datetime import datetime,timezone
 
@@ -10,6 +11,13 @@ mlb=load('update_mlb_context');nhl=load('update_nhl_context')
 now=datetime(2026,10,15,12,tzinfo=timezone.utc)
 
 class OpportunityLogs(unittest.TestCase):
+ def test_every_quoted_mlb_player_gets_postseason_inclusive_logs(self):
+  payload={'players':{str(pid):pid for pid in range(40)}}
+  with patch.object(mlb,'get',return_value={'stats':[]}) as fetch:
+   mlb.attach_player_logs(payload,now)
+  self.assertEqual(len(payload['playerLogs']),40)
+  self.assertTrue(all('gameType=R,F,D,L,W' in call.args[0] for call in fetch.call_args_list))
+  self.assertEqual(payload['history_coverage']['requested_players'],40)
  def test_mlb_logs_preserve_opportunities_and_team_identity_without_future_games(self):
   raw={'stats':[{'splits':[{'date':date,'team':{'id':1},'stat':{'plateAppearances':4,'hits':2,'totalBases':3}} for date in ['2026-10-14','2026-10-15','2026-10-16']]}]}
   rows=mlb.player_log(raw,now);self.assertEqual(len(rows),1);self.assertEqual(rows[0]['plateAppearances'],4);self.assertEqual(rows[0]['teamId'],1)

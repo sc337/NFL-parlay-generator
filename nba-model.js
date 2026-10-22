@@ -73,7 +73,8 @@ function estimate(m,ctx){const match=matchup(m,ctx);if(!match)return null;let ma
  for(let k=1;k<line;k++){mass*=shape?(k-1+shape)/k*projectedLine/(shape+projectedLine):projectedLine/k;under+=mass;}
  modelP=m.side==='no'?under:1-under;conditionalOnPlaying=true;
  function countUnder(mu){const shape=variance>mu?clamp(mu*mu/(variance-mu),.5,100):null;let mass=shape?Math.pow(shape/(shape+mu),shape):Math.exp(-mu),sum=mass;for(let k=1;k<line;k++){mass*=shape?(k-1+shape)/k*mu/(shape+mu):mu/k;sum+=mass}return sum}
- sensitivity={policy:'advisory',scenarios:[.85,1,1.15].map(factor=>({name:Math.round(projectedMinutes*factor)+' minutes',modelP:m.side==='no'?countUnder(projectedLine*factor):1-countUnder(projectedLine*factor)}))};
+ const minuteScenarios=[projectedMinutes*.85,projectedMinutes,projectedMinutes*1.15,...(roleChange?.status==='rising'?[roleChange.baseline,roleChange.recent]:[])];
+ sensitivity={policy:'advisory',scenarios:minuteScenarios.map(minutes=>({name:Math.round(minutes)+' minutes',modelP:m.side==='no'?countUnder(projectedLine*minutes/projectedMinutes):1-countUnder(projectedLine*minutes/projectedMinutes)}))};
  const simple=countUnder(avg),noPace=countUnder(opportunity?.projection??perMinute*expectedMin);
  baselines.simpleMean=m.side==='no'?simple:1-simple;baselines.noPace=m.side==='no'?noPace:1-noPace;}
  }else{if(m.kind!=='total'&&!named)return null;const margin=named==='home'?match.home-match.away:match.away-match.home;if(m.kind==='moneyline')modelP=cdf(margin/12);else if(m.kind==='spread'&&line!==null&&line%1===.5)modelP=cdf((margin+(m.side==='no'?line:-line))/12);else if(m.kind==='total'&&line!==null&&line%1===.5){projectedLine=match.home+match.away;modelP=m.side==='no'?cdf((line-projectedLine)/18):1-cdf((line-projectedLine)/18)}else return null;

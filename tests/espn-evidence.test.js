@@ -10,6 +10,10 @@ test('recent exposure changes block props; future observations cannot improve th
  assert.equal(E.inspect(market()).role.status,'falling');assert.ok(E.inspect(market()).blocked);assert.equal(E.inspect(market([30,31,30,32,31])).blocked,null);
  const m=market([30,31,30,32,31]);m.espnEvidence.usage.rows[4].date=new Date(now+3600000).toISOString();assert.equal(E.inspect(m).role,null);assert.match(E.inspect(m).warnings.join(' '),/incomplete/);
 });
+test('increased exposure is flagged for projection checks while availability still blocks',()=>{
+ const m=market([20,20,20,30,30]);assert.equal(E.inspect(m).role.status,'rising');assert.equal(E.inspect(m).blocked,null);assert.match(E.inspect(m).warnings.join(' '),/increased/);
+ m.espnEvidence.availability={status:'Out',reportedAt:at};assert.match(E.inspect(m).blocked,/unavailable/);
+});
 test('a valid public contract preserves signed spread, exact participants and source event ID',()=>{
  const m={referenceOnly:true,espn_game_id:'123',kind:'spread',team_id:'2',point:3,side:'no',game_time:start,quotedAt:at,teams:[{id:'1'},{id:'2'}]};const c=E.contract('nhl',m);assert.equal(c.line,3);assert.equal(c.eventId,'123');assert.equal(c.teamId,'2');assert.equal(c.scope,'full_game');
  for(const patch of [{espn_game_id:null},{team_id:'3'},{player:'Player'},{point:null},{quotedAt:new Date(now-31*60000).toISOString()}])assert.equal(E.contract('nhl',{...m,...patch}),null);

@@ -39,6 +39,15 @@ test('NFL measured stable opportunity history resolves its missing-role penalty 
  assert.equal(r.Q.assess('nfl',m,{...forecast,roleStability:.4}).reason,'Playing time uncertain');
  assert.equal(r.Q.assess('nfl',m,{...forecast,roleChange:{status:'falling'}}).dataPass,false);
 });
+test('increased opportunity requires measured projection and adverse scenarios; injuries and reduced roles still block',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{player:'Runner',type:'rushing',_rosterVerified:true,contextSignals:{injury_checked:true,injury_status:'none_reported'},propHistory:{source:'nflverse completed plays',played:5,games:5,opportunities:{player_rush_attempts:[10,10,10,15,15]}}});
+ g.context={updated_at:new Date(r.now()).toISOString()};
+ const forecast={...f,roleStability:.8,opportunity:{sample:5},roleChange:{status:'rising',ratio:1.5},sensitivity:{scenarios:[{modelP:.64},{modelP:.65},{modelP:.66}]}};
+ const x=r.Q.assess('nfl',m,forecast,{parlay:true});assert.equal(x.pass,true);assert.equal(x.bufferParts.changedRole,.015);assert.match(x.warnings.join(' '),/Increased role/);
+ for(const patch of [{opportunity:null},{sensitivity:null},{sensitivity:{scenarios:[{modelP:.54}]}},{roleChange:{status:'rising',ratio:2}}])assert.equal(r.Q.assess('nfl',m,{...forecast,...patch}).pass,false);
+ assert.equal(r.Q.assess('nfl',{...m,contextSignals:{injury_status:'out'}},forecast).reason,'Player unavailable');
+ assert.equal(r.Q.assess('nfl',m,{...forecast,roleChange:{status:'falling'}}).pass,false);
+});
 test('screen separates hard eligibility from price-only rejection and reports exact buffer components',()=>{
  const r=runtime(),{m,f}=fixture(r);const x=r.Q.assess('nfl',m,{...f,modelP:.55});
  assert.equal(x.dataPass,true);assert.equal(x.pricePass,false);assert.equal(x.pass,false);assert.equal(x.dataReason,null);assert.ok(x.priceGap>0);

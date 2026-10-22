@@ -28,7 +28,7 @@ def fetch_json(url):
             last_error = error
     raise RuntimeError('NHL upstream failed after retry') from last_error
 SERIES = {'KXNHLGAME': 'moneyline', 'KXNHLSPREAD': 'spread', 'KXNHLTOTAL': 'total'}
-PROP_SERIES = {'KXNHLGOAL': 'goals', 'KXNHLAST': 'assists', 'KXNHLPTS': 'points',
+PROP_SERIES = {'KXNHLGOAL': 'goals', 'KXNHLANYGOAL': 'goals', 'KXNHLAST': 'assists', 'KXNHLPTS': 'points',
                'KXNHLSAVE': 'saves', 'KXNHLSAVES': 'saves'}
 ALIASES = {'LAK': 'LA', 'SJS': 'SJ', 'TBL': 'TB', 'NJD': 'NJ', 'VEG': 'VGK', 'UTAH': 'UTA', 'MON': 'MTL', 'WAS': 'WSH'}
 CODES = set('ANA BOS BUF CAR CBJ CGY CHI COL DAL DET EDM FLA LA MIN MTL NJ NSH NYI NYR OTT PHI PIT SEA SJ STL TB TOR UTA VAN VGK WPG WSH'.split()) | set(ALIASES)
@@ -261,6 +261,13 @@ def main():
             rows.append(row)
     payload = {'updated_at': now.isoformat(), 'source': 'Kalshi + ESPN', 'series_counts': counts,
                'status': 'ready', 'markets': rows}
+    payload['prop_coverage'] = {
+        'checked_at': now.isoformat(), 'open_contracts': sum(counts[s] for s in PROP_SERIES),
+        'verified_selections': sum(row['kind'] in PROP_SERIES.values() for row in rows),
+        'status': 'available' if any(row['kind'] in PROP_SERIES.values() for row in rows)
+                  else 'unmatched' if any(counts[s] for s in PROP_SERIES) else 'not_listed',
+        'unavailable_models': ['Goalie saves: starting assignment and usage model required'],
+        'unsupported_sources': ['Shots on goal: no verified source series configured']}
     target = Path('data/kalshi-nhl.json')
     temporary = target.with_suffix('.json.tmp')
     temporary.write_text(json.dumps(payload, indent=2))

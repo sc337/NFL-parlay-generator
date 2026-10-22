@@ -122,23 +122,28 @@ def player_log(raw, now):
   for split in group.get('splits',[]):
    try:
     at=datetime.fromisoformat(split['date']+'T00:00:00+00:00')
-    if not now-timedelta(days=45)<at<now.replace(hour=0,minute=0,second=0,microsecond=0):continue
-    stats=split['stat'];row={'date':at.isoformat(),'teamId':(split.get('team') or {}).get('id')}
-    for key in ('plateAppearances','battersFaced','hits','homeRuns','rbi','totalBases','strikeOuts'):
+    if not now-timedelta(days=90)<at<now.replace(hour=0,minute=0,second=0,microsecond=0):continue
+    stats=split['stat'];row={'date':at.isoformat(),'gamePk':(split.get('game') or {}).get('gamePk'),'teamId':(split.get('team') or {}).get('id')}
+    for key in ('plateAppearances','battersFaced','hits','runs','homeRuns','rbi','totalBases','strikeOuts'):
      if key in stats:row[key]=float(stats[key])
     rows.append(row)
    except (KeyError,ValueError,TypeError):continue
- return sorted(rows,key=lambda r:r['date'])[-12:]
+ return sorted(rows,key=lambda r:(r['date'],str(r.get('gamePk') or '')))[-40:]
 
 def attach_player_logs(payload, now):
- logs={};ids=sorted(set(payload.get('players',{}).values()))[:32]
+ # Every exact matched quoted player gets a sample, including large slates.
+ # Bound history per player, not the number of players by numeric ID order.
+ logs={};ids=sorted(set(payload.get('players',{}).values()))
  def load(pid):
   group='pitching' if str(pid) in payload.get('pitchers',{}) else 'hitting'
-  try:return str(pid),player_log(get(f'{BASE}/people/{pid}/stats?stats=gameLog&group={group}&season={now.year}',timeout=8),now)
+  # The default is regular season only, which omits current postseason usage.
+  try:return str(pid),player_log(get(f'{BASE}/people/{pid}/stats?stats=gameLog&group={group}&season={now.year}&gameType=R,F,D,L,W',timeout=8),now)
   except Exception:return str(pid),[]
  with ThreadPoolExecutor(max_workers=4) as pool:
   for pid,rows in pool.map(load,ids):logs[pid]=rows
  payload['playerLogs']=logs
+ payload['history_coverage']={'requested_players':len(ids),'players_with_logs':sum(bool(v) for v in logs.values()),
+     'lookback_days':90,'max_games_per_player':40,'source':'MLB completed game logs'}
 
 def main():
  now=datetime.now(timezone.utc); start=(now-timedelta(days=1)).date().isoformat(); end=(now+timedelta(days=7)).date().isoformat()
