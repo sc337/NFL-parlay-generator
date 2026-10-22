@@ -25,6 +25,8 @@ function vector(e){
  const v={pace:.25,sign};
  if(type==='rushing'){
   v[own+'Rush']=.55;v[own+'Score']=.22;v[other+'Score']=-.22;
+ }else if(type==='passing_tds'){
+  v[own+'Pass']=.45;v[own+'Score']=.5;v[other+'Score']=.15;
  }else if(['passing','receiving','receptions'].includes(type)){
   v[own+'Pass']=.55;v[own+'Score']=.2;v[other+'Score']=.15;
  }else if(type==='td'){v[own+'Score']=.5;v[own+'Pass']=.25}
