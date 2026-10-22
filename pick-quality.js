@@ -176,7 +176,7 @@ function assess(s,m,f={},options={}){
  else if(num(m.sourceQuality)!=null&&num(m.sourceQuality)<60)reason='Source quality too low';
  else if(!(p>0&&p<1)||coverage<minCoverage){
   const history=s==='nfl'&&m.player?m.propHistoryStatus:null;
-  reason=history?.status==='insufficient_recent_sample'?'Recent return; insufficient completed-game sample':
+  reason=history?.status==='insufficient_recent_sample'?'Insufficient recent completed-game sample':
     history?.status==='inactive_latest_game'?'No activity in latest completed team game':
     history?.status==='identity_unresolved'?'Player history identity unresolved':'Independent projection too thin';
  }
