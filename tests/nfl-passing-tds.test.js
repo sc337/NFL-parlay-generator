@@ -15,7 +15,7 @@ test('passing TD probabilities use discrete counts and preserve complementary ov
  assert.ok(Math.abs(p+a.countProbability(2,2,.5,'under')-1)<1e-10);assert.ok(a.countProbability(2,2,1.5,'over')<p);
  assert.equal(a.countProbability(2,2,1,'over'),null);assert.ok(a.countProbability(2,6,.5,'over')<p);
  const f=a.evaluate(r.g,r.m),higher=a.evaluate(r.g,{...r.m,point:1.5});
- assert.equal(f.forecastVersion,'nfl-passing-td-count-v1');assert.ok(f.sd<2);assert.ok(f.modelP>higher.modelP);
+ assert.equal(f.forecastVersion,'nfl-passing-td-count-v1');r.window.NFL_MODEL_V3.enrich();assert.equal(r.m.forecastVersion,'nfl-passing-td-count-v1');assert.ok(f.sd<2);assert.ok(f.modelP>higher.modelP);
  const quoteChange=a.evaluate(r.g,{...r.m,price:100,prob:.5,marketProbability:.5});assert.equal(f.modelP,quoteChange.modelP);
 });
 test('passing TDs retain history, roster, injury and price screening instead of the unsupported-market block',()=>{
