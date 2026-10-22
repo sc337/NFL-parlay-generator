@@ -60,6 +60,10 @@ def valid_snapshot(payload, sport, previous=None, now=None):
     at = stamp(payload)
     if at is None or not now - 1800 <= at <= now + 300:
         raise ValueError(sport + ': snapshot timestamp is not fresh')
+    if sport == 'nfl':
+        native_at = stamp_time(payload.get('primary_updated_at')) if 'primary_updated_at' in payload else at
+        if native_at is None or not now - 1800 <= native_at <= now + 300:
+            raise ValueError('nfl: native prices are delayed; reference metadata is not a successful price refresh')
     key = 'games' if sport == 'nfl' else 'markets'
     if not isinstance(payload.get(key), list):
         raise ValueError(sport + ': invalid snapshot schema')
