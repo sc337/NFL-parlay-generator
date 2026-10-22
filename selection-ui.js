@@ -77,6 +77,7 @@ function tidyCards(){
   for(const section of details)if(section!==primary&&!primary.contains(section)&&!section.contains(primary)){section.classList.remove('card-explanation');primary.append(section)}
  }
 }
+let countState={};
 function mount(){
  const controls=$('#parlayControls');if(!controls)return;
  let panel=$('#sharedSelection');
@@ -96,7 +97,9 @@ function mount(){
  tidyFilters(s);
  mountBuilder(s);
  tidyCards();
- const count=window[s.toUpperCase()+'_DASHBOARD']?.availableCount?.();
+ const grid=$('#results'), revision=grid?.firstElementChild;
+ if(countState.sport!==s||countState.revision!==revision){countState={sport:s,revision,count:window[s.toUpperCase()+'_DASHBOARD']?.availableCount?.()}}
+ const count=countState.count;
  const legSelect=$('#legsSelect');if(legSelect){for(const option of legSelect.options){const impossible=s!=='nfl'&&!(s==='nba'&&$('#nbaModeSelect')?.value==='sgp')&&Number.isFinite(count)&&Number(option.value)>count;option.disabled=impossible;option.title=impossible?'Not enough qualified games or fights':'';}}
  // Legacy secondary surfaces stay out of the main dashboard.
  for(const id of ['sharedResearch','extraPicks','publicSlate','espnEvidencePanel','moreAnalysis','nflTdStraightDrawer']){const node=$('#'+id);if(node)node.hidden=true;}

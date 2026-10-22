@@ -20,5 +20,27 @@ function refresh(){if(!panel||!panel.open)return;const data=S.contexts.get(sport
 function mount(){const host=document.querySelector('#settingsDialog .settings-content');if(!host)return;panel=document.createElement('details');panel.className='settings-section starter-checks';panel.innerHTML='<summary>Starter checks</summary><div class="starter-body"></div>';host.append(panel);panel.addEventListener('toggle',()=>{if(panel.open){sport=['nba','nhl','ncaaf'].includes(window.__ACTIVE_SPORT)?window.__ACTIVE_SPORT:'nba';S.load().then(refresh);refresh()}});}
 window.STARTER_CHECKS_UI={refresh};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 // Reassess even on fetch failure so expired evidence cannot leave picks displayed.
-setInterval(async()=>{if(document.visibilityState==='hidden'||!['nba','nhl','ncaaf'].includes(window.__ACTIVE_SPORT))return;const before=JSON.stringify(S.payload());await S.load(true);window[window.__ACTIVE_SPORT.toUpperCase()+'_DASHBOARD']?.refresh?.();if(before!==JSON.stringify(S.payload())&&panel?.open&&!panel.querySelector('#starterManual')?.contains(document.activeElement))refresh()},60000);
+let polling=false;const pollStartedAt=Date.now(),checkedAt=new Map();
+function signature(at,active){
+ const rows=[...(S.payload().records||[]),...(S.payload().nba_lineup_history||[]),...S.manual()].filter(r=>r.sport===active);
+ const data=S.contexts.get(active),ctx=data?.context||{},deadline=t=>Number.isFinite(t)&&at>=t;
+ // Unchanged lineups must not keep started events or expired quotes visible.
+ const marketTimes=(data?.markets||[]).map(m=>[Date.parse(m.game_time||m.start_time),Date.parse(m.quotedAt||data.at)+30*60000].map(deadline));
+ const contextTimes=[Date.parse(ctx.updated_at)+90*60000,Date.parse(ctx.updated_at)+4*3600000,...Object.values(ctx.games||{}).map(g=>Date.parse(g.start||g.kickoff))].map(deadline);
+ return JSON.stringify([marketTimes,contextTimes,rows.map(r=>{const {checked_at,changed_at,expires_at,...report}=r;return [report,[Date.parse(r.checked_at)-300000,Date.parse(r.checked_at)+(r.method==='manual'?120:30)*60000,Date.parse(r.checked_at)+86400000,Date.parse(r.start_time),Date.parse(r.start_time)+7*86400000,Date.parse(r.expires_at)].map(deadline)]})]);
+}
+async function poll(){
+ const active=window.__ACTIVE_SPORT,token=window.__SPORT_TOKEN;
+ if(polling||document.visibilityState==='hidden'||!['nba','nhl','ncaaf'].includes(active))return;
+ polling=true;
+ try{
+  const before=signature(checkedAt.get(active)??pollStartedAt,active);await S.load(true);
+  const changed=before!==signature(Date.now(),active);checkedAt.set(active,Date.now());
+  if(active!==window.__ACTIVE_SPORT||token!==window.__SPORT_TOKEN||!changed)return;
+  window[active.toUpperCase()+'_DASHBOARD']?.refresh?.();
+  if(panel?.open&&!panel.querySelector('#starterManual')?.contains(document.activeElement))refresh();
+ }finally{polling=false}
+}
+window.STARTER_CHECKS_UI.poll=poll;
+setInterval(poll,60000);
 })();
