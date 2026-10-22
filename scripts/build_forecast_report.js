@@ -131,7 +131,8 @@ function build(rows,daily=[]){
     const selected=rows.filter(r=>r.sport===sport),groups={};
     for(const group of new Set(selected.map(r=>r.marketGroup).filter(Boolean)))
       groups[group]=metrics(selected.filter(r=>r.marketGroup===group));
-    sports[sport]={...metrics(selected),groups,versions:Object.fromEntries([...new Set(selected.map(r=>r.modelVersion||'legacy'))].map(version=>[version,metrics(selected.filter(r=>(r.modelVersion||'legacy')===version))]))};
+    const studies=Object.fromEntries([...new Set(selected.map(r=>r.studyId||'legacy'))].map(study=>[study,metrics(selected.filter(r=>(r.studyId||'legacy')===study))]));
+    sports[sport]={...metrics(selected),groups,studies,versions:Object.fromEntries([...new Set(selected.map(r=>r.modelVersion||'legacy'))].map(version=>[version,metrics(selected.filter(r=>(r.modelVersion||'legacy')===version))]))};
   }
   const pregameViolations=rows.filter(r=>!(Date.parse(r.recordedAt)<Date.parse(r.eventTime))||
     r.snapshotAt&&!(Date.parse(r.snapshotAt)<Date.parse(r.eventTime))).length;

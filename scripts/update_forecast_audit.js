@@ -44,7 +44,7 @@ function record(sport,entry,snapshot,now){
      !Number.isFinite(Date.parse(closeTime))||Date.parse(closeTime)<=now||
      !Number.isFinite(Date.parse(snapshotAt))||Date.parse(snapshotAt)>=Date.parse(eventTime)||
      !Number.isFinite(Date.parse(quoteAt))||Date.parse(quoteAt)>=Date.parse(eventTime)||Date.parse(quoteAt)>now+60000||
-     (sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)&&now-Date.parse(quoteAt)>30*60000)||
+     now-Date.parse(quoteAt)>30*60000||
      !(marketP>0&&marketP<1)||!(ask>0&&ask<1))return null;
   if(sport==='nfl'){
     if((finite(m.sourceQuality)||0)<60||m._invalidRoster===true)return null;
@@ -75,7 +75,7 @@ function record(sport,entry,snapshot,now){
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
     snapshotAt,
-    modelVersion:f.modelVersion||'legacy',forecastVersion:f.forecastVersion||null,
+    modelVersion:f.modelVersion||'legacy',studyId:'forward-20261022-v1',forecastVersion:f.forecastVersion||null,
     marginProjection:hasModel?finite(f.projectedMargin):null,probabilityMethod:f.probabilityMethod||null,errorSample:finite(f.errorSample),
     sensitivity:entry.qualification?.sensitivity||null,
     player:m.player||f.player||null,team:m.team||m.team_code||null,
@@ -103,7 +103,7 @@ async function main(){
     }catch(error){console.warn('Audit candidates unavailable for',sport,error)}
   }
   const pending=rows.filter(r=>!r.result),settled=rows.filter(r=>r.result).slice(-30000);
-  fs.writeFileSync(file,JSON.stringify({updated_at:new Date(now).toISOString(),records:[...settled,...pending]},null,2)+'\n');
+  fs.writeFileSync(file,JSON.stringify({updated_at:new Date(now).toISOString(),records:[...settled,...pending]})+'\n');
   console.log('Forecast audit',rows.length,'records;',JSON.stringify(added),'new');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});

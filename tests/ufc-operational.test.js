@@ -17,7 +17,7 @@ function runtime(){
  return {window,snapshot,el,advance:n=>now+=n,filter:on=>allowed=on};
 }
 test('UFC shows one honest matchup straight and complete 2–4 fight parlays without claiming verified value',async()=>{
- const r=runtime(),w=r.window;await w.UFC_DASHBOARD.load();assert.equal(w.UFC_DASHBOARD.availableCount(),4);assert.ok(w.straight);
+ const r=runtime(),w=r.window;await w.UFC_DASHBOARD.load();assert.equal(w.UFC_DASHBOARD.availableCount(),4);assert.equal(w.straight,undefined,'a matchup suggestion without buffered price edge is not a featured straight');
  const m=w.PICK_QUALITY.markets('ufc')[0],f=w.UFC_DASHBOARD.model(m),q=w.PICK_QUALITY.assess('ufc',m,f);
  assert.equal(f.selectionMode,'ideas');assert.equal(q.pass,true);assert.equal(q.valueQualified,false);assert.equal(q.pricePass,false);assert.ok(q.warnings.some(s=>/positive price value is not established/.test(s)));
  assert.equal(w.PICK_QUALITY.assess('ufc',m,{...f,selectionMode:'screened'}).pass,false,'strict value screening still rejects this unvalidated estimate');

@@ -6,6 +6,7 @@ shortened baseball and mismatched events remain pending for rule review.
 import json
 from datetime import datetime, timezone, timedelta
 from urllib.request import Request, urlopen
+from concurrent.futures import ThreadPoolExecutor
 try:
     from .update_public_odds import PATHS, instant, number
 except ImportError:
@@ -14,7 +15,7 @@ except ImportError:
 
 def fetch_summary(sport, event):
     url = 'https://site.api.espn.com/apis/site/v2/sports/'+PATHS[sport]+'/summary?event='+event
-    with urlopen(Request(url, headers={'User-Agent': 'sports-dashboard/1.0'}), timeout=15) as r:
+    with urlopen(Request(url, headers={'User-Agent': 'sports-dashboard/1.0'}), timeout=8) as r:
         return json.load(r)
 
 
@@ -64,8 +65,18 @@ def grade(contract, summary):
     return 'win' if margin > 0 else 'loss' if margin < 0 else 'push'
 
 
-def settle_references(records, fetch=fetch_summary, now=None, limit=60):
+def settle_references(records, fetch=fetch_summary, now=None, limit=60, workers=1):
     now = now or datetime.now(timezone.utc);cache = {};changed = 0
+    selected = {}
+    for row in sorted(records, key=lambda r: (not bool((r.get('qualification') or {}).get('pass')), r.get('settlementAttemptAt') or '')):
+        c = row.get('settlement') or {};start = instant(row.get('eventTime'));recorded = instant(row.get('recordedAt') or row.get('capturedAt'));retry = instant(row.get('settlementRetryAt'))
+        if not row.get('result') and c.get('provider') == 'ESPN' and c.get('sport') in PATHS and start and start < now and recorded and recorded < start and (not retry or retry <= now) and len(selected) < limit:
+            selected[c['sport'],str(c['eventId'])] = True
+    def load(key):
+        try:return key,fetch(*key)
+        except (OSError,ValueError):return key,{}
+    with ThreadPoolExecutor(max_workers=max(1,min(8,workers))) as pool:
+        cache.update(pool.map(load,selected))
     for row in sorted(records, key=lambda r: r.get("settlementAttemptAt") or ""):
         c = row.get('settlement') or {}
         if row.get('result') or c.get('provider') != 'ESPN' or c.get('sport') not in PATHS:
@@ -74,6 +85,7 @@ def settle_references(records, fetch=fetch_summary, now=None, limit=60):
         if not start or start >= now or not recorded or recorded >= start:
             continue
         key = c['sport'], str(c['eventId'])
+        if key not in cache:continue
         if key not in cache:
             if len(cache) >= limit:
                 continue

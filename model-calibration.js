@@ -1,6 +1,7 @@
 (()=>{'use strict';
 const clamp=(p)=>Math.min(.97,Math.max(.03,p));
 function validated(sport,group){
+ if(window.STUDY_POLICY?.paperOnly)return false;
  const rule=window.MODEL_CALIBRATION_DATA?.sports?.[sport]?.[group];
  const at=Date.parse(window.MODEL_CALIBRATION_DATA?.updated_at||'');
  if(window.MODEL_LEARNING&&rule?.modelVersion!==window.MODEL_LEARNING.VERSION)return false;

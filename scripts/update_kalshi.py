@@ -3,6 +3,7 @@ from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request,urlopen
+from concurrent.futures import ThreadPoolExecutor
 BASES=['https://api.elections.kalshi.com/trade-api/v2/markets','https://external-api.kalshi.com/trade-api/v2/markets'];ESPN_SCOREBOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
 # Kalshi's actual live NFL series tickers. Keep these explicit: guessed aliases silently return empty sets.
 SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLTD','KXNFLRECYDS','KXNFLRSHYDS','KXNFLPASSYDS','KXNFLREC','KXNFLRSHATT','KXNFLPASSATT','KXNFLPASSCOMP','KXNFLPASSTDS','KXNFLPASSINT']
@@ -113,8 +114,10 @@ def candidate_day(day,now):
  return (now-timedelta(days=1)).date()<=day<=(now+timedelta(days=14)).date()
 def main():
  now=datetime.now(timezone.utc);limit=now+timedelta(days=14);games={};counts={}
- for s in SERIES:
-  ms=fetch_series(s);counts[s]=len(ms);print(s,len(ms))
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  captures=list(pool.map(fetch_series,SERIES))
+ for s,ms in zip(SERIES,captures):
+  counts[s]=len(ms);print(s,len(ms))
   for m in ms:
    info=matchup(m);day=event_date_from_ticker(m)
    if not info or not day:continue

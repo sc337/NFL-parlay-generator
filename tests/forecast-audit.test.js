@@ -31,7 +31,7 @@ assert.equal(simulated.quotedEV,null,'unvalidated MLB totals must not enter the 
 assert.equal(record('mlb',{market:{ticker:'X',probability:.6,yes_ask:.62,spread:.02,volume:100},forecast:{}},{},now),null,'unknown start time excluded');
 const college=record('ncaaf',{market:{ticker:'C',kind:'moneyline',game_id:'99',game_time:'2026-09-28T00:00:00Z',close_time:'2026-09-28T01:00:00Z',
   game_status:'pre',probability:.55,yes_ask:.57,spread:.03,volume:200},forecast:{modelP:.62,rawModelP:.62,coverage:.75,experimental:true}},
-  {updated_at:'2026-09-27T17:00:00Z'},now);
+  {updated_at:'2026-09-27T17:45:00Z'},now);
 assert.equal(college.forecastType,'experimental');
 assert.equal(college.modelP,.62);
 assert.equal(college.quotedEV,null,'unvalidated college estimate is not an EV claim');
@@ -39,7 +39,7 @@ const newCollege=record('ncaaf',{market:{ticker:'C',kind:'spread',game_id:'99',g
   game_status:'pre',probability:.55,yes_ask:.57,spread:.03,volume:200},forecast:{modelP:.65,rawModelP:.65,coverage:.75,experimental:true,
     forecastVersion:'ncaaf-errors-stress-v1',projectedMargin:6.2,probabilityMethod:'Historical error blend',errorSample:100},
   qualification:{pass:false,reason:'NCAAF sensitivity check failed',sensitivity:{pass:false,worstP:.5,requiredP:.59}}},
-  {updated_at:'2026-09-27T17:00:00Z'},now);
+  {updated_at:'2026-09-27T17:45:00Z'},now);
 assert.equal(newCollege.forecastVersion,'ncaaf-errors-stress-v1');assert.match(newCollege.id,/ncaaf-errors-stress-v1/);
 assert.equal(newCollege.marginProjection,6.2);assert.equal(newCollege.errorSample,100);assert.equal(newCollege.sensitivity.pass,false);
 const touchdown=record('nfl',{market:{...market,type:'td',marketKey:'player_anytime_td',player:'Scorer',name:'Scorer anytime TD',point:null,ticker:'KXNFLTD-26SEP27AWAHOM-SCORER-1'},
@@ -72,6 +72,6 @@ const underAudit=record("mlb",{market:{ticker:"PAIR",kind:"total",side:"no",quot
 assert.equal(underAudit.side,"no");
 assert.equal(underAudit.id,"mlb|PAIR|no");
 
-const hockey=record('nhl',{market:{ticker:'KXNHLPTS-26OCT03BOSNYR-PLAYER-1',kind:'points',line:.5,player_id:'100',game_id:'nhl1',game_status:'pre',game_time:'2026-09-28T00:00:00Z',probability:.55,yes_ask:.57,spread:.02,volume:100},forecast:{modelP:.65,rawModelP:.65,coverage:.5,experimental:true,projectedLine:1.1}},{updated_at:'2026-09-27T17:00:00Z'},now);
+const hockey=record('nhl',{market:{ticker:'KXNHLPTS-26OCT03BOSNYR-PLAYER-1',kind:'points',line:.5,player_id:'100',game_id:'nhl1',game_status:'pre',game_time:'2026-09-28T00:00:00Z',probability:.55,yes_ask:.57,spread:.02,volume:100},forecast:{modelP:.65,rawModelP:.65,coverage:.5,experimental:true,projectedLine:1.1}},{updated_at:'2026-09-27T17:45:00Z'},now);
 assert.equal(hockey.forecastType,'experimental');assert.equal(hockey.quotedEV,null);assert.equal(hockey.point,.5);
 assert.equal(build([{...hockey,result:'win'}]).sports.nhl.experimentalRecorded,1);

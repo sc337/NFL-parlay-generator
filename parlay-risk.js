@@ -32,6 +32,7 @@ function vector(e){
  v['player:'+m.player]=.35;return v;
 }
 function fittedMatrix(entries,sport='nfl'){
+ if(window.STUDY_POLICY?.paperOnly)return null;
  const L=window.MODEL_LEARNING;if(!L)return null;
  const describe=e=>({marketFamily:String(e.market.marketKey||e.market.type||e.market.kind).replace(/_alternate$/,''),player:e.market.player,team:e.market.team||e.market.team_code,
   direction:e.market.side==='under'?'under':e.market.side==='over'?'over':e.market.quoteSide||e.market.side||'yes'});
@@ -102,6 +103,11 @@ function attach(host,s,entries,options={}){
  const format=o=>(o>0?'+':'')+o;
  text.textContent=(risk.modelP==null?'Joint likelihood unavailable':'Estimated hit chance '+Math.round(risk.modelP*100)+'% · '+risk.profile+' risk')+' · '+risk.method+'. '+risk.warning+(risk.scenario?' Sensitivity '+risk.scenario.sensitivity.map(p=>Math.round(p*100)+'%').join('–')+' across '+risk.scenario.trials.toLocaleString()+' trials.':'')+(risk.minimumOdds!=null?' Needs better than '+format(risk.minimumOdds)+' at these exact lines.':'');
  status.className='price-check-status';status.setAttribute('role','status');
+ if(window.STUDY_POLICY){
+  const notice=document.createElement('p');notice.textContent='Paper study · Exact sportsbook price required';notice.className='quality-market-row';host.appendChild(notice);
+  detail.append(summary,text);window.STUDY_POLICY.controls(detail,s,entries,{sgp:options.sgp===true});
+  window.PAPER_LEDGER?.controls(detail,s,entries,{mode:options.sgp?'sgp':'multi',modelP:risk.modelP,method:risk.method});host.appendChild(detail);return;
+ }
  const label=document.createElement('label'),input=document.createElement('input'),button=document.createElement('button');
  label.textContent='Current combined sportsbook odds';input.type='number';input.inputMode='decimal';input.placeholder='+400';input.setAttribute('aria-label','Current combined sportsbook American odds');button.type='button';button.textContent='Check price';
  button.addEventListener('click',()=>{const odds=finite(input.value);if(!window.PICK_QUALITY.odds(odds)){status.dataset.tone='danger';status.textContent='Enter valid American odds, such as +400 or -110.';return}const checkedAt=new Date().toISOString(),result=summarize(s,entries,{...options,offer:odds,checkedAt});status.dataset.tone=!result.pass?'danger':result.valueVerified?'success':'warning';status.textContent=result.pass?result.priceStatus+' · Break-even '+(result.breakEven*100).toFixed(1)+'%. Price check expires in 15 minutes; verify the same selections and lines.':result.reason;status.dataset.checkedAt=checkedAt;window.setTimeout?.(()=>{if(status.isConnected&&status.dataset.checkedAt===checkedAt){status.dataset.tone='warning';status.textContent='Price check expired. Recheck current combined odds.'}},15*60000);});

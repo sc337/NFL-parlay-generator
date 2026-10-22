@@ -5,6 +5,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 FILE = Path(__file__).resolve().parent.parent / 'data/pick-history.json'
 API = 'https://external-api.kalshi.com/trade-api/v2/markets/'
@@ -13,16 +14,40 @@ API = 'https://external-api.kalshi.com/trade-api/v2/markets/'
 def fetch_market(ticker):
     request = urllib.request.Request(API + urllib.parse.quote(ticker, safe=''),
                                      headers={'User-Agent': 'sports-dashboard/1.0'})
-    with urllib.request.urlopen(request, timeout=15) as response:
+    with urllib.request.urlopen(request, timeout=8) as response:
         return json.load(response).get('market', {})
 
 
-def settle_records(records, fetch=fetch_market, now=None, limit=60):
+def settle_records(records, fetch=fetch_market, now=None, limit=60, workers=1):
     now = now or datetime.now(timezone.utc)
     cache = {}
     changed = 0
+    # Deduplicate requests across sides, versions and both forecast archives.
+    # Prioritize screened selections, then rotate through the older backlog.
+    ordered = sorted(records, key=lambda r: (not bool((r.get('qualification') or {}).get('pass')), r.get('settlementAttemptAt') or ''))
+    selected = {}
+    for row in ordered:
+        if row.get('result') or not row.get('ticker') or (row.get('settlement') or {}).get('provider') == 'ESPN':
+            continue
+        try:
+            close = datetime.fromisoformat((row.get('eventTime') or row['closeTime']).replace('Z', '+00:00'))
+            retry = datetime.fromisoformat(row['settlementRetryAt']) if row.get('settlementRetryAt') else None
+        except (KeyError, ValueError, TypeError):
+            continue
+        if close <= now and (not retry or retry <= now) and len(selected) < limit:
+            selected[row['ticker']] = True
+    def load(ticker):
+        try:
+            return ticker, fetch(ticker)
+        except Exception as error:
+            print('Settlement lookup deferred:', ticker, error, file=sys.stderr)
+            return ticker, {}
+    with ThreadPoolExecutor(max_workers=max(1, min(8, workers))) as pool:
+        cache.update(pool.map(load, selected))
     for row in sorted(records, key=lambda r: r.get("settlementAttemptAt") or ""):
         if row.get('result') or not row.get('ticker') or (row.get('settlement') or {}).get('provider') == 'ESPN':
+            continue
+        if row['ticker'] not in cache:
             continue
         try:
             close = datetime.fromisoformat((row.get('eventTime') or row['closeTime']).replace('Z', '+00:00'))

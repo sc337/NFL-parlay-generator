@@ -82,7 +82,7 @@ def main():
     changed = settle_records(records, limit=100) + settle_references(records, limit=100) + add_nfl_totals(records)
     if changed or any(r.get('settlementAttemptAt') or r.get('scoreAttemptAt') for r in records):
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-        FILE.write_text(json.dumps(payload, indent=2) + '\n')
+        FILE.write_text(json.dumps(payload, separators=(',', ':')) + '\n')
     print('Audit outcomes updated', changed)
 
 
