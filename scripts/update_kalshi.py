@@ -3,7 +3,7 @@ from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request,urlopen
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 BASES=['https://api.elections.kalshi.com/trade-api/v2/markets','https://external-api.kalshi.com/trade-api/v2/markets'];ESPN_SCOREBOARD='https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
 # Kalshi's actual live NFL series tickers. Keep these explicit: guessed aliases silently return empty sets.
 SERIES=['KXNFLGAME','KXNFLSPREAD','KXNFLTOTAL','KXNFLTD','KXNFLRECYDS','KXNFLRSHYDS','KXNFLPASSYDS','KXNFLREC','KXNFLRSHATT','KXNFLPASSATT','KXNFLPASSCOMP','KXNFLPASSTDS','KXNFLPASSINT']
@@ -12,8 +12,8 @@ PROP_SERIES={'KXNFLRECYDS':('receiving','player_reception_yds','receiving yards'
 def fetch_json(url,timeout=20):
  req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.1','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
 def fetch_series(s):
- # An unavailable family must fail the refresh so the worker retains the
- # original snapshot and timestamp. Empty successful responses remain valid.
+ # The caller isolates failed families; never manufacture rows or timestamps
+ # for an unavailable family. Empty successful responses remain valid.
  for base in BASES:
   try:
    rows=[];cursor=None;seen=set()
@@ -112,11 +112,22 @@ def candidate_day(day,now):
  # Compare calendar dates, not midnight to the current instant. Evening US
  # events remain candidates after UTC midnight; ESPN kickoff/status is final.
  return (now-timedelta(days=1)).date()<=day<=(now+timedelta(days=14)).date()
+def collect_families():
+ captures={};errors={}
+ with ThreadPoolExecutor(max_workers=6) as pool:
+  pending={pool.submit(fetch_series,s):s for s in SERIES}
+  for future in as_completed(pending):
+   series=pending[future]
+   try:captures[series]=future.result()
+   except Exception as error:
+    errors[series]=str(error);print('WARN market family unavailable:',series,error,flush=True)
+ if not captures:raise RuntimeError('All NFL native market families are unavailable')
+ return captures,errors
+
 def main():
  now=datetime.now(timezone.utc);limit=now+timedelta(days=14);games={};counts={}
- with ThreadPoolExecutor(max_workers=4) as pool:
-  captures=list(pool.map(fetch_series,SERIES))
- for s,ms in zip(SERIES,captures):
+ captures,errors=collect_families()
+ for s,ms in captures.items():
   counts[s]=len(ms);print(s,len(ms))
   for m in ms:
    info=matchup(m);day=event_date_from_ticker(m)
@@ -136,10 +147,9 @@ def main():
      if code:
       team=ALL_CODES[code];other=info['teams'][0] if info['teams'][1]==team else info['teams'][1];g['_candidates']['spreads'].append((abs(p-.5),float(mm.group(2)),team,other,m,p))
    else:parse_prop(m,g,s)
- schedules={}
- for g in games.values():
-  day=datetime.fromisoformat(g['event_date']).date()
-  if day not in schedules:schedules[day]=espn_schedule(day)
+ days=sorted({datetime.fromisoformat(g['event_date']).date() for g in games.values()})
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  schedules=dict(zip(days,pool.map(espn_schedule,days)))
  out=[];started=unmatched=0
  for g in games.values():
   day=datetime.fromisoformat(g['event_date']).date();ev=schedules.get(day,{}).get('|'.join(sorted((g['away'],g['home']))))
@@ -150,5 +160,9 @@ def main():
   g['commence_time']=ko.isoformat().replace('+00:00','Z');g['game_status']='pre';g['status_detail']=ev.get('detail') or '';g=finalize(g)
   if g['markets']:out.append(g)
  out.sort(key=lambda x:x['commence_time']);payload={'source':'Kalshi','updated_at':now.isoformat(),'games':out,'raw_market_count':sum(counts.values()),'series_counts':counts,'market_coverage':{key:{'status':'available' if value else 'unavailable','count':value,'checked_at':now.isoformat()} for key,value in counts.items()},'filters':{'started_or_live_removed':started,'espn_unmatched_removed':unmatched}}
+ payload['primary_updated_at']=now.isoformat()
+ for series,error in errors.items():payload['market_coverage'][series]={'status':'unavailable','count':0,'checked_at':now.isoformat(),'error':error}
+ for game in out:
+  for market in game['markets']:market['quotedAt']=now.isoformat()
  Path('data').mkdir(exist_ok=True);Path('data/kalshi-nfl.json').write_text(json.dumps(payload,separators=(',',':')));print('wrote',len(out),'games',sum(len(g['markets']) for g in out),'markets')
 if __name__=='__main__':main()

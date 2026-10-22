@@ -1,5 +1,6 @@
 import importlib.util
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 spec = importlib.util.spec_from_file_location('snapshot', Path(__file__).parents[1]/'scripts/update_kalshi.py')
@@ -7,6 +8,16 @@ snapshot = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(snapshot)
 
 class AltSnapshotTest(unittest.TestCase):
+    def test_failed_family_does_not_discard_other_fresh_families(self):
+        def fetch(series):
+            if series == 'bad': raise RuntimeError('upstream timeout')
+            return [{'ticker': series}]
+        with patch.object(snapshot,'SERIES',['good','bad']), patch.object(snapshot,'fetch_series',side_effect=fetch):
+            captures,errors=snapshot.collect_families()
+        self.assertEqual(captures,{'good':[{'ticker':'good'}]})
+        self.assertEqual(errors,{'bad':'upstream timeout'})
+        with patch.object(snapshot,'SERIES',['bad']), patch.object(snapshot,'fetch_series',side_effect=RuntimeError('outage')):
+            with self.assertRaises(RuntimeError):snapshot.collect_families()
     def test_receptions_series_has_its_own_category(self):
         self.assertEqual(snapshot.PROP_SERIES['KXNFLREC'][0], 'receptions')
         self.assertEqual(snapshot.PROP_SERIES['KXNFLRECYDS'][0], 'receiving')

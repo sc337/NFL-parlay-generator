@@ -11,6 +11,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.preserve_newer_snapshot import replace_if_newer
 
 class RefreshSafeguards(unittest.TestCase):
+    def test_fresh_reference_metadata_cannot_pass_expired_native_prices(self):
+        payload={'updated_at':'2026-10-06T06:00:00Z', 'primary_updated_at':'2026-10-06T05:00:00Z','games':[{'markets':[]}]}
+        with self.assertRaisesRegex(ValueError,'native prices are delayed'):
+            valid_snapshot(payload,'nfl',now=1791266400)
+        payload['primary_updated_at']='2026-10-06T05:50:00Z'
+        valid_snapshot(payload,'nfl',now=1791266400)
     def test_optional_nfl_enrichment_outage_keeps_new_verified_quotes(self):
         with tempfile.TemporaryDirectory() as folder:
             before=os.getcwd()
