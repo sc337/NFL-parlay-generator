@@ -5,7 +5,7 @@ const key=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLo
 const safeURL=s=>{try{const u=new URL(s);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null}catch{return null}};
 try{manual=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(manual))manual=[]}catch{manual=[]}
 function fresh(r,start){const at=Date.parse(r.checked_at),end=Date.parse(r.start_time),now=Date.now();return Number.isFinite(at)&&at<=now+300000&&now-at<=(r.method==='manual'?2*3600000:TTL)&&Number.isFinite(end)&&end>now&&Math.abs(end-start)<60000&&safeURL(r.source_url)&&(!r.expires_at||Date.parse(r.expires_at)>now)}
-function register(s,markets,context){if(['nba','nhl','ncaaf'].includes(s))contexts.set(s,{markets,context:context||{}})}
+function register(s,markets,context,at=null){if(['nba','nhl','ncaaf'].includes(s))contexts.set(s,{markets,context:context||{},at})}
 function game(s,m,ctx){return ctx?.games?.[String(m.context_game_id||m.game_id)]}
 function teamList(s,g){return s==='ncaaf'?[g?.away?.name,g?.home?.name].filter(Boolean):[g?.away,g?.home].filter(Boolean)}
 function nbaLineup(gid,start,team){
@@ -22,7 +22,26 @@ function nbaLineup(gid,start,team){
  const previous=[...(payload.nba_lineup_history||[])].filter(r=>valid(r)&&Date.parse(r.start_time)<now&&now-Date.parse(r.start_time)<=7*86400000&&r.players.every(name=>roster.filter(p=>p.team===team&&key(p.name)===key(name)).length===1)).sort((a,b)=>Date.parse(b.start_time)-Date.parse(a.start_time)||Date.parse(b.checked_at)-Date.parse(a.checked_at))[0];
  return previous?{...previous,game_id:String(gid),start_time:new Date(start).toISOString(),previous_game_id:previous.game_id,status:'projected',basis:'previous',game_context:undefined,rows:[previous]}:{status:'unknown',basis:'unavailable',rows:[]};
 }
+// Cache only within one synchronous calculation. Never retain an availability
+// decision across user actions, feed updates, or a report's expiry boundary.
+let calculation=null;
+function withCache(run){
+ if(calculation)return run();
+ const now=Date.now(),times=[...(payload.records||[]),...(payload.nba_lineup_history||[]),...manual].flatMap(r=>{
+  const at=Date.parse(r.checked_at),start=Date.parse(r.start_time);
+  return [at-300000,at+(r.method==='manual'?2*3600000:TTL),at+86400000,start,start+7*86400000,Date.parse(r.expires_at)];
+ }).filter(t=>Number.isFinite(t)&&t>now);
+ calculation={rows:new Map(),evidence:new WeakMap(),until:Math.min(Infinity,...times)};
+ try{return run()}finally{calculation=null}
+}
 function resolve(s,gid,start,team,role,player){
+ if(!calculation)return resolveFresh(s,gid,start,team,role,player);
+ if(Date.now()>=calculation.until){calculation.rows.clear();calculation.until=Date.now();}
+ const k=JSON.stringify([s,gid,start,team,role,player||'']);
+ if(calculation.rows.has(k)&&Date.now()<Math.min(start,calculation.until))return calculation.rows.get(k);
+ const result=resolveFresh(s,gid,start,team,role,player);calculation.rows.set(k,result);return result;
+}
+function resolveFresh(s,gid,start,team,role,player){
  if(s==='nba'&&role==='lineup')return nbaLineup(gid,start,team);
  const rows=[...(payload.records||[]),...manual].filter(r=>r.sport===s&&String(r.game_id)===String(gid)&&r.team===team&&r.role===role&&(!['line','powerplay','availability'].includes(role)||!player||(r.players||[]).some(n=>key(n)===key(player)))&&fresh(r,start));
  const names=r=>(r.players||[]).map(key).sort().join('|');
@@ -35,6 +54,12 @@ function resolve(s,gid,start,team,role,player){
  return r?{...r,rows}:{status:'unknown',rows:[]};
 }
 function evidence(s,m,ctx){
+ if(!calculation)return evidenceFresh(s,m,ctx);
+ const cached=calculation.evidence.get(m),start=Date.parse(game(s,m,ctx)?.start||game(s,m,ctx)?.kickoff||m.game_time);
+ if(cached?.sport===s&&cached.context===ctx&&Date.now()<Math.min(start,calculation.until))return cached.result;
+ const result=evidenceFresh(s,m,ctx);calculation.evidence.set(m,{sport:s,context:ctx,result});return result;
+}
+function evidenceFresh(s,m,ctx){
  const g=game(s,m,ctx),gid=String(m.context_game_id||m.game_id||''),start=Date.parse(g?.start||g?.kickoff||m.game_time),teams=teamList(s,g);
  const role=s==='nba'?'lineup':s==='nhl'?'goalie':'qb';
  const sides=teams.map(team=>resolve(s,gid,start,team,role));
@@ -90,5 +115,5 @@ function changed(){for(const s of ['NBA','NHL','NCAAF'])if(window.__ACTIVE_SPORT
 async function load(force=false){if(pending)return pending;if(!force&&Date.now()-lastLoad<60000)return payload;
  pending=(async()=>{try{const r=await fetch('data/starter-status.json?ts='+Date.now(),{cache:'no-store',signal:typeof AbortSignal!=='undefined'?AbortSignal.timeout(10000):undefined});if(!r.ok)throw Error('Starter feed unavailable');const d=await r.json();if(d.schemaVersion!==1||!Array.isArray(d.records))throw Error('Invalid starter feed');payload=d;lastLoad=Date.now();return payload}catch{return payload}finally{pending=null}})();return pending;
 }
-window.STARTER_STATUS={register,evidence,resolve,save,clear,load,key,safeURL,teamList,contexts,payload:()=>payload,manual:()=>manual};
+window.STARTER_STATUS={register,evidence,resolve,withCache,save,clear,load,key,safeURL,teamList,contexts,payload:()=>payload,manual:()=>manual};
 })();

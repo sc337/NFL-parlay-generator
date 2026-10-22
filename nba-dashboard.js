@@ -90,11 +90,14 @@ function media(m){const team=(m.teams||[]).find(t=>t.code===m.team_code);return 
 function lineup(m){return window.STARTER_STATUS?.evidence('nba',m,context)}
 function note(m){return (lineup(m)?.lineupLabel||'Lineup pending · Not final')+' · '+Q.note('nba',m,model(m)||{})}
 function leg(m,i){const f=model(m),q=Q.quoteLabel('nba',m),status=lineup(m);return '<div class="leg sport-visual-leg" data-event-time="'+esc(m.game_time)+'" data-alt-line="'+(m.isAltLine?'true':'false')+'" data-matchup="'+esc(m.game_label)+'">'+media(m)+'<div class="sport-visual-copy"><div class="leg-title">'+(i+1)+'. '+esc(m.label)+(m.isAltLine?' <span class="alt-tag">ALT</span>':'')+'</div><div class="nba-lineup-status" data-tone="'+(status?.confirmed?'neutral':'warning')+'">'+esc(status?.lineupLabel||'Lineup pending · Not final')+'</div><div class="leg-sub">'+esc(m.game_label)+' · '+(f.marketAnchored?'Market-informed likelihood ':'Experimental estimate ')+Math.round(f.modelP*100)+'%'+(f.projectedLine!=null?' · Projected '+f.projectedLine.toFixed(1):'')+'</div><div class="leg-reason">'+esc(f.method)+' · '+esc(note(m))+'</div></div><div class="leg-quote">'+esc(q)+'</div></div>'}
-function render(){
+let qualifiedCount=null;
+function render(){return window.STARTER_STATUS?.withCache?window.STARTER_STATUS.withCache(renderFresh):renderFresh()}
+function renderFresh(){
  if(window.__ACTIVE_SPORT!=='nba')return;
  forecastCache.clear();window.EXTRA_PICKS?.clear?.();Q.prepare('nba',markets,context,[],snapshotAt);
  window.SPORT_MARKETS.sync('nba',markets,render);controls();
  const count=window.DASHBOARD_UI?.get('nba','legs',2)||2,pool=ranked(),sgp=buildMode==='sgp';
+ qualifiedCount=G.unique(pool,Infinity).length;
  const scoped=sgp?pool.filter(m=>String(m.game_id)===selectedGame):pool;
  const marketCounts=markets.filter(m=>G.pregame(m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m))).reduce((a,m)=>(a[m.kind]=(a[m.kind]||0)+1,a),{}),eligibleCounts=pool.reduce((a,m)=>(a[m.kind]=(a[m.kind]||0)+1,a),{});
  const host=$('#nbaMarketFilters'),marketNote=host?.querySelector?.('[data-market-note]');if(marketNote)marketNote.textContent='Eligible / quoted: '+Object.entries(marketCounts).map(([kind,n])=>kind+' '+(eligibleCounts[kind]||0)+'/'+n).join(' · ')+'. Comparable market types compete; missing player evidence remains a pass.';
@@ -140,5 +143,5 @@ function controls(){
  if(select.innerHTML!==html)select.innerHTML=html;select.value=selectedGame;select.disabled=!options.length;
  ($('#nbaGameField')||field.querySelector('#nbaGameField')).hidden=buildMode!=='sgp';
 }
-window.NBA_DASHBOARD={availableCount:()=>loaded?G.unique(ranked(),Infinity).length:null,load,refresh:render,setLegs,model,eligible,profileBuild,PROFILES,buildSameGame,compatibleSet,profileFits,profileRisk,unavailableBuild,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
+window.NBA_DASHBOARD={availableCount:()=>loaded?qualifiedCount:null,load,refresh:render,setLegs,model,eligible,profileBuild,PROFILES,buildSameGame,compatibleSet,profileFits,profileRisk,unavailableBuild,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
 })();
