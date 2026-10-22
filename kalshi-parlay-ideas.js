@@ -63,17 +63,18 @@ function scopedGames(games,state,selected){
  return state.mode==='sgp'?games.filter(g=>g.id===selected):games;
 }
 function report(games,state){
+ const altIdeas=!!window.NFL_ALT_IDEAS?.active?.(state);
  const reasons=new Map(),eligible=[],priceWatch=[];let checked=0,props=0,dataReady=0;
  for(const game of games)for(const m of game.markets||[]){
   if(!(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))||!window.NFL_ALT_LINES?.matches(m,state.lineMode))continue;
   if(window.SLATE_UI&&!window.SLATE_UI.matches('nfl',m,game.commence_time))continue;
   checked++;if(m.player)props++;
-  const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{selectionMode:likelihood(state)?'likelihood':'screened',modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
+  const result=active(state)?assess(m,game,state):window.PICK_QUALITY.assess('nfl',m,{selectionMode:altIdeas||likelihood(state)?'likelihood':'screened',opportunity:m.opportunity,roleChange:m.roleChange,sensitivity:m.sensitivity,modelP:m.modelProbability,rawModelP:m.rawModelProbability,marketP:m.marketProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketAnchored:m.marketAnchored,experimental:m.tdExperimental||m.nflPropExperimental},{game,parlay:true});
   if(result.pass)eligible.push({market:m,game});else reasons.set(result.reason,(reasons.get(result.reason)||0)+1);
   if(!active(state)&&!likelihood(state)&&result.dataPass){dataReady++;if(!result.pricePass&&result.minimumOdds!=null)priceWatch.push({market:m,game,quality:result});}
  }
  const seen=new Set(),watch=priceWatch.sort((a,b)=>a.quality.priceGap-b.quality.priceGap||String(a.market.ticker).localeCompare(String(b.market.ticker))).filter(({market:m,game:g})=>{const key=g.id+'|'+(m.player||m.type);if(seen.has(key))return false;seen.add(key);return true}).slice(0,3);
- return {eligible,checked,props,screened:!active(state)&&!likelihood(state),dataReady,priceWatch:watch,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
+ return {eligible,checked,props,screened:!active(state)&&!likelihood(state)&&!altIdeas,dataReady,priceWatch:watch,reasons:[...reasons].sort((a,b)=>b[1]-a[1]),players:new Set(eligible.filter(x=>x.market.player).map(x=>x.market.player)).size};
 }
 function diagnostics(report){
  if(!report)return '';
