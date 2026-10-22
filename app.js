@@ -1061,6 +1061,8 @@ function render(parlays){
   renderNflStraight();
   if(document.body.classList.contains('prediction-only')){const rows=nflSlate().filter(g=>Date.parse(g.commence_time)>Date.now()).flatMap(g=>(g.markets||[]).filter(m=>Number.isFinite(m.price)&&m.price!==0).map(m=>({...m,label:m.name,game_id:g.id,game_label:g.away+' at '+g.home,yes_ask:window.MODEL_CORE?.implied?.(m.price)})));$('#results').innerHTML=window.MARKET_GUARDS.watchlist(rows,'NFL');$('#resultsTitle').textContent='NFL Market Watchlist';return}
   const wrap=$('#results'); wrap.innerHTML='';
+  const coverageGame=state.mode==='sgp'?nflSlate().find(g=>g.id===$('#gameSelect').value):null;
+  window.NFL_PARLAY_UI?.renderPropCoverage?.(coverageGame,state,nflQualityForecast,isParlayEligible);
   const tpl=$('#parlayTemplate');
   const profileOrder={safe:0,balanced:1,long:2};
   const requestedCount=Number($('#legsSelect')?.value)||2;

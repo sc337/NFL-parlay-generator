@@ -134,7 +134,7 @@ def carry_nfl_evidence(candidate, previous):
         for market in game.get('markets',[]):
             prior=markets.get((market.get('ticker'),market.get('quoteSide'),market.get('player'))) or {}
             if market.get('team')!=prior.get('team'):continue
-            for field in ('propHistory','tdHistory','contextSignals','espnEvidence'):
+            for field in ('propHistory','propHistoryStatus','tdHistory','contextSignals','espnEvidence'):
                 if field in prior:market[field]=prior[field]
 
 def refresh(sport):

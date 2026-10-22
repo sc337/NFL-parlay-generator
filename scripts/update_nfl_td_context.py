@@ -1,7 +1,7 @@
 """Attach pregame touchdown opportunity from completed nflverse plays.
 
 Only plays dated before the upcoming game are counted. A failed or stale
-download leaves touchdown markets without an experimental forecast.
+download retains prior dated evidence; model age checks still apply.
 """
 import csv
 import gzip
@@ -31,10 +31,15 @@ def truth(value): return str(value or '') in ('1', '1.0', 'True', 'TRUE')
 def number(value):
     try: return float(value)
     except (ValueError, TypeError): return None
-def norm(value): return re.sub(r'[^a-z0-9]', '', str(value or '').lower())
+def name_parts(value):
+    parts=re.findall(r'[a-z0-9]+',str(value or '').lower())
+    if parts and parts[-1] in ('jr','sr','ii','iii','iv','v','vi'):parts.pop()
+    return parts
+
+def norm(value): return ''.join(name_parts(value))
 
 def alias(value):
-    parts=re.findall(r'[a-z0-9]+',str(value or '').lower())
+    parts=name_parts(value)
     return (parts[0][0]+parts[-1]) if len(parts)>1 else ''
 
 def player_key(rows, name):
@@ -89,7 +94,9 @@ def attach(snapshot,games,now=None):
     attached=0
     props_attached=0
     for game in snapshot.get('games') or []:
-        for market in game.get('markets') or []:market.pop('propHistory',None)
+        for market in game.get('markets') or []:
+            market.pop('propHistory',None)
+            market.pop('propHistoryStatus',None)
     for game in snapshot.get('games') or []:
         kickoff=game.get('commence_time')
         try: day=datetime.fromisoformat(kickoff.replace('Z','+00:00')).date().isoformat()
@@ -100,22 +107,35 @@ def attach(snapshot,games,now=None):
             prior=sorted(((gid,row) for (name,gid),row in games.items()
                           if name==team and row['date']<day and row['date']<now.date().isoformat()),
                          key=lambda item:item[1]['date'])[-5:]
-            if len(prior)<2:continue
+            if len(prior)<2:
+                for market in game.get('markets') or []:
+                    if market.get('player') and market.get('team')==team:
+                        market['propHistoryStatus']={'status':'insufficient_team_sample','teamGames':len(prior),'activeGames':0,'source':'nflverse completed plays'}
+                continue
             players={}
             for _,row in prior:
                 for key,stats in row['players'].items():
                     entry=players.setdefault(key,{'name':stats['name'],**{k:0 for k in ('rush','target','rz_rush','rz_target','ten_rush','ten_target')}})
+                    if stats.get('name'):entry['name']=stats['name']
                     for k in ('rush','target','rz_rush','rz_target','ten_rush','ten_target'):entry[k]+=stats[k]
             # Include zero-usage games in samples, and require activity in the
             # latest completed team game. Never infer role from quote counts.
             for market in game.get('markets') or []:
                 if not market.get('player') or market.get('team')!=team or not market.get('_rosterVerified'):continue
                 key=player_key(players,market.get('player'))
-                if key is None or len(prior)<3:continue
+                if key is None:
+                    market['propHistoryStatus']={'status':'identity_unresolved','teamGames':len(prior),'source':'nflverse completed plays'}
+                    continue
                 history=[row['players'].get(key,{}) for _,row in prior]
                 active=lambda s:sum(s.get(k,0) for k in ('rush','target','pass_attempts'))>0
                 played=sum(active(s) for s in history)
-                if played<3 or not active(history[-1]):continue
+                status={'status':'available','teamGames':len(prior),'activeGames':played,
+                    'latestActive':active(history[-1]),'matchedName':players[key]['name'],'gsisId':key,
+                    'dates':[row['date'] for _,row in prior],'source':'nflverse completed plays'}
+                market['propHistoryStatus']=status
+                if played<3 or len(prior)<3 or not active(history[-1]):
+                    status['status']='insufficient_recent_sample' if active(history[-1]) else 'inactive_latest_game'
+                    continue
                 metrics={}
                 mapping={'player_pass_yds':'pass_yards','player_rush_yds':'rush_yards',
                     'player_reception_yds':'rec_yards','player_receptions':'receptions',
@@ -125,7 +145,9 @@ def attach(snapshot,games,now=None):
                 for kind,stat in mapping.items():
                     values=[float(s.get(stat,0)) for s in history]
                     if any(v!=0 for v in values):metrics[kind]=values
-                if not metrics:continue
+                if not metrics:
+                    status['status']='metrics_unavailable'
+                    continue
                 opportunities={kind:[float(s.get(stat,0)) for s in history] for kind,stat in
                     [('player_rush_attempts','rush'),('player_pass_attempts','pass_attempts'),('targets','target')]}
                 relevant=opportunities['player_rush_attempts' if market.get('type')=='rushing' else
@@ -171,10 +193,9 @@ def main():
         print('Touchdown opportunity attached:',attach(data,all_games,now))
     except Exception as error:
         print('WARN touchdown opportunity unavailable:',error)
-        for game in data.get('games') or []:
-            for market in game.get('markets') or []:market.pop('propHistory',None)
-        data['prop_context']={'updated_at':now.isoformat(),'attached':0,'status':'unavailable'}
-        data['td_context']={'source':'nflverse play by play','updated_at':now.isoformat(),'attached':0,'status':'unavailable'}
+        for field in ('prop_context','td_context'):
+            previous=data.get(field) or {}
+            data[field]={**previous,'status':'refresh_unavailable','attempted_at':now.isoformat()}
     SNAPSHOT.write_text(json.dumps(data,separators=(',',':')))
 
 if __name__=='__main__':main()
