@@ -284,7 +284,7 @@ def collect(sport, now, fetch=None):
     return list({str(e['id']): e for e in events if e.get('id')}.values())
 
 
-def main(sport):
+def main(sport, *, skip_nfl_context=False):
     path = Path('data/kalshi-' + sport + '.json')
     now = datetime.now(timezone.utc)
     try:
@@ -294,7 +294,7 @@ def main(sport):
         ctx = json.loads(context_path.read_text()) if context_path.exists() else {}
         result = enrich(sport, snapshot, events, ctx, now)
         temp = path.with_suffix('.json.tmp'); temp.write_text(json.dumps(result, separators=(',', ':')) + '\n'); temp.replace(path)
-        if sport == 'nfl' and any(not (g.get('context') or {}).get('available') for g in result.get('games', [])):
+        if sport == 'nfl' and not skip_nfl_context and any(not (g.get('context') or {}).get('available') for g in result.get('games', [])):
             # The native context pass runs before public gap filling. New ESPN
             # games need their own real context pass; never fabricate evidence.
             try:
@@ -314,4 +314,5 @@ def main(sport):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--sport', required=True, choices=PATHS)
-    main(parser.parse_args().sport)
+    parser.add_argument('--skip-nfl-context', action='store_true')
+    args = parser.parse_args(); main(args.sport, skip_nfl_context=args.skip_nfl_context)

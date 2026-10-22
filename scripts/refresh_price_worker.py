@@ -153,15 +153,24 @@ def refresh(sport):
                     Path(name).write_bytes(saved[name])
                 else:
                     Path(name).unlink(missing_ok=True)
-        # Public references may recover a primary outage, without refreshing any
-        # old native quote timestamps. Individual source failures retain data.
-        run(['python', 'scripts/update_public_odds.py', '--sport', sport], timeout=90)
-        # Preserve the previous dated evidence cache across native feed rebuilds.
+        # Carry dated evidence before gap filling. New native snapshots have no
+        # context yet; the public collector must not launch an unbounded rebuild.
         previous = json.loads(saved[FILES[sport][0]]) if FILES[sport][0] in saved else {}
         if sport == 'nfl' and primary_error is None:
             target=Path(FILES[sport][0]);current=json.loads(target.read_text())
             carry_nfl_evidence(current,previous)
             target.write_text(json.dumps(current,separators=(',',':'))+'\n')
+        checkpoint = {name: Path(name).read_bytes() for name in FILES[sport] if Path(name).exists()}
+        try:
+            args=['python', 'scripts/update_public_odds.py', '--sport', sport]
+            if sport == 'nfl': args.append('--skip-nfl-context')
+            run(args, timeout=90)
+        except Exception as error:
+            if primary_error is not None: raise
+            for name, raw in checkpoint.items(): Path(name).write_bytes(raw)
+            print('Public references delayed; fresh native prices retained:',sport,error,flush=True)
+        if sport == 'nfl' and primary_error is None:
+            target=Path(FILES[sport][0])
             # A context outage must not roll newly collected, roster-verified
             # prices back. Prior evidence keeps its own original timestamps.
             for step in ('enrich_snapshot_context.py','update_nfl_td_context.py'):
@@ -261,8 +270,8 @@ def cycle(publish_changes=True, sports=SPORTS):
     with ThreadPoolExecutor(max_workers=len(sports)) as pool:
         results = dict(zip(sports, pool.map(refresh, sports)))
     names = [name for sport, ok in results.items() if ok for name in FILES[sport]]
-    if sports == ('nhl',):
-        # NHL publication must never wait for multi-sport capture.
+    if sports in (('nhl',), ('nfl',)):
+        # Dedicated NFL/NHL quote publication must not wait for recommendation capture.
         if publish_changes:
             publish(names, results)
         else:

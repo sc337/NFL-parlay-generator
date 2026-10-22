@@ -30,6 +30,31 @@ class RefreshSafeguards(unittest.TestCase):
                 self.assertEqual(result['games'][0]['markets'][0]['price'],150)
                 self.assertEqual(result['games'][0]['context']['updated_at'],'2026-01-01T00:00:00Z')
             finally:os.chdir(before)
+    def test_public_reference_timeout_preserves_fresh_native_quotes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            before=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir()
+                at=worker.datetime.now(worker.timezone.utc).isoformat()
+                path=Path('data/kalshi-nfl.json')
+                old={'updated_at':at,'games':[{'id':'g','markets':[{'ticker':'old'}]}]}
+                fresh={'updated_at':at,'games':[{'id':'g','markets':[{'ticker':'new','price':150,'_rosterVerified':True}]}]}
+                path.write_text(json.dumps(old))
+                def step(args,**kwargs):
+                    if 'scripts/update_kalshi.py' in args:path.write_text(json.dumps(fresh))
+                    if 'scripts/update_public_odds.py' in args:
+                        self.assertIn('--skip-nfl-context',args)
+                        path.write_text('{"partial":true}')
+                        raise TimeoutError('public source delayed')
+                with patch.object(worker,'run',side_effect=step):self.assertTrue(worker.refresh('nfl'))
+                self.assertEqual(json.loads(path.read_text()),fresh)
+            finally:os.chdir(before)
+
+    def test_dedicated_nfl_publication_does_not_wait_for_recommendation_capture(self):
+        with patch.object(worker,'refresh',return_value=True), patch.object(worker,'publish') as publish, patch.object(worker,'run') as run:
+            self.assertEqual(worker.cycle(sports=('nfl',)),{'nfl':True})
+        run.assert_not_called();publish.assert_called_once()
+
     def test_nfl_context_reuse_never_refreshes_evidence_dates_or_copies_prices(self):
         old={'games':[{'id':'g','home':'H','away':'A','commence_time':'2026-10-23T00:15:00Z','context':{'updated_at':'old'},'markets':[{'ticker':'x','team':'H','player':'P','quoteSide':'yes','price':100,'propHistory':{'as_of':'old'}}]}]}
         fresh={'games':[{'id':'g','home':'H','away':'A','commence_time':'2026-10-23T00:15:00+00:00','markets':[{'ticker':'x','team':'H','player':'P','quoteSide':'yes','price':150}]}]}
