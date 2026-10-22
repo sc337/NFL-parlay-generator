@@ -7,7 +7,7 @@ test('NFL SGP does not require FanDuel props merely because an API key exists', 
   const source = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
   assert.doesNotMatch(source, /state\.apiKey\s*&&\s*!String\(game\?\.id/);
   assert.match(source, /if\(state\.requirePlayerProp && propCount===0\)/);
-  assert.match(source, /const p=buildSgp\(game,count,state\.risk,v/);
+  assert.match(source, /sgpResult=buildSgpProfiles\(game,count,state\.risk,variants/);
 });
 
 test('SGP and multi-game use distinct builders', () => {

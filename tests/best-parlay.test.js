@@ -7,6 +7,7 @@ function nfl(mode='multi'){
   nflSlate:()=>[game],ensurePropsForGame:async()=>{},ensurePropsForMultiGame:async()=>{},countPlayerProps:()=>1,
   buildMulti:(_n,_r,v)=>builds[v],buildSgp:(_g,_n,_r,v,prev)=>{previous.push(prev);return builds[v]},
   render:p=>output.push(p),parlaySignature:p=>p.legs.join('|')});
+ vm.runInContext(source.slice(source.indexOf('function sgpBuildReason('),source.indexOf('function propFamily(')),context);
  vm.runInContext(source.slice(source.indexOf('async function generate(){'),source.indexOf('window.generate=generate;')),context);
  return {run:()=>context.generate(),builds,output,previous,state:context.state};
 }

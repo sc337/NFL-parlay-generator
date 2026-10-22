@@ -67,3 +67,31 @@ test('NFL Balanced compares weakest-leg evidence inside the same joint-risk band
  assert.deepEqual([...r.run('safe',[],2).legs.map(m=>m.player)].sort(),['A','B']);
  assert.deepEqual([...r.run('balanced',[],2).legs.map(m=>m.player)].sort(),['A','C']);
 });
+test('complete combinations below the former top-24 cutoff reach the joint-risk check',()=>{
+ const r=build({markets:Array.from({length:9},(_,i)=>({type:'passing',team:i%2?'Away':'Home',player:'P'+i,score:120-i}))});
+ r.ctx.sgpCombinationRisk=legs=>{const good=legs.every(m=>Number(m.player.slice(1))>=7),p=good?.5:.1;return {pass:true,modelP:p,independentP:p,scenario:{sensitivity:[p,p]}}};
+ const p=r.run('safe',[],2);assert.ok(p);assert.deepEqual([...p.legs.map(m=>m.player)].sort(),['P7','P8']);
+});
+test('one player threshold ladder cannot starve distinct players out of an ALT build',()=>{
+ const rows=Array.from({length:30},(_,i)=>({type:'passing',player:'QB',team:'Home',score:200-i,point:i*10+9.5}));
+ rows.push(...['RB','WR','OtherQB'].map((player,i)=>({type:'passing',player,team:'Away',score:100-i})));
+ const r=build({markets:rows});r.ctx.sgpCombinationRisk=()=>({pass:true,modelP:.5,independentP:.5,scenario:{sensitivity:[.5,.5]}});
+ const p=r.run('safe',[],4);assert.ok(p);assert.equal(new Set(p.legs.map(m=>m.player)).size,4);
+});
+test('fallback uses the largest qualifying smaller count and records the requested size',()=>{
+ const r=build(),calls=[];r.ctx.buildSgp=(game,count,risk,variant)=>{calls.push(count);game.sgpSearchDiagnostics={qualified:12,compatible:0};return count===3&&variant==='safe'?{legs:[{},{},{}],profile:variant}:null};
+ const result=r.ctx.buildSgpProfiles(r.game,4,50,['safe','balanced','long']);
+ assert.equal(result.count,3);assert.equal(result.parlays[0].requestedLegs,4);assert.match(result.reason,/distinct compatible/);assert.ok(!calls.includes(2));
+});
+test('fallback does not shorten a successful request or invent an unavailable build',()=>{
+ const r=build();r.ctx.buildSgp=(game,count,risk,variant)=>count===4?{legs:[{},{},{},{}],profile:variant}:null;
+ assert.equal(r.ctx.buildSgpProfiles(r.game,4,50,['safe']).count,4);
+ r.ctx.buildSgp=()=>null;const empty=r.ctx.buildSgpProfiles(r.game,4,50,['safe']);assert.equal(empty.parlays.length,0);assert.equal(empty.count,4);
+});
+test('Conservative cushion preference is shared by screened SGP and multi-game without bypassing quality',()=>{
+ const source=fs.readFileSync('app.js','utf8'),state={lineMode:'alt',moreCushion:false,mode:'sgp'},window={NFL_ALT_LINES:{matches:()=>true,cushionBonus:m=>m.cushionPoints?3:0},PICK_QUALITY:{assess:()=>({pass:true})}};
+ const ctx=vm.createContext({window,state,nflQualityForecast:()=>({}),profileSelectionScore:()=>100});
+ vm.runInContext(source.slice(source.indexOf('function candidateScore('),source.indexOf('function playerCount(')),ctx);
+ for(const mode of ['sgp','multi']){state.mode=mode;assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),103);assert.equal(ctx.candidateScore({},50,'safe'),100);assert.equal(ctx.candidateScore({cushionPoints:10},50,'balanced'),100)}
+ window.PICK_QUALITY.assess=()=>({pass:false});assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),-999);
+});
