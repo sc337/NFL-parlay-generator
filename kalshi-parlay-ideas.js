@@ -109,11 +109,9 @@ function mount(){
  anchor.before(field);
  field.querySelector('select').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.recommendationTier=e.target.value;window.DASHBOARD_UI?.put('nfl','tier',s.recommendationTier);refresh();window.generate?.()});
  field.querySelector('#nflRequireProp').addEventListener('change',e=>{const s=window.NFL_PARLAY_STATE;s.requirePlayerProp=e.target.checked;window.DASHBOARD_UI?.put('nfl','requireProp',s.requirePlayerProp?'on':'off');window.generate?.()});
- // TD suggestions are not a parlay market. Preserve a separate scoped drawer.
- document.querySelector('#marketChips [data-market="td"]')?.remove();
- window.NFL_PARLAY_STATE?.selectedMarkets.delete('td');
+ // Keep TD Scorer selectable; the ordinary quality gates decide eligibility.
  const td=document.querySelector('#tdMarketOptions'),results=document.querySelector('#results');
- if(td&&results){const drawer=document.createElement('details');drawer.className='market-filter-details';drawer.id='nflTdStraightDrawer';drawer.innerHTML='<summary>TD straight-only ideas</summary>';drawer.append(td);results.after(drawer)}
+ if(td&&results){const drawer=document.createElement('details');drawer.className='market-filter-details';drawer.id='nflTdStraightDrawer';drawer.innerHTML='<summary>TD Scorer · Experimental</summary>';drawer.append(td);results.after(drawer)}
  refresh();
 }
 window.NFL_PARLAY_IDEAS={active,likelihood,assess,checkBuild,scopedGames,report,emptyMessage,diagnostics,refresh};
