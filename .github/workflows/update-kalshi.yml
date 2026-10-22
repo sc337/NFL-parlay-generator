@@ -287,11 +287,11 @@ jobs:
           python scripts/preserve_newer_snapshot.py /tmp/mlb-context.json data/mlb-context.json
           python scripts/preserve_newer_snapshot.py /tmp/ncaaf-context.json data/ncaaf-context.json
           cp /tmp/sports-media.json data/sports-media.json
-          cp /tmp/pick-history.json data/pick-history.json
+          python scripts/refresh_forecast_worker.py --reconcile /tmp/pick-history.json data/pick-history.json
           cp /tmp/model-calibration.js data/model-calibration.js
           cp /tmp/model-learning.js data/model-learning.js
-          cp /tmp/forecast-audit.json data/forecast-audit.json
-          cp /tmp/forecast-report.json data/forecast-report.json
+          python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit.json data/forecast-audit.json
+          node scripts/build_forecast_report.js
           python scripts/preserve_newer_snapshot.py /tmp/daily-picks.json data/daily-picks.json
           python scripts/preserve_newer_snapshot.py /tmp/dashboard-health.json data/dashboard-health.json
           mkdir -p data/daily-picks
@@ -339,11 +339,11 @@ jobs:
             python scripts/preserve_newer_snapshot.py /tmp/mlb-context.json data/mlb-context.json
             python scripts/preserve_newer_snapshot.py /tmp/ncaaf-context.json data/ncaaf-context.json
             cp /tmp/sports-media.json data/sports-media.json
-            cp /tmp/pick-history.json data/pick-history.json
+            python scripts/refresh_forecast_worker.py --reconcile /tmp/pick-history.json data/pick-history.json
             cp /tmp/model-calibration.js data/model-calibration.js
             cp /tmp/model-learning.js data/model-learning.js
-            cp /tmp/forecast-audit.json data/forecast-audit.json
-            cp /tmp/forecast-report.json data/forecast-report.json
+            python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit.json data/forecast-audit.json
+            node scripts/build_forecast_report.js
             python scripts/preserve_newer_snapshot.py /tmp/daily-picks.json data/daily-picks.json
             python scripts/preserve_newer_snapshot.py /tmp/dashboard-health.json data/dashboard-health.json
             mkdir -p data/daily-picks

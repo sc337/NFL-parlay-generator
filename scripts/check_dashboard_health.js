@@ -9,14 +9,14 @@ function checkSport(sport,snapshot,previous,now,context){
  else if(age>1800000)add('stale',age>7200000?'critical':'warning','Feed is '+Math.round(age/60000)+' minutes old.');
  if(sport==='nfl'?!Array.isArray(snapshot.games):!Array.isArray(snapshot.markets)){add('schema','critical','Feed has no valid market collection.');return {summary:{snapshotAt:at},alerts}}
  const entries=sport==='nfl'?snapshot.games.flatMap(g=>(g.markets||[]).map(m=>({m,g}))):snapshot.markets.map(m=>({m,g:{}}));
- const futureEvents=new Map(),playerCounts={},families={},unknown=[],props=[];let quotes=0;
+ const futureEvents=new Map(),playerCounts={},families={},unknown=[],props=[];let quotes=0,expiredQuotes=0;
  for(const {m,g} of entries){
   const time=start(sport,m,g,snapshot)||g.commence_time||m.game_time||m.start_time;
   const startAt=Date.parse(time),closed=Date.parse(m.close_time);
   if(['Live','Final','in','post'].includes(m.game_status)||['in','post'].includes(g.game_status)||Number.isFinite(startAt)&&startAt<=now||Number.isFinite(closed)&&closed<=now)continue;
   const id=String(g.id||m.game_id||m.event_ticker||''),kind=m.type||m.kind||'unknown';families[kind]=(families[kind]||0)+1;
   if(!Number.isFinite(startAt))unknown.push(m);else futureEvents.set(id,{id,time});
-  const ask=Number(sport==='nfl'?m.quoteProbability:m.yes_ask);if(ask>0&&ask<1)quotes++;
+  const ask=Number(sport==='nfl'?m.quoteProbability:m.yes_ask);if(ask>0&&ask<1){quotes++;const age=now-Date.parse(m.quotedAt||at);if(!Number.isFinite(age)||age>1800000||age< -300000)expiredQuotes++;}
   const isPlayer=!!m.player||!['h2h','spreads','totals','moneyline','spread','total'].includes(kind)&&sport!=='ufc';
   if(isPlayer){props.push(m);playerCounts[id]=(playerCounts[id]||0)+1}
  }
@@ -30,6 +30,7 @@ function checkSport(sport,snapshot,previous,now,context){
   if(propEvents.length&&propEvents.every(e=>!playerCounts[e.id]))add('props-missing','warning','Player props disappeared for games that still have team markets.');
  }
  if(active&&quotes===0)add('quotes-missing','critical','Upcoming markets have no executable reference ask prices.');
+ if(expiredQuotes>0&&expiredQuotes/Math.max(1,quotes)>.5)add('native-quotes-stale','warning',expiredQuotes+' individual quotes expired; aggregate refresh time is not price freshness.');
  if(unknown.length>=5&&unknown.length/Math.max(1,active)>.2)add('starts-missing','warning',unknown.length+' upcoming markets lack verified start times.');
  if(props.length){
   const missing=props.filter(m=>sport==='nfl'?m._invalidRoster===true||m._rosterVerified!==true:sport==='nhl'?!m.player_id:sport==='mlb'?!context?.players?.[String(m.label||'').split(':')[0].trim()]:false).length;
@@ -40,7 +41,7 @@ function checkSport(sport,snapshot,previous,now,context){
   if(!expectedEvents.has(event.id))expectedEvents.set(event.id,event);
   if(!expectedPlayerCounts[event.id]&&previous.playerCounts?.[event.id])expectedPlayerCounts[event.id]=previous.playerCounts[event.id];
  }
- return {summary:{snapshotAt:at,ageMinutes:Number.isFinite(age)?Math.round(age/60000):null,markets:active,quotedMarkets:quotes,playerMarkets:props.length,families,futureEvents:[...expectedEvents.values()],playerCounts:expectedPlayerCounts},alerts};
+ return {summary:{snapshotAt:at,ageMinutes:Number.isFinite(age)?Math.round(age/60000):null,markets:active,quotedMarkets:quotes,expiredQuotes,playerMarkets:props.length,families,futureEvents:[...expectedEvents.values()],playerCounts:expectedPlayerCounts},alerts};
 }
 function build(data,previous={},now=Date.now(),refreshStatus='success'){
  const sports={},alerts=[];
@@ -50,6 +51,8 @@ function build(data,previous={},now=Date.now(),refreshStatus='success'){
   catch(error){sports[sport]={error:error.message};alerts.push({id:sport+':unavailable',sport,code:'unavailable',severity:'critical',message:error.message})}
  }
  const archive=data['daily-picks.json'];
+ const performance=data['forecast-report.json'];
+ if(performance&&(!Number.isFinite(Date.parse(performance.updated_at))||now-Date.parse(performance.updated_at)>6*3600000))alerts.push({id:'pipeline:evaluation-stale',sport:null,code:'evaluation-stale',severity:'warning',message:'Performance recording/settlement report is stale; betting edge remains unverified.'});
  if(!archive||!Number.isFinite(Date.parse(archive.updated_at))||now-Date.parse(archive.updated_at)>1800000)alerts.push({id:'archive:stale',sport:null,code:'archive-stale',severity:'warning',message:'Daily recommendation archive has not refreshed successfully.'});
  for(const [sport,status] of Object.entries(archive?.sports||{}))if(status.error)alerts.push({id:sport+':capture-failed',sport,code:'capture-failed',severity:'warning',message:'Recommendation capture failed: '+status.error});
  const old=new Map((previous.alerts||[]).map(a=>[a.id,a]));
@@ -61,6 +64,7 @@ function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data'),now
  const file=path.join(dataDir,'dashboard-health.json'),data={};let previous={};try{previous=read(dataDir,'dashboard-health.json')}catch{}
  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc'])for(const name of ['kalshi-'+sport+'.json',sport+'-context.json'])try{data[name]=read(dataDir,name)}catch{}
  try{data['daily-picks.json']=read(dataDir,'daily-picks.json')}catch{}
+ try{data['forecast-report.json']=read(dataDir,'forecast-report.json')}catch{}
  const report=build(data,previous,now,refreshStatus);fs.writeFileSync(file,JSON.stringify(report,null,2)+'\n');
  for(const alert of report.alerts)console.log('::'+(alert.severity==='critical'?'error':'warning')+' title=Dashboard health::'+alert.sport+' '+alert.message.replace(/\r?\n/g,' '));
  if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\n### Dashboard health: '+report.status+'\n\n'+(report.alerts.length?report.alerts.map(a=>'- **'+a.severity+'** '+(a.sport||'Pipeline')+': '+a.message).join('\n'):'All feed and recommendation checks passed.')+'\n');

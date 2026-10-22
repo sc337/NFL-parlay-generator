@@ -11,6 +11,34 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scripts.preserve_newer_snapshot import replace_if_newer
 
 class RefreshSafeguards(unittest.TestCase):
+    def test_optional_nfl_enrichment_outage_keeps_new_verified_quotes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            before=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir()
+                at=worker.datetime.now(worker.timezone.utc).isoformat()
+                prior={'updated_at':at,'games':[{'id':'g','home':'H','away':'A','commence_time':'2099-01-01T00:00:00Z','context':{'updated_at':'2026-01-01T00:00:00Z'},'markets':[]}]}
+                Path('data/kalshi-nfl.json').write_text(json.dumps(prior))
+                def step(args,**kwargs):
+                    if 'scripts/update_kalshi.py' in args:
+                        fresh={**prior,'games':[{k:v for k,v in prior['games'][0].items() if k!='context'}]}
+                        fresh['games'][0]['markets']=[{'ticker':'new','price':150,'quotedAt':at,'_rosterVerified':True}]
+                        Path('data/kalshi-nfl.json').write_text(json.dumps(fresh))
+                    if any('enrich_snapshot_context' in a or 'update_nfl_td_context' in a for a in args):raise RuntimeError('context unavailable')
+                with patch.object(worker,'run',side_effect=step):self.assertTrue(worker.refresh('nfl'))
+                result=json.loads(Path('data/kalshi-nfl.json').read_text())
+                self.assertEqual(result['games'][0]['markets'][0]['price'],150)
+                self.assertEqual(result['games'][0]['context']['updated_at'],'2026-01-01T00:00:00Z')
+            finally:os.chdir(before)
+    def test_nfl_context_reuse_never_refreshes_evidence_dates_or_copies_prices(self):
+        old={'games':[{'id':'g','home':'H','away':'A','commence_time':'2026-10-23T00:15:00Z','context':{'updated_at':'old'},'markets':[{'ticker':'x','team':'H','player':'P','quoteSide':'yes','price':100,'propHistory':{'as_of':'old'}}]}]}
+        fresh={'games':[{'id':'g','home':'H','away':'A','commence_time':'2026-10-23T00:15:00+00:00','markets':[{'ticker':'x','team':'H','player':'P','quoteSide':'yes','price':150}]}]}
+        worker.carry_nfl_evidence(fresh,old)
+        self.assertEqual(fresh['games'][0]['context']['updated_at'],'old')
+        self.assertEqual(fresh['games'][0]['markets'][0]['price'],150)
+        self.assertEqual(fresh['games'][0]['markets'][0]['propHistory']['as_of'],'old')
+        different={'games':[{'id':'g','home':'Other','away':'A','commence_time':'2026-10-23T00:15:00Z','markets':[]}]}
+        worker.carry_nfl_evidence(different,old);self.assertNotIn('context',different['games'][0])
     def test_metadata_refresh_does_not_roll_native_prices_back(self):
         def snapshot(wrapper, primary, price, reference):
             return {'updated_at': wrapper, 'primary_updated_at': primary, 'games': [

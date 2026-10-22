@@ -75,6 +75,10 @@ def main():
             cache[team_name] = []
         return cache[team_name]
 
+    from concurrent.futures import ThreadPoolExecutor
+    teams=sorted({game.get(side) for game in data.get('games') or [] for side in ('away','home') if game.get(side)})
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        list(pool.map(roster,teams))
     total_raw = total_verified = total_removed = 0
     games_verified = 0
     for game in data.get('games') or []:

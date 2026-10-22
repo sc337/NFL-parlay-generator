@@ -34,6 +34,7 @@ function quote(s,m){
  return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):(m.source||'Kalshi'),checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
 function validatedRule(s,m,f={}){
+ if(window.STUDY_POLICY?.paperOnly)return false;
  if(s==='nba'&&f.marketAnchored===true)return false;
  if(s==='ncaaf'&&f.forecastVersion&&window.MODEL_CALIBRATION?.rules(s)?.[group(s,m)+(f.experimental?':experimental':'')]?.forecastVersion!==f.forecastVersion)return false;
  if(window.MODEL_LEARNING&&!window.MODEL_LEARNING.baselineApproved(s,group(s,m)))return false;
@@ -148,7 +149,7 @@ function assess(s,m,f={},options={}){
  const context=contextEvidence(s,m,f,options.game);
  const monitored=window.ESPN_EVIDENCE?.inspect(m),roleChange=f.roleChange??m.roleChange;
  const increasedRole=roleChange?.status==='rising'||monitored?.role?.status==='rising';
- const learned=s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
+ const learned=window.STUDY_POLICY?.paperOnly||s==='ncaaf'&&f.forecastVersion?null:window.MODEL_LEARNING?.learnedBuffer(s,group(s,m),p);
  const bufferParts=learned?{empirical:learned.buffer,missingInputs:context.penalty}:{modelStatus:(validated ? .015 : .04),limitedCoverage:(1-coverage)*.02,modelUncertainty:uncertainty*.015,missingInputs:context.penalty};
  if(increasedRole)bufferParts.changedRole=.015;
  const buffer=Object.values(bufferParts).reduce((sum,value)=>sum+value,0);
@@ -180,6 +181,7 @@ function assess(s,m,f={},options={}){
  if(!reason&&roleChange?.status==='falling')reason='Recent opportunity decreased; waiting for a stable role';
  if(increasedRole)warnings.push('Increased role · Not final; wider opportunity checks applied');
  const clearsValue=ev>0&&conservativeEV>0;
+ if(!reason&&options.featured&&!clearsValue)reason='Featured straight price does not clear the selection buffer';
   const potentialValue=ev>0&&!clearsValue&&!validated&&!anchored;
  // A market-anchored NFL estimate is a suggestion, never independent proof of EV.
  let sensitivity=null;

@@ -16,8 +16,7 @@ from pathlib import Path
 SPORTS = ('mlb', 'nba', 'ncaaf', 'nfl', 'nhl', 'ufc')
 STEPS = {
     'nba': ['update_kalshi_nba.py'],
-    'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py',
-            'enrich_snapshot_context.py', 'update_nfl_td_context.py'],
+    'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py'],
     'mlb': ['update_kalshi_mlb.py', 'update_mlb_context.py', 'attach_game_context.py'],
     'ncaaf': ['update_kalshi_ncaaf.py', 'attach_game_context.py --ncaaf'],
     'nhl': ['update_nhl_context.py', 'update_kalshi_nhl.py'],
@@ -125,6 +124,19 @@ def reconcile_snapshot(candidate, existing):
 def run(args, timeout=240):
     return subprocess.run(args, check=True, timeout=timeout)
 
+def carry_nfl_evidence(candidate, previous):
+    games={g.get('id'):g for g in previous.get('games',[])}
+    for game in candidate.get('games',[]):
+        old=games.get(game.get('id')) or {}
+        if any(game.get(key)!=old.get(key) for key in ('home','away')) or stamp_time(game.get('commence_time'))!=stamp_time(old.get('commence_time')):continue
+        if old.get('context'):game['context']=old['context']
+        markets={(m.get('ticker'),m.get('quoteSide'),m.get('player')):m for m in old.get('markets',[])}
+        for market in game.get('markets',[]):
+            prior=markets.get((market.get('ticker'),market.get('quoteSide'),market.get('player'))) or {}
+            if market.get('team')!=prior.get('team'):continue
+            for field in ('propHistory','tdHistory','contextSignals','espnEvidence'):
+                if field in prior:market[field]=prior[field]
+
 def refresh(sport):
     saved = {name: Path(name).read_bytes() for name in FILES[sport] if Path(name).exists()}
     try:
@@ -146,6 +158,18 @@ def refresh(sport):
         run(['python', 'scripts/update_public_odds.py', '--sport', sport], timeout=90)
         # Preserve the previous dated evidence cache across native feed rebuilds.
         previous = json.loads(saved[FILES[sport][0]]) if FILES[sport][0] in saved else {}
+        if sport == 'nfl' and primary_error is None:
+            target=Path(FILES[sport][0]);current=json.loads(target.read_text())
+            carry_nfl_evidence(current,previous)
+            target.write_text(json.dumps(current,separators=(',',':'))+'\n')
+            # A context outage must not roll newly collected, roster-verified
+            # prices back. Prior evidence keeps its own original timestamps.
+            for step in ('enrich_snapshot_context.py','update_nfl_td_context.py'):
+                before=target.read_bytes()
+                try:run(['python','scripts/'+step],timeout=90)
+                except Exception as error:
+                    target.write_bytes(before)
+                    print('NFL context delayed; fresh prices retained:',step,error,flush=True)
         if previous.get('espn_evidence'):
             target = Path(FILES[sport][0]);current = json.loads(target.read_text())
             current.setdefault('espn_evidence', previous['espn_evidence'])
