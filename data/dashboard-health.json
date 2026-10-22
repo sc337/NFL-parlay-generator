@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-22T15:30:56.601Z",
+  "updated_at": "2026-10-22T15:40:05.165Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-22T15:29:38.144532+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 149,
       "quotedMarkets": 149,
       "expiredQuotes": 0,
@@ -42,7 +42,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-22T15:29:58.842455+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 4460,
       "quotedMarkets": 4460,
       "expiredQuotes": 0,
@@ -234,7 +234,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-22T15:30:26.075611+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 6459,
       "quotedMarkets": 6459,
       "expiredQuotes": 0,
@@ -1113,17 +1113,17 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-22T15:29:34.708474+00:00",
-      "ageMinutes": 1,
-      "markets": 5351,
-      "quotedMarkets": 5351,
-      "expiredQuotes": 5261,
+      "snapshotAt": "2026-10-22T15:36:41.256233+00:00",
+      "ageMinutes": 3,
+      "markets": 5273,
+      "quotedMarkets": 5273,
+      "expiredQuotes": 0,
       "playerMarkets": 3967,
       "families": {
-        "h2h": 86,
+        "h2h": 56,
         "td": 269,
-        "totals": 562,
-        "spreads": 736,
+        "totals": 534,
+        "spreads": 716,
         "receiving": 2122,
         "rushing": 992,
         "passing": 534,
@@ -1261,19 +1261,19 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-10-22T15:29:58.209509+00:00",
-      "ageMinutes": 1,
-      "markets": 3340,
-      "quotedMarkets": 3340,
+      "snapshotAt": "2026-10-22T15:39:59.469584+00:00",
+      "ageMinutes": 0,
+      "markets": 3426,
+      "quotedMarkets": 3426,
       "expiredQuotes": 0,
-      "playerMarkets": 2560,
+      "playerMarkets": 2646,
       "families": {
         "moneyline": 98,
         "spread": 212,
         "total": 470,
-        "goals": 920,
-        "assists": 708,
-        "points": 926,
+        "goals": 970,
+        "assists": 724,
+        "points": 946,
         "saves": 6
       },
       "futureEvents": [
@@ -1475,13 +1475,13 @@
         }
       ],
       "playerCounts": {
-        "401892552": 206,
-        "401892553": 204,
-        "401892554": 190,
-        "401892555": 208,
-        "401892556": 206,
-        "401892557": 178,
-        "401892558": 212,
+        "401892552": 208,
+        "401892553": 224,
+        "401892554": 200,
+        "401892555": 218,
+        "401892556": 236,
+        "401892557": 186,
+        "401892558": 218,
         "401892559": 178,
         "401892560": 238,
         "401892561": 250,
@@ -1491,7 +1491,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-22T15:29:35.191300+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 126,
       "quotedMarkets": 126,
       "expiredQuotes": 0,
@@ -1654,18 +1654,14 @@
       "message": "2123 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "5261 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-10-22T15:20:03.348Z",
-      "changedAt": "2026-10-22T15:20:03.348Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-10-22T15:40:05.165Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39798815853",
   "refreshResults": {
     "mlb": {
@@ -1686,7 +1682,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-22T15:30:03.545670+00:00"
+      "at": "2026-10-22T15:40:05.142901+00:00"
     },
     "ufc": {
       "ok": true,
