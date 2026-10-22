@@ -11,8 +11,8 @@ function emptyMessage(report,count,state){
  return lead+reason+'. '+(/uncertainty buffer|50%/.test(reason)&&state.lineMode==='standard'?'Try Standard + ALT in Filters.':'Review the exclusions or choose another game.');
 }
 function propCategory(reason){
- if(/history|projection|sample|completed.game/i.test(reason))return 'History';
  if(/role|playing time|workload|opportunity|activity/i.test(reason))return 'Role';
+ if(/history|projection|sample|completed.game/i.test(reason))return 'History';
  if(/price|buffer|edge|spread too wide/i.test(reason))return 'Price';
  if(/injury|unavailable|roster/i.test(reason))return 'Availability';
  return 'Reliability';
@@ -33,7 +33,7 @@ function propReport(game,state,forecast,isEligible=()=>true){
   if(!passed.length&&reason==='Edge does not clear uncertainty buffer')reason='Current price does not clear the value check.';
   if(!passed.length&&reason==='Independent projection too thin')reason='Not enough verified player history for this market.';
   if(!passed.length&&reason==='Unvalidated longshot; insufficient reliability')reason='This threshold exceeds the reliability limit for an unvalidated estimate.';
-  if(!passed.length&&history&&/sample|activity/i.test(reason))reason+=' ('+history.activeGames+' active games in the last '+history.teamGames+' team games).';
+  if(!passed.length&&history&&/sample|activity/i.test(reason))reason+=' ('+history.activeGames+' active game'+(history.activeGames===1?'':'s')+' in the last '+history.teamGames+' team games).';
   if(!passed.length&&/Increased role/.test(reason)&&role?.baseline!=null){
    const metric=['receiving','receptions'].includes(best.m.type)?'targets':'attempts';
    reason='Recent '+metric+' rose from '+role.baseline.toFixed(1)+' to '+role.recent.toFixed(1)+'; the adverse-workload scenario or supporting evidence does not clear the price check.';
