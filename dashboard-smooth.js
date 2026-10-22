@@ -5,7 +5,7 @@ const initialSport=sports.includes(preferences.sport)?preferences.sport:'nfl';
 // Selection is always screened on a new visit. Exploration is session-only.
 for(const s of sports)preferences[s]={...preferences[s],selectionMode:'screened',tier:'screened'};
 const active=()=>window.__ACTIVE_SPORT||'nfl',results=()=>document.querySelector('#results');
-function get(s,key,fallback){const value=preferences[s]?.[key];if(key==='legs')return Number.isInteger(Number(value))&&Number(value)>=2&&Number(value)<=6?Math.min(4,Number(value)):Math.max(2,Math.min(4,Number(fallback)||2));if(key==='markets')return Array.isArray(value)?value.filter(x=>['h2h','spreads','totals','passing','rushing','receiving','receptions','td'].includes(x)):fallback;if(key==='mode')return ['sgp','multi'].includes(value)?value:fallback;return typeof value==='string'?value:fallback}
+function get(s,key,fallback){const value=preferences[s]?.[key];if(key==='legs')return Number.isInteger(Number(value))&&Number(value)>=2&&Number(value)<=6?Math.min(4,Number(value)):Math.max(2,Math.min(4,Number(fallback)||2));if(key==='markets')return Array.isArray(value)?value.filter(x=>['h2h','spreads','totals','passing','rushing','receiving','receptions','passing_tds','completions','td'].includes(x)):fallback;if(key==='mode')return ['sgp','multi'].includes(value)?value:fallback;return typeof value==='string'||typeof value==='boolean'&&typeof fallback==='boolean'?value:fallback}
 function put(s,key,value){if(!sports.includes(s))return;preferences[s]={...preferences[s],[key]:key==='legs'?Math.max(2,Math.min(4,Math.floor(Number(value))||2)):value};save()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(preferences))}catch{}}
 let sequence=0,pending=null;

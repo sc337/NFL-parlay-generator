@@ -40,3 +40,5 @@ test('successful generation closes filters for every sport without changing thei
   assert.equal(filters.open,false,sport);assert.equal(filters.selection,'alt');
  }
 });
+
+test('new NFL categories and one-time migration flags persist across visits',()=>{const r=setup({nfl:{markets:['passing_tds','completions','td'],scorerCompletionsAdded:true}});assert.deepEqual([...r.ui.get('nfl','markets',[])],['passing_tds','completions','td']);assert.equal(r.ui.get('nfl','scorerCompletionsAdded',false),true);r.ui.put('nfl','markets',['td']);assert.deepEqual([...r.ui.get('nfl','markets',[])],['td']);});
