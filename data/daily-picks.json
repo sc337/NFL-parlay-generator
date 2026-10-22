@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-10-22",
-  "updated_at": "2026-10-22T10:25:42.189Z",
+  "updated_at": "2026-10-22T10:35:42.828Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -32,17 +32,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-22T10:25:19.907226+00:00"
+      "snapshotAt": "2026-10-22T10:35:20.463068+00:00"
     },
     "nba": {
       "captured": 16,
       "passes": [],
-      "snapshotAt": "2026-10-22T10:15:29.971766+00:00"
+      "snapshotAt": "2026-10-22T10:25:30.222612+00:00"
     },
     "ncaaf": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-22T10:25:39.077580+00:00"
+      "snapshotAt": "2026-10-22T10:35:40.504697+00:00"
     },
     "nfl": {
       "captured": 15,
@@ -72,17 +72,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-10-22T10:25:32.501810+00:00"
+      "snapshotAt": "2026-10-22T10:35:32.906593+00:00"
     },
     "nhl": {
       "captured": 8,
       "passes": [],
-      "snapshotAt": "2026-10-22T10:15:27.256528+00:00"
+      "snapshotAt": "2026-10-22T10:25:27.757858+00:00"
     },
     "ufc": {
       "captured": 4,
       "passes": [],
-      "snapshotAt": "2026-10-22T10:25:16.523921+00:00"
+      "snapshotAt": "2026-10-22T10:35:16.727148+00:00"
     }
   },
   "records": [
@@ -9771,6 +9771,106 @@
           "isAltLine": false,
           "altReferenceLine": null,
           "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-10-22|nba|multi|balanced|2||learning-20261019|84928060b2f768f6",
+      "day": "2026-10-22",
+      "sport": "nba",
+      "mode": "multi",
+      "profile": "balanced",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": null
+      },
+      "capturedAt": "2026-10-22T10:35:42.828Z",
+      "snapshotAt": "2026-10-22T10:25:30.222612+00:00",
+      "sourceVersion": "e20984813a668830786502388e20ad60cf275af5",
+      "priceEstimate": 310,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.37449668175469586,
+        "conservativeP": 0.28617672407316036,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.22419469080751342,
+          "upper": 0.5991946908075134,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nba|KXNBA3D-26OCT22DENOKC-DENNJOKIC15|yes",
+          "ticker": "KXNBA3D-26OCT22DENOKC-DENNJOKIC15",
+          "side": "yes",
+          "eventId": "401909094",
+          "event": "Nuggets vs Thunder",
+          "eventTime": "2026-10-23T01:30Z",
+          "closeTime": "2026-10-25T01:30:00Z",
+          "selection": "Nikola Jokic Triple Double (Yes)",
+          "market": "triple_double",
+          "line": null,
+          "player": "Nikola Jokic",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.53,
+          "referenceAmericanOdds": null,
+          "marketP": 0.51,
+          "modelP": 0.625,
+          "rawModelP": 0.625,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": null,
+          "projectedTotal": 228.00699259543364,
+          "projectedMargin": 2.416240980919028,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nba|KXNBAPTS-26OCT23NYKBOS-BOSJTATUM0-25|no",
+          "ticker": "KXNBAPTS-26OCT23NYKBOS-BOSJTATUM0-25",
+          "side": "no",
+          "eventId": "401909095",
+          "event": "Knicks vs Celtics",
+          "eventTime": "2026-10-23T23:00Z",
+          "closeTime": "2026-10-25T23:00:00Z",
+          "selection": "Jayson Tatum Under 24.5 Points",
+          "market": "points",
+          "line": 24.5,
+          "player": "Jayson Tatum",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.46,
+          "referenceAmericanOdds": null,
+          "marketP": 0.42500000000000004,
+          "modelP": 0.5991946908075134,
+          "rawModelP": 0.5991946908075134,
+          "coverage": 0.544,
+          "confidence": null,
+          "forecastType": "experimental",
+          "projectedLine": 23.384262238962336,
+          "projectedTotal": 227.57970928180535,
+          "projectedMargin": 1.9558734700918023,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": 24.5,
+          "altDistance": 0,
           "result": null
         }
       ],
