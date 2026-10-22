@@ -174,7 +174,12 @@ function assess(s,m,f={},options={}){
  else if(m._invalidRoster===true)reason='Roster unverified';
  else if(!(q.p>0&&q.p<1))reason='Quote unavailable';
  else if(num(m.sourceQuality)!=null&&num(m.sourceQuality)<60)reason='Source quality too low';
- else if(!(p>0&&p<1)||coverage<minCoverage)reason='Independent projection too thin';
+ else if(!(p>0&&p<1)||coverage<minCoverage){
+  const history=s==='nfl'&&m.player?m.propHistoryStatus:null;
+  reason=history?.status==='insufficient_recent_sample'?'Recent return; insufficient completed-game sample':
+    history?.status==='inactive_latest_game'?'No activity in latest completed team game':
+    history?.status==='identity_unresolved'?'Player history identity unresolved':'Independent projection too thin';
+ }
  else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
  else reason=participation(s,m,f,g,warnings);
  if(monitored){warnings.push(...monitored.warnings);if(!reason&&monitored.blocked)reason=monitored.blocked;}

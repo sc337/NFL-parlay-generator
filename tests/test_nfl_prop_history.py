@@ -19,4 +19,29 @@ class HistoryTests(unittest.TestCase):
   mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc));self.assertNotIn('propHistory',data['games'][0]['markets'][0]);data=self.snapshot();mod.attach(data,self.plays(),datetime(2026,9,10,tzinfo=timezone.utc));self.assertTrue(all('propHistory' not in m for m in data['games'][0]['markets']))
  def test_zero_usage_included_latest_inactivity_blocks(self):
   games=self.plays();del list(games.values())[1]['players']['R'];data=self.snapshot();mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc));h=data['games'][0]['markets'][0]['propHistory'];self.assertEqual(h['metrics']['player_rush_yds'],[80,0,90,70]);self.assertEqual(h['played'],3);del list(games.values())[-1]['players']['R'];data=self.snapshot();mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc));self.assertNotIn('propHistory',data['games'][0]['markets'][0])
+ def test_suffix_match_is_unique_and_history_preserves_observed_games(self):
+  games=self.plays();data=self.snapshot();data['games'][0]['markets'][0]['player']='Andrew Runner III'
+  mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc))
+  market=data['games'][0]['markets'][0]
+  self.assertIn('propHistory',market);self.assertEqual(market['propHistoryStatus']['gsisId'],'R')
+  for row in games.values():row['players']['R2']={**row['players']['R'],'name':'A.Runner'}
+  mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc))
+  self.assertNotIn('propHistory',market);self.assertEqual(market['propHistoryStatus']['status'],'identity_unresolved')
+ def test_recent_return_gets_explicit_coverage_status_without_inventing_history(self):
+  games=self.plays()
+  for row in list(games.values())[1:3]:del row['players']['Q']
+  data=self.snapshot();mod.attach(data,games,datetime(2026,9,30,tzinfo=timezone.utc));m=data['games'][0]['markets'][1]
+  self.assertNotIn('propHistory',m);self.assertEqual(m['propHistoryStatus']['activeGames'],2)
+  self.assertEqual(m['propHistoryStatus']['status'],'insufficient_recent_sample')
+ def test_download_failure_retains_prior_evidence_and_original_dates(self):
+  import json,tempfile
+  from unittest.mock import patch
+  with tempfile.TemporaryDirectory() as folder:
+   path=Path(folder)/'snapshot.json';data=self.snapshot();data['prop_context']={'updated_at':'2026-09-29T00:00:00Z','attached':1}
+   data['games'][0]['markets'][0]['propHistory']={'latest_game':'2026-09-22','source':'nflverse completed plays'}
+   path.write_text(json.dumps(data))
+   with patch.object(mod,'SNAPSHOT',path),patch.object(mod,'urlopen',side_effect=OSError('offline')):mod.main()
+   actual=json.loads(path.read_text());self.assertEqual(actual['prop_context']['updated_at'],data['prop_context']['updated_at'])
+   self.assertEqual(actual['prop_context']['status'],'refresh_unavailable')
+   self.assertEqual(actual['games'][0]['markets'][0]['propHistory'],data['games'][0]['markets'][0]['propHistory'])
 if __name__=='__main__':unittest.main()
