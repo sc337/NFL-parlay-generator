@@ -1093,7 +1093,7 @@ function render(parlays){
     const node=tpl.content.cloneNode(true);
     node.querySelector('.parlay-card').dataset.nflProfile=p.profile;
     if(sgpResult?.reason){
-      const notice=document.createElement('p');notice.className='summary sgp-build-notice';notice.setAttribute('role','status');
+      const notice=document.createElement('p');notice.className='card-thesis sgp-build-notice';notice.setAttribute('role','status');
       notice.textContent='Showing '+shownCount+' legs of '+sgpResult.requested+' requested. '+sgpResult.reason;
       node.querySelector('.legs').before(notice);
     }
