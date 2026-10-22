@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-22T14:41:59.840Z",
+  "updated_at": "2026-10-22T14:50:06.546Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-22T14:39:49.863612+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 206,
       "quotedMarkets": 206,
+      "expiredQuotes": 0,
       "playerMarkets": 141,
       "families": {
         "moneyline": 8,
@@ -42,9 +43,10 @@
     },
     "nba": {
       "snapshotAt": "2026-10-22T14:39:35.281759+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 11,
       "markets": 4462,
       "quotedMarkets": 4462,
+      "expiredQuotes": 0,
       "playerMarkets": 2632,
       "families": {
         "moneyline": 76,
@@ -233,9 +235,10 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-22T14:41:00.103240+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 6507,
       "quotedMarkets": 6507,
+      "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
         "moneyline": 462,
@@ -1111,10 +1114,11 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-22T14:39:45.158416+00:00",
-      "ageMinutes": 2,
+      "snapshotAt": "2026-10-22T14:49:10.746602+00:00",
+      "ageMinutes": 1,
       "markets": 5273,
       "quotedMarkets": 5273,
+      "expiredQuotes": 0,
       "playerMarkets": 3967,
       "families": {
         "h2h": 56,
@@ -1258,16 +1262,17 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-10-22T14:39:47.575950+00:00",
-      "ageMinutes": 2,
-      "markets": 3448,
-      "quotedMarkets": 3448,
-      "playerMarkets": 2674,
+      "snapshotAt": "2026-10-22T14:49:57.911582+00:00",
+      "ageMinutes": 0,
+      "markets": 3458,
+      "quotedMarkets": 3458,
+      "expiredQuotes": 0,
+      "playerMarkets": 2684,
       "families": {
         "moneyline": 98,
         "spread": 208,
         "total": 468,
-        "goals": 1066,
+        "goals": 1076,
         "assists": 696,
         "points": 912
       },
@@ -1471,9 +1476,9 @@
       ],
       "playerCounts": {
         "401892552": 204,
-        "401892553": 208,
-        "401892554": 202,
-        "401892555": 204,
+        "401892553": 214,
+        "401892554": 200,
+        "401892555": 210,
         "401892556": 206,
         "401892557": 182,
         "401892558": 262,
@@ -1486,9 +1491,10 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-22T14:39:45.754814+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 228,
       "quotedMarkets": 228,
+      "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
         "moneyline": 28,
@@ -1651,10 +1657,19 @@
       "message": "2123 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
+    },
+    {
+      "id": "pipeline:evaluation-stale",
+      "sport": null,
+      "code": "evaluation-stale",
+      "severity": "warning",
+      "message": "Performance recording/settlement report is stale; betting edge remains unverified.",
+      "firstSeen": "2026-10-22T14:50:06.546Z",
+      "changedAt": "2026-10-22T14:50:06.546Z"
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39787128038",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39798815853",
   "refreshResults": {
     "mlb": {
       "ok": true,
@@ -1674,7 +1689,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-22T14:39:53.812580+00:00"
+      "at": "2026-10-22T14:50:06.525781+00:00"
     },
     "ufc": {
       "ok": true,
