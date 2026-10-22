@@ -33,6 +33,14 @@ class PublicStarterTests(unittest.TestCase):
         bad = copy.deepcopy(ctx); bad['players'].pop('BOS Player 0'); self.assertEqual(len(parse_nba(html, bad, NOW)), 1)
         html, ctx = self.nba(day='2026-10-17'); self.assertEqual(parse_nba(html, ctx, NOW), [])
 
+    def test_confirmations_still_match_tonights_context_after_utc_midnight(self):
+        html, ctx = self.nba('confirmed')
+        after_midnight = datetime(2026, 10, 17, 0, 30, tzinfo=timezone.utc)
+        rows = parse_nba(html, ctx, after_midnight)
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row['status'] == 'confirmed' and row['game_id'] == '1'
+                            for row in rows))
+
     def goalie_fixture(self):
         ctx = {'games': {'1': {'away': 'BOS', 'home': 'COL', 'start': START}}, 'rosters': [
             {'name': 'Away Goalie', 'team': 'BOS', 'position': 'G'}, {'name': 'Home Goalie', 'team': 'COL', 'position': 'G'}]}

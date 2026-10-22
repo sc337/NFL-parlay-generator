@@ -251,8 +251,16 @@ def context(events, now):
     for p in players.values(): p['games'].sort(key=lambda r:r['date'])
     return {'schemaVersion': 1, 'updated_at': now.isoformat(), 'games': games, 'teams': histories, 'players': players, 'sources': ['ESPN completed NBA box scores and current rosters'], 'availability': 'Roster injury status; starting lineups not confirmed'}
 
+def schedule_dates(now):
+    """Include the U.S. evening slate after UTC midnight, through UTC day +7."""
+    first = now.astimezone(ZoneInfo('America/Los_Angeles')).date()
+    last = now.astimezone(timezone.utc).date() + timedelta(days=7)
+    return [(first + timedelta(days=i)).strftime('%Y%m%d')
+            for i in range((last - first).days + 1)]
+
+
 def main():
-    now = datetime.now(timezone.utc); days = [(now+timedelta(days=i)).strftime('%Y%m%d') for i in range(8)]
+    now = datetime.now(timezone.utc); days = schedule_dates(now)
     events = []
     for day in days: events.extend(get(ESPN+'/scoreboard?dates='+day+'&limit=100').get('events', []))
     events = list({str(e['id']): e for e in events}.values()); ctx = context(events, now); rows = []
