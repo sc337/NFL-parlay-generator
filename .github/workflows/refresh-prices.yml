@@ -51,7 +51,30 @@ jobs:
         env:
           TZ: America/Los_Angeles
           REFRESH_STATUS: success
-        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nfl mlb ncaaf ufc
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports mlb ncaaf ufc
+
+  nfl-prices:
+    concurrency:
+      group: rolling-nfl-price-worker
+      cancel-in-progress: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check NFL refresh safeguards
+        run: python -m unittest discover -s tests -p 'test_price_worker.py'
+      - name: Publish NFL independently of other sports and recommendation capture
+        env:
+          TZ: America/Los_Angeles
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports nfl
 
   nba-prices:
     concurrency:

@@ -167,3 +167,18 @@ class PublicOdds(unittest.TestCase):
                 self.assertEqual(json.loads(p.read_text()), {'original': True})
             finally:
                 os.chdir(before)
+
+class NflQuoteOnlyRefresh(unittest.TestCase):
+    def test_quote_refresh_can_skip_implicit_full_context_rebuild(self):
+        import os
+        from scripts import update_public_odds as updater
+        from scripts import enrich_snapshot_context as context
+        with tempfile.TemporaryDirectory() as folder:
+            before=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir()
+                Path('data/kalshi-nfl.json').write_text(json.dumps(base('nfl')))
+                with patch.object(updater,'collect',return_value=[]), patch.object(context,'main') as enrich_context:
+                    self.assertTrue(updater.main('nfl',skip_nfl_context=True))
+                enrich_context.assert_not_called()
+            finally:os.chdir(before)
