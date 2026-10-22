@@ -107,7 +107,7 @@ function contextEvidence(s,m,f={},game){
   if(m.player){
    add(m.contextSignals?.injury_checked===true,'Availability check');add(m.propHistory?.played>=3,'Recent opportunities');
    const role=f.roleChange??m.roleChange,history=m.propHistory;
-   const metric=m.type==='rushing'?'player_rush_attempts':['receiving','receptions'].includes(m.type)?'targets':'player_pass_attempts',samples=history?.opportunities?.[metric]||history?.metrics?.[metric];
+   const metric=(m.type==='rushing'||m.type==='td'&&['RB','QB'].includes(m.position))?'player_rush_attempts':(['receiving','receptions'].includes(m.type)||m.type==='td')?'targets':'player_pass_attempts',samples=history?.opportunities?.[metric]||history?.metrics?.[metric];
    const measuredRole=Array.isArray(samples)&&samples.length>=3&&samples.every(v=>typeof v==='number'&&Number.isFinite(v)&&v>=0)&&samples.some(v=>v>0);
    const modeledStable=measuredRole&&history?.source==='nflverse completed plays'&&history.played>=3&&history.games>=3&&num(f.roleStability??m.roleStability)>=.6&&!['rising','falling'].includes(role?.status);
    add(history?.roleStable===true||history?.roleStable==null&&modeledStable,'Stable recent role');

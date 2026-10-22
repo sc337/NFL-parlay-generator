@@ -21,7 +21,7 @@ function estimate(game,market){
  const blend=clamp(.12+.025*x.games,.17,.245);
  return {modelP:clamp(marketP*(1-blend)+opportunityP*blend,.025,.95),rawModelP:opportunityP,
    marketP,expectedPlayerTds,opportunityP,coverage:clamp(.2+.06*x.games,.32,.5),
-   confidence:0,ev:null,experimental:true,source:'nflverse completed plays',
+   forecastVersion:'nfl-td-scorer-opportunity-v1',probabilityMethod:'Experimental scoring-opportunity estimate',confidence:0,ev:null,experimental:true,source:'nflverse completed plays',
    projectedLine:null};
 }
 window.NFL_TD_MODEL={estimate};

@@ -5,7 +5,7 @@ function role(m){
  const h=m.propHistory,inj=String(m?.contextSignals?.injury_status||'').toLowerCase();
  if(/out|doubtful|inactive|injured reserve/.test(inj))return .05;
  if(h?.source!=='nflverse completed plays'||h.games<3||h.played<3)return .25;
- const key=m.type==='rushing'?'player_rush_attempts':['receiving','receptions'].includes(m.type)?'targets':'player_pass_attempts';
+ const key=(m.type==='rushing'||m.type==='td'&&['RB','QB'].includes(m.position))?'player_rush_attempts':(['receiving','receptions'].includes(m.type)||m.type==='td')?'targets':'player_pass_attempts';
  const values=h.opportunities?.[key]||h.metrics?.[key];
  if(!Array.isArray(values)||values.length<3||values.some(v=>!Number.isFinite(v)))return clamp(h.played/h.games*.7,.05,.65);
  const mean=values.reduce((s,v)=>s+v,0)/values.length;if(!(mean>0))return .1;
@@ -14,7 +14,7 @@ function role(m){
 }
 function opp(game,m){const f=game?.context?.recent_form||{},me=m.team,fo=Object.entries(f).filter(([t])=>t!==me).map(([,v])=>v).find(v=>v?.available);if(!fo)return 0;const pa=num(fo.avg_points_against);return pa==null?0:clamp((pa-22)/18,-.3,.3)}
 function script(game,m){const p=window.NFL_PROJECTIONS?.marketProjection?.(game,m);const margin=p?.team?.homeMargin,total=p?.team?.total;if(!Number.isFinite(margin)&&!Number.isFinite(total))return 0;let z=0;if(m.type==='rushing'&&m.team){const fav=m.team===game.home?margin:-margin;if(Number.isFinite(fav))z+=clamp(fav/24,-.25,.25)}if(['passing','receiving','receptions'].includes(m.type)&&Number.isFinite(total))z+=clamp((total-44)/35,-.16,.16);return z}
-function distribution(m,projection){const base={passing:.24,rushing:.34,receiving:.38,receptions:.29,td:.65,h2h:.22,spreads:.28,totals:.25}[m.type]||.32;return clamp(base+(1-role(m))*.18+(m.type==='td'?.12:0),.16,.82)}
+function distribution(m,projection){const base={passing:.24,rushing:.34,receiving:.38,receptions:.29,completions:.29,td:.65,h2h:.22,spreads:.28,totals:.25}[m.type]||.32;return clamp(base+(1-role(m))*.18+(m.type==='td'?.12:0),.16,.82)}
 function normalCdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=1-d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>=0?p:1-p}
 // Discrete TD counts use a Poisson distribution; allow observed overdispersion
 // with a negative-binomial count distribution. No yardage-scale normal width.
@@ -28,7 +28,7 @@ function countProbability(mean,variance,line,side){
 function simulate(game,m,base){
  const line=num(m.point),proj=num(base?.projectionLine);if(line==null||proj==null||!m.player)return null;
  const count=String(m.marketKey||'').replace(/_alternate$/,'')==='player_pass_tds';
- const cv=distribution(m,proj),sd=count?Math.sqrt(Math.max(proj,(num(base.projectionSD)||0)**2)):Math.max(m.type==='receptions'?1.2:5,Math.abs(proj)*cv,num(base.projectionSD)||0);
+ const cv=distribution(m,proj),sd=count?Math.sqrt(Math.max(proj,(num(base.projectionSD)||0)**2)):Math.max(['receptions','completions'].includes(m.type)?1.2:5,Math.abs(proj)*cv,num(base.projectionSD)||0);
  const overdispersion=count&&proj>0?Math.max(0,(sd*sd-proj)/(proj*proj)):0;
  const at=projection=>count?countProbability(Math.max(0,projection),Math.max(0,projection)+overdispersion*projection*projection,line,m.side):(m.side==='under'?normalCdf((line-projection)/sd):1-normalCdf((line-projection)/sd));
  const initial=at(proj);if(initial==null)return null;
