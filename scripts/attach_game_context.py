@@ -36,11 +36,14 @@ def scoreboard(sport,days):
  import urllib.request
  out=[]
  for day in sorted(days):
-  url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/scoreboard?dates={day.strftime("%Y%m%d")}&limit=1000'+('&groups=80' if sport=='football/college-football' else '')
-  try:
-   with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'sports-dashboard/1.0'}),timeout=25) as response:d=json.load(response)
-   out+=d.get('events',[])
-  except Exception as e:print('schedule unavailable',sport,day,e)
+  # ESPN silently caps college responses at 25 when limit exceeds 500.
+  # Fetch FBS and FCS separately: comma-separated groups produce empty events.
+  for group in ('80','81') if sport=='football/college-football' else ('',):
+   url=f'https://site.api.espn.com/apis/site/v2/sports/{sport}/scoreboard?dates={day.strftime("%Y%m%d")}&limit=500'+('&groups='+group if group else '')
+   try:
+    with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'sports-dashboard/1.0'}),timeout=25) as response:d=json.load(response)
+    out+=[event for event in d.get('events',[]) if event.get('id')]
+   except Exception as e:print('schedule unavailable',sport,day,e)
  return out
 
 def ncaa_scoreboard(days):
@@ -81,36 +84,57 @@ def ncaa_scoreboard(days):
 def college_name(s):
  s=key(s).replace('state','st').replace('saint','st')
  return {'armywestpoint':'army','westernky':'westernkentucky','easternky':'easternkentucky',
-         'miamifl':'miami','miamioh':'miamiohio','northernill':'northernillinois','southernmiss':'southernmississippi','appst':'appalachianst','ulmonroe':'louisianamonroe','ul':'louisiana'}.get(s,s)
+         'miamifl':'miami','miamioh':'miamiohio','northernill':'northernillinois','southernmiss':'southernmississippi','appst':'appalachianst','ulmonroe':'louisianamonroe','ul':'louisiana','nmsu':'newmexicost','ncst':'northcarolinast','samhoustonst':'samhouston','thecitadel':'citadel','universityatalbany':'albany','ualbany':'albany','centralconnecticutst':'centralconnecticut','nichollsst':'nicholls','southernuniversity':'southern','tennesseemartin':'utmartin','southeasternlouisiana':'selouisiana'}.get(s,s)
+
+def college_matches(names, day, events):
+ matches={}
+ if len(names)!=2:return []
+ a,b=sorted(names)
+ for event in events:
+  comp=(event.get('competitions') or [{}])[0]
+  comps=comp.get('competitors',[])
+  if len(comps)!=2 or comp.get('timeValid') is False:continue
+  teamnames=[{college_name(c.get('team',{}).get(field)) for field in
+              ('location','displayName','shortDisplayName','abbreviation')} for c in comps]
+  if not (a in teamnames[0] and b in teamnames[1] or b in teamnames[0] and a in teamnames[1]):continue
+  try:start=datetime.fromisoformat(event['date'].replace('Z','+00:00'))
+  except (KeyError,TypeError,ValueError,AttributeError):continue
+  if start.tzinfo and start.astimezone(ZoneInfo('America/New_York')).date()==day:
+   # Multiple providers may describe the same game. Prefer ESPN's context ID;
+   # genuinely conflicting kickoff times remain ambiguous and ineligible.
+   matches.setdefault(start.timestamp(),event)
+ return list(matches.values())
 
 def attach_ncaaf():
  path=Path('data/kalshi-ncaaf.json');d=json.loads(path.read_text());rows=d['markets'];days={day for m in rows if (day:=date_code(m.get('event_ticker'))[0])}
- upcoming=sorted(day for day in days if datetime.now(timezone.utc).date()<=day<=datetime.now(timezone.utc).date()+timedelta(days=14))
+ today=datetime.now(ZoneInfo('America/New_York')).date()
+ upcoming=sorted(day for day in days if today<=day<=today+timedelta(days=14))
  events=scoreboard('football/college-football',upcoming)
- if not events:events=ncaa_scoreboard(upcoming)
  events=list({event.get('id'):event for event in events if event.get('id')}.values())
  groups={}
  for row in rows:
   if row.get('kind')=='moneyline':groups.setdefault(row.get('event_ticker','').split('-',1)[-1],[]).append(row)
+ unresolved={day for group in groups.values() if (day:=date_code(group[0].get('event_ticker'))[0]) in upcoming
+             and len(college_matches({college_name(r.get('title','').removesuffix(' wins')) for r in group},day,events))!=1}
+ # A partial ESPN response is not a complete schedule. Supplement only dates
+ # with unresolved matchups; preserve the same exact-name/date/time checks.
+ if unresolved:events+=ncaa_scoreboard(sorted(unresolved))
  for m in rows:
   day,_=date_code(m.get('event_ticker'))
   if not day:continue
   group=groups.get(m['event_ticker'].split('-',1)[-1],[])
   names={college_name(r.get('title','').removesuffix(' wins')) for r in group}
   if len(names)!=2:continue
-  matches=[]
-  for event in events:
-   comps=(event.get('competitions') or [{}])[0].get('competitors',[])
-   if len(comps)!=2:continue
-   teamnames=[{college_name(x) for x in (c.get('team') or {}).values() if isinstance(x,str) and len(x)>2} for c in comps]
-   a,b=sorted(names)
-   if not (a in teamnames[0] and b in teamnames[1] or b in teamnames[0] and a in teamnames[1]):continue
-   start=event.get('date')
-   if (event.get('competitions') or [{}])[0].get('timeValid') is False:continue
-   if start and datetime.fromisoformat(start.replace('Z','+00:00')).astimezone(ZoneInfo('America/New_York')).date()==day:matches.append(event)
-  if len(matches)!=1:continue
+  matches=college_matches(names,day,events)
+  m['schedule_status']='verified' if len(matches)==1 else 'unmatched'
+  if len(matches)!=1:
+   for field in ('game_id','game_time','game_label','game_status','game_source'):m.pop(field,None)
+   continue
   ev=matches[0];m['game_id']=ev['id'];m['game_time']=ev['date'];m['game_label']=ev.get('name') or ev.get('shortName');m['game_status']=(ev.get('status') or {}).get('type',{}).get('state');m['game_source']=ev.get('source') or 'ESPN'
- path.write_text(json.dumps(d,indent=2));print('NCAAF matched',sum(bool(m.get('game_time')) for m in rows),'of',len(rows))
+ matched=sum(bool(m.get('game_time')) for m in rows)
+ d['schedule_coverage']={'verified_quotes':matched,'unmatched_quotes':len(rows)-matched,
+     'checked_at':datetime.now(timezone.utc).isoformat(),'policy':'Exact teams and Eastern event date; kickoff must be verified'}
+ path.write_text(json.dumps(d,indent=2));print('NCAAF matched',matched,'of',len(rows))
 
 if __name__=='__main__':
  import sys

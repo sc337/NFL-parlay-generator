@@ -1,7 +1,7 @@
 // Shared browser/training math. Training is offline; the browser only applies
 // dated, held-out rules for the exact model version.
 (function(factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(typeof window!=='undefined')window.MODEL_LEARNING=api;})(()=>{'use strict';
-const VERSION='learning-20261019',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const VERSION='learning-20261022',clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const finite=v=>typeof v==='number'&&Number.isFinite(v),mean=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
 const median=a=>{const x=[...a].sort((a,b)=>a-b);return x.length?(x[Math.floor((x.length-1)/2)]+x[Math.floor(x.length/2)])/2:null};
 function roleChange(values){

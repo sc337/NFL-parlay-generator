@@ -9,3 +9,7 @@ test('MLB player estimates need exact identity, matching current team and real l
  const r=runtime(['pick-quality.js','mlb-prop-model.js']),m={kind:'hits',label:'Hitter: 1+ hits',game_id:'g',game_time:start,probability:.5},rows=Array.from({length:8},(_,i)=>({date:new Date(now-(10-i)*86400000).toISOString(),teamId:1,plateAppearances:4,hits:1,totalBases:2})),ctx={updated_at:new Date(now).toISOString(),players:{Hitter:7},games:[{gamePk:'g',homeId:1,awayId:2}],playerLogs:{'7':rows}};
  const f=r.window.MLB_PROP_MODEL.estimate(m,ctx);assert.ok(f);assert.equal(f.projectedLine,1);assert.equal(f.opportunity.projectedExposure,4);assert.ok(f.modelP>0&&f.modelP<1);assert.equal(f.roleChange.status,'stable');ctx.games[0].homeId=3;assert.equal(r.window.MLB_PROP_MODEL.estimate(m,ctx),null);
 });
+test('MLB HRR requires all three observed components and uses completed same-team history',()=>{
+ const r=runtime(['pick-quality.js','mlb-prop-model.js']),m={kind:'hrr',label:'Hitter: 2+ hits, runs, RBI',game_id:'g',game_time:start,probability:.5},rows=Array.from({length:8},(_,i)=>({date:new Date(now-(60-i)*86400000).toISOString(),teamId:1,plateAppearances:4,hits:1,runs:1,rbi:1})),ctx={updated_at:new Date(now).toISOString(),players:{Hitter:7},games:[{gamePk:'g',homeId:1,awayId:2}],playerLogs:{'7':rows}};
+ assert.equal(r.window.MLB_PROP_MODEL.estimate(m,ctx).projectedLine,3);delete rows[0].runs;delete rows[1].rbi;delete rows[2].hits;delete rows[3].runs;assert.equal(r.window.MLB_PROP_MODEL.estimate(m,ctx),null);
+});

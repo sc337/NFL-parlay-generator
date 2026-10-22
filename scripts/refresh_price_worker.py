@@ -79,6 +79,49 @@ def valid_snapshot(payload, sport, previous=None, now=None):
 def stamp_time(raw):
     return stamp({'updated_at': raw})
 
+def reconcile_snapshot(candidate, existing):
+    """Publish metadata and native quote captures independently.
+
+    A public-reference refresh advances updated_at, not primary_updated_at.
+    Select a whole native capture so removed/suspended contracts stay removed;
+    never retimestamp individual quotes or resurrect contracts by merging prices.
+    """
+    if not existing:
+        return candidate
+    newer = (stamp(candidate) or 0) > (stamp(existing) or 0)
+    base, other = (candidate, existing) if newer else (existing, candidate)
+    def capture(payload):
+        return stamp_time(payload.get('primary_updated_at')) or stamp(payload) or 0
+    native = candidate if capture(candidate) > capture(existing) else existing if capture(existing) > capture(candidate) else base
+    if native is base or not isinstance(base.get('games'), list) or not isinstance(native.get('games'), list):
+        return reconcile_evidence(base, other)
+    # NFL native games are the authority for contract membership. The latest
+    # reference collection can still add independent, explicitly dated quotes.
+    references = {g.get('id'): g for g in base['games']}
+    games = []
+    for game in native['games']:
+        recent = references.pop(game.get('id'), {})
+        merged = {**game}
+        if (stamp(recent.get('context') or {}) or 0) > (stamp(game.get('context') or {}) or 0):
+            merged['context'] = recent['context']
+        evidence = {(m.get('ticker'), m.get('quoteSide')): m.get('espnEvidence')
+                    for m in recent.get('markets', []) if m.get('espnEvidence')}
+        merged['markets'] = [{**m, **({'espnEvidence': evidence[(m.get('ticker'), m.get('quoteSide'))]}
+                            if (m.get('ticker'), m.get('quoteSide')) in evidence else {})}
+                            for m in game['markets'] if not m.get('referenceOnly')]
+        merged['markets'] += [m for m in recent.get('markets', []) if m.get('referenceOnly')]
+        games.append(merged)
+    for game in references.values():
+        refs = [m for m in game.get('markets', []) if m.get('referenceOnly')]
+        if refs:
+            games.append({**game, 'markets': refs})
+    result = {**base, 'games': games}
+    for key in ('primary_updated_at', 'raw_market_count', 'series_counts', 'market_coverage',
+                'filters', 'prop_verification', 'prop_context', 'td_context'):
+        if key in native:
+            result[key] = native[key]
+    return reconcile_evidence(result, other)
+
 def run(args, timeout=240):
     return subprocess.run(args, check=True, timeout=timeout)
 
@@ -168,10 +211,9 @@ def publish(names, results=None):
                     existing = json.loads(Path(name).read_text())
                 except (OSError, ValueError):
                     existing = {}
-                candidate = reconcile_evidence(candidate, existing)
-                raw = json.dumps(candidate).encode() if 'fighter_stats' in candidate else raw
-                new, old = stamp(candidate), stamp(existing)
-                if new is not None and old is not None and old >= new:
+                candidate = reconcile_snapshot(candidate, existing)
+                raw = json.dumps(candidate).encode()
+                if candidate == existing:
                     continue
                 Path(name).parent.mkdir(parents=True, exist_ok=True)
                 Path(name).write_bytes(raw)

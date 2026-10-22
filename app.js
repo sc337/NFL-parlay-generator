@@ -932,7 +932,7 @@ function buildMulti(count,risk,variant,previous=[]){
   return null;
 }
 
-function nflQualityForecast(m){return {selectionMode:state.recommendationTier==='likelihood'?'likelihood':'screened',modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,baselines:m.baselines,marketAnchored:m.marketAnchored===true,modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental};}
+function nflQualityForecast(m){return {selectionMode:state.recommendationTier==='likelihood'?'likelihood':'screened',modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,sensitivity:m.sensitivity,baselines:m.baselines,marketAnchored:m.marketAnchored===true,modelP:m.modelProbability,rawModelP:m.rawModelProbability,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental};}
 function prepareNflQuality(){window.PICK_QUALITY?.prepare('nfl',(state.games||[]).flatMap(g=>(g.markets||[])),{},state.games,window.NFL_KALSHI?.snapshotAt?.()||null);}
 function packageParlay(legs,variant,isSgp,meta={}){
  if(window.SELECTION_UI?.accepts&&!window.SELECTION_UI.accepts('nfl',legs))return null;

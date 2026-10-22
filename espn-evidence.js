@@ -20,7 +20,8 @@ function inspect(m,now=Date.now()){
    const old=values.slice(0,-2),median=a=>{const s=[...a].sort((a,b)=>a-b);return (s[Math.floor((s.length-1)/2)]+s[Math.floor(s.length/2)])/2},noise=1.4826*median(old.map(v=>Math.abs(v-median(old))));
    const material=base>0&&Math.abs(recent-base)>=Math.max(1,base*.25,noise);
    role={status:base<=0?'insufficient':material&&ratio<.7?'falling':material&&ratio>1.3?'rising':'stable',baseline:base,recent,ratio,sample:values.length,metric:u.metric};
-   if(['falling','rising'].includes(role.status))blocked=blocked||'Recent '+u.metric+' changed; reassess playing time';
+   if(role.status==='falling')blocked=blocked||'Recent '+u.metric+' decreased; reassess playing time';
+   if(role.status==='rising')warnings.push('Recent '+u.metric+' increased; projection must account for the changed role');
   }else warnings.push('Recent ESPN usage sample incomplete');
  }
  return {blocked,warnings,role,note:[a?'ESPN '+a.status:'No matching injury report; availability unconfirmed',role?'Recent '+role.metric+': '+role.recent.toFixed(1)+' vs '+role.baseline.toFixed(1)+' baseline ('+role.status+')':'', 'Checked '+new Date(e.checkedAt).toLocaleString()].filter(Boolean).join(' · ')};
