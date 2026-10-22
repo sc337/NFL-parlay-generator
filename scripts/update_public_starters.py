@@ -276,6 +276,54 @@ def parse_lines(html, ctx, team, now, url):
     return out
 
 
+def retain_nba_lineups(rows, previous, ctx, now):
+    """Retain dated lineup reports; a cached report never becomes confirmation."""
+    def valid(row):
+        at, start = instant(row.get('checked_at')), instant(row.get('start_time'))
+        names = row.get('players') or []
+        return (row.get('sport') == 'nba' and row.get('role') == 'lineup'
+                and row.get('status') in ('confirmed', 'projected')
+                and at and start and at <= now+timedelta(minutes=5)
+                and len(names) == 5 and len({key(n) for n in names}) == 5
+                and urlparse(row.get('source_url', '')).scheme == 'https')
+
+    def identity(row):
+        return str(row.get('game_id')), row.get('team')
+
+    def signature(row):
+        return tuple(sorted(key(n) for n in row['players'])), row['status']
+
+    old = [r for r in previous.get('records', []) if valid(r)]
+    current = [r for r in rows if valid(r)]
+    for row in current:
+        matches = [r for r in old if identity(r) == identity(row)]
+        latest = max(matches, key=lambda r: r['checked_at']) if matches else None
+        row['changed_at'] = (latest.get('changed_at', latest['checked_at'])
+                             if latest and signature(latest) == signature(row)
+                             else row['checked_at'])
+
+    present = {identity(r) for r in rows if r.get('sport') == 'nba' and r.get('role') == 'lineup'}
+    for row in old:
+        game = ctx.get('games', {}).get(str(row.get('game_id')), {})
+        start = instant(row['start_time'])
+        roster = [p for p in ctx.get('players', {}).values() if p.get('team') == row.get('team')]
+        if (identity(row) not in present and start > now
+                and start == instant(game.get('start'))
+                and row.get('team') in (game.get('away'), game.get('home'))
+                and now-instant(row['checked_at']) <= timedelta(hours=24)
+                and all(sum(key(p.get('name')) == key(n) for p in roster) == 1 for n in row['players'])):
+            rows.append({**row, 'retained': True})
+
+    history = {}
+    for row in [*previous.get('nba_lineup_history', []), *old, *current]:
+        if not valid(row) or not now-timedelta(days=7) <= instant(row['start_time']) < now:
+            continue
+        team = row['team']
+        if team not in history or (row['start_time'], row['checked_at']) > (history[team]['start_time'], history[team]['checked_at']):
+            history[team] = row
+    return rows, list(history.values())
+
+
 def collect(now, reader=None):
     reader = reader or Reader(); rows = []; checks = []
     def attempt(source, fn):
@@ -289,6 +337,10 @@ def collect(now, reader=None):
         except (OSError, ValueError):
             return {}
     nba, nhl = context('nba'), context('nhl')
+    try:
+        previous = json.loads((ROOT/TARGET).read_text())
+    except (OSError, ValueError):
+        previous = {}
     # Today's public cards only; tomorrow's subscriber content is never requested.
     result = attempt('RotoWire NBA', lambda: parse_nba(reader.get(RW), nba, now))
     rows.extend(result or [])
@@ -299,8 +351,10 @@ def collect(now, reader=None):
         for team, slug in slugs.items():
             url = DFO+'/teams/'+slug+'/line-combinations'
             rows.extend(attempt('Daily Faceoff '+team+' lines', lambda u=url, t=team: parse_lines(reader.get(u), nhl, t, now, u)) or [])
-    # Do not retain previous confirmed rows on a failed fetch, nor retimestamp them.
-    return {'schemaVersion': 1, 'updated_at': now.isoformat(), 'records': rows, 'checks': checks,
+    # Retained NBA lineups keep their observation time and are provisional.
+    # Injury/goalie/QB confirmations still expire normally; never retimestamp them.
+    rows, history = retain_nba_lineups(rows, previous, nba, now)
+    return {'schemaVersion': 1, 'updated_at': now.isoformat(), 'records': rows, 'nba_lineup_history': history, 'checks': checks,
             'college_status': 'Official game-specific QB announcements require sourced manual review; availability is not starting status.'}
 
 

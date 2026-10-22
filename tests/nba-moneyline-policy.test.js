@@ -40,11 +40,11 @@ test('historical team data decays and an established current-season sample stays
  const recent=M.team(f.ctx.teams[a.team_code].games,NOW,Date.parse(START));assert.ok(old.effectiveN<recent.effectiveN/10);assert.equal(old.recent,0);assert.equal(recent.recent,12);
  const x=M.estimate(a,f.ctx);assert.equal(x.marketAnchored,false);assert.equal(x.marketBasis,null);const original=x.modelP;a.yes_ask=.8;a.probability=.8;assert.equal(M.estimate(a,f.ctx).modelP,original);
 });
-test('NBA ML keeps price caps, injury checks and near-tip lineup gates',()=>{
+test('NBA ML keeps price caps and injury checks while labeling pending near-tip lineups',()=>{
  const f=fixture([.9,.7]),r=runtime(f),Q=r.w.PICK_QUALITY,M=r.w.NBA_MODEL,a=f.markets[0],b=f.markets[2];
  const assess=m=>Q.assess('nba',m,Q.forecast('nba',m,M.estimate(m,f.ctx)),{parlay:true,nbaProfile:'safe'});
  assert.match(assess(a).reason,/price too short/);b.injury_status='out';assert.match(assess(b).reason,/unavailable|out/i);delete b.injury_status;
- const near=new Date(NOW+60*60000).toISOString();b.game_time=near;f.markets[3].game_time=near;f.ctx.games.g1.start=near;assert.match(assess(b).reason,/Confirm starters/);
+ const near=new Date(NOW+60*60000).toISOString();b.game_time=near;f.markets[3].game_time=near;f.ctx.games.g1.start=near;assert.equal(assess(b).pass,true);assert.match(assess(b).warnings.join(' '),/Lineup pending · Not final/);
 });
 test('key-player injury and changed roster history reduce independent reliance instead of inventing an adjustment',()=>{
  for(const change of ['injury','roster']){
