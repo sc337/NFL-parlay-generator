@@ -50,3 +50,14 @@ test('expired evidence is refreshed after a long background pause',async()=>{
  const r=poller();r.S.contexts.set('nba',{markets:[{game_time:'2026-10-22T02:00:00Z',quotedAt:'2026-10-22T00:55:00Z'}]});
  r.advance(3600000);await r.poll();assert.equal(r.counts().refreshes,1);
 });
+test('NFL preparation assigns parent event identity before reconciliation',()=>{
+ const window={},env=vm.createContext({window,Date});
+ for(const file of ['market-guards.js','pick-quality.js'])vm.runInContext(fs.readFileSync(file,'utf8'),env);
+ const markets=Array.from({length:200},(_,i)=>({ticker:'contract-'+i})),start='2026-10-23T00:00:00Z';
+ const games=[{id:'one',commence_time:start,markets:markets.slice(0,100)},{id:'two',commence_time:start,markets:markets.slice(100)}];
+ window.PICK_QUALITY.prepare('nfl',markets,{},games,start);
+ assert.equal(new Set(markets.map(window.MARKET_GUARDS.gameKey)).size,2);
+ assert.equal(markets[0].gameId,'one');assert.equal(markets[100].gameId,'two');
+ assert.equal(window.MARKET_GUARDS.independent([markets[0],markets[100]]),true);
+ assert.equal(window.MARKET_GUARDS.independent([markets[0],markets[1]]),false);
+});

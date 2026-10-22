@@ -5,7 +5,7 @@ const pregame=m=>{const t=Date.parse(m?.start_time||m?.game_time||'');return Num
 const futureDated=m=>{const match=String(m?.event_ticker||'').match(/-(\d{2})([A-Z]{3})(\d{2})/);if(!match)return false;const t=Date.parse('20'+match[1]+'-'+({JAN:'01',FEB:'02',MAR:'03',APR:'04',MAY:'05',JUN:'06',JUL:'07',AUG:'08',SEP:'09',OCT:'10',NOV:'11',DEC:'12'}[match[2]]||'00')+'-'+match[3]+'T00:00:00Z');return Number.isFinite(t)&&t>Date.now()};
 const quote=m=>{const ask=Number(m?.yes_ask);return Number.isFinite(ask)&&ask>0&&ask<1?ask:null};
 const ev=(p,ask)=>Number.isFinite(p)&&Number.isFinite(ask)&&ask>0&&ask<1?p/ask-1:null;
-const gameKey=m=>m.canonical_event_id|| (m.game_id!=null&&String(m.game_id)!==''?String(m.game_id):String(m.event_ticker||'').replace(/^[^-]+-/,''));
+const gameKey=m=>m.canonical_event_id|| ((m.game_id??m.gameId)!=null&&String(m.game_id??m.gameId)!==''?String(m.game_id??m.gameId):String(m.event_ticker||'').replace(/^[^-]+-/,''));
 // Reconcile provider IDs only when matchup, start time and game number agree.
 // Ambiguous identities remain separate; independence also checks close matchups.
 const matchupKey=m=>String(m.game_label||m.fight||'').toLowerCase().replace(/\s+(?:at|vs\.?|@)\s+/g,'|').split('|').map(x=>x.replace(/[^a-z0-9]/g,'')).sort().join('|');
@@ -18,6 +18,9 @@ function sameEvent(a,b){
  return ka.includes('|')&&ka===kb&&Number.isFinite(ta)&&Number.isFinite(tb)&&Math.abs(ta-tb)<=15*60000&&String(a.game_number||'')===String(b.game_number||'');
 }
 function reconcile(sport,rows){
+ // NFL rows already carry verified parent-game IDs. Do not pin a redundant
+ // canonical ID onto them: callers may replace an entry's game context.
+ if(sport==='nfl'&&rows.every(m=>m.gameId!=null&&String(m.gameId)!==''))return rows;
  const groups=[];
  for(const m of rows){
   const group=groups.find(g=>sameEvent(g,m));
