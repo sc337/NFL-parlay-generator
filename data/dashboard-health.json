@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-22T18:58:24.325Z",
+  "updated_at": "2026-10-22T19:07:09.339Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-22T18:56:45.737410+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 237,
       "quotedMarkets": 237,
       "expiredQuotes": 0,
@@ -45,7 +45,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-22T18:56:56.399053+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 4608,
       "quotedMarkets": 4608,
       "expiredQuotes": 0,
@@ -237,7 +237,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-22T18:57:42.527585+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 6701,
       "quotedMarkets": 6701,
       "expiredQuotes": 0,
@@ -1116,20 +1116,20 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-22T18:56:21.683134+00:00",
+      "snapshotAt": "2026-10-22T19:05:35.776262+00:00",
       "ageMinutes": 2,
-      "markets": 5588,
-      "quotedMarkets": 5588,
-      "expiredQuotes": 5498,
-      "playerMarkets": 4204,
+      "markets": 5530,
+      "quotedMarkets": 5530,
+      "expiredQuotes": 0,
+      "playerMarkets": 4224,
       "families": {
-        "h2h": 86,
+        "h2h": 56,
         "td": 270,
-        "totals": 562,
-        "spreads": 736,
-        "receiving": 2150,
-        "rushing": 1044,
+        "totals": 534,
+        "spreads": 716,
+        "rushing": 1064,
         "passing": 604,
+        "receiving": 2150,
         "receptions": 136
       },
       "futureEvents": [
@@ -1256,7 +1256,7 @@
         "kalshi-cleveland-browns-tennessee-titans": 262,
         "kalshi-indianapolis-colts-minnesota-vikings": 149,
         "kalshi-houston-texans-new-york-giants": 415,
-        "kalshi-arizona-cardinals-denver-broncos": 306,
+        "kalshi-arizona-cardinals-denver-broncos": 326,
         "kalshi-detroit-lions-green-bay-packers": 340,
         "kalshi-las-vegas-raiders-los-angeles-rams": 316,
         "kalshi-kansas-city-chiefs-seattle-seahawks": 241,
@@ -1264,8 +1264,8 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-10-22T18:56:27.917133+00:00",
-      "ageMinutes": 2,
+      "snapshotAt": "2026-10-22T19:07:04.317715+00:00",
+      "ageMinutes": 0,
       "markets": 3764,
       "quotedMarkets": 3764,
       "expiredQuotes": 0,
@@ -1442,7 +1442,7 @@
         },
         {
           "id": "401892560",
-          "time": "2026-10-23T01:00:00+00:00"
+          "time": "2026-10-23T01:00Z"
         },
         {
           "id": "401892558",
@@ -1494,7 +1494,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-10-22T18:56:45.358336+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 228,
       "quotedMarkets": 228,
       "expiredQuotes": 0,
@@ -1660,19 +1660,15 @@
       "message": "2132 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "5498 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-10-22T18:26:31.636Z",
-      "changedAt": "2026-10-22T18:26:31.636Z"
     }
   ],
-  "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39810789610",
+  "resolved": [
+    {
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-10-22T19:07:09.339Z"
+    }
+  ],
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39836906243",
   "refreshResults": {
     "mlb": {
       "ok": true,
@@ -1692,7 +1688,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-22T18:56:32.458835+00:00"
+      "at": "2026-10-22T19:07:09.322145+00:00"
     },
     "ufc": {
       "ok": true,
