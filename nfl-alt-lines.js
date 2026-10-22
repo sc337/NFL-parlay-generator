@@ -1,10 +1,10 @@
 (()=>{'use strict';
-const propTypes={player_pass_yds:'passing',player_rush_yds:'rushing',player_reception_yds:'receiving',player_receptions:'receptions'};
+const propTypes={player_pass_yds:'passing',player_rush_yds:'rushing',player_reception_yds:'receiving',player_receptions:'receptions',player_pass_tds:'passing_tds'};
 const propKey=m=>String(m?.marketKey||'').toLowerCase().replace(/_alternate$/,'');
 function normalize(m){const type=propTypes[propKey(m)];if(type)m.type=type;return m}
-function supportedProp(m){const key=propKey(m);return key?!!propTypes[key]:['passing','rushing','receiving','receptions'].includes(m?.type)}
+function supportedProp(m){const key=propKey(m);return key?!!propTypes[key]:['passing','rushing','receiving','receptions','passing_tds'].includes(m?.type)}
 function selected(m,markets){normalize(m);return (!m.player||supportedProp(m))&&markets.has(m.type)}
-const supported=m=>['spreads','totals','receptions'].includes(m.type)||['player_pass_yds','player_rush_yds','player_reception_yds'].includes(String(m.marketKey||'').replace(/_alternate$/,''));
+const supported=m=>['spreads','totals','receptions','passing_tds'].includes(m.type)||['player_pass_yds','player_rush_yds','player_reception_yds'].includes(String(m.marketKey||'').replace(/_alternate$/,''));
 const point=m=>m.point==null||m.point===''?null:Number.isFinite(Number(m.point))?Number(m.point):null;
 const family=m=>[m.player||'',String(m.marketKey||m.type).replace(/_alternate$/,''),m.type==='spreads'?m.team||'':''].join('|');
 const probability=m=>m.marketProbability!=null&&Number.isFinite(Number(m.marketProbability))?Number(m.marketProbability):m.price>0?100/(m.price+100):Math.abs(m.price)/(Math.abs(m.price)+100);
@@ -61,12 +61,12 @@ function unsupportedIncrement(m){
 function matches(m,mode='standard'){
  if(unsupportedAltUnder(m)||unsupportedIncrement(m))return false;
  if(mode==='both')return true;
- return mode==='alt'?supported(m)&&(m.isAltLine===true||m.type==='receptions'&&m.side==='over'&&point(m)!==null&&point(m)%1===.5):!m.isAltLine;
+ return mode==='alt'?supported(m)&&(m.isAltLine===true||['receptions','passing_tds'].includes(m.type)&&m.side==='over'&&point(m)!==null&&point(m)%1===.5):!m.isAltLine;
 }
 function label(m){
  const n=point(m);
  // Integer yardage: O 39.5 and 40+ represent the same threshold.
- return (m.isAltLine||m.type==='receptions')&&!unsupportedIncrement(m)&&m.player&&m.side==='over'&&n!==null&&n%1===.5?String(Math.floor(n)+1)+'+':null;
+ return (m.isAltLine||['receptions','passing_tds'].includes(m.type))&&!unsupportedIncrement(m)&&m.player&&m.side==='over'&&n!==null&&n%1===.5?String(Math.floor(n)+1)+'+':null;
 }
 function cushionBonus(m){
  // Preference only; candidateScore still enforces shared and profile quality gates.

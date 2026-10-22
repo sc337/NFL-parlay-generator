@@ -5,7 +5,9 @@
   const originalFetch=window.fetch.bind(window);
 
   const PROP_GROUPS={
-    passing:new Set(['player_pass_yds','player_pass_yds_alternate','player_pass_tds','player_pass_attempts','player_pass_completions']),
+    passing:new Set(['player_pass_yds','player_pass_yds_alternate','player_pass_attempts','player_pass_completions']),
+    passing_tds:new Set(['player_pass_tds']),
+    receptions:new Set(['player_receptions']),
     rushing:new Set(['player_rush_yds','player_rush_yds_alternate','player_rush_attempts']),
     receiving:new Set(['player_reception_yds','player_reception_yds_alternate','player_receptions']),
     td:new Set(['player_anytime_td'])

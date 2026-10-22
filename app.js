@@ -6,7 +6,7 @@ const state = {
   requirePlayerProp:window.DASHBOARD_UI?.get('nfl','requireProp','off')==='on',
   risk:50,
   recommendationTier:window.DASHBOARD_UI?.get('nfl','tier','screened')||'screened',
-  selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','td']),
+  selectedMarkets:new Set(window.DASHBOARD_UI?.get('nfl','markets',['h2h','spreads','totals','passing','rushing','receiving','receptions','passing_tds','td'])||['h2h','spreads','totals','passing','rushing','receiving','receptions','passing_tds','td']),
   games:[],
   apiKey:localStorage.getItem('nflParlayOddsApiKey') || '',
   propsLoaded:new Set(),
@@ -20,6 +20,9 @@ const state = {
     nflverseStatus:'idle'
   }
 };
+
+// Enable the newly requested category once, without resetting saved filters.
+if(!window.DASHBOARD_UI?.get('nfl','passingTDsAdded',false)){state.selectedMarkets.add('receiving');state.selectedMarkets.add('passing_tds');window.DASHBOARD_UI?.put('nfl','passingTDsAdded',true);window.DASHBOARD_UI?.put('nfl','markets',[...state.selectedMarkets]);}
 
 const demoGames = [
   {
@@ -301,7 +304,7 @@ function isParlayEligible(m){
 const PROP_MARKET_META = {
   player_pass_yds:{type:'passing',label:'passing yards'},
   player_pass_yds_alternate:{type:'passing',label:'passing yards'},
-  player_pass_tds:{type:'passing',label:'passing TDs'},
+  player_pass_tds:{type:'passing_tds',label:'passing TDs'},
   player_pass_attempts:{type:'passing',label:'pass attempts'},
   player_pass_completions:{type:'passing',label:'completions'},
   player_rush_yds:{type:'rushing',label:'rushing yards'},

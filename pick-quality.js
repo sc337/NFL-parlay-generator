@@ -224,7 +224,7 @@ function assess(s,m,f={},options={}){
  if(anchored)warnings.push('Context-supported suggestion; value unverified');
  const parlayKey=String(m.marketKey||'').replace(/_alternate$/,'');
  if(options.parlay&&['player_rush_attempts','player_pass_attempts','player_pass_completions'].includes(parlayKey))reason='Caesars straight only';
- else if(options.parlay&&s==='nfl'&&['player_pass_tds','player_pass_interceptions'].includes(parlayKey))reason='Unsupported SGP player market';
+ else if(options.parlay&&s==='nfl'&&parlayKey==='player_pass_interceptions')reason='Unsupported SGP player market';
  if(!reason&&likelihoodMode&&conservativeP<.5)reason='Win Chance needs a buffered estimate of at least 50%';
  if(!reason&&nbaTeam&&q.p>.85)reason='NBA team-market price too short';
  if(!reason&&nbaTeam&&matchupMode&&q.p-conservativeP>.10)reason='NBA team-market price exceeds buffered likelihood by over 10 points';
