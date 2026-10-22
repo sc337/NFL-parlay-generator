@@ -25,6 +25,13 @@ test('Pick of the Day shows one pregame straight and never a stake',()=>{
  window.PICK_OF_DAY.show('nfl');
  assert.match(host.children[0].textContent,/Pass/);
 });
+test('NBA straight keeps lineup status visible outside Details',()=>{
+ for(const label of ['Lineup confirmed','Projected lineup · Not final','Latest known lineup · Not final','Previous lineup · Not final','Lineup pending · Not final']){
+  const app=runtime();app.window.__ACTIVE_SPORT='nba';
+  app.window.PICK_OF_DAY.show('nba',{market:{yes_ask:.6},eventTime:new Date(Date.now()+60000),label:'Lakers ML',note:label+' · Model unvalidated.'});
+  assert.ok(app.host.children[1].textContent.startsWith(label));
+ }
+});
 test('supported sport date filters show future featured picks with ALT tiles',()=>{
  const app=runtime(),future=new Date(Date.now()+2*86400000),key=future.getFullYear()+'-'+String(future.getMonth()+1).padStart(2,'0')+'-'+String(future.getDate()).padStart(2,'0');
  app.window.__ACTIVE_SPORT='nhl';const pick={market:{yes_ask:.7,isAltLine:true},eventTime:future,label:'Bruins +2.5 Puck line',event:'Bruins vs Jets'};
