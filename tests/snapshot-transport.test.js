@@ -21,3 +21,10 @@ test('fresh raw quotes avoid a duplicate hosted request; network failures fall b
  const fresh=snapshot(1),app=runtime(fresh,snapshot(2));await app.window.fetch('data/kalshi-nhl.json');assert.equal(app.calls.length,1);
  const broken=runtime(Error('offline'),fresh),res=await broken.window.fetch('data/kalshi-nhl.json');assert.deepEqual(await res.clone().json(),fresh);
 });
+test('fresh reference metadata cannot hide expired NFL native prices from fallback selection',async()=>{
+ const raw={...snapshot(1),primary_updated_at:new Date(Date.now()-100*60000).toISOString(),games:[]};
+ const hosted={...snapshot(3),primary_updated_at:new Date(Date.now()-4*60000).toISOString(),games:[]};
+ const app=runtime(raw,hosted),response=await app.window.fetch('data/kalshi-nfl.json');
+ assert.deepEqual(await response.clone().json(),hosted);assert.equal(app.calls.length,2);
+ assert.equal(raw.primary_updated_at,new Date(Date.parse(raw.primary_updated_at)).toISOString());
+});
