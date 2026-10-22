@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22T14:52:21.721Z",
+  "updated_at": "2026-10-22T15:44:28.403Z",
   "method": "Immutable first observed pregame quote plus near-start NFL checkpoints; NFL line calibration uses the latest eligible snapshot per contract. Settled contract outcomes, or final ESPN score for half-point totals when settlement is missing; no postgame forecast backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger.",
   "pregameViolations": 0,
   "sports": {
@@ -3712,20 +3712,20 @@
       }
     },
     "nba": {
-      "recorded": 4853,
+      "recorded": 4908,
       "settlementHealth": {
-        "pending": 4641,
-        "overdue": 2032,
+        "pending": 4611,
+        "overdue": 1969,
         "oldestPending": "2026-10-14T23:30Z"
       },
       "independentRecorded": 0,
       "qualified": {
-        "recorded": 401,
-        "settled": 66,
-        "distinctEvents": 10,
-        "winRate": 0.6667,
-        "brier": 0.2178,
-        "referenceReturnPerUnit": 0.2397,
+        "recorded": 417,
+        "settled": 88,
+        "distinctEvents": 12,
+        "winRate": 0.6591,
+        "brier": 0.2176,
+        "referenceReturnPerUnit": 0.1997,
         "calibrationBins": [
           {
             "range": [
@@ -3741,27 +3741,27 @@
               0.4,
               0.6
             ],
-            "count": 11,
-            "predicted": 0.5331,
-            "observed": 0.6364
+            "count": 20,
+            "predicted": 0.5419,
+            "observed": 0.55
           },
           {
             "range": [
               0.6,
               0.8
             ],
-            "count": 51,
-            "predicted": 0.6486,
-            "observed": 0.6863
+            "count": 59,
+            "predicted": 0.6541,
+            "observed": 0.6949
           },
           {
             "range": [
               0.8,
               1
             ],
-            "count": 4,
-            "predicted": 0.8516,
-            "observed": 0.5
+            "count": 9,
+            "predicted": 0.8936,
+            "observed": 0.6667
           }
         ],
         "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -3772,56 +3772,56 @@
             0,
             0.4
           ],
-          "count": 57,
-          "predicted": 0.3352,
-          "observed": 0.3333
+          "count": 82,
+          "predicted": 0.2978,
+          "observed": 0.3049
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 92,
-          "predicted": 0.4995,
-          "observed": 0.4891
+          "count": 127,
+          "predicted": 0.5013,
+          "observed": 0.5039
         },
         {
           "range": [
             0.6,
             0.8
           ],
-          "count": 59,
-          "predicted": 0.6533,
-          "observed": 0.7119
+          "count": 74,
+          "predicted": 0.6616,
+          "observed": 0.7162
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 4,
-          "predicted": 0.8516,
-          "observed": 0.5
+          "count": 14,
+          "predicted": 0.9055,
+          "observed": 0.7143
         }
       ],
       "rejectionReasons": {
-        "Independent projection too thin": 928,
-        "Edge does not clear uncertainty buffer": 1676,
-        "Unvalidated longshot; insufficient reliability": 976,
+        "Independent projection too thin": 945,
+        "Edge does not clear uncertainty buffer": 1682,
+        "Unvalidated longshot; insufficient reliability": 988,
         "Quote spread too wide": 38,
         "Model disagrees too strongly with market": 101,
         "ESPN availability uncertain: Day-To-Day": 22,
         "NBA team-market price exceeds buffered likelihood by over 10 points": 4,
-        "NBA team-market price too short": 144,
-        "Recent opportunity decreased; waiting for a stable role": 28,
+        "NBA team-market price too short": 146,
+        "Recent opportunity decreased; waiting for a stable role": 30,
         "Player availability uncertain": 8
       },
       "sources": {
         "Kalshi": {
-          "recorded": 4651,
-          "settled": 80,
+          "recorded": 4706,
+          "settled": 165,
           "pushes": 0,
-          "distinctEvents": 10
+          "distinctEvents": 12
         },
         "DraftKings via ESPN": {
           "recorded": 114,
@@ -3836,19 +3836,19 @@
           "distinctEvents": 11
         }
       },
-      "marketSupportedRecorded": 564,
-      "experimentalRecorded": 2850,
-      "settled": 212,
-      "distinctEvents": 13,
+      "marketSupportedRecorded": 586,
+      "experimentalRecorded": 2866,
+      "settled": 297,
+      "distinctEvents": 14,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.2273,
-        "market": 0.2389
+        "model": 0.2248,
+        "market": 0.232
       },
       "logLoss": {
-        "model": 0.6454,
-        "market": 0.67
+        "model": 0.6475,
+        "market": 0.6557
       },
       "independentComparison": {
         "brierModel": null,
@@ -3857,10 +3857,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 212,
-        "distinctEvents": 13,
-        "brierEstimate": 0.2273,
-        "brierMarket": 0.2389
+        "settled": 297,
+        "distinctEvents": 14,
+        "brierEstimate": 0.2248,
+        "brierMarket": 0.232
       },
       "calibrationBins": [
         {
@@ -3913,20 +3913,20 @@
       },
       "groups": {
         "moneyline": {
-          "recorded": 223,
+          "recorded": 226,
           "settlementHealth": {
             "pending": 211,
-            "overdue": 60,
+            "overdue": 57,
             "oldestPending": "2026-10-14T23:30Z"
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 49,
-            "settled": 7,
-            "distinctEvents": 5,
-            "winRate": 0.5714,
-            "brier": 0.1845,
-            "referenceReturnPerUnit": 0.0682,
+            "recorded": 51,
+            "settled": 8,
+            "distinctEvents": 6,
+            "winRate": 0.625,
+            "brier": 0.1847,
+            "referenceReturnPerUnit": 0.1897,
             "calibrationBins": [
               {
                 "range": [
@@ -3942,9 +3942,9 @@
                   0.4,
                   0.6
                 ],
-                "count": 4,
-                "predicted": 0.5044,
-                "observed": 0.25
+                "count": 5,
+                "predicted": 0.5172,
+                "observed": 0.4
               },
               {
                 "range": [
@@ -3982,9 +3982,9 @@
                 0.4,
                 0.6
               ],
-              "count": 7,
-              "predicted": 0.4947,
-              "observed": 0.2857
+              "count": 10,
+              "predicted": 0.5168,
+              "observed": 0.5
             },
             {
               "range": [
@@ -4008,32 +4008,32 @@
           "rejectionReasons": {
             "Edge does not clear uncertainty buffer": 62,
             "Unvalidated longshot; insufficient reliability": 37,
-            "Independent projection too thin": 10,
+            "Independent projection too thin": 11,
             "Quote spread too wide": 2,
             "Model disagrees too strongly with market": 2,
             "NBA team-market price exceeds buffered likelihood by over 10 points": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 223,
-              "settled": 12,
+              "recorded": 226,
+              "settled": 15,
               "pushes": 0,
-              "distinctEvents": 5
+              "distinctEvents": 6
             }
           },
-          "marketSupportedRecorded": 56,
+          "marketSupportedRecorded": 58,
           "experimentalRecorded": 116,
-          "settled": 12,
-          "distinctEvents": 5,
+          "settled": 15,
+          "distinctEvents": 6,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1802,
-            "market": 0.1906
+            "model": 0.1814,
+            "market": 0.2038
           },
           "logLoss": {
-            "model": 0.549,
-            "market": 0.5712
+            "model": 0.5522,
+            "market": 0.5983
           },
           "independentComparison": {
             "brierModel": null,
@@ -4042,10 +4042,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 12,
-            "distinctEvents": 5,
-            "brierEstimate": 0.1802,
-            "brierMarket": 0.1906
+            "settled": 15,
+            "distinctEvents": 6,
+            "brierEstimate": 0.1814,
+            "brierMarket": 0.2038
           },
           "calibrationBins": [
             {
@@ -4098,20 +4098,20 @@
           }
         },
         "spread": {
-          "recorded": 2126,
+          "recorded": 2144,
           "settlementHealth": {
-            "pending": 2098,
-            "overdue": 904,
+            "pending": 2102,
+            "overdue": 900,
             "oldestPending": "2026-10-14T23:30Z"
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 160,
-            "settled": 14,
-            "distinctEvents": 3,
-            "winRate": 0.5714,
-            "brier": 0.2673,
-            "referenceReturnPerUnit": 0.0205,
+            "recorded": 169,
+            "settled": 18,
+            "distinctEvents": 5,
+            "winRate": 0.5556,
+            "brier": 0.2549,
+            "referenceReturnPerUnit": -0.0016,
             "calibrationBins": [
               {
                 "range": [
@@ -4127,18 +4127,18 @@
                   0.4,
                   0.6
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 2,
+                "predicted": 0.5426,
+                "observed": 0
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 12,
-                "predicted": 0.6563,
-                "observed": 0.6667
+                "count": 14,
+                "predicted": 0.6545,
+                "observed": 0.7143
               },
               {
                 "range": [
@@ -4158,27 +4158,27 @@
                 0,
                 0.4
               ],
-              "count": 14,
-              "predicted": 0.3226,
-              "observed": 0.4286
+              "count": 17,
+              "predicted": 0.3265,
+              "observed": 0.3529
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 8,
+              "predicted": 0.5,
+              "observed": 0.5
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 12,
-              "predicted": 0.6563,
-              "observed": 0.6667
+              "count": 15,
+              "predicted": 0.6561,
+              "observed": 0.7333
             },
             {
               "range": [
@@ -4191,33 +4191,33 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 392,
+            "Independent projection too thin": 398,
             "Edge does not clear uncertainty buffer": 776,
-            "Unvalidated longshot; insufficient reliability": 413,
+            "Unvalidated longshot; insufficient reliability": 416,
             "Model disagrees too strongly with market": 11,
             "NBA team-market price too short": 98
           },
           "sources": {
             "Kalshi": {
-              "recorded": 2126,
-              "settled": 28,
+              "recorded": 2144,
+              "settled": 42,
               "pushes": 0,
-              "distinctEvents": 3
+              "distinctEvents": 5
             }
           },
-          "marketSupportedRecorded": 340,
+          "marketSupportedRecorded": 352,
           "experimentalRecorded": 1118,
-          "settled": 28,
-          "distinctEvents": 3,
+          "settled": 42,
+          "distinctEvents": 5,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2673,
-            "market": 0.2481
+            "model": 0.2515,
+            "market": 0.2365
           },
           "logLoss": {
-            "model": 0.741,
-            "market": 0.6908
+            "model": 0.7036,
+            "market": 0.6668
           },
           "independentComparison": {
             "brierModel": null,
@@ -4226,10 +4226,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 28,
-            "distinctEvents": 3,
-            "brierEstimate": 0.2673,
-            "brierMarket": 0.2481
+            "settled": 42,
+            "distinctEvents": 5,
+            "brierEstimate": 0.2515,
+            "brierMarket": 0.2365
           },
           "calibrationBins": [
             {
@@ -4282,20 +4282,20 @@
           }
         },
         "total": {
-          "recorded": 1306,
+          "recorded": 1314,
           "settlementHealth": {
-            "pending": 1270,
-            "overdue": 616,
+            "pending": 1258,
+            "overdue": 608,
             "oldestPending": "2026-10-14T23:30Z"
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 98,
-            "settled": 17,
+            "recorded": 101,
+            "settled": 22,
             "distinctEvents": 7,
-            "winRate": 0.8235,
-            "brier": 0.1792,
-            "referenceReturnPerUnit": 0.5848,
+            "winRate": 0.7727,
+            "brier": 0.1886,
+            "referenceReturnPerUnit": 0.4719,
             "calibrationBins": [
               {
                 "range": [
@@ -4311,27 +4311,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 5,
-                "predicted": 0.5334,
-                "observed": 0.8
+                "count": 8,
+                "predicted": 0.5423,
+                "observed": 0.75
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 12,
-                "predicted": 0.6636,
-                "observed": 0.8333
+                "count": 13,
+                "predicted": 0.6623,
+                "observed": 0.7692
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.871,
+                "observed": 1
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -4342,16 +4342,16 @@
                 0,
                 0.4
               ],
-              "count": 12,
-              "predicted": 0.3364,
-              "observed": 0.1667
+              "count": 16,
+              "predicted": 0.3126,
+              "observed": 0.25
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 12,
+              "count": 24,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -4360,49 +4360,49 @@
                 0.6,
                 0.8
               ],
-              "count": 12,
-              "predicted": 0.6636,
-              "observed": 0.8333
+              "count": 14,
+              "predicted": 0.6612,
+              "observed": 0.7143
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.871,
+              "observed": 1
             }
           ],
           "rejectionReasons": {
             "Independent projection too thin": 272,
             "Edge does not clear uncertainty buffer": 440,
-            "Unvalidated longshot; insufficient reliability": 233,
+            "Unvalidated longshot; insufficient reliability": 236,
             "Model disagrees too strongly with market": 8,
             "Quote spread too wide": 15,
-            "NBA team-market price too short": 46
+            "NBA team-market price too short": 48
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1306,
-              "settled": 36,
+              "recorded": 1314,
+              "settled": 56,
               "pushes": 0,
               "distinctEvents": 7
             }
           },
-          "marketSupportedRecorded": 168,
+          "marketSupportedRecorded": 176,
           "experimentalRecorded": 672,
-          "settled": 36,
+          "settled": 56,
           "distinctEvents": 7,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1868,
-            "market": 0.2299
+            "model": 0.1989,
+            "market": 0.2216
           },
           "logLoss": {
-            "model": 0.5586,
-            "market": 0.6525
+            "model": 0.58,
+            "market": 0.6329
           },
           "independentComparison": {
             "brierModel": null,
@@ -4411,10 +4411,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 36,
+            "settled": 56,
             "distinctEvents": 7,
-            "brierEstimate": 0.1868,
-            "brierMarket": 0.2299
+            "brierEstimate": 0.1989,
+            "brierMarket": 0.2216
           },
           "calibrationBins": [
             {
@@ -4467,20 +4467,20 @@
           }
         },
         "points": {
-          "recorded": 338,
+          "recorded": 342,
           "settlementHealth": {
-            "pending": 338,
-            "overdue": 172,
+            "pending": 314,
+            "overdue": 144,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 24,
-            "settled": 0,
-            "distinctEvents": 0,
-            "winRate": null,
-            "brier": null,
-            "referenceReturnPerUnit": null,
+            "recorded": 25,
+            "settled": 7,
+            "distinctEvents": 3,
+            "winRate": 0.7143,
+            "brier": 0.138,
+            "referenceReturnPerUnit": 0.0757,
             "calibrationBins": [
               {
                 "range": [
@@ -4496,27 +4496,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 3,
+                "predicted": 0.5498,
+                "observed": 0.3333
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.7791,
+                "observed": 1
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 3,
+                "predicted": 0.9373,
+                "observed": 1
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -4527,69 +4527,69 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 8,
+              "predicted": 0.1023,
+              "observed": 0
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 12,
+              "predicted": 0.5,
+              "observed": 0.5
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.7791,
+              "observed": 1
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 6,
+              "predicted": 0.9373,
+              "observed": 1
             }
           ],
           "rejectionReasons": {
             "Independent projection too thin": 76,
-            "Edge does not clear uncertainty buffer": 92,
+            "Edge does not clear uncertainty buffer": 93,
             "Quote spread too wide": 5,
             "Model disagrees too strongly with market": 26,
-            "Unvalidated longshot; insufficient reliability": 89,
+            "Unvalidated longshot; insufficient reliability": 91,
             "ESPN availability uncertain: Day-To-Day": 14,
             "Recent opportunity decreased; waiting for a stable role": 10,
             "Player availability uncertain": 2
           },
           "sources": {
             "Kalshi": {
-              "recorded": 338,
-              "settled": 0,
+              "recorded": 342,
+              "settled": 28,
               "pushes": 0,
-              "distinctEvents": 0
+              "distinctEvents": 3
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 262,
-          "settled": 0,
-          "distinctEvents": 0,
+          "experimentalRecorded": 266,
+          "settled": 28,
+          "distinctEvents": 3,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": null,
-            "market": null
+            "model": 0.138,
+            "market": 0.1454
           },
           "logLoss": {
-            "model": null,
-            "market": null
+            "model": 0.4046,
+            "market": 0.4596
           },
           "independentComparison": {
             "brierModel": null,
@@ -4598,10 +4598,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
+            "settled": 28,
+            "distinctEvents": 3,
+            "brierEstimate": 0.138,
+            "brierMarket": 0.1454
           },
           "calibrationBins": [
             {
@@ -4654,20 +4654,20 @@
           }
         },
         "assists": {
-          "recorded": 154,
+          "recorded": 158,
           "settlementHealth": {
             "pending": 154,
-            "overdue": 62,
+            "overdue": 58,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 11,
-            "settled": 0,
-            "distinctEvents": 0,
-            "winRate": null,
-            "brier": null,
-            "referenceReturnPerUnit": null,
+            "settled": 1,
+            "distinctEvents": 1,
+            "winRate": 1,
+            "brier": 0.0574,
+            "referenceReturnPerUnit": 0.5152,
             "calibrationBins": [
               {
                 "range": [
@@ -4692,9 +4692,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.7604,
+                "observed": 1
               },
               {
                 "range": [
@@ -4714,9 +4714,9 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.2396,
+              "observed": 0
             },
             {
               "range": [
@@ -4732,9 +4732,9 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.7604,
+              "observed": 1
             },
             {
               "range": [
@@ -4747,35 +4747,35 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 43,
-            "Independent projection too thin": 38,
+            "Edge does not clear uncertainty buffer": 44,
+            "Independent projection too thin": 40,
             "Model disagrees too strongly with market": 9,
-            "Unvalidated longshot; insufficient reliability": 42,
+            "Unvalidated longshot; insufficient reliability": 43,
             "ESPN availability uncertain: Day-To-Day": 4,
             "Quote spread too wide": 3,
             "Recent opportunity decreased; waiting for a stable role": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 154,
-              "settled": 0,
+              "recorded": 158,
+              "settled": 4,
               "pushes": 0,
-              "distinctEvents": 0
+              "distinctEvents": 1
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 116,
-          "settled": 0,
-          "distinctEvents": 0,
+          "experimentalRecorded": 118,
+          "settled": 4,
+          "distinctEvents": 1,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": null,
-            "market": null
+            "model": 0.0574,
+            "market": 0.0887
           },
           "logLoss": {
-            "model": null,
-            "market": null
+            "model": 0.2739,
+            "market": 0.3449
           },
           "independentComparison": {
             "brierModel": null,
@@ -4784,10 +4784,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
+            "settled": 4,
+            "distinctEvents": 1,
+            "brierEstimate": 0.0574,
+            "brierMarket": 0.0887
           },
           "calibrationBins": [
             {
@@ -5398,20 +5398,20 @@
           }
         },
         "rebounds": {
-          "recorded": 150,
+          "recorded": 156,
           "settlementHealth": {
-            "pending": 150,
-            "overdue": 84,
+            "pending": 148,
+            "overdue": 76,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 8,
-            "settled": 0,
-            "distinctEvents": 0,
-            "winRate": null,
-            "brier": null,
-            "referenceReturnPerUnit": null,
+            "settled": 2,
+            "distinctEvents": 2,
+            "winRate": 0.5,
+            "brier": 0.5181,
+            "referenceReturnPerUnit": -0.0741,
             "calibrationBins": [
               {
                 "range": [
@@ -5436,18 +5436,18 @@
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.6417,
+                "observed": 1
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.9528,
+                "observed": 0
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -5458,9 +5458,9 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 4,
+              "predicted": 0.2028,
+              "observed": 0.5
             },
             {
               "range": [
@@ -5476,50 +5476,50 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.6417,
+              "observed": 1
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 2,
+              "predicted": 0.9528,
+              "observed": 0
             }
           ],
           "rejectionReasons": {
             "Independent projection too thin": 26,
-            "Edge does not clear uncertainty buffer": 54,
-            "Unvalidated longshot; insufficient reliability": 40,
+            "Edge does not clear uncertainty buffer": 56,
+            "Unvalidated longshot; insufficient reliability": 42,
             "Model disagrees too strongly with market": 10,
             "ESPN availability uncertain: Day-To-Day": 4,
-            "Recent opportunity decreased; waiting for a stable role": 4,
+            "Recent opportunity decreased; waiting for a stable role": 6,
             "Player availability uncertain": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 150,
-              "settled": 0,
+              "recorded": 156,
+              "settled": 8,
               "pushes": 0,
-              "distinctEvents": 0
+              "distinctEvents": 2
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 124,
-          "settled": 0,
-          "distinctEvents": 0,
+          "experimentalRecorded": 130,
+          "settled": 8,
+          "distinctEvents": 2,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": null,
-            "market": null
+            "model": 0.5181,
+            "market": 0.4638
           },
           "logLoss": {
-            "model": null,
-            "market": null
+            "model": 1.7481,
+            "market": 1.2156
           },
           "independentComparison": {
             "brierModel": null,
@@ -5528,10 +5528,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 0,
-            "distinctEvents": 0,
-            "brierEstimate": null,
-            "brierMarket": null
+            "settled": 8,
+            "distinctEvents": 2,
+            "brierEstimate": 0.5181,
+            "brierMarket": 0.4638
           },
           "calibrationBins": [
             {
@@ -5584,20 +5584,20 @@
           }
         },
         "threes": {
-          "recorded": 238,
+          "recorded": 242,
           "settlementHealth": {
-            "pending": 234,
-            "overdue": 112,
+            "pending": 230,
+            "overdue": 104,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 17,
-            "settled": 2,
+            "settled": 4,
             "distinctEvents": 1,
-            "winRate": 1,
-            "brier": 0.0101,
-            "referenceReturnPerUnit": 0.25,
+            "winRate": 0.75,
+            "brier": 0.1487,
+            "referenceReturnPerUnit": 0.0487,
             "calibrationBins": [
               {
                 "range": [
@@ -5622,9 +5622,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 2,
+                "predicted": 0.6989,
+                "observed": 0.5
               },
               {
                 "range": [
@@ -5644,9 +5644,9 @@
                 0,
                 0.4
               ],
-              "count": 2,
-              "predicted": 0.1005,
-              "observed": 0
+              "count": 6,
+              "predicted": 0.2342,
+              "observed": 0.3333
             },
             {
               "range": [
@@ -5662,9 +5662,9 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 4,
+              "predicted": 0.6989,
+              "observed": 0.5
             },
             {
               "range": [
@@ -5678,7 +5678,7 @@
           ],
           "rejectionReasons": {
             "Edge does not clear uncertainty buffer": 67,
-            "Independent projection too thin": 60,
+            "Independent projection too thin": 64,
             "Unvalidated longshot; insufficient reliability": 67,
             "Model disagrees too strongly with market": 19,
             "Quote spread too wide": 4,
@@ -5686,25 +5686,25 @@
           },
           "sources": {
             "Kalshi": {
-              "recorded": 238,
-              "settled": 4,
+              "recorded": 242,
+              "settled": 12,
               "pushes": 0,
               "distinctEvents": 1
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 178,
-          "settled": 4,
+          "settled": 12,
           "distinctEvents": 1,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.0101,
-            "market": 0.0507
+            "model": 0.1949,
+            "market": 0.2013
           },
           "logLoss": {
-            "model": 0.1059,
-            "market": 0.2549
+            "model": 0.5513,
+            "market": 0.5838
           },
           "independentComparison": {
             "brierModel": null,
@@ -5713,10 +5713,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 4,
+            "settled": 12,
             "distinctEvents": 1,
-            "brierEstimate": 0.0101,
-            "brierMarket": 0.0507
+            "brierEstimate": 0.1949,
+            "brierMarket": 0.2013
           },
           "calibrationBins": [
             {
@@ -5769,9 +5769,9 @@
           }
         },
         "pra": {
-          "recorded": 56,
+          "recorded": 60,
           "settlementHealth": {
-            "pending": 56,
+            "pending": 60,
             "overdue": 12,
             "oldestPending": "2026-10-20T19:00Z"
           },
@@ -5862,23 +5862,23 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 20,
+            "Independent projection too thin": 22,
             "Unvalidated longshot; insufficient reliability": 16,
             "Model disagrees too strongly with market": 6,
             "Quote spread too wide": 7,
             "Recent opportunity decreased; waiting for a stable role": 4,
-            "Edge does not clear uncertainty buffer": 2
+            "Edge does not clear uncertainty buffer": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 56,
+              "recorded": 60,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 36,
+          "experimentalRecorded": 38,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -5954,15 +5954,15 @@
           }
         },
         "blocks": {
-          "recorded": 28,
+          "recorded": 30,
           "settlementHealth": {
-            "pending": 28,
+            "pending": 30,
             "overdue": 6,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 0,
+            "recorded": 1,
             "settled": 0,
             "distinctEvents": 0,
             "winRate": null,
@@ -6047,7 +6047,7 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 8,
+            "Unvalidated longshot; insufficient reliability": 9,
             "Quote spread too wide": 1,
             "Edge does not clear uncertainty buffer": 9,
             "Independent projection too thin": 4,
@@ -6057,14 +6057,14 @@
           },
           "sources": {
             "Kalshi": {
-              "recorded": 28,
+              "recorded": 30,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 24,
+          "experimentalRecorded": 26,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -6324,9 +6324,9 @@
           }
         },
         "double_double": {
-          "recorded": 12,
+          "recorded": 14,
           "settlementHealth": {
-            "pending": 12,
+            "pending": 14,
             "overdue": 0,
             "oldestPending": null
           },
@@ -6419,11 +6419,11 @@
           "rejectionReasons": {
             "Unvalidated longshot; insufficient reliability": 3,
             "Edge does not clear uncertainty buffer": 3,
-            "Independent projection too thin": 6
+            "Independent projection too thin": 8
           },
           "sources": {
             "Kalshi": {
-              "recorded": 12,
+              "recorded": 14,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -6692,18 +6692,18 @@
         "legacy": {
           "recorded": 3684,
           "settlementHealth": {
-            "pending": 3472,
-            "overdue": 2032,
+            "pending": 3387,
+            "overdue": 1969,
             "oldestPending": "2026-10-14T23:30Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 123,
-            "settled": 66,
-            "distinctEvents": 10,
-            "winRate": 0.6667,
-            "brier": 0.2178,
-            "referenceReturnPerUnit": 0.2397,
+            "settled": 88,
+            "distinctEvents": 12,
+            "winRate": 0.6591,
+            "brier": 0.2176,
+            "referenceReturnPerUnit": 0.1997,
             "calibrationBins": [
               {
                 "range": [
@@ -6719,27 +6719,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 11,
-                "predicted": 0.5331,
-                "observed": 0.6364
+                "count": 20,
+                "predicted": 0.5419,
+                "observed": 0.55
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 51,
-                "predicted": 0.6486,
-                "observed": 0.6863
+                "count": 59,
+                "predicted": 0.6541,
+                "observed": 0.6949
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 4,
-                "predicted": 0.8516,
-                "observed": 0.5
+                "count": 9,
+                "predicted": 0.8936,
+                "observed": 0.6667
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -6750,36 +6750,36 @@
                 0,
                 0.4
               ],
-              "count": 57,
-              "predicted": 0.3352,
-              "observed": 0.3333
+              "count": 82,
+              "predicted": 0.2978,
+              "observed": 0.3049
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 92,
-              "predicted": 0.4995,
-              "observed": 0.4891
+              "count": 127,
+              "predicted": 0.5013,
+              "observed": 0.5039
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 59,
-              "predicted": 0.6533,
-              "observed": 0.7119
+              "count": 74,
+              "predicted": 0.6616,
+              "observed": 0.7162
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 4,
-              "predicted": 0.8516,
-              "observed": 0.5
+              "count": 14,
+              "predicted": 0.9055,
+              "observed": 0.7143
             }
           ],
           "rejectionReasons": {
@@ -6793,9 +6793,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 3502,
-              "settled": 80,
+              "settled": 165,
               "pushes": 0,
-              "distinctEvents": 10
+              "distinctEvents": 12
             },
             "DraftKings via ESPN": {
               "recorded": 114,
@@ -6812,17 +6812,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2474,
-          "settled": 212,
-          "distinctEvents": 13,
+          "settled": 297,
+          "distinctEvents": 14,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2273,
-            "market": 0.2389
+            "model": 0.2248,
+            "market": 0.232
           },
           "logLoss": {
-            "model": 0.6454,
-            "market": 0.67
+            "model": 0.6475,
+            "market": 0.6557
           },
           "independentComparison": {
             "brierModel": null,
@@ -6831,10 +6831,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 212,
-            "distinctEvents": 13,
-            "brierEstimate": 0.2273,
-            "brierMarket": 0.2389
+            "settled": 297,
+            "distinctEvents": 14,
+            "brierEstimate": 0.2248,
+            "brierMarket": 0.232
           },
           "calibrationBins": [
             {
@@ -6887,15 +6887,15 @@
           }
         },
         "forward-20261022-v1": {
-          "recorded": 1169,
+          "recorded": 1224,
           "settlementHealth": {
-            "pending": 1169,
+            "pending": 1224,
             "overdue": 0,
             "oldestPending": null
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 278,
+            "recorded": 294,
             "settled": 0,
             "distinctEvents": 0,
             "winRate": null,
@@ -6980,19 +6980,19 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 331,
-            "Independent projection too thin": 229,
+            "Unvalidated longshot; insufficient reliability": 343,
+            "Independent projection too thin": 246,
             "NBA team-market price exceeds buffered likelihood by over 10 points": 4,
-            "NBA team-market price too short": 144,
-            "Edge does not clear uncertainty buffer": 105,
+            "NBA team-market price too short": 146,
+            "Edge does not clear uncertainty buffer": 111,
             "Model disagrees too strongly with market": 31,
-            "Recent opportunity decreased; waiting for a stable role": 28,
+            "Recent opportunity decreased; waiting for a stable role": 30,
             "Quote spread too wide": 11,
             "Player availability uncertain": 8
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1149,
+              "recorded": 1204,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -7004,8 +7004,8 @@
               "distinctEvents": 0
             }
           },
-          "marketSupportedRecorded": 564,
-          "experimentalRecorded": 376,
+          "marketSupportedRecorded": 586,
+          "experimentalRecorded": 392,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -7083,10 +7083,10 @@
       },
       "versions": {
         "legacy": {
-          "recorded": 1453,
+          "recorded": 1470,
           "settlementHealth": {
-            "pending": 1452,
-            "overdue": 1214,
+            "pending": 1468,
+            "overdue": 1213,
             "oldestPending": "2026-10-14T23:30Z"
           },
           "independentRecorded": 0,
@@ -7152,9 +7152,9 @@
                 0.4,
                 0.6
               ],
-              "count": 1,
-              "predicted": 0.4589,
-              "observed": 0
+              "count": 2,
+              "predicted": 0.5136,
+              "observed": 0.5
             },
             {
               "range": [
@@ -7176,14 +7176,14 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 926
+            "Independent projection too thin": 943
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1433,
-              "settled": 1,
+              "recorded": 1450,
+              "settled": 2,
               "pushes": 0,
-              "distinctEvents": 1
+              "distinctEvents": 2
             },
             "Draft Kings via ESPN": {
               "recorded": 20,
@@ -7194,17 +7194,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 16,
-          "settled": 1,
-          "distinctEvents": 1,
+          "settled": 2,
+          "distinctEvents": 2,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2106,
-            "market": 0.1056
+            "model": 0.1985,
+            "market": 0.1778
           },
           "logLoss": {
-            "model": 0.6142,
-            "market": 0.393
+            "model": 0.5896,
+            "market": 0.5431
           },
           "independentComparison": {
             "brierModel": null,
@@ -7213,10 +7213,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1,
-            "distinctEvents": 1,
-            "brierEstimate": 0.2106,
-            "brierMarket": 0.1056
+            "settled": 2,
+            "distinctEvents": 2,
+            "brierEstimate": 0.1985,
+            "brierMarket": 0.1778
           },
           "calibrationBins": [
             {
@@ -7451,8 +7451,8 @@
         "learning-20261015": {
           "recorded": 1290,
           "settlementHealth": {
-            "pending": 1139,
-            "overdue": 410,
+            "pending": 1098,
+            "overdue": 379,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
@@ -7509,36 +7509,36 @@
                 0,
                 0.4
               ],
-              "count": 39,
-              "predicted": 0.3397,
-              "observed": 0.3333
+              "count": 51,
+              "predicted": 0.308,
+              "observed": 0.3137
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 70,
-              "predicted": 0.4999,
-              "observed": 0.5
+              "count": 87,
+              "predicted": 0.5007,
+              "observed": 0.5057
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 40,
-              "predicted": 0.6522,
-              "observed": 0.7
+              "count": 47,
+              "predicted": 0.6594,
+              "observed": 0.7021
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 2,
-              "predicted": 0.8516,
-              "observed": 0.5
+              "count": 7,
+              "predicted": 0.9055,
+              "observed": 0.7143
             }
           ],
           "rejectionReasons": {
@@ -7551,9 +7551,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 1144,
-              "settled": 39,
+              "settled": 80,
               "pushes": 0,
-              "distinctEvents": 10
+              "distinctEvents": 12
             },
             "DraftKings via ESPN": {
               "recorded": 114,
@@ -7570,17 +7570,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1290,
-          "settled": 151,
-          "distinctEvents": 13,
+          "settled": 192,
+          "distinctEvents": 14,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2294,
-            "market": 0.242
+            "model": 0.2275,
+            "market": 0.236
           },
           "logLoss": {
-            "model": 0.6501,
-            "market": 0.6762
+            "model": 0.6517,
+            "market": 0.6632
           },
           "independentComparison": {
             "brierModel": null,
@@ -7589,10 +7589,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 151,
-            "distinctEvents": 13,
-            "brierEstimate": 0.2294,
-            "brierMarket": 0.242
+            "settled": 192,
+            "distinctEvents": 14,
+            "brierEstimate": 0.2275,
+            "brierMarket": 0.236
           },
           "calibrationBins": [
             {
@@ -7647,18 +7647,18 @@
         "learning-20261019": {
           "recorded": 1167,
           "settlementHealth": {
-            "pending": 1108,
-            "overdue": 406,
+            "pending": 1065,
+            "overdue": 375,
             "oldestPending": "2026-10-20T19:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 61,
-            "settled": 23,
-            "distinctEvents": 8,
-            "winRate": 0.6522,
-            "brier": 0.2176,
-            "referenceReturnPerUnit": 0.2047,
+            "settled": 45,
+            "distinctEvents": 11,
+            "winRate": 0.6444,
+            "brier": 0.2172,
+            "referenceReturnPerUnit": 0.1437,
             "calibrationBins": [
               {
                 "range": [
@@ -7674,27 +7674,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 5,
-                "predicted": 0.5234,
-                "observed": 0.6
+                "count": 14,
+                "predicted": 0.5422,
+                "observed": 0.5
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 16,
-                "predicted": 0.6525,
-                "observed": 0.6875
+                "count": 24,
+                "predicted": 0.6648,
+                "observed": 0.7083
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 2,
-                "predicted": 0.8516,
-                "observed": 0.5
+                "count": 7,
+                "predicted": 0.9055,
+                "observed": 0.7143
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -7705,36 +7705,36 @@
                 0,
                 0.4
               ],
-              "count": 18,
-              "predicted": 0.3253,
-              "observed": 0.3333
+              "count": 31,
+              "predicted": 0.2809,
+              "observed": 0.2903
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 21,
-              "predicted": 0.5001,
-              "observed": 0.4762
+              "count": 38,
+              "predicted": 0.5018,
+              "observed": 0.5
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 18,
-              "predicted": 0.6539,
-              "observed": 0.7222
+              "count": 26,
+              "predicted": 0.6647,
+              "observed": 0.7308
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 2,
-              "predicted": 0.8516,
-              "observed": 0.5
+              "count": 7,
+              "predicted": 0.9055,
+              "observed": 0.7143
             }
           ],
           "rejectionReasons": {
@@ -7747,9 +7747,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 1131,
-              "settled": 39,
+              "settled": 82,
               "pushes": 0,
-              "distinctEvents": 10
+              "distinctEvents": 12
             },
             "Draft Kings via ESPN": {
               "recorded": 36,
@@ -7760,17 +7760,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1167,
-          "settled": 59,
-          "distinctEvents": 12,
+          "settled": 102,
+          "distinctEvents": 13,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2242,
-            "market": 0.2345
+            "model": 0.2214,
+            "market": 0.226
           },
           "logLoss": {
-            "model": 0.6386,
-            "market": 0.661
+            "model": 0.6434,
+            "market": 0.6448
           },
           "independentComparison": {
             "brierModel": null,
@@ -7779,10 +7779,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 59,
-            "distinctEvents": 12,
-            "brierEstimate": 0.2242,
-            "brierMarket": 0.2345
+            "settled": 102,
+            "distinctEvents": 13,
+            "brierEstimate": 0.2214,
+            "brierMarket": 0.226
           },
           "calibrationBins": [
             {
@@ -7835,15 +7835,15 @@
           }
         },
         "learning-20261022": {
-          "recorded": 940,
+          "recorded": 978,
           "settlementHealth": {
-            "pending": 940,
+            "pending": 978,
             "overdue": 0,
             "oldestPending": null
           },
           "independentRecorded": 0,
           "qualified": {
-            "recorded": 278,
+            "recorded": 294,
             "settled": 0,
             "distinctEvents": 0,
             "winRate": null,
@@ -7928,25 +7928,25 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 331,
+            "Unvalidated longshot; insufficient reliability": 343,
             "NBA team-market price exceeds buffered likelihood by over 10 points": 4,
-            "NBA team-market price too short": 144,
-            "Edge does not clear uncertainty buffer": 105,
+            "NBA team-market price too short": 146,
+            "Edge does not clear uncertainty buffer": 111,
             "Model disagrees too strongly with market": 31,
-            "Recent opportunity decreased; waiting for a stable role": 28,
+            "Recent opportunity decreased; waiting for a stable role": 30,
             "Quote spread too wide": 11,
             "Player availability uncertain": 8
           },
           "sources": {
             "Kalshi": {
-              "recorded": 940,
+              "recorded": 978,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
-          "marketSupportedRecorded": 564,
-          "experimentalRecorded": 376,
+          "marketSupportedRecorded": 586,
+          "experimentalRecorded": 392,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -8024,20 +8024,20 @@
       }
     },
     "ncaaf": {
-      "recorded": 8508,
+      "recorded": 8536,
       "settlementHealth": {
-        "pending": 6262,
-        "overdue": 3233,
-        "oldestPending": "2026-10-03T19:30Z"
+        "pending": 6243,
+        "overdue": 3205,
+        "oldestPending": "2026-10-07T00:00Z"
       },
       "independentRecorded": 0,
       "qualified": {
         "recorded": 296,
-        "settled": 46,
-        "distinctEvents": 19,
-        "winRate": 0.4348,
-        "brier": 0.2752,
-        "referenceReturnPerUnit": -0.1566,
+        "settled": 53,
+        "distinctEvents": 20,
+        "winRate": 0.4906,
+        "brier": 0.2744,
+        "referenceReturnPerUnit": 0.0074,
         "calibrationBins": [
           {
             "range": [
@@ -8053,18 +8053,18 @@
               0.4,
               0.6
             ],
-            "count": 15,
-            "predicted": 0.5383,
-            "observed": 0.4667
+            "count": 21,
+            "predicted": 0.5286,
+            "observed": 0.619
           },
           {
             "range": [
               0.6,
               0.8
             ],
-            "count": 30,
-            "predicted": 0.6517,
-            "observed": 0.4
+            "count": 31,
+            "predicted": 0.6512,
+            "observed": 0.3871
           },
           {
             "range": [
@@ -8084,27 +8084,27 @@
             0,
             0.4
           ],
-          "count": 595,
-          "predicted": 0.2735,
-          "observed": 0.2824
+          "count": 602,
+          "predicted": 0.2742,
+          "observed": 0.2857
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 617,
-          "predicted": 0.4937,
-          "observed": 0.4976
+          "count": 643,
+          "predicted": 0.494,
+          "observed": 0.4992
         },
         {
           "range": [
             0.6,
             0.8
           ],
-          "count": 217,
-          "predicted": 0.6746,
-          "observed": 0.6866
+          "count": 219,
+          "predicted": 0.6742,
+          "observed": 0.6804
         },
         {
           "range": [
@@ -8117,20 +8117,20 @@
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 2698,
-        "Independent projection too thin": 474,
+        "Edge does not clear uncertainty buffer": 2708,
+        "Independent projection too thin": 484,
         "NCAAF sensitivity check failed": 90,
         "Model disagrees too strongly with market": 108,
-        "Unvalidated longshot; insufficient reliability": 980,
+        "Unvalidated longshot; insufficient reliability": 988,
         "Event already started": 5,
         "Quote spread too wide": 10
       },
       "sources": {
         "Kalshi": {
-          "recorded": 7445,
-          "settled": 1861,
+          "recorded": 7471,
+          "settled": 1908,
           "pushes": 0,
-          "distinctEvents": 161
+          "distinctEvents": 164
         },
         "DraftKings via ESPN": {
           "recorded": 641,
@@ -8139,25 +8139,25 @@
           "distinctEvents": 56
         },
         "Draft Kings via ESPN": {
-          "recorded": 422,
+          "recorded": 424,
           "settled": 153,
           "pushes": 4,
           "distinctEvents": 53
         }
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 6486,
-      "settled": 2236,
-      "distinctEvents": 209,
+      "experimentalRecorded": 6504,
+      "settled": 2283,
+      "distinctEvents": 211,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.2075,
-        "market": 0.1935
+        "model": 0.2081,
+        "market": 0.1951
       },
       "logLoss": {
-        "model": 0.5987,
-        "market": 0.5648
+        "model": 0.6001,
+        "market": 0.5682
       },
       "independentComparison": {
         "brierModel": null,
@@ -8166,10 +8166,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 1470,
-        "distinctEvents": 153,
-        "brierEstimate": 0.2149,
-        "brierMarket": 0.1936
+        "settled": 1505,
+        "distinctEvents": 154,
+        "brierEstimate": 0.2159,
+        "brierMarket": 0.1961
       },
       "calibrationBins": [
         {
@@ -8407,20 +8407,20 @@
           }
         },
         "spread": {
-          "recorded": 4048,
+          "recorded": 4056,
           "settlementHealth": {
-            "pending": 3038,
-            "overdue": 1803,
-            "oldestPending": "2026-10-03T19:30Z"
+            "pending": 3033,
+            "overdue": 1795,
+            "oldestPending": "2026-10-07T00:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 120,
-            "settled": 15,
-            "distinctEvents": 5,
-            "winRate": 0.6667,
-            "brier": 0.2366,
-            "referenceReturnPerUnit": 0.2669,
+            "settled": 16,
+            "distinctEvents": 6,
+            "winRate": 0.625,
+            "brier": 0.247,
+            "referenceReturnPerUnit": 0.1877,
             "calibrationBins": [
               {
                 "range": [
@@ -8445,9 +8445,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 9,
-                "predicted": 0.6989,
-                "observed": 0.5556
+                "count": 10,
+                "predicted": 0.6925,
+                "observed": 0.5
               },
               {
                 "range": [
@@ -8467,27 +8467,27 @@
                 0,
                 0.4
               ],
-              "count": 438,
-              "predicted": 0.2567,
-              "observed": 0.2306
+              "count": 443,
+              "predicted": 0.2577,
+              "observed": 0.2348
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 214,
-              "predicted": 0.4821,
-              "observed": 0.5794
+              "count": 215,
+              "predicted": 0.4822,
+              "observed": 0.5814
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 57,
-              "predicted": 0.6644,
-              "observed": 0.7895
+              "count": 59,
+              "predicted": 0.6634,
+              "observed": 0.7627
             },
             {
               "range": [
@@ -8500,34 +8500,34 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 580,
-            "Edge does not clear uncertainty buffer": 1053,
+            "Unvalidated longshot; insufficient reliability": 583,
+            "Edge does not clear uncertainty buffer": 1056,
             "Model disagrees too strongly with market": 60,
-            "Independent projection too thin": 85,
+            "Independent projection too thin": 87,
             "NCAAF sensitivity check failed": 46,
             "Quote spread too wide": 1
           },
           "sources": {
             "Kalshi": {
-              "recorded": 4048,
-              "settled": 1010,
+              "recorded": 4056,
+              "settled": 1023,
               "pushes": 0,
-              "distinctEvents": 104
+              "distinctEvents": 107
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 3636,
-          "settled": 1010,
-          "distinctEvents": 104,
+          "experimentalRecorded": 3642,
+          "settled": 1023,
+          "distinctEvents": 107,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2001,
-            "market": 0.1822
+            "model": 0.2003,
+            "market": 0.1825
           },
           "logLoss": {
-            "model": 0.5872,
-            "market": 0.541
+            "model": 0.5875,
+            "market": 0.5417
           },
           "independentComparison": {
             "brierModel": null,
@@ -8536,10 +8536,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 711,
-            "distinctEvents": 83,
-            "brierEstimate": 0.1946,
-            "brierMarket": 0.1692
+            "settled": 719,
+            "distinctEvents": 85,
+            "brierEstimate": 0.1958,
+            "brierMarket": 0.1705
           },
           "calibrationBins": [
             {
@@ -8592,20 +8592,20 @@
           }
         },
         "total": {
-          "recorded": 2490,
+          "recorded": 2508,
           "settlementHealth": {
-            "pending": 1882,
-            "overdue": 1201,
-            "oldestPending": "2026-10-03T19:30Z"
+            "pending": 1866,
+            "overdue": 1181,
+            "oldestPending": "2026-10-07T00:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 55,
-            "settled": 6,
-            "distinctEvents": 3,
-            "winRate": 0.1667,
-            "brier": 0.2729,
-            "referenceReturnPerUnit": -0.5833,
+            "settled": 12,
+            "distinctEvents": 5,
+            "winRate": 0.5833,
+            "brier": 0.2597,
+            "referenceReturnPerUnit": 0.4245,
             "calibrationBins": [
               {
                 "range": [
@@ -8621,9 +8621,9 @@
                   0.4,
                   0.6
                 ],
-                "count": 6,
-                "predicted": 0.5172,
-                "observed": 0.1667
+                "count": 12,
+                "predicted": 0.5107,
+                "observed": 0.5833
               },
               {
                 "range": [
@@ -8652,18 +8652,18 @@
                 0,
                 0.4
               ],
-              "count": 85,
-              "predicted": 0.2844,
-              "observed": 0.3529
+              "count": 87,
+              "predicted": 0.2852,
+              "observed": 0.3563
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 145,
-              "predicted": 0.5073,
-              "observed": 0.4483
+              "count": 170,
+              "predicted": 0.5066,
+              "observed": 0.4588
             },
             {
               "range": [
@@ -8685,32 +8685,32 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 241,
-            "Edge does not clear uncertainty buffer": 605,
-            "Unvalidated longshot; insufficient reliability": 228,
+            "Independent projection too thin": 249,
+            "Edge does not clear uncertainty buffer": 610,
+            "Unvalidated longshot; insufficient reliability": 233,
             "Model disagrees too strongly with market": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 2490,
-              "settled": 608,
+              "recorded": 2508,
+              "settled": 642,
               "pushes": 0,
-              "distinctEvents": 90
+              "distinctEvents": 93
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1247,
-          "settled": 608,
-          "distinctEvents": 90,
+          "experimentalRecorded": 1257,
+          "settled": 642,
+          "distinctEvents": 93,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1965,
-            "market": 0.1845
+            "model": 0.1993,
+            "market": 0.1904
           },
           "logLoss": {
-            "model": 0.5717,
-            "market": 0.5446
+            "model": 0.5779,
+            "market": 0.5573
           },
           "independentComparison": {
             "brierModel": null,
@@ -8719,10 +8719,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 364,
-            "distinctEvents": 65,
-            "brierEstimate": 0.2094,
-            "brierMarket": 0.1893
+            "settled": 391,
+            "distinctEvents": 67,
+            "brierEstimate": 0.2118,
+            "brierMarket": 0.1971
           },
           "calibrationBins": [
             {
@@ -8775,9 +8775,9 @@
           }
         },
         "spread:public": {
-          "recorded": 646,
+          "recorded": 648,
           "settlementHealth": {
-            "pending": 418,
+            "pending": 420,
             "overdue": 0,
             "oldestPending": null
           },
@@ -8868,7 +8868,7 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 452,
+            "Edge does not clear uncertainty buffer": 454,
             "Independent projection too thin": 7,
             "NCAAF sensitivity check failed": 16,
             "Model disagrees too strongly with market": 20,
@@ -8883,14 +8883,14 @@
               "distinctEvents": 56
             },
             "Draft Kings via ESPN": {
-              "recorded": 275,
+              "recorded": 277,
               "settled": 91,
               "pushes": 4,
               "distinctEvents": 53
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 634,
+          "experimentalRecorded": 636,
           "settled": 218,
           "distinctEvents": 55,
           "independentSettled": 0,
@@ -9347,18 +9347,18 @@
         "legacy": {
           "recorded": 7132,
           "settlementHealth": {
-            "pending": 4886,
-            "overdue": 3233,
-            "oldestPending": "2026-10-03T19:30Z"
+            "pending": 4839,
+            "overdue": 3205,
+            "oldestPending": "2026-10-07T00:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 189,
-            "settled": 46,
-            "distinctEvents": 19,
-            "winRate": 0.4348,
-            "brier": 0.2752,
-            "referenceReturnPerUnit": -0.1566,
+            "settled": 53,
+            "distinctEvents": 20,
+            "winRate": 0.4906,
+            "brier": 0.2744,
+            "referenceReturnPerUnit": 0.0074,
             "calibrationBins": [
               {
                 "range": [
@@ -9374,18 +9374,18 @@
                   0.4,
                   0.6
                 ],
-                "count": 15,
-                "predicted": 0.5383,
-                "observed": 0.4667
+                "count": 21,
+                "predicted": 0.5286,
+                "observed": 0.619
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 30,
-                "predicted": 0.6517,
-                "observed": 0.4
+                "count": 31,
+                "predicted": 0.6512,
+                "observed": 0.3871
               },
               {
                 "range": [
@@ -9405,27 +9405,27 @@
                 0,
                 0.4
               ],
-              "count": 595,
-              "predicted": 0.2735,
-              "observed": 0.2824
+              "count": 602,
+              "predicted": 0.2742,
+              "observed": 0.2857
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 617,
-              "predicted": 0.4937,
-              "observed": 0.4976
+              "count": 643,
+              "predicted": 0.494,
+              "observed": 0.4992
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 217,
-              "predicted": 0.6746,
-              "observed": 0.6866
+              "count": 219,
+              "predicted": 0.6742,
+              "observed": 0.6804
             },
             {
               "range": [
@@ -9449,9 +9449,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 6135,
-              "settled": 1861,
+              "settled": 1908,
               "pushes": 0,
-              "distinctEvents": 161
+              "distinctEvents": 164
             },
             "DraftKings via ESPN": {
               "recorded": 641,
@@ -9468,17 +9468,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 5314,
-          "settled": 2236,
-          "distinctEvents": 209,
+          "settled": 2283,
+          "distinctEvents": 211,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2075,
-            "market": 0.1935
+            "model": 0.2081,
+            "market": 0.1951
           },
           "logLoss": {
-            "model": 0.5987,
-            "market": 0.5648
+            "model": 0.6001,
+            "market": 0.5682
           },
           "independentComparison": {
             "brierModel": null,
@@ -9487,10 +9487,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1470,
-            "distinctEvents": 153,
-            "brierEstimate": 0.2149,
-            "brierMarket": 0.1936
+            "settled": 1505,
+            "distinctEvents": 154,
+            "brierEstimate": 0.2159,
+            "brierMarket": 0.1961
           },
           "calibrationBins": [
             {
@@ -9543,9 +9543,9 @@
           }
         },
         "forward-20261022-v1": {
-          "recorded": 1376,
+          "recorded": 1404,
           "settlementHealth": {
-            "pending": 1376,
+            "pending": 1404,
             "overdue": 0,
             "oldestPending": null
           },
@@ -9636,28 +9636,28 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 204,
-            "Edge does not clear uncertainty buffer": 573,
-            "Unvalidated longshot; insufficient reliability": 453,
+            "Independent projection too thin": 214,
+            "Edge does not clear uncertainty buffer": 583,
+            "Unvalidated longshot; insufficient reliability": 461,
             "Model disagrees too strongly with market": 35,
             "Quote spread too wide": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1310,
+              "recorded": 1336,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             },
             "Draft Kings via ESPN": {
-              "recorded": 66,
+              "recorded": 68,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1172,
+          "experimentalRecorded": 1190,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -9737,9 +9737,9 @@
         "legacy": {
           "recorded": 3847,
           "settlementHealth": {
-            "pending": 2052,
-            "overdue": 2012,
-            "oldestPending": "2026-10-03T19:30Z"
+            "pending": 2038,
+            "overdue": 1998,
+            "oldestPending": "2026-10-07T00:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
@@ -9795,18 +9795,18 @@
                 0,
                 0.4
               ],
-              "count": 512,
-              "predicted": 0.2615,
-              "observed": 0.248
+              "count": 516,
+              "predicted": 0.2619,
+              "observed": 0.2481
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 353,
-              "predicted": 0.4925,
-              "observed": 0.5269
+              "count": 355,
+              "predicted": 0.4928,
+              "observed": 0.5296
             },
             {
               "range": [
@@ -9831,24 +9831,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 3847,
-              "settled": 1795,
+              "settled": 1809,
               "pushes": 0,
-              "distinctEvents": 159
+              "distinctEvents": 161
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2304,
-          "settled": 1795,
-          "distinctEvents": 159,
+          "settled": 1809,
+          "distinctEvents": 161,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1961,
-            "market": 0.1813
+            "model": 0.1959,
+            "market": 0.1814
           },
           "logLoss": {
-            "model": 0.5739,
-            "market": 0.5374
+            "model": 0.5733,
+            "market": 0.5375
           },
           "independentComparison": {
             "brierModel": null,
@@ -9857,10 +9857,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1057,
-            "distinctEvents": 105,
-            "brierEstimate": 0.1987,
-            "brierMarket": 0.1736
+            "settled": 1063,
+            "distinctEvents": 106,
+            "brierEstimate": 0.1986,
+            "brierMarket": 0.174
           },
           "calibrationBins": [
             {
@@ -9915,8 +9915,8 @@
         "learning-20261015": {
           "recorded": 2625,
           "settlementHealth": {
-            "pending": 2185,
-            "overdue": 1125,
+            "pending": 2166,
+            "overdue": 1117,
             "oldestPending": "2026-10-15T23:30Z"
           },
           "independentRecorded": 0,
@@ -9973,27 +9973,27 @@
                 0,
                 0.4
               ],
-              "count": 82,
-              "predicted": 0.3468,
-              "observed": 0.4878
+              "count": 84,
+              "predicted": 0.3476,
+              "observed": 0.5
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 255,
-              "predicted": 0.4948,
-              "observed": 0.4588
+              "count": 267,
+              "predicted": 0.4951,
+              "observed": 0.4607
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 63,
-              "predicted": 0.6598,
-              "observed": 0.4603
+              "count": 64,
+              "predicted": 0.6594,
+              "observed": 0.4531
             },
             {
               "range": [
@@ -10029,24 +10029,24 @@
             },
             "Kalshi": {
               "recorded": 1741,
-              "settled": 63,
+              "settled": 82,
               "pushes": 0,
-              "distinctEvents": 8
+              "distinctEvents": 9
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2358,
-          "settled": 430,
+          "settled": 449,
           "distinctEvents": 56,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2533,
-            "market": 0.2426
+            "model": 0.2542,
+            "market": 0.2442
           },
           "logLoss": {
-            "model": 0.6986,
-            "market": 0.6755
+            "model": 0.7005,
+            "market": 0.6787
           },
           "independentComparison": {
             "brierModel": null,
@@ -10055,10 +10055,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 402,
+            "settled": 417,
             "distinctEvents": 53,
-            "brierEstimate": 0.256,
-            "brierMarket": 0.2446
+            "brierEstimate": 0.2567,
+            "brierMarket": 0.2459
           },
           "calibrationBins": [
             {
@@ -10113,18 +10113,18 @@
         "learning-20261019": {
           "recorded": 660,
           "settlementHealth": {
-            "pending": 649,
-            "overdue": 96,
+            "pending": 635,
+            "overdue": 90,
             "oldestPending": "2026-10-20T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 52,
-            "settled": 3,
-            "distinctEvents": 2,
-            "winRate": 0.3333,
-            "brier": 0.2969,
-            "referenceReturnPerUnit": -0.2593,
+            "settled": 10,
+            "distinctEvents": 3,
+            "winRate": 0.7,
+            "brier": 0.2772,
+            "referenceReturnPerUnit": 0.6817,
             "calibrationBins": [
               {
                 "range": [
@@ -10140,17 +10140,17 @@
                   0.4,
                   0.6
                 ],
-                "count": 2,
-                "predicted": 0.541,
-                "observed": 0.5
+                "count": 8,
+                "predicted": 0.5135,
+                "observed": 0.875
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 1,
-                "predicted": 0.6277,
+                "count": 2,
+                "predicted": 0.6312,
                 "observed": 0
               },
               {
@@ -10171,8 +10171,8 @@
                 0,
                 0.4
               ],
-              "count": 1,
-              "predicted": 0.3723,
+              "count": 2,
+              "predicted": 0.3688,
               "observed": 1
             },
             {
@@ -10180,17 +10180,17 @@
                 0.4,
                 0.6
               ],
-              "count": 9,
-              "predicted": 0.5042,
-              "observed": 0.4444
+              "count": 21,
+              "predicted": 0.5018,
+              "observed": 0.4762
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 1,
-              "predicted": 0.6277,
+              "count": 2,
+              "predicted": 0.6312,
               "observed": 0
             },
             {
@@ -10213,9 +10213,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 547,
-              "settled": 3,
+              "settled": 17,
               "pushes": 0,
-              "distinctEvents": 2
+              "distinctEvents": 3
             },
             "Draft Kings via ESPN": {
               "recorded": 113,
@@ -10226,17 +10226,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 652,
-          "settled": 11,
+          "settled": 25,
           "distinctEvents": 4,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.27,
-            "market": 0.2557
+            "model": 0.2693,
+            "market": 0.3067
           },
           "logLoss": {
-            "model": 0.7343,
-            "market": 0.7045
+            "model": 0.7329,
+            "market": 0.8083
           },
           "independentComparison": {
             "brierModel": null,
@@ -10245,10 +10245,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 11,
+            "settled": 25,
             "distinctEvents": 4,
-            "brierEstimate": 0.27,
-            "brierMarket": 0.2557
+            "brierEstimate": 0.2693,
+            "brierMarket": 0.3067
           },
           "calibrationBins": [
             {
@@ -10301,9 +10301,9 @@
           }
         },
         "learning-20261022": {
-          "recorded": 1376,
+          "recorded": 1404,
           "settlementHealth": {
-            "pending": 1376,
+            "pending": 1404,
             "overdue": 0,
             "oldestPending": null
           },
@@ -10394,28 +10394,28 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 204,
-            "Edge does not clear uncertainty buffer": 573,
-            "Unvalidated longshot; insufficient reliability": 453,
+            "Independent projection too thin": 214,
+            "Edge does not clear uncertainty buffer": 583,
+            "Unvalidated longshot; insufficient reliability": 461,
             "Model disagrees too strongly with market": 35,
             "Quote spread too wide": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1310,
+              "recorded": 1336,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             },
             "Draft Kings via ESPN": {
-              "recorded": 66,
+              "recorded": 68,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1172,
+          "experimentalRecorded": 1190,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -10493,20 +10493,20 @@
       }
     },
     "nfl": {
-      "recorded": 35646,
+      "recorded": 35648,
       "settlementHealth": {
-        "pending": 28199,
-        "overdue": 19736,
+        "pending": 28153,
+        "overdue": 19688,
         "oldestPending": "2026-10-04T13:30:00Z"
       },
       "independentRecorded": 13766,
       "qualified": {
         "recorded": 157,
-        "settled": 48,
+        "settled": 49,
         "distinctEvents": 12,
-        "winRate": 0.4375,
-        "brier": 0.2572,
-        "referenceReturnPerUnit": -0.1077,
+        "winRate": 0.449,
+        "brier": 0.2542,
+        "referenceReturnPerUnit": -0.0889,
         "calibrationBins": [
           {
             "range": [
@@ -10531,9 +10531,9 @@
               0.6,
               0.8
             ],
-            "count": 19,
-            "predicted": 0.6487,
-            "observed": 0.4737
+            "count": 20,
+            "predicted": 0.6495,
+            "observed": 0.5
           },
           {
             "range": [
@@ -10553,16 +10553,16 @@
             0,
             0.4
           ],
-          "count": 33,
-          "predicted": 0.2613,
-          "observed": 0.3939
+          "count": 34,
+          "predicted": 0.2635,
+          "observed": 0.3824
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 58,
+          "count": 60,
           "predicted": 0.5,
           "observed": 0.5
         },
@@ -10571,9 +10571,9 @@
             0.6,
             0.8
           ],
-          "count": 20,
-          "predicted": 0.6474,
-          "observed": 0.45
+          "count": 21,
+          "predicted": 0.6482,
+          "observed": 0.4762
         },
         {
           "range": [
@@ -10586,7 +10586,7 @@
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 5544,
+        "Edge does not clear uncertainty buffer": 5546,
         "Playing time uncertain": 1374,
         "Independent projection too thin": 1124,
         "ALT yardage requires a quoted 10-yard milestone": 833,
@@ -10606,8 +10606,8 @@
       },
       "sources": {
         "Kalshi": {
-          "recorded": 35526,
-          "settled": 7431,
+          "recorded": 35528,
+          "settled": 7479,
           "pushes": 0,
           "distinctEvents": 44
         },
@@ -10625,30 +10625,30 @@
         }
       },
       "marketSupportedRecorded": 5142,
-      "experimentalRecorded": 10045,
-      "settled": 7447,
+      "experimentalRecorded": 10047,
+      "settled": 7495,
       "distinctEvents": 44,
-      "independentSettled": 4448,
+      "independentSettled": 4480,
       "independentEvents": 43,
       "brier": {
-        "model": 0.1899,
-        "market": 0.1826
+        "model": 0.19,
+        "market": 0.1825
       },
       "logLoss": {
-        "model": 0.5767,
-        "market": 0.5441
+        "model": 0.5768,
+        "market": 0.544
       },
       "independentComparison": {
-        "brierModel": 0.1765,
+        "brierModel": 0.1767,
         "brierMarket": 0.1646,
-        "logLossModel": 0.5576,
+        "logLossModel": 0.558,
         "logLossMarket": 0.5038
       },
       "experimentalComparison": {
-        "settled": 113,
+        "settled": 117,
         "distinctEvents": 19,
-        "brierEstimate": 0.239,
-        "brierMarket": 0.2221
+        "brierEstimate": 0.2361,
+        "brierMarket": 0.2216
       },
       "calibrationBins": [
         {
@@ -10656,16 +10656,16 @@
             0,
             0.4
           ],
-          "count": 1926,
+          "count": 1940,
           "predicted": 0.1404,
-          "observed": 0.2175
+          "observed": 0.218
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 592,
+          "count": 596,
           "predicted": 0.4998,
           "observed": 0.5
         },
@@ -10674,18 +10674,18 @@
             0.6,
             0.8
           ],
-          "count": 547,
+          "count": 550,
           "predicted": 0.7022,
-          "observed": 0.6417
+          "observed": 0.6418
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 1383,
-          "predicted": 0.9221,
-          "observed": 0.8373
+          "count": 1394,
+          "predicted": 0.922,
+          "observed": 0.8364
         }
       ],
       "ablations": {
@@ -10708,16 +10708,16 @@
         "meanCLV": null
       },
       "positiveEV": {
-        "settled": 1156,
+        "settled": 1160,
         "distinctEvents": 27,
-        "grossReturnPerUnit": -0.0419
+        "grossReturnPerUnit": -0.0443
       },
       "groups": {
         "player_prop": {
           "recorded": 6376,
           "settlementHealth": {
-            "pending": 629,
-            "overdue": 629,
+            "pending": 587,
+            "overdue": 587,
             "oldestPending": "2026-10-04T13:30:00Z"
           },
           "independentRecorded": 3050,
@@ -10810,29 +10810,29 @@
           "sources": {
             "Kalshi": {
               "recorded": 6376,
-              "settled": 5747,
+              "settled": 5789,
               "pushes": 0,
               "distinctEvents": 18
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 5747,
+          "settled": 5789,
           "distinctEvents": 18,
-          "independentSettled": 2892,
+          "independentSettled": 2924,
           "independentEvents": 17,
           "brier": {
-            "model": 0.1954,
-            "market": 0.1862
+            "model": 0.1955,
+            "market": 0.1861
           },
           "logLoss": {
-            "model": 0.5967,
-            "market": 0.555
+            "model": 0.5969,
+            "market": 0.5549
           },
           "independentComparison": {
-            "brierModel": 0.1815,
+            "brierModel": 0.1818,
             "brierMarket": 0.1632,
-            "logLossModel": 0.5882,
+            "logLossModel": 0.5885,
             "logLossMarket": 0.5053
           },
           "experimentalComparison": {
@@ -10847,36 +10847,36 @@
                 0,
                 0.4
               ],
-              "count": 1354,
-              "predicted": 0.1148,
-              "observed": 0.2275
+              "count": 1368,
+              "predicted": 0.1151,
+              "observed": 0.2281
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 181,
+              "count": 185,
               "predicted": 0.5,
-              "observed": 0.4972
+              "observed": 0.4973
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 275,
-              "predicted": 0.7034,
-              "observed": 0.6
+              "count": 278,
+              "predicted": 0.7033,
+              "observed": 0.6007
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1082,
-              "predicted": 0.9319,
-              "observed": 0.8161
+              "count": 1093,
+              "predicted": 0.9316,
+              "observed": 0.8152
             }
           ],
           "ablations": {},
@@ -10886,9 +10886,9 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 1010,
+            "settled": 1014,
             "distinctEvents": 17,
-            "grossReturnPerUnit": -0.0359
+            "grossReturnPerUnit": -0.0387
           }
         },
         "moneyline": {
@@ -11452,8 +11452,8 @@
         "touchdown_scorer": {
           "recorded": 1279,
           "settlementHealth": {
-            "pending": 1253,
-            "overdue": 944,
+            "pending": 1251,
+            "overdue": 942,
             "oldestPending": "2026-10-04T17:00:00Z"
           },
           "independentRecorded": 0,
@@ -11556,24 +11556,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1279,
-              "settled": 26,
+              "settled": 28,
               "pushes": 0,
               "distinctEvents": 12
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1056,
-          "settled": 26,
+          "settled": 28,
           "distinctEvents": 12,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.0433,
-            "market": 0.039
+            "model": 0.0405,
+            "market": 0.0365
           },
           "logLoss": {
-            "model": 0.1575,
-            "market": 0.1499
+            "model": 0.1511,
+            "market": 0.144
           },
           "independentComparison": {
             "brierModel": null,
@@ -12192,9 +12192,9 @@
           }
         },
         "player_pass_tds": {
-          "recorded": 248,
+          "recorded": 250,
           "settlementHealth": {
-            "pending": 234,
+            "pending": 236,
             "overdue": 174,
             "oldestPending": "2026-10-09T00:15:00Z"
           },
@@ -12285,7 +12285,7 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 65,
+            "Edge does not clear uncertainty buffer": 67,
             "Playing time uncertain": 10,
             "Unvalidated longshot; insufficient reliability": 12,
             "Recent opportunity changed; waiting for a stable role": 12,
@@ -12295,14 +12295,14 @@
           },
           "sources": {
             "Kalshi": {
-              "recorded": 248,
+              "recorded": 250,
               "settled": 14,
               "pushes": 0,
               "distinctEvents": 3
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 114,
+          "experimentalRecorded": 116,
           "settled": 14,
           "distinctEvents": 3,
           "independentSettled": 4,
@@ -12380,18 +12380,18 @@
         "player_receptions": {
           "recorded": 1007,
           "settlementHealth": {
-            "pending": 1001,
-            "overdue": 949,
+            "pending": 997,
+            "overdue": 945,
             "oldestPending": "2026-10-06T00:15:00Z"
           },
           "independentRecorded": 319,
           "qualified": {
             "recorded": 8,
-            "settled": 3,
-            "distinctEvents": 2,
-            "winRate": 0.6667,
-            "brier": 0.2666,
-            "referenceReturnPerUnit": 0.7105,
+            "settled": 4,
+            "distinctEvents": 3,
+            "winRate": 0.75,
+            "brier": 0.2282,
+            "referenceReturnPerUnit": 0.7374,
             "calibrationBins": [
               {
                 "range": [
@@ -12416,9 +12416,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.664,
+                "observed": 1
               },
               {
                 "range": [
@@ -12438,16 +12438,16 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 1,
+              "predicted": 0.336,
+              "observed": 0
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 6,
+              "count": 8,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -12456,9 +12456,9 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 1,
+              "predicted": 0.664,
+              "observed": 1
             },
             {
               "range": [
@@ -12485,24 +12485,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1007,
-              "settled": 6,
+              "settled": 10,
               "pushes": 0,
-              "distinctEvents": 2
+              "distinctEvents": 3
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 490,
-          "settled": 6,
-          "distinctEvents": 2,
+          "settled": 10,
+          "distinctEvents": 3,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2666,
-            "market": 0.3168
+            "model": 0.2223,
+            "market": 0.2738
           },
           "logLoss": {
-            "model": 0.7264,
-            "market": 0.8298
+            "model": 0.6357,
+            "market": 0.7425
           },
           "independentComparison": {
             "brierModel": null,
@@ -12511,10 +12511,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 6,
-            "distinctEvents": 2,
-            "brierEstimate": 0.2666,
-            "brierMarket": 0.3168
+            "settled": 10,
+            "distinctEvents": 3,
+            "brierEstimate": 0.2223,
+            "brierMarket": 0.2738
           },
           "calibrationBins": [
             {
@@ -14453,18 +14453,18 @@
         "legacy": {
           "recorded": 30371,
           "settlementHealth": {
-            "pending": 22924,
-            "overdue": 19736,
+            "pending": 22876,
+            "overdue": 19688,
             "oldestPending": "2026-10-04T13:30:00Z"
           },
           "independentRecorded": 13766,
           "qualified": {
             "recorded": 53,
-            "settled": 48,
+            "settled": 49,
             "distinctEvents": 12,
-            "winRate": 0.4375,
-            "brier": 0.2572,
-            "referenceReturnPerUnit": -0.1077,
+            "winRate": 0.449,
+            "brier": 0.2542,
+            "referenceReturnPerUnit": -0.0889,
             "calibrationBins": [
               {
                 "range": [
@@ -14489,9 +14489,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 19,
-                "predicted": 0.6487,
-                "observed": 0.4737
+                "count": 20,
+                "predicted": 0.6495,
+                "observed": 0.5
               },
               {
                 "range": [
@@ -14511,16 +14511,16 @@
                 0,
                 0.4
               ],
-              "count": 33,
-              "predicted": 0.2613,
-              "observed": 0.3939
+              "count": 34,
+              "predicted": 0.2635,
+              "observed": 0.3824
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 58,
+              "count": 60,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -14529,9 +14529,9 @@
                 0.6,
                 0.8
               ],
-              "count": 20,
-              "predicted": 0.6474,
-              "observed": 0.45
+              "count": 21,
+              "predicted": 0.6482,
+              "observed": 0.4762
             },
             {
               "range": [
@@ -14560,7 +14560,7 @@
           "sources": {
             "Kalshi": {
               "recorded": 30263,
-              "settled": 7431,
+              "settled": 7479,
               "pushes": 0,
               "distinctEvents": 44
             },
@@ -14579,29 +14579,29 @@
           },
           "marketSupportedRecorded": 3836,
           "experimentalRecorded": 6725,
-          "settled": 7447,
+          "settled": 7495,
           "distinctEvents": 44,
-          "independentSettled": 4448,
+          "independentSettled": 4480,
           "independentEvents": 43,
           "brier": {
-            "model": 0.1899,
-            "market": 0.1826
+            "model": 0.19,
+            "market": 0.1825
           },
           "logLoss": {
-            "model": 0.5767,
-            "market": 0.5441
+            "model": 0.5768,
+            "market": 0.544
           },
           "independentComparison": {
-            "brierModel": 0.1765,
+            "brierModel": 0.1767,
             "brierMarket": 0.1646,
-            "logLossModel": 0.5576,
+            "logLossModel": 0.558,
             "logLossMarket": 0.5038
           },
           "experimentalComparison": {
-            "settled": 113,
+            "settled": 117,
             "distinctEvents": 19,
-            "brierEstimate": 0.239,
-            "brierMarket": 0.2221
+            "brierEstimate": 0.2361,
+            "brierMarket": 0.2216
           },
           "calibrationBins": [
             {
@@ -14609,16 +14609,16 @@
                 0,
                 0.4
               ],
-              "count": 1926,
+              "count": 1940,
               "predicted": 0.1404,
-              "observed": 0.2175
+              "observed": 0.218
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 592,
+              "count": 596,
               "predicted": 0.4998,
               "observed": 0.5
             },
@@ -14627,18 +14627,18 @@
                 0.6,
                 0.8
               ],
-              "count": 547,
+              "count": 550,
               "predicted": 0.7022,
-              "observed": 0.6417
+              "observed": 0.6418
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1383,
-              "predicted": 0.9221,
-              "observed": 0.8373
+              "count": 1394,
+              "predicted": 0.922,
+              "observed": 0.8364
             }
           ],
           "ablations": {
@@ -14661,15 +14661,15 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 1156,
+            "settled": 1160,
             "distinctEvents": 27,
-            "grossReturnPerUnit": -0.0419
+            "grossReturnPerUnit": -0.0443
           }
         },
         "forward-20261022-v1": {
-          "recorded": 5275,
+          "recorded": 5277,
           "settlementHealth": {
-            "pending": 5275,
+            "pending": 5277,
             "overdue": 0,
             "oldestPending": null
           },
@@ -14760,7 +14760,7 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 946,
+            "Edge does not clear uncertainty buffer": 948,
             "Independent projection too thin": 325,
             "Playing time uncertain": 476,
             "Unvalidated longshot; insufficient reliability": 1049,
@@ -14776,7 +14776,7 @@
           },
           "sources": {
             "Kalshi": {
-              "recorded": 5263,
+              "recorded": 5265,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -14789,7 +14789,7 @@
             }
           },
           "marketSupportedRecorded": 1306,
-          "experimentalRecorded": 3320,
+          "experimentalRecorded": 3322,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -14869,8 +14869,8 @@
         "legacy": {
           "recorded": 19495,
           "settlementHealth": {
-            "pending": 12160,
-            "overdue": 12132,
+            "pending": 12116,
+            "overdue": 12088,
             "oldestPending": "2026-10-04T13:30:00Z"
           },
           "independentRecorded": 13766,
@@ -14963,29 +14963,29 @@
           "sources": {
             "Kalshi": {
               "recorded": 19495,
-              "settled": 7335,
+              "settled": 7379,
               "pushes": 0,
               "distinctEvents": 44
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1078,
-          "settled": 7335,
+          "settled": 7379,
           "distinctEvents": 44,
-          "independentSettled": 4448,
+          "independentSettled": 4480,
           "independentEvents": 43,
           "brier": {
-            "model": 0.1889,
+            "model": 0.189,
             "market": 0.1816
           },
           "logLoss": {
-            "model": 0.5748,
-            "market": 0.5421
+            "model": 0.5749,
+            "market": 0.5419
           },
           "independentComparison": {
-            "brierModel": 0.1765,
+            "brierModel": 0.1767,
             "brierMarket": 0.1646,
-            "logLossModel": 0.5576,
+            "logLossModel": 0.558,
             "logLossMarket": 0.5038
           },
           "experimentalComparison": {
@@ -15000,16 +15000,16 @@
                 0,
                 0.4
               ],
-              "count": 1926,
+              "count": 1940,
               "predicted": 0.1404,
-              "observed": 0.2175
+              "observed": 0.218
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 592,
+              "count": 596,
               "predicted": 0.4998,
               "observed": 0.5
             },
@@ -15018,18 +15018,18 @@
                 0.6,
                 0.8
               ],
-              "count": 547,
+              "count": 550,
               "predicted": 0.7022,
-              "observed": 0.6417
+              "observed": 0.6418
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1383,
-              "predicted": 0.9221,
-              "observed": 0.8373
+              "count": 1394,
+              "predicted": 0.922,
+              "observed": 0.8364
             }
           ],
           "ablations": {
@@ -15052,16 +15052,16 @@
             "meanCLV": null
           },
           "positiveEV": {
-            "settled": 1156,
+            "settled": 1160,
             "distinctEvents": 27,
-            "grossReturnPerUnit": -0.0419
+            "grossReturnPerUnit": -0.0443
           }
         },
         "learning-20261015": {
           "recorded": 8885,
           "settlementHealth": {
-            "pending": 8777,
-            "overdue": 7165,
+            "pending": 8775,
+            "overdue": 7163,
             "oldestPending": "2026-10-16T00:15:00Z"
           },
           "independentRecorded": 0,
@@ -15127,7 +15127,7 @@
                 0.4,
                 0.6
               ],
-              "count": 52,
+              "count": 54,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -15179,24 +15179,24 @@
             },
             "Kalshi": {
               "recorded": 8791,
-              "settled": 92,
+              "settled": 94,
               "pushes": 0,
               "distinctEvents": 12
             }
           },
           "marketSupportedRecorded": 2550,
           "experimentalRecorded": 5069,
-          "settled": 108,
+          "settled": 110,
           "distinctEvents": 12,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2555,
-            "market": 0.2447
+            "model": 0.2544,
+            "market": 0.2441
           },
           "logLoss": {
-            "model": 0.7026,
-            "market": 0.6822
+            "model": 0.7006,
+            "market": 0.681
           },
           "independentComparison": {
             "brierModel": null,
@@ -15205,10 +15205,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 92,
+            "settled": 94,
             "distinctEvents": 12,
-            "brierEstimate": 0.2564,
-            "brierMarket": 0.2438
+            "brierEstimate": 0.2552,
+            "brierMarket": 0.2431
           },
           "calibrationBins": [
             {
@@ -15443,18 +15443,18 @@
         "learning-20261019": {
           "recorded": 1987,
           "settlementHealth": {
-            "pending": 1983,
-            "overdue": 435,
+            "pending": 1981,
+            "overdue": 433,
             "oldestPending": "2026-10-20T00:15:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 4,
-            "settled": 2,
+            "settled": 3,
             "distinctEvents": 1,
-            "winRate": 0,
-            "brier": 0.2751,
-            "referenceReturnPerUnit": -1,
+            "winRate": 0.3333,
+            "brier": 0.221,
+            "referenceReturnPerUnit": -0.3939,
             "calibrationBins": [
               {
                 "range": [
@@ -15479,9 +15479,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 0,
-                "predicted": null,
-                "observed": null
+                "count": 1,
+                "predicted": 0.664,
+                "observed": 1
               },
               {
                 "range": [
@@ -15501,9 +15501,9 @@
                 0,
                 0.4
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 1,
+              "predicted": 0.336,
+              "observed": 0
             },
             {
               "range": [
@@ -15519,9 +15519,9 @@
                 0.6,
                 0.8
               ],
-              "count": 0,
-              "predicted": null,
-              "observed": null
+              "count": 1,
+              "predicted": 0.664,
+              "observed": 1
             },
             {
               "range": [
@@ -15549,7 +15549,7 @@
           "sources": {
             "Kalshi": {
               "recorded": 1973,
-              "settled": 4,
+              "settled": 6,
               "pushes": 0,
               "distinctEvents": 1
             },
@@ -15562,17 +15562,17 @@
           },
           "marketSupportedRecorded": 1286,
           "experimentalRecorded": 574,
-          "settled": 4,
+          "settled": 6,
           "distinctEvents": 1,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2751,
-            "market": 0.1917
+            "model": 0.221,
+            "market": 0.1968
           },
           "logLoss": {
-            "model": 0.7439,
-            "market": 0.5749
+            "model": 0.6324,
+            "market": 0.5856
           },
           "independentComparison": {
             "brierModel": null,
@@ -15581,10 +15581,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 4,
+            "settled": 6,
             "distinctEvents": 1,
-            "brierEstimate": 0.2751,
-            "brierMarket": 0.1917
+            "brierEstimate": 0.221,
+            "brierMarket": 0.1968
           },
           "calibrationBins": [
             {
@@ -15637,9 +15637,9 @@
           }
         },
         "learning-20261022": {
-          "recorded": 5275,
+          "recorded": 5277,
           "settlementHealth": {
-            "pending": 5275,
+            "pending": 5277,
             "overdue": 0,
             "oldestPending": null
           },
@@ -15730,7 +15730,7 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 946,
+            "Edge does not clear uncertainty buffer": 948,
             "Independent projection too thin": 325,
             "Playing time uncertain": 476,
             "Unvalidated longshot; insufficient reliability": 1049,
@@ -15746,7 +15746,7 @@
           },
           "sources": {
             "Kalshi": {
-              "recorded": 5263,
+              "recorded": 5265,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -15759,7 +15759,7 @@
             }
           },
           "marketSupportedRecorded": 1306,
-          "experimentalRecorded": 3320,
+          "experimentalRecorded": 3322,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -15837,20 +15837,20 @@
       }
     },
     "nhl": {
-      "recorded": 16397,
+      "recorded": 16500,
       "settlementHealth": {
-        "pending": 14781,
-        "overdue": 14348,
+        "pending": 14816,
+        "overdue": 14280,
         "oldestPending": "2026-10-03T23:00Z"
       },
       "independentRecorded": 0,
       "qualified": {
         "recorded": 129,
-        "settled": 65,
-        "distinctEvents": 23,
-        "winRate": 0.5538,
-        "brier": 0.2354,
-        "referenceReturnPerUnit": -0.1271,
+        "settled": 69,
+        "distinctEvents": 24,
+        "winRate": 0.5507,
+        "brier": 0.2452,
+        "referenceReturnPerUnit": -0.1223,
         "calibrationBins": [
           {
             "range": [
@@ -15866,27 +15866,27 @@
               0.4,
               0.6
             ],
-            "count": 15,
-            "predicted": 0.5378,
-            "observed": 0.2667
+            "count": 17,
+            "predicted": 0.5431,
+            "observed": 0.2941
           },
           {
             "range": [
               0.6,
               0.8
             ],
-            "count": 33,
-            "predicted": 0.7185,
-            "observed": 0.6061
+            "count": 34,
+            "predicted": 0.7168,
+            "observed": 0.6176
           },
           {
             "range": [
               0.8,
               1
             ],
-            "count": 17,
-            "predicted": 0.8627,
-            "observed": 0.7059
+            "count": 18,
+            "predicted": 0.8692,
+            "observed": 0.6667
           }
         ],
         "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -15897,54 +15897,54 @@
             0,
             0.4
           ],
-          "count": 600,
+          "count": 626,
           "predicted": 0.2057,
-          "observed": 0.2083
+          "observed": 0.2109
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 358,
-          "predicted": 0.5009,
-          "observed": 0.4944
+          "count": 374,
+          "predicted": 0.5008,
+          "observed": 0.4947
         },
         {
           "range": [
             0.6,
             0.8
           ],
-          "count": 313,
-          "predicted": 0.7053,
-          "observed": 0.7061
+          "count": 327,
+          "predicted": 0.705,
+          "observed": 0.7095
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 287,
-          "predicted": 0.8912,
-          "observed": 0.8815
+          "count": 299,
+          "predicted": 0.8919,
+          "observed": 0.8729
         }
       ],
       "rejectionReasons": {
-        "Edge does not clear uncertainty buffer": 4024,
-        "Model disagrees too strongly with market": 64,
+        "Edge does not clear uncertainty buffer": 4076,
+        "Model disagrees too strongly with market": 65,
         "Independent projection too thin": 441,
-        "Unvalidated longshot; insufficient reliability": 611,
-        "ESPN availability uncertain: Day-To-Day": 34,
-        "Quote spread too wide": 8,
+        "Unvalidated longshot; insufficient reliability": 658,
+        "ESPN availability uncertain: Day-To-Day": 36,
+        "Quote spread too wide": 9,
         "Recent TOI changed; reassess playing time": 8,
         "ESPN reports player unavailable: Injured Reserve": 2
       },
       "sources": {
         "Kalshi": {
-          "recorded": 16250,
-          "settled": 1479,
+          "recorded": 16347,
+          "settled": 1547,
           "pushes": 0,
-          "distinctEvents": 59
+          "distinctEvents": 60
         },
         "DraftKings via ESPN": {
           "recorded": 79,
@@ -15953,25 +15953,25 @@
           "distinctEvents": 20
         },
         "Draft Kings via ESPN": {
-          "recorded": 68,
+          "recorded": 74,
           "settled": 62,
           "pushes": 0,
           "distinctEvents": 10
         }
       },
       "marketSupportedRecorded": 0,
-      "experimentalRecorded": 15167,
-      "settled": 1616,
+      "experimentalRecorded": 15270,
+      "settled": 1684,
       "distinctEvents": 75,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1717,
-        "market": 0.1697
+        "model": 0.1743,
+        "market": 0.1719
       },
       "logLoss": {
-        "model": 0.5143,
-        "market": 0.5123
+        "model": 0.5242,
+        "market": 0.5183
       },
       "independentComparison": {
         "brierModel": null,
@@ -15980,10 +15980,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 1558,
+        "settled": 1626,
         "distinctEvents": 74,
-        "brierEstimate": 0.1725,
-        "brierMarket": 0.1704
+        "brierEstimate": 0.1751,
+        "brierMarket": 0.1727
       },
       "calibrationBins": [
         {
@@ -16036,9 +16036,9 @@
       },
       "groups": {
         "moneyline": {
-          "recorded": 478,
+          "recorded": 481,
           "settlementHealth": {
-            "pending": 409,
+            "pending": 412,
             "overdue": 292,
             "oldestPending": "2026-10-05T23:00Z"
           },
@@ -16129,21 +16129,21 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 176,
+            "Edge does not clear uncertainty buffer": 178,
             "Model disagrees too strongly with market": 3,
-            "Unvalidated longshot; insufficient reliability": 47,
+            "Unvalidated longshot; insufficient reliability": 48,
             "Independent projection too thin": 1
           },
           "sources": {
             "Kalshi": {
-              "recorded": 478,
+              "recorded": 481,
               "settled": 69,
               "pushes": 0,
               "distinctEvents": 39
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 474,
+          "experimentalRecorded": 477,
           "settled": 69,
           "distinctEvents": 39,
           "independentSettled": 0,
@@ -16219,20 +16219,20 @@
           }
         },
         "spread": {
-          "recorded": 1088,
+          "recorded": 1090,
           "settlementHealth": {
-            "pending": 928,
-            "overdue": 860,
-            "oldestPending": "2026-10-04T00:00Z"
+            "pending": 924,
+            "overdue": 854,
+            "oldestPending": "2026-10-04T01:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 26,
-            "settled": 13,
+            "settled": 14,
             "distinctEvents": 8,
-            "winRate": 0.6154,
-            "brier": 0.2787,
-            "referenceReturnPerUnit": -0.0853,
+            "winRate": 0.6429,
+            "brier": 0.2671,
+            "referenceReturnPerUnit": -0.0295,
             "calibrationBins": [
               {
                 "range": [
@@ -16257,9 +16257,9 @@
                   0.6,
                   0.8
                 ],
-                "count": 8,
-                "predicted": 0.7353,
-                "observed": 0.75
+                "count": 9,
+                "predicted": 0.727,
+                "observed": 0.7778
               },
               {
                 "range": [
@@ -16279,9 +16279,9 @@
                 0,
                 0.4
               ],
-              "count": 75,
-              "predicted": 0.2206,
-              "observed": 0.28
+              "count": 78,
+              "predicted": 0.2234,
+              "observed": 0.2692
             },
             {
               "range": [
@@ -16297,9 +16297,9 @@
                 0.6,
                 0.8
               ],
-              "count": 44,
-              "predicted": 0.7226,
-              "observed": 0.7273
+              "count": 47,
+              "predicted": 0.7215,
+              "observed": 0.7447
             },
             {
               "range": [
@@ -16312,32 +16312,32 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 262,
-            "Unvalidated longshot; insufficient reliability": 71,
+            "Edge does not clear uncertainty buffer": 263,
+            "Unvalidated longshot; insufficient reliability": 72,
             "Independent projection too thin": 24,
             "Model disagrees too strongly with market": 3
           },
           "sources": {
             "Kalshi": {
-              "recorded": 1088,
-              "settled": 160,
+              "recorded": 1090,
+              "settled": 166,
               "pushes": 0,
               "distinctEvents": 29
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1042,
-          "settled": 160,
+          "experimentalRecorded": 1044,
+          "settled": 166,
           "distinctEvents": 29,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2083,
-            "market": 0.1922
+            "model": 0.2041,
+            "market": 0.1899
           },
           "logLoss": {
-            "model": 0.6177,
-            "market": 0.5699
+            "model": 0.6081,
+            "market": 0.565
           },
           "independentComparison": {
             "brierModel": null,
@@ -16346,10 +16346,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 158,
+            "settled": 164,
             "distinctEvents": 29,
-            "brierEstimate": 0.2071,
-            "brierMarket": 0.1908
+            "brierEstimate": 0.2028,
+            "brierMarket": 0.1884
           },
           "calibrationBins": [
             {
@@ -16402,10 +16402,10 @@
           }
         },
         "total": {
-          "recorded": 2178,
+          "recorded": 2182,
           "settlementHealth": {
             "pending": 1914,
-            "overdue": 1822,
+            "overdue": 1818,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
@@ -16462,9 +16462,9 @@
                 0,
                 0.4
               ],
-              "count": 97,
-              "predicted": 0.1482,
-              "observed": 0.1443
+              "count": 99,
+              "predicted": 0.1513,
+              "observed": 0.1414
             },
             {
               "range": [
@@ -16480,9 +16480,9 @@
                 0.6,
                 0.8
               ],
-              "count": 38,
-              "predicted": 0.7119,
-              "observed": 0.7105
+              "count": 40,
+              "predicted": 0.7112,
+              "observed": 0.725
             },
             {
               "range": [
@@ -16495,32 +16495,32 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 498,
-            "Unvalidated longshot; insufficient reliability": 91,
+            "Edge does not clear uncertainty buffer": 500,
+            "Unvalidated longshot; insufficient reliability": 93,
             "Independent projection too thin": 60,
             "Quote spread too wide": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 2178,
-              "settled": 264,
+              "recorded": 2182,
+              "settled": 268,
               "pushes": 0,
               "distinctEvents": 25
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 2062,
-          "settled": 264,
+          "experimentalRecorded": 2066,
+          "settled": 268,
           "distinctEvents": 25,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1388,
-            "market": 0.133
+            "model": 0.1381,
+            "market": 0.1321
           },
           "logLoss": {
-            "model": 0.4147,
-            "market": 0.4081
+            "model": 0.4139,
+            "market": 0.4066
           },
           "independentComparison": {
             "brierModel": null,
@@ -16529,10 +16529,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 260,
+            "settled": 264,
             "distinctEvents": 25,
-            "brierEstimate": 0.1407,
-            "brierMarket": 0.1348
+            "brierEstimate": 0.14,
+            "brierMarket": 0.1339
           },
           "calibrationBins": [
             {
@@ -16585,20 +16585,20 @@
           }
         },
         "goals": {
-          "recorded": 6314,
+          "recorded": 6360,
           "settlementHealth": {
-            "pending": 5762,
-            "overdue": 5688,
+            "pending": 5776,
+            "overdue": 5656,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 14,
-            "settled": 7,
-            "distinctEvents": 7,
-            "winRate": 0.8571,
-            "brier": 0.1088,
-            "referenceReturnPerUnit": 0.196,
+            "settled": 8,
+            "distinctEvents": 8,
+            "winRate": 0.75,
+            "brier": 0.2153,
+            "referenceReturnPerUnit": 0.0465,
             "calibrationBins": [
               {
                 "range": [
@@ -16632,9 +16632,9 @@
                   0.8,
                   1
                 ],
-                "count": 3,
-                "predicted": 0.9068,
-                "observed": 1
+                "count": 4,
+                "predicted": 0.9251,
+                "observed": 0.75
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -16645,9 +16645,9 @@
                 0,
                 0.4
               ],
-              "count": 260,
-              "predicted": 0.1788,
-              "observed": 0.1654
+              "count": 276,
+              "predicted": 0.1794,
+              "observed": 0.1739
             },
             {
               "range": [
@@ -16663,51 +16663,51 @@
                 0.6,
                 0.8
               ],
-              "count": 103,
-              "predicted": 0.7267,
-              "observed": 0.7379
+              "count": 111,
+              "predicted": 0.7245,
+              "observed": 0.7387
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 157,
-              "predicted": 0.8831,
-              "observed": 0.8981
+              "count": 165,
+              "predicted": 0.8852,
+              "observed": 0.8848
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 1383,
+            "Edge does not clear uncertainty buffer": 1406,
             "Independent projection too thin": 132,
-            "Unvalidated longshot; insufficient reliability": 186,
+            "Unvalidated longshot; insufficient reliability": 207,
             "Model disagrees too strongly with market": 22,
-            "ESPN availability uncertain: Day-To-Day": 14,
+            "ESPN availability uncertain: Day-To-Day": 16,
             "Quote spread too wide": 3,
             "Recent TOI changed; reassess playing time": 8,
             "ESPN reports player unavailable: Injured Reserve": 2
           },
           "sources": {
             "Kalshi": {
-              "recorded": 6314,
-              "settled": 552,
+              "recorded": 6360,
+              "settled": 584,
               "pushes": 0,
-              "distinctEvents": 25
+              "distinctEvents": 26
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 5846,
-          "settled": 552,
-          "distinctEvents": 25,
+          "experimentalRecorded": 5892,
+          "settled": 584,
+          "distinctEvents": 26,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1303,
-            "market": 0.1316
+            "model": 0.1385,
+            "market": 0.1384
           },
           "logLoss": {
-            "model": 0.4194,
-            "market": 0.4267
+            "model": 0.4497,
+            "market": 0.4446
           },
           "independentComparison": {
             "brierModel": null,
@@ -16716,10 +16716,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 522,
-            "distinctEvents": 25,
-            "brierEstimate": 0.1281,
-            "brierMarket": 0.1294
+            "settled": 554,
+            "distinctEvents": 26,
+            "brierEstimate": 0.1369,
+            "brierMarket": 0.1368
           },
           "calibrationBins": [
             {
@@ -16772,20 +16772,20 @@
           }
         },
         "assists": {
-          "recorded": 2034,
+          "recorded": 2048,
           "settlementHealth": {
-            "pending": 1830,
-            "overdue": 1798,
+            "pending": 1826,
+            "overdue": 1780,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 26,
-            "settled": 14,
-            "distinctEvents": 11,
-            "winRate": 0.7143,
-            "brier": 0.2063,
-            "referenceReturnPerUnit": 0.1224,
+            "settled": 15,
+            "distinctEvents": 12,
+            "winRate": 0.7333,
+            "brier": 0.2049,
+            "referenceReturnPerUnit": 0.1894,
             "calibrationBins": [
               {
                 "range": [
@@ -16801,8 +16801,8 @@
                   0.4,
                   0.6
                 ],
-                "count": 1,
-                "predicted": 0.5384,
+                "count": 2,
+                "predicted": 0.5543,
                 "observed": 1
               },
               {
@@ -16832,16 +16832,16 @@
                 0,
                 0.4
               ],
-              "count": 81,
-              "predicted": 0.2592,
-              "observed": 0.2963
+              "count": 86,
+              "predicted": 0.2538,
+              "observed": 0.3023
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 36,
+              "count": 44,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -16850,48 +16850,48 @@
                 0.6,
                 0.8
               ],
-              "count": 58,
-              "predicted": 0.686,
-              "observed": 0.6724
+              "count": 59,
+              "predicted": 0.6859,
+              "observed": 0.661
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 23,
-              "predicted": 0.879,
-              "observed": 0.7826
+              "count": 27,
+              "predicted": 0.878,
+              "observed": 0.7778
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 481,
+            "Edge does not clear uncertainty buffer": 487,
             "Independent projection too thin": 38,
-            "Unvalidated longshot; insufficient reliability": 59,
-            "Model disagrees too strongly with market": 18,
+            "Unvalidated longshot; insufficient reliability": 66,
+            "Model disagrees too strongly with market": 19,
             "ESPN availability uncertain: Day-To-Day": 8
           },
           "sources": {
             "Kalshi": {
-              "recorded": 2034,
-              "settled": 204,
+              "recorded": 2048,
+              "settled": 222,
               "pushes": 0,
-              "distinctEvents": 29
+              "distinctEvents": 30
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 1912,
-          "settled": 204,
-          "distinctEvents": 29,
+          "experimentalRecorded": 1926,
+          "settled": 222,
+          "distinctEvents": 30,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2058,
-            "market": 0.2083
+            "model": 0.2062,
+            "market": 0.2105
           },
           "logLoss": {
-            "model": 0.6053,
-            "market": 0.6173
+            "model": 0.605,
+            "market": 0.6206
           },
           "independentComparison": {
             "brierModel": null,
@@ -16900,10 +16900,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 198,
-            "distinctEvents": 29,
-            "brierEstimate": 0.2107,
-            "brierMarket": 0.2133
+            "settled": 216,
+            "distinctEvents": 30,
+            "brierEstimate": 0.2108,
+            "brierMarket": 0.2152
           },
           "calibrationBins": [
             {
@@ -16956,20 +16956,20 @@
           }
         },
         "points": {
-          "recorded": 3876,
+          "recorded": 3904,
           "settlementHealth": {
-            "pending": 3652,
-            "overdue": 3602,
+            "pending": 3672,
+            "overdue": 3594,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 44,
-            "settled": 22,
-            "distinctEvents": 13,
-            "winRate": 0.4545,
-            "brier": 0.2589,
-            "referenceReturnPerUnit": -0.1814,
+            "settled": 23,
+            "distinctEvents": 14,
+            "winRate": 0.4348,
+            "brier": 0.2631,
+            "referenceReturnPerUnit": -0.217,
             "calibrationBins": [
               {
                 "range": [
@@ -16985,9 +16985,9 @@
                   0.4,
                   0.6
                 ],
-                "count": 9,
-                "predicted": 0.5365,
-                "observed": 0.3333
+                "count": 10,
+                "predicted": 0.5425,
+                "observed": 0.3
               },
               {
                 "range": [
@@ -17025,7 +17025,7 @@
                 0.4,
                 0.6
               ],
-              "count": 108,
+              "count": 116,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -17049,34 +17049,34 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 1111,
+            "Edge does not clear uncertainty buffer": 1126,
             "Independent projection too thin": 78,
             "Model disagrees too strongly with market": 16,
-            "Unvalidated longshot; insufficient reliability": 128,
+            "Unvalidated longshot; insufficient reliability": 140,
             "ESPN availability uncertain: Day-To-Day": 12,
-            "Quote spread too wide": 1
+            "Quote spread too wide": 2
           },
           "sources": {
             "Kalshi": {
-              "recorded": 3876,
-              "settled": 224,
+              "recorded": 3904,
+              "settled": 232,
               "pushes": 0,
-              "distinctEvents": 29
+              "distinctEvents": 30
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 3684,
-          "settled": 224,
-          "distinctEvents": 29,
+          "experimentalRecorded": 3712,
+          "settled": 232,
+          "distinctEvents": 30,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2175,
-            "market": 0.2077
+            "model": 0.2197,
+            "market": 0.2083
           },
           "logLoss": {
-            "model": 0.6163,
-            "market": 0.5967
+            "model": 0.6211,
+            "market": 0.5983
           },
           "independentComparison": {
             "brierModel": null,
@@ -17085,10 +17085,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 216,
-            "distinctEvents": 29,
-            "brierEstimate": 0.2207,
-            "brierMarket": 0.2104
+            "settled": 224,
+            "distinctEvents": 30,
+            "brierEstimate": 0.2228,
+            "brierMarket": 0.211
           },
           "calibrationBins": [
             {
@@ -17321,9 +17321,9 @@
           }
         },
         "total:public": {
-          "recorded": 78,
+          "recorded": 80,
           "settlementHealth": {
-            "pending": 6,
+            "pending": 8,
             "overdue": 6,
             "oldestPending": "2026-10-21T02:30:00+00:00"
           },
@@ -17414,8 +17414,8 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 69,
-            "Unvalidated longshot; insufficient reliability": 9
+            "Edge does not clear uncertainty buffer": 70,
+            "Unvalidated longshot; insufficient reliability": 10
           },
           "sources": {
             "DraftKings via ESPN": {
@@ -17425,14 +17425,14 @@
               "distinctEvents": 18
             },
             "Draft Kings via ESPN": {
-              "recorded": 34,
+              "recorded": 36,
               "settled": 30,
               "pushes": 0,
               "distinctEvents": 9
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 78,
+          "experimentalRecorded": 80,
           "settled": 72,
           "distinctEvents": 24,
           "independentSettled": 0,
@@ -17508,9 +17508,9 @@
           }
         },
         "spread:public": {
-          "recorded": 64,
+          "recorded": 68,
           "settlementHealth": {
-            "pending": 4,
+            "pending": 8,
             "overdue": 4,
             "oldestPending": "2026-10-21T02:30:00+00:00"
           },
@@ -17601,9 +17601,9 @@
             }
           ],
           "rejectionReasons": {
-            "Edge does not clear uncertainty buffer": 39,
+            "Edge does not clear uncertainty buffer": 41,
             "Model disagrees too strongly with market": 2,
-            "Unvalidated longshot; insufficient reliability": 20
+            "Unvalidated longshot; insufficient reliability": 22
           },
           "sources": {
             "DraftKings via ESPN": {
@@ -17613,14 +17613,14 @@
               "distinctEvents": 16
             },
             "Draft Kings via ESPN": {
-              "recorded": 30,
+              "recorded": 34,
               "settled": 28,
               "pushes": 0,
               "distinctEvents": 10
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 64,
+          "experimentalRecorded": 68,
           "settled": 60,
           "distinctEvents": 22,
           "independentSettled": 0,
@@ -17886,18 +17886,18 @@
         "legacy": {
           "recorded": 16024,
           "settlementHealth": {
-            "pending": 14408,
-            "overdue": 14348,
+            "pending": 14340,
+            "overdue": 14280,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 108,
-            "settled": 65,
-            "distinctEvents": 23,
-            "winRate": 0.5538,
-            "brier": 0.2354,
-            "referenceReturnPerUnit": -0.1271,
+            "settled": 69,
+            "distinctEvents": 24,
+            "winRate": 0.5507,
+            "brier": 0.2452,
+            "referenceReturnPerUnit": -0.1223,
             "calibrationBins": [
               {
                 "range": [
@@ -17913,27 +17913,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 15,
-                "predicted": 0.5378,
-                "observed": 0.2667
+                "count": 17,
+                "predicted": 0.5431,
+                "observed": 0.2941
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 33,
-                "predicted": 0.7185,
-                "observed": 0.6061
+                "count": 34,
+                "predicted": 0.7168,
+                "observed": 0.6176
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 17,
-                "predicted": 0.8627,
-                "observed": 0.7059
+                "count": 18,
+                "predicted": 0.8692,
+                "observed": 0.6667
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -17944,36 +17944,36 @@
                 0,
                 0.4
               ],
-              "count": 600,
+              "count": 626,
               "predicted": 0.2057,
-              "observed": 0.2083
+              "observed": 0.2109
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 358,
-              "predicted": 0.5009,
-              "observed": 0.4944
+              "count": 374,
+              "predicted": 0.5008,
+              "observed": 0.4947
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 313,
-              "predicted": 0.7053,
-              "observed": 0.7061
+              "count": 327,
+              "predicted": 0.705,
+              "observed": 0.7095
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 287,
-              "predicted": 0.8912,
-              "observed": 0.8815
+              "count": 299,
+              "predicted": 0.8919,
+              "observed": 0.8729
             }
           ],
           "rejectionReasons": {
@@ -17988,9 +17988,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 15877,
-              "settled": 1479,
+              "settled": 1547,
               "pushes": 0,
-              "distinctEvents": 59
+              "distinctEvents": 60
             },
             "DraftKings via ESPN": {
               "recorded": 79,
@@ -18007,17 +18007,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 14798,
-          "settled": 1616,
+          "settled": 1684,
           "distinctEvents": 75,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1717,
-            "market": 0.1697
+            "model": 0.1743,
+            "market": 0.1719
           },
           "logLoss": {
-            "model": 0.5143,
-            "market": 0.5123
+            "model": 0.5242,
+            "market": 0.5183
           },
           "independentComparison": {
             "brierModel": null,
@@ -18026,10 +18026,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1558,
+            "settled": 1626,
             "distinctEvents": 74,
-            "brierEstimate": 0.1725,
-            "brierMarket": 0.1704
+            "brierEstimate": 0.1751,
+            "brierMarket": 0.1727
           },
           "calibrationBins": [
             {
@@ -18082,9 +18082,9 @@
           }
         },
         "forward-20261022-v1": {
-          "recorded": 373,
+          "recorded": 476,
           "settlementHealth": {
-            "pending": 373,
+            "pending": 476,
             "overdue": 0,
             "oldestPending": null
           },
@@ -18175,24 +18175,30 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 152,
-            "Edge does not clear uncertainty buffer": 187,
-            "Quote spread too wide": 4,
-            "ESPN availability uncertain: Day-To-Day": 2,
+            "Unvalidated longshot; insufficient reliability": 199,
+            "Edge does not clear uncertainty buffer": 239,
+            "Quote spread too wide": 5,
+            "ESPN availability uncertain: Day-To-Day": 4,
             "Independent projection too thin": 4,
             "ESPN reports player unavailable: Injured Reserve": 2,
-            "Model disagrees too strongly with market": 1
+            "Model disagrees too strongly with market": 2
           },
           "sources": {
             "Kalshi": {
-              "recorded": 373,
+              "recorded": 470,
+              "settled": 0,
+              "pushes": 0,
+              "distinctEvents": 0
+            },
+            "Draft Kings via ESPN": {
+              "recorded": 6,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 369,
+          "experimentalRecorded": 472,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -18272,8 +18278,8 @@
         "legacy": {
           "recorded": 11515,
           "settlementHealth": {
-            "pending": 10158,
-            "overdue": 10154,
+            "pending": 10106,
+            "overdue": 10102,
             "oldestPending": "2026-10-03T23:00Z"
           },
           "independentRecorded": 0,
@@ -18330,36 +18336,36 @@
                 0,
                 0.4
               ],
-              "count": 528,
-              "predicted": 0.199,
-              "observed": 0.197
+              "count": 550,
+              "predicted": 0.1995,
+              "observed": 0.1982
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 242,
+              "count": 250,
               "predicted": 0.5002,
-              "observed": 0.4959
+              "observed": 0.496
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 260,
-              "predicted": 0.7052,
-              "observed": 0.7038
+              "count": 272,
+              "predicted": 0.7051,
+              "observed": 0.7059
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 269,
+              "count": 279,
               "predicted": 0.8932,
-              "observed": 0.8922
+              "observed": 0.8889
             }
           ],
           "rejectionReasons": {
@@ -18368,24 +18374,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 11515,
-              "settled": 1357,
+              "settled": 1409,
               "pushes": 0,
               "distinctEvents": 43
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 10287,
-          "settled": 1357,
+          "settled": 1409,
           "distinctEvents": 43,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1627,
-            "market": 0.1612
+            "model": 0.1635,
+            "market": 0.1618
           },
           "logLoss": {
-            "model": 0.4925,
-            "market": 0.4921
+            "model": 0.4944,
+            "market": 0.4939
           },
           "independentComparison": {
             "brierModel": null,
@@ -18394,10 +18400,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1299,
+            "settled": 1351,
             "distinctEvents": 41,
-            "brierEstimate": 0.1633,
-            "brierMarket": 0.1617
+            "brierEstimate": 0.164,
+            "brierMarket": 0.1624
           },
           "calibrationBins": [
             {
@@ -18452,8 +18458,8 @@
         "learning-20261015": {
           "recorded": 3943,
           "settlementHealth": {
-            "pending": 3728,
-            "overdue": 3698,
+            "pending": 3720,
+            "overdue": 3690,
             "oldestPending": "2026-10-15T23:00Z"
           },
           "independentRecorded": 0,
@@ -18510,36 +18516,36 @@
                 0,
                 0.4
               ],
-              "count": 63,
-              "predicted": 0.2533,
-              "observed": 0.3175
+              "count": 65,
+              "predicted": 0.251,
+              "observed": 0.3231
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 90,
-              "predicted": 0.5019,
-              "observed": 0.4889
+              "count": 94,
+              "predicted": 0.5018,
+              "observed": 0.4894
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 45,
-              "predicted": 0.7037,
-              "observed": 0.6889
+              "count": 46,
+              "predicted": 0.7028,
+              "observed": 0.6957
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 17,
-              "predicted": 0.8602,
-              "observed": 0.7059
+              "count": 18,
+              "predicted": 0.8668,
+              "observed": 0.6667
             }
           ],
           "rejectionReasons": {
@@ -18559,9 +18565,9 @@
             },
             "Kalshi": {
               "recorded": 3834,
-              "settled": 112,
+              "settled": 120,
               "pushes": 0,
-              "distinctEvents": 22
+              "distinctEvents": 23
             },
             "Draft Kings via ESPN": {
               "recorded": 30,
@@ -18572,17 +18578,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 3943,
-          "settled": 215,
+          "settled": 223,
           "distinctEvents": 38,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2269,
-            "market": 0.2172
+            "model": 0.2333,
+            "market": 0.2231
           },
           "logLoss": {
-            "model": 0.6466,
-            "market": 0.6246
+            "model": 0.6755,
+            "market": 0.6414
           },
           "independentComparison": {
             "brierModel": null,
@@ -18591,10 +18597,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 215,
+            "settled": 223,
             "distinctEvents": 38,
-            "brierEstimate": 0.2269,
-            "brierMarket": 0.2172
+            "brierEstimate": 0.2333,
+            "brierMarket": 0.2231
           },
           "calibrationBins": [
             {
@@ -18830,18 +18836,18 @@
         "learning-20261019": {
           "recorded": 552,
           "settlementHealth": {
-            "pending": 508,
-            "overdue": 478,
+            "pending": 500,
+            "overdue": 470,
             "oldestPending": "2026-10-19T23:00Z"
           },
           "independentRecorded": 0,
           "qualified": {
             "recorded": 16,
-            "settled": 6,
-            "distinctEvents": 4,
-            "winRate": 0.6667,
-            "brier": 0.1502,
-            "referenceReturnPerUnit": -0.0306,
+            "settled": 10,
+            "distinctEvents": 5,
+            "winRate": 0.6,
+            "brier": 0.2519,
+            "referenceReturnPerUnit": -0.0361,
             "calibrationBins": [
               {
                 "range": [
@@ -18857,27 +18863,27 @@
                   0.4,
                   0.6
                 ],
-                "count": 1,
-                "predicted": 0.5386,
-                "observed": 0
+                "count": 3,
+                "predicted": 0.5685,
+                "observed": 0.3333
               },
               {
                 "range": [
                   0.6,
                   0.8
                 ],
-                "count": 4,
-                "predicted": 0.7369,
-                "observed": 0.75
+                "count": 5,
+                "predicted": 0.7216,
+                "observed": 0.8
               },
               {
                 "range": [
                   0.8,
                   1
                 ],
-                "count": 1,
-                "predicted": 0.8747,
-                "observed": 1
+                "count": 2,
+                "predicted": 0.9275,
+                "observed": 0.5
               }
             ],
             "note": "Frozen selection gate. Hypothetical equal-unit reference returns exclude fees; not placed bets."
@@ -18888,17 +18894,17 @@
                 0,
                 0.4
               ],
-              "count": 9,
-              "predicted": 0.2637,
-              "observed": 0.1111
+              "count": 11,
+              "predicted": 0.2485,
+              "observed": 0.1818
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 26,
-              "predicted": 0.503,
+              "count": 30,
+              "predicted": 0.5026,
               "observed": 0.5
             },
             {
@@ -18906,18 +18912,18 @@
                 0.6,
                 0.8
               ],
-              "count": 8,
-              "predicted": 0.719,
-              "observed": 0.875
+              "count": 9,
+              "predicted": 0.7124,
+              "observed": 0.8889
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1,
-              "predicted": 0.8747,
-              "observed": 1
+              "count": 2,
+              "predicted": 0.9275,
+              "observed": 0.5
             }
           ],
           "rejectionReasons": {
@@ -18930,9 +18936,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 514,
-              "settled": 10,
+              "settled": 18,
               "pushes": 0,
-              "distinctEvents": 3
+              "distinctEvents": 4
             },
             "Draft Kings via ESPN": {
               "recorded": 38,
@@ -18943,17 +18949,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 552,
-          "settled": 44,
-          "distinctEvents": 13,
+          "settled": 52,
+          "distinctEvents": 14,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1797,
-            "market": 0.199
+            "model": 0.2142,
+            "market": 0.2248
           },
           "logLoss": {
-            "model": 0.5407,
-            "market": 0.5873
+            "model": 0.681,
+            "market": 0.6515
           },
           "independentComparison": {
             "brierModel": null,
@@ -18962,10 +18968,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 44,
-            "distinctEvents": 13,
-            "brierEstimate": 0.1797,
-            "brierMarket": 0.199
+            "settled": 52,
+            "distinctEvents": 14,
+            "brierEstimate": 0.2142,
+            "brierMarket": 0.2248
           },
           "calibrationBins": [
             {
@@ -19018,9 +19024,9 @@
           }
         },
         "learning-20261022": {
-          "recorded": 369,
+          "recorded": 472,
           "settlementHealth": {
-            "pending": 369,
+            "pending": 472,
             "overdue": 0,
             "oldestPending": null
           },
@@ -19111,23 +19117,29 @@
             }
           ],
           "rejectionReasons": {
-            "Unvalidated longshot; insufficient reliability": 152,
-            "Edge does not clear uncertainty buffer": 187,
-            "Quote spread too wide": 4,
-            "ESPN availability uncertain: Day-To-Day": 2,
+            "Unvalidated longshot; insufficient reliability": 199,
+            "Edge does not clear uncertainty buffer": 239,
+            "Quote spread too wide": 5,
+            "ESPN availability uncertain: Day-To-Day": 4,
             "ESPN reports player unavailable: Injured Reserve": 2,
-            "Model disagrees too strongly with market": 1
+            "Model disagrees too strongly with market": 2
           },
           "sources": {
             "Kalshi": {
-              "recorded": 369,
+              "recorded": 466,
+              "settled": 0,
+              "pushes": 0,
+              "distinctEvents": 0
+            },
+            "Draft Kings via ESPN": {
+              "recorded": 6,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
             }
           },
           "marketSupportedRecorded": 0,
-          "experimentalRecorded": 369,
+          "experimentalRecorded": 472,
           "settled": 0,
           "distinctEvents": 0,
           "independentSettled": 0,
@@ -19205,10 +19217,10 @@
       }
     },
     "ufc": {
-      "recorded": 804,
+      "recorded": 812,
       "settlementHealth": {
-        "pending": 599,
-        "overdue": 435,
+        "pending": 606,
+        "overdue": 434,
         "oldestPending": "2026-10-03T22:00:00Z"
       },
       "independentRecorded": 140,
@@ -19298,33 +19310,33 @@
         }
       ],
       "rejectionReasons": {
-        "Independent projection too thin": 175,
+        "Independent projection too thin": 181,
         "Edge does not clear uncertainty buffer": 34,
-        "Event start unverified": 96,
+        "Event start unverified": 98,
         "Market-only estimate": 3,
         "Unvalidated longshot; insufficient reliability": 11
       },
       "sources": {
         "Kalshi": {
-          "recorded": 804,
-          "settled": 205,
+          "recorded": 812,
+          "settled": 206,
           "pushes": 0,
           "distinctEvents": 46
         }
       },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 0,
-      "settled": 205,
+      "settled": 206,
       "distinctEvents": 46,
       "independentSettled": 20,
       "independentEvents": 10,
       "brier": {
-        "model": 0.1278,
-        "market": 0.127
+        "model": 0.1272,
+        "market": 0.1264
       },
       "logLoss": {
-        "model": 0.3955,
-        "market": 0.3937
+        "model": 0.394,
+        "market": 0.3922
       },
       "independentComparison": {
         "brierModel": 0.1426,
@@ -19573,9 +19585,9 @@
           }
         },
         "distance": {
-          "recorded": 50,
+          "recorded": 51,
           "settlementHealth": {
-            "pending": 36,
+            "pending": 37,
             "overdue": 30,
             "oldestPending": "2026-10-10T21:00:00Z"
           },
@@ -19666,12 +19678,12 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 13,
+            "Independent projection too thin": 14,
             "Event start unverified": 6
           },
           "sources": {
             "Kalshi": {
-              "recorded": 50,
+              "recorded": 51,
               "settled": 14,
               "pushes": 0,
               "distinctEvents": 13
@@ -19754,9 +19766,9 @@
           }
         },
         "method_victory": {
-          "recorded": 354,
+          "recorded": 358,
           "settlementHealth": {
-            "pending": 258,
+            "pending": 262,
             "overdue": 207,
             "oldestPending": "2026-10-03T22:00:00Z"
           },
@@ -19847,12 +19859,12 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 101,
-            "Event start unverified": 41
+            "Independent projection too thin": 104,
+            "Event start unverified": 42
           },
           "sources": {
             "Kalshi": {
-              "recorded": 354,
+              "recorded": 358,
               "settled": 96,
               "pushes": 0,
               "distinctEvents": 35
@@ -19935,9 +19947,9 @@
           }
         },
         "round_finish": {
-          "recorded": 83,
+          "recorded": 84,
           "settlementHealth": {
-            "pending": 56,
+            "pending": 57,
             "overdue": 52,
             "oldestPending": "2026-10-03T22:00:00Z"
           },
@@ -20028,12 +20040,12 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 24,
+            "Independent projection too thin": 25,
             "Event start unverified": 4
           },
           "sources": {
             "Kalshi": {
-              "recorded": 83,
+              "recorded": 84,
               "settled": 27,
               "pushes": 0,
               "distinctEvents": 17
@@ -20116,10 +20128,10 @@
           }
         },
         "method_finish": {
-          "recorded": 111,
+          "recorded": 113,
           "settlementHealth": {
-            "pending": 71,
-            "overdue": 68,
+            "pending": 72,
+            "overdue": 67,
             "oldestPending": "2026-10-03T22:00:00Z"
           },
           "independentRecorded": 0,
@@ -20209,30 +20221,30 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 23,
-            "Event start unverified": 10
+            "Independent projection too thin": 24,
+            "Event start unverified": 11
           },
           "sources": {
             "Kalshi": {
-              "recorded": 111,
-              "settled": 40,
+              "recorded": 113,
+              "settled": 41,
               "pushes": 0,
               "distinctEvents": 17
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 40,
+          "settled": 41,
           "distinctEvents": 17,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1525,
-            "market": 0.1525
+            "model": 0.1489,
+            "market": 0.1489
           },
           "logLoss": {
-            "model": 0.4574,
-            "market": 0.4574
+            "model": 0.4483,
+            "market": 0.4483
           },
           "independentComparison": {
             "brierModel": null,
@@ -20301,8 +20313,8 @@
         "legacy": {
           "recorded": 712,
           "settlementHealth": {
-            "pending": 507,
-            "overdue": 435,
+            "pending": 506,
+            "overdue": 434,
             "oldestPending": "2026-10-03T22:00:00Z"
           },
           "independentRecorded": 112,
@@ -20401,24 +20413,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 712,
-              "settled": 205,
+              "settled": 206,
               "pushes": 0,
               "distinctEvents": 46
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 205,
+          "settled": 206,
           "distinctEvents": 46,
           "independentSettled": 20,
           "independentEvents": 10,
           "brier": {
-            "model": 0.1278,
-            "market": 0.127
+            "model": 0.1272,
+            "market": 0.1264
           },
           "logLoss": {
-            "model": 0.3955,
-            "market": 0.3937
+            "model": 0.394,
+            "market": 0.3922
           },
           "independentComparison": {
             "brierModel": 0.1426,
@@ -20483,9 +20495,9 @@
           }
         },
         "forward-20261022-v1": {
-          "recorded": 92,
+          "recorded": 100,
           "settlementHealth": {
-            "pending": 92,
+            "pending": 100,
             "overdue": 0,
             "oldestPending": null
           },
@@ -20576,13 +20588,13 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 41,
-            "Event start unverified": 35,
+            "Independent projection too thin": 47,
+            "Event start unverified": 37,
             "Unvalidated longshot; insufficient reliability": 5
           },
           "sources": {
             "Kalshi": {
-              "recorded": 92,
+              "recorded": 100,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -20669,8 +20681,8 @@
         "legacy": {
           "recorded": 474,
           "settlementHealth": {
-            "pending": 269,
-            "overdue": 251,
+            "pending": 268,
+            "overdue": 250,
             "oldestPending": "2026-10-03T22:00:00Z"
           },
           "independentRecorded": 68,
@@ -20763,24 +20775,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 474,
-              "settled": 205,
+              "settled": 206,
               "pushes": 0,
               "distinctEvents": 46
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 205,
+          "settled": 206,
           "distinctEvents": 46,
           "independentSettled": 20,
           "independentEvents": 10,
           "brier": {
-            "model": 0.1278,
-            "market": 0.127
+            "model": 0.1272,
+            "market": 0.1264
           },
           "logLoss": {
-            "model": 0.3955,
-            "market": 0.3937
+            "model": 0.394,
+            "market": 0.3922
           },
           "independentComparison": {
             "brierModel": 0.1426,
@@ -21393,9 +21405,9 @@
           }
         },
         "learning-20261022": {
-          "recorded": 92,
+          "recorded": 100,
           "settlementHealth": {
-            "pending": 92,
+            "pending": 100,
             "overdue": 0,
             "oldestPending": null
           },
@@ -21486,13 +21498,13 @@
             }
           ],
           "rejectionReasons": {
-            "Independent projection too thin": 41,
-            "Event start unverified": 35,
+            "Independent projection too thin": 47,
+            "Event start unverified": 37,
             "Unvalidated longshot; insufficient reliability": 5
           },
           "sources": {
             "Kalshi": {
-              "recorded": 92,
+              "recorded": 100,
               "settled": 0,
               "pushes": 0,
               "distinctEvents": 0
@@ -22127,67 +22139,67 @@
   },
   "recommendations": {
     "nfl|multi|Conservative": {
-      "recorded": 306,
-      "settled": 111,
-      "winRate": 0.1982,
-      "referenceReturnPerUnit": -0.4509,
-      "scenarioBrier": null,
+      "recorded": 308,
+      "settled": 134,
+      "winRate": 0.1642,
+      "referenceReturnPerUnit": -0.5451,
+      "scenarioBrier": 0.1434,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|sgp|Conservative": {
       "recorded": 183,
-      "settled": 122,
-      "winRate": 0.0164,
+      "settled": 123,
+      "winRate": 0.0244,
       "referenceReturnPerUnit": null,
       "scenarioBrier": null,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|multi|Balanced": {
-      "recorded": 623,
-      "settled": 129,
-      "winRate": 0.1008,
-      "referenceReturnPerUnit": -0.7371,
-      "scenarioBrier": null,
+      "recorded": 628,
+      "settled": 242,
+      "winRate": 0.0702,
+      "referenceReturnPerUnit": -0.8062,
+      "scenarioBrier": 0.0947,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|sgp|Balanced": {
       "recorded": 306,
-      "settled": 138,
-      "winRate": 0.0362,
+      "settled": 147,
+      "winRate": 0.034,
       "referenceReturnPerUnit": null,
-      "scenarioBrier": null,
+      "scenarioBrier": 0.112,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|multi|Lotto": {
-      "recorded": 895,
-      "settled": 86,
-      "winRate": 0,
-      "referenceReturnPerUnit": -1,
-      "scenarioBrier": null,
+      "recorded": 897,
+      "settled": 309,
+      "winRate": 0.0194,
+      "referenceReturnPerUnit": -0.6773,
+      "scenarioBrier": 0.044,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|sgp|Lotto": {
-      "recorded": 228,
-      "settled": 139,
-      "winRate": 0.0216,
+      "recorded": 230,
+      "settled": 140,
+      "winRate": 0.0214,
       "referenceReturnPerUnit": null,
-      "scenarioBrier": null,
+      "scenarioBrier": 0.0106,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "mlb|straight|featured": {
       "recorded": 47,
-      "settled": 3,
-      "winRate": 0,
-      "referenceReturnPerUnit": -1,
-      "scenarioBrier": null,
+      "settled": 7,
+      "winRate": 0.2857,
+      "referenceReturnPerUnit": -0.5778,
+      "scenarioBrier": 0.2822,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "mlb|multi|best": {
       "recorded": 160,
-      "settled": 75,
-      "winRate": 0,
-      "referenceReturnPerUnit": -1,
-      "scenarioBrier": null,
+      "settled": 77,
+      "winRate": 0.013,
+      "referenceReturnPerUnit": -0.9574,
+      "scenarioBrier": 0.2575,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "ncaaf|straight|featured": {
@@ -22200,26 +22212,26 @@
     },
     "ncaaf|multi|best": {
       "recorded": 364,
-      "settled": 129,
-      "winRate": 0.0078,
-      "referenceReturnPerUnit": -0.9734,
-      "scenarioBrier": 0.0893,
+      "settled": 149,
+      "winRate": 0.0067,
+      "referenceReturnPerUnit": -0.977,
+      "scenarioBrier": 0.0824,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nhl|straight|featured": {
       "recorded": 96,
-      "settled": 7,
-      "winRate": 0.5714,
-      "referenceReturnPerUnit": -0.0748,
-      "scenarioBrier": null,
+      "settled": 18,
+      "winRate": 0.3889,
+      "referenceReturnPerUnit": -0.4125,
+      "scenarioBrier": 0.3757,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nhl|multi|balanced": {
-      "recorded": 630,
-      "settled": 81,
-      "winRate": 0.0247,
-      "referenceReturnPerUnit": -0.9576,
-      "scenarioBrier": null,
+      "recorded": 632,
+      "settled": 179,
+      "winRate": 0.0168,
+      "referenceReturnPerUnit": -0.9703,
+      "scenarioBrier": 0.1595,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "ufc|straight|featured": {
@@ -22239,23 +22251,23 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nfl|straight|featured": {
-      "recorded": 20,
-      "settled": 5,
-      "winRate": 0.6,
-      "referenceReturnPerUnit": -0.0032,
-      "scenarioBrier": null,
+      "recorded": 21,
+      "settled": 10,
+      "winRate": 0.8,
+      "referenceReturnPerUnit": 0.3714,
+      "scenarioBrier": 0.1021,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nba|multi|best": {
       "recorded": 37,
-      "settled": 0,
-      "winRate": null,
-      "referenceReturnPerUnit": null,
-      "scenarioBrier": null,
+      "settled": 8,
+      "winRate": 0.875,
+      "referenceReturnPerUnit": 2.0669,
+      "scenarioBrier": 0.337,
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nba|multi|safe": {
-      "recorded": 8,
+      "recorded": 9,
       "settled": 0,
       "winRate": null,
       "referenceReturnPerUnit": null,
@@ -22271,7 +22283,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nba|multi|long": {
-      "recorded": 5,
+      "recorded": 6,
       "settled": 0,
       "winRate": null,
       "referenceReturnPerUnit": null,
@@ -22279,7 +22291,7 @@
       "note": "Build outcomes overlap; counts are not independent trials. SGP returns require actual combined odds; never synthesized."
     },
     "nba|straight|featured": {
-      "recorded": 1,
+      "recorded": 2,
       "settled": 0,
       "winRate": null,
       "referenceReturnPerUnit": null,
