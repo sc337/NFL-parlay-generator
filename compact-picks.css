@@ -1,5 +1,7 @@
 /* Selection beside the subject, source and odds in a compact right column. */
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-row{align-items:center;gap:8px;min-height:0;flex:none}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{padding:7px 0!important}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card:has(.compact-pick-row) .parlay-name{margin:0 0 4px!important}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price{width:94px;min-height:0;padding:0!important;border:0!important;border-radius:0;background:none!important;box-shadow:none!important;align-self:center;flex:none}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price>.market-tile-heading,:is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price>.market-tile-line{display:none!important}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price .market-tile-price{display:inline-flex!important;flex-direction:row-reverse;flex-wrap:wrap;align-items:center;justify-content:flex-start;column-gap:4px;row-gap:3px;margin:0;font-size:13px;line-height:1.25;color:var(--text);max-width:100%;font-variant-numeric:tabular-nums}
@@ -16,7 +18,7 @@
 #parlaySwipeHint .carousel-position{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .card-quote-footer:has(>.card-explanation:only-child){justify-content:flex-end}
 @media(max-width:600px){
- :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{padding:9px 0!important;gap:7px}
+ :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{padding:7px 0!important;gap:7px}
  :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price{width:80px}
  :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row .leg-title{font-size:13px}
  .compact-pick-selection{font-size:12px}

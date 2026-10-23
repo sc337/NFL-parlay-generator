@@ -71,6 +71,8 @@ function mountBuilder(s){
  const generate=$('#generateBtn');if(generate&&filters&&filters.nextElementSibling!==generate)filters.after(generate);
 }
 function tidyCards(){
+ // Analysis nodes temporarily leave the card while its details sheet is open.
+ if(document.body.classList.contains('details-sheet-open'))return;
  for(const card of document.querySelectorAll('#results>.parlay-card[data-compact]')){
   const details=[...card.querySelectorAll('.card-explanation')];const primary=details.find(d=>!d.classList.contains('parlay-risk'))||details[0];if(!primary)continue;
   const heading=primary.querySelector('summary');if(heading&&heading.textContent!=='Details')heading.textContent='Details';
