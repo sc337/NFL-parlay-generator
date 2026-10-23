@@ -48,6 +48,18 @@ function row(node,sport){
  if(meta&&node.dataset.eventTime&&node.dataset.matchup){meta.title=meta.textContent;meta.textContent=metadata(sport,node.dataset.eventTime,node.dataset.matchup)}
  const warning=node.querySelector('.nba-lineup-status');if(warning){warning.title=warning.textContent;warning.textContent=lineup(warning.textContent)}
 }
+function featuredTeamMedia(media,subject){
+ const key=value=>String(value||'').toLowerCase().replace(/[^a-z0-9]/g,''),name=key(subject);
+ const resolved=media.querySelector('.sport-selected-media');
+ if(name&&resolved&&key(resolved.dataset.selectedSubject)===name){
+  for(const child of [...media.children])if(child!==resolved)child.remove();
+  return true;
+ }
+ const images=[...media.querySelectorAll('img')],selected=images.find(x=>name&&key(x.alt).includes(name));
+ // Flatten the selected image so team sizing applies consistently to nested media.
+ if(selected){media.replaceChildren(selected);return true}
+ media.replaceChildren();return false;
+}
 function featured(node){
  if(node.dataset.featuredLayout||!node.dataset.pickLayout)return;
  const host=node.closest('#pickOfDay'),details=host?.querySelector('.card-explanation'),copy=node.querySelector('.pick-copy'),meta=node.querySelector('.pick-meta'),media=node.querySelector('.compact-pick-media');
@@ -59,12 +71,8 @@ function featured(node){
  const foot=host.querySelector('.pick-foot');if(foot){foot.dataset.fullStatus=foot.textContent;foot.textContent=featuredStatus(foot.textContent);foot.hidden=!foot.textContent}
  // Team picks show the selected team. Unmatched media is omitted rather than
  // displaying an opponent as the selection's logo.
- if(!media.classList.contains('compact-player-media')){
-  const name=node.querySelector('.pick-name')?.textContent.toLowerCase().replace(/[^a-z0-9]/g,'')||'';
-  const images=[...media.querySelectorAll('img')],selected=images.find(x=>name&&String(x.alt||'').toLowerCase().replace(/[^a-z0-9]/g,'').includes(name));
-  for(const image of images)if(image!==selected)image.remove();
- }
- if(!media.querySelector('img'))node.classList.add('featured-no-media');
+ const hasMedia=media.classList.contains('compact-player-media')?!!media.querySelector('img'):featuredTeamMedia(media,node.querySelector('.pick-name')?.textContent);
+ if(!hasMedia)node.classList.add('featured-no-media');
 }
 function card(node,sport){
  const estimate=node.querySelector('.odds-label');if(estimate&&/ est\.$/i.test(estimate.textContent)){estimate.dataset.sourceLabel=estimate.textContent;estimate.textContent='Est.'}
@@ -105,5 +113,5 @@ function start(){
  schedule();new MutationObserver(records=>{if(records.some(r=>r.target.closest?.('#results,#pickOfDayContent,#analysisSecondary,#nflParlayAlternatives')))schedule()}).observe(document.body,{childList:true,subtree:true});
 }
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',start,{once:true}):start();
-return {selection,featuredSelection,featuredStatus,matchup,metadata,lineup,row,featured,card};
+return {selection,featuredSelection,featuredStatus,featuredTeamMedia,matchup,metadata,lineup,row,featured,card};
 });

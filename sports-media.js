@@ -21,7 +21,9 @@ function ncaaf(m){
  if(!teams.length&&m.game_label)teams=String(m.game_label).split(/\s+(?:at|vs\.?|@)\s+/i).map(name=>({name}));
  if(m.kind!=='total'){
   const wanted=collegeKey(name),team=teams.find(t=>[t.name,...(t.aliases||[])].some(a=>collegeKey(a)===wanted||wanted.length>=4&&collegeKey(a).startsWith(wanted)));
-  return collegeMark(team||{name});
+  // Carry the already-resolved selection through display compaction, including
+  // aliases such as UMass / Massachusetts Minutemen and the logo-error fallback.
+  return '<span class="sport-selected-media" data-selected-subject="'+esc(name)+'">'+collegeMark(team||{name})+'</span>';
  }
  if(teams.length===2)return teams.map(collegeMark).join('');
  const codes=String(m.event_ticker||'').match(/-\d{2}[A-Z]{3}\d{2}(?:\d{4})?([A-Z]+)$/)?.[1];

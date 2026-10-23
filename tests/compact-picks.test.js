@@ -6,6 +6,27 @@ test('featured straight spells out its market without changing the line',()=>{
 test('featured status keeps price and lineup uncertainty visible without repeated source text',()=>{
  assert.equal(api.featuredStatus('Kalshi · Lineup pending · Not final · Value unverified · Confirm participation'),'Lineup pending · Value unverified');assert.equal(api.featuredStatus('Kalshi · Value unverified'),'Value unverified');assert.equal(api.featuredStatus('Kalshi · Previous lineup · Not final · Value unverified'),'Lineup unconfirmed · Value unverified');assert.equal(api.featuredStatus('Verify current price · Goalies unconfirmed'),'Verify current price · Goalies unconfirmed');
 });
+test('featured team media retains resolved college aliases and the logo-error fallback',()=>{
+ const fixture=fs.readFileSync('tests/nhl-display.test.js','utf8'),env={};
+ vm.runInNewContext(fixture.slice(fixture.indexOf('class Element'),fixture.indexOf("test('PRA"))+';this.make=el;',env);
+ const el=env.make,media=el('span','pick-media'),selected=el('span','sport-selected-media'),wrapper=el('span',''),logo=el('img','sport-logo'),fallback=el('span','sport-logo','MM'),opponent=el('img','sport-logo');
+ selected.dataset.selectedSubject='UMass';logo.alt='Massachusetts Minutemen logo';opponent.alt='UConn Huskies logo';wrapper.append(logo,fallback);selected.append(wrapper);media.append(selected,opponent);
+ assert.equal(api.featuredTeamMedia(media,'UMass'),true);assert.equal(media.children.length,1);assert.equal(media.children[0],selected);assert.equal(logo.parentElement,wrapper);assert.equal(fallback.parentElement,wrapper);
+ assert.equal(api.featuredTeamMedia(media,'UMass'),true);assert.equal(media.children.length,1);
+ // The semantic wrapper still works after its image fails; the fallback survives.
+ logo.remove();assert.equal(api.featuredTeamMedia(media,'UMass'),true);assert.equal(fallback.parentElement,wrapper);
+});
+test('featured price overrides legacy mobile tile sizing without changing parlay styling',()=>{
+ const css=fs.readFileSync('featured-straight.css','utf8');
+ assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price\{[^}]*width:auto!important[^}]*min-height:0!important/);
+ assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price \.market-tile-price\{[^}]*flex-wrap:nowrap!important[^}]*font-size:20px!important/);
+});
+test('featured team media flattens only the matching team and never substitutes its opponent',()=>{
+ const image=alt=>({alt,remove(){}}),lakers=image('Los Angeles Lakers logo'),clippers=image('Los Angeles Clippers logo');
+ const media={children:[],querySelector:()=>null,querySelectorAll:()=>[clippers,lakers],replaceChildren(...children){this.children=children}};
+ assert.equal(api.featuredTeamMedia(media,'Lakers'),true);assert.deepEqual(media.children,[lakers]);
+ assert.equal(api.featuredTeamMedia(media,'Celtics'),false);assert.deepEqual(media.children,[]);
+});
 test('compact selections preserve the actual side, line, market and moneyline meaning',()=>{
  for(const [market,line,want] of [['Assists','O 5.5','Over 5.5 Assists'],['Spread','+3.5','+3.5 Spread'],['Winner','ML','Moneyline'],['Rec Yds','U 39.5','Under 39.5 Rec Yds'],['Total','O 221.5','Over 221.5 Total'],['PRA','O 35.5','Over 35.5 PRA']])assert.equal(api.selection(market,line),want);
 });
