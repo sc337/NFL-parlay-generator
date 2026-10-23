@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const feeds=new Map();let host;
-function set(sport,snapshot){feeds.set(sport,snapshot?.slate||null);render()}
+function set(sport,snapshot){feeds.set(sport,snapshot?.slate||null);window.SOURCE_BRANDING?.capture(sport,snapshot);render()}
 function render(){
  const sport=window.__ACTIVE_SPORT||'nfl',slate=feeds.get(sport);
  if(sport==='ncaaf'||!slate?.games?.length){if(host)host.hidden=true;return}

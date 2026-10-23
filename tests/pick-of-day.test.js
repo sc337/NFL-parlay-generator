@@ -6,7 +6,7 @@ const test=require('node:test');
 function runtime(status='Fresh markets'){
  const host={children:[],textContent:'',replaceChildren(){this.children=[];this.textContent=''},append(...nodes){this.children.push(...nodes)}};
  const source={textContent:status};
- const createElement=()=>({children:[],textContent:'',innerHTML:'',setAttribute(){},append(...nodes){this.children.push(...nodes)}});
+ const createElement=()=>({children:[],dataset:{},textContent:'',innerHTML:'',setAttribute(){},append(...nodes){this.children.push(...nodes)}});
  const title={textContent:''},document={querySelector:s=>s==='#pickOfDayContent'?host:s==='#dataStatus'?source:s==='#pickOfDayTitle'?title:null,createElement};
  const window={__ACTIVE_SPORT:'nfl',MARKET_GUARDS:{quote:m=>m.yes_ask??null}};
  vm.runInNewContext(fs.readFileSync('pick-of-day.js','utf8'),{window,document,Date,Number,Math});
