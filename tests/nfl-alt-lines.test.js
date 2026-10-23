@@ -26,6 +26,14 @@ test('explicit sportsbook ALT labels win and unsupported markets stay out of ALT
 test('single exchange threshold is never invented into an ALT',()=>{
  const {api}=setup();const market={source:'Kalshi',type:'totals',marketKey:'totals',point:44.5,price:-110};api.classify({markets:[market]});assert.equal(market.isAltLine,false);assert.equal(api.matches(market,'alt'),false);
 });
+test('Polymarket ladders retain exact quotes and enforce ten-yard ALT increments',()=>{
+ const {api}=setup();
+ const rows=[19.5,24.5,39.5].map((point,i)=>({source:'Polymarket',type:'receiving',marketKey:'player_reception_yds',player:'WR',point,side:'over',marketProbability:[.85,.75,.51][i],price:-110}));
+ const before=JSON.stringify(rows.map(m=>[m.point,m.price]));api.classify({markets:rows});
+ assert.equal(api.label(rows[0]),'20+');assert.equal(api.matches(rows[0],'alt'),true);
+ assert.equal(api.matches(rows[1],'alt'),false);assert.equal(rows[2].isAltLine,false);
+ assert.equal(JSON.stringify(rows.map(m=>[m.point,m.price])),before);
+});
 test('ALT yardage only uses genuinely quoted 10-yard milestones without rounding prices or thresholds',()=>{
  const {api}=setup();
  for(const marketKey of ['player_pass_yds_alternate','player_rush_yds_alternate','player_reception_yds_alternate']){

@@ -41,7 +41,7 @@ function classify(game){
  for(const rows of groups.values()){
   // Exchanges do not label a main line: select the threshold nearest 50%.
   // Sportsbook main/alternate keys remain authoritative. Never fabricate odds.
-  if(!rows.every(m=>String(m.source||'').toLowerCase()==='kalshi'))continue;
+  if(!rows.every(m=>['kalshi','polymarket'].includes(String(m.source||'').toLowerCase())))continue;
   const reference=rows.filter(quoted).sort((a,b)=>Math.abs(probability(a)-.5)-Math.abs(probability(b)-.5)||(Number(b.volume)||0)-(Number(a.volume)||0)||point(a)-point(b))[0];
   if(!reference)continue;
   for(const m of rows){m.isAltLine=point(m)!==point(reference);m.altReference=true}

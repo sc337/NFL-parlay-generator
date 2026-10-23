@@ -28,6 +28,7 @@ on:
       - 'scripts/update_ncaaf_context.py'
       - 'scripts/update_ncaaf_slate.py'
       - 'scripts/update_public_odds.py'
+      - 'scripts/update_polymarket.py'
       - 'scripts/update_espn_evidence.py'
       - 'scripts/settle_espn_reference.py'
       - 'espn-evidence.js'
@@ -144,6 +145,11 @@ jobs:
           python scripts/update_public_odds.py --sport mlb
           python scripts/update_public_odds.py --sport nhl
           python scripts/update_public_odds.py --sport ufc
+      - name: Fill verified selection gaps with free Polymarket order books
+        run: |
+          for sport in nfl nba mlb nhl ncaaf ufc; do
+            python scripts/update_polymarket.py --sport "$sport"
+          done
       - name: Monitor dated availability and completed-game usage
         run: |
           python scripts/update_espn_evidence.py --sport nfl

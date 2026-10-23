@@ -63,7 +63,16 @@ def valid_snapshot(payload, sport, previous=None, now=None):
     if sport == 'nfl':
         native_at = stamp_time(payload.get('primary_updated_at')) if 'primary_updated_at' in payload else at
         if native_at is None or not now - 1800 <= native_at <= now + 300:
-            raise ValueError('nfl: native prices are delayed; reference metadata is not a successful price refresh')
+            # Fresh verified order books can recover missing primary coverage.
+            backup = any(m.get('source') == 'Polymarket' and m.get('referenceOnly') is True
+                         and m.get('polymarket_token') and m.get('askDepth', 0) >= 5
+                         and 0 < (m.get('yes_ask') or 0) < 1
+                         and 0 <= (m.get('spread') if m.get('spread') is not None else 1) <= .08
+                         and now - 1800 <= (stamp_time(m.get('quotedAt')) or 0) <= now + 300
+                         and (stamp_time(g.get('commence_time')) or 0) > now
+                         for g in payload.get('games', []) for m in g.get('markets', []))
+            if not backup:
+                raise ValueError('nfl: native prices are delayed; reference metadata is not a successful price refresh')
     key = 'games' if sport == 'nfl' else 'markets'
     if not isinstance(payload.get(key), list):
         raise ValueError(sport + ': invalid snapshot schema')
@@ -170,9 +179,13 @@ def refresh(sport):
             if sport == 'nfl': args.append('--skip-nfl-context')
             run(args, timeout=90)
         except Exception as error:
-            if primary_error is not None: raise
             for name, raw in checkpoint.items(): Path(name).write_bytes(raw)
             print('Public references delayed; fresh native prices retained:',sport,error,flush=True)
+        # Isolate the free exchange backup from primary and ESPN failures.
+        try:
+            run(['python', 'scripts/update_polymarket.py', '--sport', sport], timeout=90)
+        except Exception as error:
+            print('Polymarket backup delayed; other sources retained:', sport, error, flush=True)
         if sport == 'nfl' and primary_error is None:
             target=Path(FILES[sport][0])
             # A context outage must not roll newly collected, roster-verified

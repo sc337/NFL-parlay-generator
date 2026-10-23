@@ -158,6 +158,7 @@ function assess(s,m,f={},options={}){
  if(window.SLATE_UI&&!window.SLATE_UI.matches(s,m,gameFor(s,m,options.game)?.commence_time))return {pass:false,rank:-Infinity,reason:'Outside selected date',warnings:[],quote:q};
  if(!validated)warnings.push('Model unvalidated; value unverified');
  if(m.referenceOnly)warnings.push('Public reference odds; verify current sportsbook price');
+ if(m.source==='Polymarket')warnings.push('Exchange reference; Caesars price, fees and player void rules can differ');
  if(s==='nfl'&&m.player&&f.experimental&&!validated)warnings.push('Experimental player-history estimate');
  const anchored=(nbaTeam||s==='nfl'&&!m.player)&&f.marketAnchored===true;
  const quoteAge=Date.now()-Date.parse(q.checkedAt||'');
