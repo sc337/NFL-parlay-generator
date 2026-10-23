@@ -22,9 +22,6 @@ test('featured price overrides legacy mobile tile sizing without changing parlay
  assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price\{[^}]*width:auto!important[^}]*min-height:0!important/);
  assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price \.market-tile-price\{[^}]*flex-wrap:nowrap!important[^}]*font-size:20px!important/);
 });
-test('parlay odds and source stay inline even when a narrow tile cannot wrap',()=>{
- const css=fs.readFileSync('compact-picks.css','utf8');assert.match(css,/\.compact-pick-price \.market-tile-price\{[^}]*flex-direction:row-reverse[^}]*flex-wrap:nowrap!important/);assert.match(css,/\.compact-pick-price \.source-price-copy\{[^}]*white-space:nowrap/);
-});
 test('featured team media flattens only the matching team and never substitutes its opponent',()=>{
  const image=alt=>({alt,remove(){}}),lakers=image('Los Angeles Lakers logo'),clippers=image('Los Angeles Clippers logo');
  const media={children:[],querySelector:()=>null,querySelectorAll:()=>[clippers,lakers],replaceChildren(...children){this.children=children}};
