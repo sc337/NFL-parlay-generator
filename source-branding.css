@@ -1,0 +1,32 @@
+.source-strip{margin:2px 0 10px;min-width:0;position:relative}
+.source-feed-row{display:flex;align-items:center;gap:6px;min-width:0}
+.source-feed-button{appearance:none;display:flex;flex:1;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:36px;padding:8px 7px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);cursor:pointer}
+.source-feed-button:hover,.source-feed-button[aria-expanded="true"]{background:var(--surface2)}
+.source-feed-button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.source-logo{display:inline-flex;align-items:center;justify-content:center;flex:none;vertical-align:middle}
+.source-logo img{display:block;object-fit:contain;width:auto;height:16px;max-width:88px}
+html[data-theme="dark"] .source-logo[data-brand="polymarket"] img{filter:invert(1)}
+.source-logo[data-brand="espn"]{position:relative;overflow:hidden;width:54px;height:16px;border-radius:2px}
+.source-logo[data-brand="espn"] img{position:absolute;width:76px;height:43px;max-width:none;left:-11px;top:-13.5px}
+.source-logo img.source-logo-dark{display:none}
+html[data-theme="dark"] .source-logo img.source-logo-light{display:none}
+html[data-theme="dark"] .source-logo img.source-logo-dark{display:block}
+.source-logo-fallback{display:none;font-size:11px;font-weight:650}
+.source-logo-fallback::after{content:attr(data-name)}
+.source-logo-failed img{display:none!important}.source-logo-failed .source-logo-fallback{display:inline}
+.source-feed-dot{width:6px;height:6px;border-radius:50%;flex:none;background:#84909e}
+.source-feed-button[data-tone="fresh"] .source-feed-dot{background:#27bb83}
+.source-feed-button[data-tone="warning"] .source-feed-dot{background:#e9a82f}
+.source-feed-button[data-tone="unavailable"] .source-logo{opacity:.45;filter:grayscale(1)}
+.source-feed-details{margin-top:6px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);font-size:11px;line-height:1.5;color:var(--muted)}
+.source-feed-details[hidden]{display:none}.source-feed-details strong{display:block;color:var(--text);font-size:12px}
+.source-feed-details p{margin:4px 0 0;overflow-wrap:anywhere}
+.source-price{display:inline-flex!important;flex-wrap:wrap;align-items:center;justify-content:flex-end;column-gap:5px;row-gap:2px;max-width:100%;vertical-align:middle}
+.source-price .source-logo img{height:12px;max-width:62px}
+.source-price .source-logo[data-brand="espn"]{width:40px;height:12px}
+.source-price .source-logo[data-brand="espn"] img{width:56px;height:31.5px;max-width:none;left:-8px;top:-10px}
+.source-price-copy{min-width:0;overflow-wrap:anywhere}
+.source-name-sr{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+html[data-theme="light"] .source-feed-button[data-tone="fresh"] .source-feed-dot{background:#087c50}
+html[data-theme="light"] .source-feed-button[data-tone="warning"] .source-feed-dot{background:#9b6500}
+@media(max-width:600px){.source-strip{margin:0 0 8px}.source-feed-button{min-height:36px;padding:7px 5px;gap:6px}.source-logo img{height:14px;max-width:80px}.source-price .source-logo img{height:11px;max-width:55px}.source-feed-details{font-size:11px}}
