@@ -101,7 +101,8 @@ function renderFresh(){
  const scoped=sgp?pool.filter(m=>String(m.game_id)===selectedGame):pool;
  const marketCounts=markets.filter(m=>G.pregame(m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m))).reduce((a,m)=>(a[m.kind]=(a[m.kind]||0)+1,a),{}),eligibleCounts=pool.reduce((a,m)=>(a[m.kind]=(a[m.kind]||0)+1,a),{});
  const host=$('#nbaMarketFilters'),marketNote=host?.querySelector?.('[data-market-note]');if(marketNote)marketNote.textContent='Eligible / quoted: '+Object.entries(marketCounts).map(([kind,n])=>kind+' '+(eligibleCounts[kind]||0)+'/'+n).join(' · ')+'. Comparable market types compete; missing player evidence remains a pass.';
- const straight=markets.filter(m=>eligible(m,true)).sort((a,b)=>Q.assess('nba',b,model(b)).rank-Q.assess('nba',a,model(a)).rank).find(m=>eligible(m,true)&&(window.SLATE_UI?window.SLATE_UI.matches('nba',m):window.PICK_OF_DAY?.today?window.PICK_OF_DAY.today(m.game_time):new Date(m.game_time).toDateString()===new Date().toDateString()));
+ const straightPool=markets.filter(m=>eligible(m,true)&&(window.SLATE_UI?window.SLATE_UI.matches('nba',m):window.PICK_OF_DAY?.today?window.PICK_OF_DAY.today(m.game_time):new Date(m.game_time).toDateString()===new Date().toDateString()));
+ const straight=Q.bestStraight?Q.bestStraight('nba',straightPool.map(m=>({market:m,forecast:model(m)})))?.market:straightPool.sort((a,b)=>Q.assess('nba',b,model(b)).rank-Q.assess('nba',a,model(a)).rank)[0];
  const builds=[];
  for(const profile of PROFILES){const legs=profileBuild(scoped,count,sgp,profile,builds);builds.push({profile,legs,risk:profileRisk(legs.map(m=>assessProfile(m,profile)))})}
  window.PICK_OF_DAY?.show('nba',straight&&{market:straight,eventTime:straight.game_time,label:straight.label,event:straight.game_label,media:media(straight),note:note(straight)});

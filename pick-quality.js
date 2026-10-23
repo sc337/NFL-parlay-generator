@@ -137,7 +137,7 @@ function unsupportedAltUnder(m){
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
  const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
- const selectionMode=nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
+ const selectionMode=options.featured?'screened':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
@@ -266,10 +266,36 @@ function checkBuild(s,entries,sgp=false,offer=null){
  const bounds=joint(checks),breakEven=implied(offer);
  return {pass:true,checks,bounds,breakEven,valueStatus:breakEven==null?'Joint value unverified':bounds.lower>breakEven?'Clears marginal dependence bound; joint model unvalidated':bounds.upper<=breakEven?'Price fails even the upper bound':'Joint value unverified',actionable:false};
 }
+const straightPolicy=Object.freeze({minOdds:-250,maxOdds:-110,preferredMin:-200,preferredMax:-125,minCoverage:.6,confidenceTolerance:.02});
+function straight(s,m,f={},options={}){
+ // Straight selection is independent of parlay and matchup preferences.
+ const x=assess(s,m,{...f,selectionMode:'screened'},{...options,featured:true});
+ let reason=x.reason;
+ if(!reason&&(x.quote.odds<straightPolicy.minOdds||x.quote.odds>straightPolicy.maxOdds))reason='Straight price must be -250 to -110';
+ if(!reason&&x.coverage<straightPolicy.minCoverage)reason='Straight needs at least 60% input coverage';
+ const starter=x.context?.starterEvidence,ctx=data.get(s)?.context||{};
+ if(!reason&&s==='nba'&&!(m.player?starter?.confirmedPlayer:starter?.confirmed))reason='Straight waiting for confirmed player availability or lineups';
+ if(!reason&&s==='ncaaf'&&!starter?.confirmed)reason='Straight waiting for confirmed starting quarterbacks';
+ if(!reason&&s==='nhl'&&(!starter?.confirmed||m.player&&!starter?.lineConfirmed))reason='Straight waiting for confirmed goalies and player role';
+ if(!reason&&s==='mlb'){
+  const event=(ctx.games||[]).find(g=>String(g.gamePk)===String(m.game_id));
+  if(!event?.startersConfirmed||!event?.lineupsConfirmed||x.warnings.some(w=>/lineup status unconfirmed/i.test(w)))reason='Straight waiting for confirmed pitchers and lineups';
+ }
+ if(!reason&&s==='nfl'&&m.player&&x.warnings.some(w=>/injury status unconfirmed/i.test(w)))reason='Straight waiting for current player availability';
+ return {...x,pass:!reason,reason,preferred:x.quote?.odds>=straightPolicy.preferredMin&&x.quote?.odds<=straightPolicy.preferredMax};
+}
+function bestStraight(s,entries){
+ const ranked=entries.map(entry=>({...entry,straight:straight(s,entry.market,entry.forecast||{},{game:entry.game,eventTime:entry.eventTime})})).filter(e=>e.straight.pass)
+  .sort((a,b)=>b.straight.conservativeP-a.straight.conservativeP||b.straight.coverage-a.straight.coverage||b.straight.conservativeEV-a.straight.conservativeEV||id(s,a.market).localeCompare(id(s,b.market)));
+ if(!ranked.length)return null;
+ // Pay for a materially higher win estimate, not a tiny difference in an
+ // unvalidated model. Within two points, prefer the intended price range.
+ return ranked.find(e=>e.straight.preferred&&ranked[0].straight.conservativeP-e.straight.conservativeP<=straightPolicy.confidenceTolerance)||ranked[0];
+}
 function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketAnchored===true;
  const tier=anchored?(s==='nba'?'Market-informed likelihood; value unverified':'Market-supported suggestion'):!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
 function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',s!=='ncaaf'&&x.sensitivity?'Opportunity scenarios: '+x.sensitivity.scenarios.map(row=>row.name+' '+(row.bufferedP==null?'unavailable':Math.round(row.bufferedP*100)+'% buffered')).join('; ')+' (policy scenarios, not confidence intervals)':'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'',x.minimumOdds==null?'':('Minimum acceptable odds '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line'),'Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
-window.PICK_QUALITY={contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
+window.PICK_QUALITY={straightPolicy,straight,bestStraight,contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
