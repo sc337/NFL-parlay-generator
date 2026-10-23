@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-23T01:52:39.064Z",
+  "updated_at": "2026-10-23T02:00:01.383Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-23T01:50:25.047187+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 128,
       "quotedMarkets": 128,
       "expiredQuotes": 0,
@@ -42,7 +42,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-23T01:50:21.159717+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 4476,
       "quotedMarkets": 4476,
       "expiredQuotes": 0,
@@ -224,7 +224,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-23T01:51:40.893710+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "markets": 7037,
       "quotedMarkets": 7037,
       "expiredQuotes": 0,
@@ -1103,12 +1103,12 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-10-23T01:49:34.789054+00:00",
-      "ageMinutes": 3,
-      "markets": 5758,
-      "quotedMarkets": 5758,
+      "snapshotAt": "2026-10-23T01:59:34.331365+00:00",
+      "ageMinutes": 0,
+      "markets": 5760,
+      "quotedMarkets": 5760,
       "expiredQuotes": 0,
-      "playerMarkets": 4377,
+      "playerMarkets": 4379,
       "families": {
         "h2h": 82,
         "td": 255,
@@ -1116,10 +1116,10 @@
         "spreads": 767,
         "rushing": 1048,
         "passing": 510,
+        "receptions": 202,
         "completions": 44,
-        "receptions": 200,
-        "passing_tds": 200,
-        "receiving": 2120
+        "receiving": 2120,
+        "passing_tds": 200
       },
       "futureEvents": [
         {
@@ -1234,7 +1234,7 @@
       "playerCounts": {
         "kalshi-new-orleans-saints-pittsburgh-steelers": 422,
         "kalshi-miami-dolphins-new-york-jets": 289,
-        "kalshi-carolina-panthers-tampa-bay-buccaneers": 353,
+        "kalshi-carolina-panthers-tampa-bay-buccaneers": 355,
         "kalshi-baltimore-ravens-cincinnati-bengals": 274,
         "kalshi-atlanta-falcons-san-francisco-49ers": 324,
         "kalshi-cleveland-browns-tennessee-titans": 272,
@@ -1249,15 +1249,15 @@
     },
     "nhl": {
       "snapshotAt": "2026-10-23T01:50:24.848402+00:00",
-      "ageMinutes": 2,
-      "markets": 640,
-      "quotedMarkets": 640,
+      "ageMinutes": 10,
+      "markets": 586,
+      "quotedMarkets": 586,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 105,
-        "spread": 164,
-        "total": 371
+        "moneyline": 101,
+        "spread": 148,
+        "total": 337
       },
       "futureEvents": [
         {
@@ -1439,24 +1439,13 @@
         {
           "id": "401892564",
           "time": "2026-10-24T00:00:00+00:00"
-        },
-        {
-          "id": "401892563",
-          "time": "2026-10-23T02:00Z"
-        },
-        {
-          "id": "401892562",
-          "time": "2026-10-23T02:00Z"
         }
       ],
-      "playerCounts": {
-        "401892562": 230,
-        "401892563": 266
-      }
+      "playerCounts": {}
     },
     "ufc": {
       "snapshotAt": "2026-10-23T01:50:23.836710+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 232,
       "quotedMarkets": 232,
       "expiredQuotes": 0,
@@ -1630,18 +1619,14 @@
       "message": "2198 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-03T07:35:35.607Z",
       "changedAt": "2026-10-03T07:35:35.607Z"
-    },
-    {
-      "id": "nhl:props-missing",
-      "sport": "nhl",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-10-23T00:01:18.099Z",
-      "changedAt": "2026-10-23T00:01:18.099Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:props-missing",
+      "resolvedAt": "2026-10-23T02:00:01.383Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/39883234494",
   "refreshResults": {
     "mlb": {
@@ -1658,7 +1643,7 @@
     },
     "nfl": {
       "ok": true,
-      "at": "2026-10-23T01:50:01.642329+00:00"
+      "at": "2026-10-23T02:00:01.368572+00:00"
     },
     "nhl": {
       "ok": true,
