@@ -22,6 +22,9 @@ test('started events, future timestamps and expired quotes cannot turn a provide
 test('fresh ESPN schedules are useful even when sportsbook prices are absent',()=>{
  const api=setup();api.capture('nba',{updated_at:at,slate:{updated_at:at,games:[{game_time:future}]},markets:[]});const x=api.state('nba','espn',now);assert.equal(x.status,'Fresh schedule');assert.equal(x.freshCount,0);assert.equal(x.scheduleCount,1);
 });
+test('registered NFL selections retain game start and source context',()=>{
+ const api=setup();api.capture('nfl',{updated_at:at,games:[{id:'started',commence_time:new Date(now-60000).toISOString(),dataSource:'Kalshi'},{id:'future',commence_time:future,dataSource:'FanDuel'}]});api.register('nfl',[{gameId:'started',price:-150},{gameId:'future',price:-150}],at);assert.equal(api.state('nfl','kalshi',now).count,0);
+});
 test('sport switching keeps coverage counts and timestamps isolated',()=>{
  const api=setup();api.capture('nba',{updated_at:at,markets:[quote('Kalshi')]});api.capture('nfl',{updated_at:old,games:[{commence_time:future,markets:[quote('Polymarket',{quotedAt:old})]}]});assert.equal(api.state('nba','kalshi',now).freshCount,1);assert.equal(api.state('nfl','kalshi',now).freshCount,0);assert.equal(api.state('nfl','polymarket',now).tone,'warning');
 });

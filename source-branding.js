@@ -11,9 +11,10 @@ function state(sport,id,now=Date.now()){
  if(!f)return {...base,tone:'unavailable',status:'Loading',description:'Waiting for this sport’s feed.'};
  const d=f.snapshot||{},rows=f.rows??(sport==='nfl'?(d.games||[]).flatMap(g=>(g.markets||[]).map(m=>({...m,kickoff:g.commence_time}))):d.markets||[]);
  const nativeAt=d.primary_updated_at||d.updated_at||f.at,group=rows.filter(m=>{
-  const start=stamp(m.kickoff||m.game_time||m.start_time),kind=provider(m.source||(!m.referenceOnly?'Kalshi':''));
+  const game=sport==='nfl'?(d.games||[]).find(g=>g.id===m.gameId):null;
+  const start=stamp(m.kickoff||m.game_time||m.start_time||game?.commence_time),kind=provider(m.source||game?.dataSource||(!m.referenceOnly&&sport!=='nfl'?'Kalshi':''));
   const ask=Number(m.yes_ask??m.quoteProbability),price=Number(m.price),quoted=(ask>0&&ask<1)||(m.price!=null&&Number.isFinite(price)&&Math.abs(price)>=100);
-  return kind===id&&quoted&&(start===null||start>now)&&!['in','post','Live','Final'].includes(m.game_status);
+  return kind===id&&quoted&&(start===null||start>now)&&!['in','post','Live','Final'].includes(m.game_status||game?.game_status);
  });
  const quotes=group.map(m=>stamp(m.quotedAt||(id==='kalshi'?nativeAt:null))),current=quotes.filter(t=>fresh(t,now));
  base.count=group.length;base.freshCount=current.length;base.latestQuote=quotes.filter(t=>t!==null).sort((a,b)=>b-a)[0]??null;
