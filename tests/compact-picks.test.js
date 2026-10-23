@@ -2,6 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const api=require('../compact-picks.js');
 test('featured straight spells out its market without changing the line',()=>{
  assert.equal(api.featuredSelection('Rec Yds','O 29.5'),'Over 29.5 receiving yards');assert.equal(api.featuredSelection('passing yards','U 249.5'),'Under 249.5 passing yards');assert.equal(api.featuredSelection('Winner','ML'),'Moneyline');assert.equal(api.featuredSelection('Team total','O 2.5'),'Over 2.5 team total');assert.equal(api.featuredSelection('PRA','O 35.5'),'Over 35.5 points + rebounds + assists');
+ assert.equal(api.featuredSelection('RBI','1+'),'1+ RBI');
 });
 test('featured status keeps price and lineup uncertainty visible without repeated source text',()=>{
  assert.equal(api.featuredStatus('Kalshi · Lineup pending · Not final · Value unverified · Confirm participation'),'Lineup pending · Value unverified');assert.equal(api.featuredStatus('Kalshi · Value unverified'),'Value unverified');assert.equal(api.featuredStatus('Kalshi · Previous lineup · Not final · Value unverified'),'Lineup unconfirmed · Value unverified');assert.equal(api.featuredStatus('Verify current price · Goalies unconfirmed'),'Verify current price · Goalies unconfirmed');
@@ -20,6 +21,9 @@ test('featured price overrides legacy mobile tile sizing without changing parlay
  const css=fs.readFileSync('featured-straight.css','utf8');
  assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price\{[^}]*width:auto!important[^}]*min-height:0!important/);
  assert.match(css,/#pickOfDay\.featured-straight \.compact-pick-price \.market-tile-price\{[^}]*flex-wrap:nowrap!important[^}]*font-size:20px!important/);
+});
+test('parlay odds and source stay inline even when a narrow tile cannot wrap',()=>{
+ const css=fs.readFileSync('compact-picks.css','utf8');assert.match(css,/\.compact-pick-price \.market-tile-price\{[^}]*flex-direction:row-reverse[^}]*flex-wrap:nowrap!important/);assert.match(css,/\.compact-pick-price \.source-price-copy\{[^}]*white-space:nowrap/);
 });
 test('featured team media flattens only the matching team and never substitutes its opponent',()=>{
  const image=alt=>({alt,remove(){}}),lakers=image('Los Angeles Lakers logo'),clippers=image('Los Angeles Clippers logo');
