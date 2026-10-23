@@ -37,7 +37,8 @@ function row(node,sport){
  if(!tile||!heading||!line||!price||!title||!copy)return;
  node.dataset.pickLayout='compact';node.classList.add('compact-pick-row');tile.classList.add('compact-pick-price');
  let media=[...node.children].find(x=>x.classList.contains('nfl-leg-media')||x.classList.contains('pick-media'));
- if(!media){media=document.createElement('span');copy.before(media);for(const image of [...node.children].filter(x=>String(x.tagName).toLowerCase()==='img'))media.append(image)}
+ if(!media){media=document.createElement('span');copy.before(media)}
+ for(const visual of [...node.children].filter(x=>String(x.tagName).toLowerCase()==='img'||x.classList.contains('sport-selected-media')))media.append(visual);
  media.classList.add('compact-pick-media');
  if(media.querySelector('.sport-photo')||media.querySelector('.mlb-player-photo'))media.classList.add('compact-player-media');
  const subject=title.textContent.replace(/^\d+\.\s*/,'');if(title.textContent!==subject)title.textContent=subject;
