@@ -137,7 +137,8 @@ function unsupportedAltUnder(m){
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
  const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
- const selectionMode=options.featured?'screened':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
+ const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(!nbaProfile||nbaProfile==='safe');
+ const selectionMode=options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
@@ -232,6 +233,9 @@ function assess(s,m,f={},options={}){
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  if(!reason&&window.SELECTION_UI?.excluded?.(s,m))reason='Selection excluded by you';
  const dataReason=reason,dataPass=!dataReason;
+ if(!reason&&saferMode&&conservativeP<window.PARLAY_POLICY.minBufferedP)reason='Safer legs need at least 55% buffered likelihood';
+ if(!reason&&saferMode&&q.p>window.PARLAY_POLICY.maxMarketP)reason='Price too short for safer parlay selection';
+ if(!reason&&saferMode&&q.p-conservativeP>window.PARLAY_POLICY.maxPriceGap)reason='Price exceeds buffered likelihood by over 6 points';
  if(potentialValue&&!likelihoodMode&&!matchupMode)warnings.push('Potential value only; positive raw EV does not clear uncertainty buffer');
  if(!reason&&!clearsValue&&!likelihoodMode&&!matchupMode)reason='Edge does not clear uncertainty buffer';
  if(likelihoodMode)warnings.push('Win Chance prioritizes estimated likelihood; price may be poor value');
