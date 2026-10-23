@@ -60,7 +60,8 @@ function renderFresh(){if(window.__ACTIVE_SPORT&&window.__ACTIVE_SPORT!=='nhl')r
  if(lastLoaded&&!fresh()){$('#dataStatus').textContent='NHL feed stale';window.PICK_OF_DAY?.show?.('nhl');$('#resultsTitle').textContent='NHL Recommendations';$('#results').innerHTML='<div class="empty">NHL feed stale · Refresh markets.</div>';window.PARLAY_GENERATOR?.syncLabel?.();return}
  window.SPORT_LEGS?.mount?.('nhl',legs,n=>{legs=n;render()});
  if(!selectedMarkets.size){$('#dataStatus').textContent='NHL · No markets selected';window.PICK_OF_DAY?.show?.('nhl');$('#resultsTitle').textContent='NHL Recommendations';$('#results').innerHTML='<div class="empty">Select at least one NHL market.</div>';window.PARLAY_GENERATOR?.syncLabel?.();return}
- const ranked=pool(),featured=ranked.filter(m=>!window.PICK_QUALITY||window.PICK_QUALITY.assess('nhl',m,model(m)||{},{featured:true}).pass),today=featured.find(m=>window.SLATE_UI?window.SLATE_UI.matches('nhl',m):selectedDate!=='all'||window.PICK_OF_DAY?.today?.(m.game_time))||featured[0];
+ const ranked=pool(),featured=ranked.filter(m=>!window.PICK_QUALITY||window.PICK_QUALITY.assess('nhl',m,model(m)||{},{featured:true}).pass),onDate=m=>window.SLATE_UI?window.SLATE_UI.matches('nhl',m):selectedDate!=='all'||window.PICK_OF_DAY?.today?.(m.game_time);
+ const today=window.PICK_QUALITY?.bestStraight?window.PICK_QUALITY.bestStraight('nhl',featured.filter(onDate).map(m=>({market:m,forecast:model(m)||{}})))?.market:featured.find(onDate)||featured[0];
  window.PICK_OF_DAY?.show?.('nhl',today&&{market:today,eventTime:today.game_time,label:today.label,event:today.game_label,media:media(today),note:note(today)+' · '+(window.PICK_QUALITY?.note('nhl',today,model(today)||{})||'')},{date:selectedDate});
  const games=G.unique(ranked,Infinity),covered=ranked.filter(m=>model(m)).length;
  lastStatus='NHL · '+games.length+' qualified games · '+(covered?'Experimental NHL model':'Market only');$('#dataStatus').textContent=lastStatus;

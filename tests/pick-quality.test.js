@@ -4,6 +4,46 @@ function runtime(blocked=false){let now=Date.now();const state=new Map();class C
  for(const file of ['model-calibration.js','pick-quality.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx,{filename:file});
  return {Q:window.PICK_QUALITY,window,ctx,state,now:()=>now,advance:ms=>now+=ms};}
 function fixture(r,patch={}){const m={ticker:'MATCH-45',type:'totals',marketKey:'totals',point:44.5,side:'over',name:'Over 44.5',price:100,marketProbability:.5,source:'Kalshi',game_status:'pre',...patch},g={id:'game',commence_time:new Date(r.now()+2*3600000).toISOString(),game_status:'pre',markets:[m]};r.Q.prepare('nfl',[m],{},[g],new Date(r.now()).toISOString());return {m,g,f:{modelP:.64,rawModelP:.64,coverage:.7,marketP:.5,uncertainty:.3}}}
+test('bankroll straights enforce the odds band while preserving ordinary pick eligibility',()=>{
+ for(const price of [110,100,-109,-110,-125,-200,-250,-251]){
+  const r=runtime(),{m,g,f}=fixture(r,{price,marketProbability:r.Q.implied(price)}),forecast={...f,marketP:r.Q.implied(price),modelP:r.Q.implied(price)+.15};
+  assert.equal(r.Q.assess('nfl',m,forecast).pass,true);
+  assert.equal(r.Q.straight('nfl',m,forecast,{game:g}).pass,price<=-110&&price>=-250,String(price));
+ }
+});
+test('bankroll straight selects higher supported win chance over a larger estimated return',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{price:-110,marketProbability:r.Q.implied(-110)});
+ const value={market:m,forecast:{...f,marketP:r.Q.implied(-110),modelP:.69},game:g},likely={market:{...m,ticker:'likely',price:-180,marketProbability:r.Q.implied(-180)},forecast:{...f,marketP:r.Q.implied(-180),modelP:.79},game:g};
+ assert.ok(r.Q.assess('nfl',m,value.forecast).conservativeEV>r.Q.assess('nfl',likely.market,likely.forecast).conservativeEV);
+ assert.equal(r.Q.bestStraight('nfl',[value,likely]).market.ticker,'likely');
+});
+test('preferred straight price wins a close confidence comparison, but not a material gap',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{price:-190,marketProbability:r.Q.implied(-190)});
+ const preferred={market:m,forecast:{...f,marketP:r.Q.implied(-190),modelP:.79},game:g},short={market:{...m,ticker:'short',price:-240,marketProbability:r.Q.implied(-240)},forecast:{...f,marketP:r.Q.implied(-240),modelP:.80},game:g};
+ assert.equal(r.Q.bestStraight('nfl',[short,preferred]).market,m);
+ short.forecast.modelP=.84;assert.equal(r.Q.bestStraight('nfl',[short,preferred]).market.ticker,'short');
+});
+test('straight policy ignores parlay mode but still rejects poor value, stale quotes and unavailable players',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{price:-150,marketProbability:.6});
+ for(const mode of ['ideas','likelihood','screened']){
+  r.window.DASHBOARD_UI={get:()=>mode};const forecast={...f,marketP:.6,selectionMode:mode};
+  assert.equal(r.Q.bestStraight('nfl',[{market:m,forecast,game:g}]),null);
+  assert.equal(r.Q.straight('nfl',m,{...forecast,modelP:.75},{game:g}).pass,true);
+  assert.equal(r.Q.straight('nfl',m,{...forecast,modelP:.75,coverage:.5},{game:g}).reason,'Straight needs at least 60% input coverage');
+ }
+ for(const patch of [{quotedAt:new Date(r.now()-31*60000).toISOString()},{injury_status:'out'},{game_status:'in'}])assert.equal(r.Q.straight('nfl',{...m,...patch},{...f,modelP:.75},{game:g}).pass,false);
+});
+test('straights wait for confirmed participation evidence across lineup sports',()=>{
+ for(const sport of ['nba','ncaaf','nhl','mlb']){
+  const r=runtime(),m={ticker:sport,kind:'total',game_id:'1',game_time:new Date(r.now()+2*3600000).toISOString(),yes_ask:.6,probability:.6,game_status:'pre'};
+  const context=sport==='mlb'?{updated_at:new Date(r.now()).toISOString(),games:[{gamePk:'1',startersConfirmed:true,lineupsConfirmed:true}]}:{games:{'1':{season_type:2}}};
+  r.Q.prepare(sport,[m],context,[],new Date(r.now()).toISOString());const f={modelP:.76,marketP:.6,coverage:.8,uncertainty:.3};
+  let confirmed=false;r.window.STARTER_STATUS={evidence:()=>({confirmed,confirmedPlayer:confirmed,lineConfirmed:confirmed})};
+  if(sport==='mlb'){context.games[0].lineupsConfirmed=false;assert.equal(r.Q.straight(sport,m,f).pass,false);context.games[0].lineupsConfirmed=true;}
+  else assert.equal(r.Q.straight(sport,m,f).pass,false,sport);
+  confirmed=true;assert.equal(r.Q.straight(sport,m,f).pass,true,sport);
+ }
+});
 test('book compatibility blocks ALT player unders on straight, featured, extra and parlay gates',()=>{
  const r=runtime(),{m,g,f}=fixture(r,{type:'rushing',marketKey:'player_rush_yds',player:'RB',side:'under',name:'RB Under 69.5',isAltLine:true,_rosterVerified:true});
  const forecast={...f,roleStability:.8};

@@ -38,7 +38,7 @@ function show(sport,pick,options={}){if(window.__ACTIVE_SPORT!==sport)return;con
   meta.textContent=[window.DISPLAY_COPY?.date?.(pick.eventTime)||new Date(pick.eventTime).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}),parsed.subject?(window.DISPLAY_COPY?.matchup?.(pick.event)||pick.event||'Upcoming event'):''].filter(Boolean).join(' · ');
   const ask=window.MARKET_GUARDS?.quote?.(pick.market);
   reference.textContent=window.PICK_QUALITY?window.PICK_QUALITY.quoteLabel(sport,pick.market):sport==='nfl'&&Number.isFinite(Number(pick.market?.price))?money(pick.market.price):ask!=null?'Kalshi '+Math.round(ask*100)+'¢':'Line check';
-  const note=pick.note||'';
+  const note=[pick.note||'',window.PICK_QUALITY?.straightPolicy?'Straight selection prioritizes buffered win likelihood · Preferred odds -125 to -200; allowed -110 to -250 · Availability and price checks required':''].filter(Boolean).join(' · ');
   const likelihood=/Estimated likelihood (\d+)%/.exec(note);let estimate=null;
   if(likelihood){estimate=document.createElement('small');estimate.className='pick-estimate';estimate.textContent='Estimated hit chance '+likelihood[1]+'% · Uncertainty in Details';}
   foot.textContent=[/value unverified|context-supported/i.test(note)?'Suggestion · Value unverified':'',/delayed reference/i.test(note)?'Verify current price':'',/lineups unconfirmed|starters unconfirmed|injury status unconfirmed/i.test(note)?'Confirm lineup/status':'',/unvalidated/i.test(note)?'Model unvalidated':/experimental/i.test(note)?'Experimental':/market.only|no independent/i.test(note)?'Market only':'',/if playing|participation/i.test(note)?'Confirm participation':/goalies unconfirmed/i.test(note)?'Goalies unconfirmed':''].filter(Boolean).join(' · ');
