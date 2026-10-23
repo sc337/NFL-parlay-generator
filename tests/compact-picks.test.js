@@ -6,6 +6,10 @@ test('compact selections preserve the actual side, line, market and moneyline me
 test('NBA matchup abbreviations preserve away/home order and do not guess unknown teams',()=>{
  assert.equal(api.matchup('Knicks vs Celtics','nba'),'NYK @ BOS');assert.equal(api.matchup('Los Angeles Lakers at Portland Trail Blazers','nba'),'LAL @ POR');assert.equal(api.matchup('Team A vs Team B','ncaaf'),'Team A @ Team B');assert.equal(api.matchup('Fight card','ufc'),'Fight card');assert.equal(api.metadata('nba','invalid','Knicks vs Celtics'),'NYK @ BOS');
 });
+test('card tidy leaves analysis alone while nodes are displayed in the details sheet',()=>{
+ const source=fs.readFileSync('selection-ui.js','utf8'),document={body:{classList:{contains:name=>name==='details-sheet-open'}},querySelectorAll(){throw Error('Must not restructure an open sheet')}};
+ vm.runInNewContext(source.slice(source.indexOf('function tidyCards(){'),source.indexOf('let countState='))+';tidyCards();',{document});
+});
 test('row layout retains the price, ALT tag and provisional lineup warning through repeated redraws',()=>{
  // Reuse the existing shared display fixture to exercise real node moves.
  const fixture=fs.readFileSync('tests/nhl-display.test.js','utf8');
