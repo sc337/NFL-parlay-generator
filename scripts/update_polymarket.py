@@ -289,6 +289,25 @@ def identity(sport, row, game, ctx):
     return slot(sport, row, game, ctx)
 
 
+def budget(candidates, limit=MAX_MARKETS):
+    """Share book reads across both games and market families."""
+    by_game = {}
+    for _, row, market, game in sorted(candidates, key=lambda x: (x[3]['game_time'],
+            -(number(x[2].get('volumeNum')) or number(x[2].get('volume')) or 0))):
+        family = row.get('marketKey') or row.get('kind')
+        by_game.setdefault(game['game_id'], {}).setdefault(family, {})[market['id']] = True
+    queues = []
+    for families in by_game.values():
+        kinds = [list(markets) for markets in families.values()]
+        queues.append([queue[i] for i in range(max(map(len, kinds), default=0)) for queue in kinds if i < len(queue)])
+    chosen = []
+    for index in range(max(map(len, queues), default=0)):
+        for queue in queues:
+            if index < len(queue) and len(chosen) < limit:
+                chosen.append(queue[index])
+    return [candidate for candidate in candidates if candidate[2]['id'] in chosen]
+
+
 def enrich(sport, snapshot, ctx, now, fetch=get):
     result = copy.deepcopy(snapshot)
     status = {'checked_at': now.isoformat(), 'status': 'unavailable', 'markets_added': 0, 'rejected': {}}
@@ -306,19 +325,7 @@ def enrich(sport, snapshot, ctx, now, fetch=get):
             for market in event.get('markets', []):
                 for token, row in selections(sport, market, event, game, result, ctx):
                     candidates.append((token, row, market, game))
-        # Share the bounded request budget across games. A large ALT ladder
-        # for the earliest matchup must not crowd out the rest of the slate.
-        candidates.sort(key=lambda x: (x[3]['game_time'], -(number(x[2].get('volumeNum')) or 0)))
-        by_game = {}
-        for _, _, market, game in candidates:
-            by_game.setdefault(game['game_id'], {})[market['id']] = True
-        queues = [list(markets) for markets in by_game.values()]
-        chosen = []
-        for index in range(max(map(len, queues), default=0)):
-            for queue in queues:
-                if index < len(queue) and len(chosen) < MAX_MARKETS:
-                    chosen.append(queue[index])
-        candidates = [x for x in candidates if x[2]['id'] in chosen]
+        candidates = budget(candidates)
         tokens = list(dict.fromkeys(x[0] for x in candidates))
         books = fetch(CLOB + '/books', [{'token_id': token} for token in tokens]) if tokens else []
         if not isinstance(books, list):

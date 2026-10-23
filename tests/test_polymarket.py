@@ -3,7 +3,7 @@ import json
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from scripts.update_polymarket import discover, enrich, match_event, quote, selections
+from scripts.update_polymarket import budget, discover, enrich, match_event, quote, selections
 from scripts.refresh_price_worker import valid_snapshot
 
 NOW = datetime(2026, 10, 23, 1, tzinfo=timezone.utc)
@@ -56,6 +56,17 @@ def fetcher(events=None, books=None):
 
 
 class PolymarketBackup(unittest.TestCase):
+    def test_large_spread_ladders_do_not_crowd_out_props_or_later_games(self):
+        candidates = []
+        for gid in ('early', 'later'):
+            game = {**GAME, 'game_id': gid}
+            for i in range(30):
+                candidates.append(('token', {'kind': 'spread'}, market(id=gid+str(i), volumeNum=10000), game))
+            candidates.append(('prop', {'kind': 'receiving', 'marketKey': 'player_reception_yds'},
+                               market(id=gid+'prop', volumeNum=1), game))
+        selected = budget(candidates, limit=4)
+        self.assertEqual({m['id'] for _, _, m, _ in selected}, {'early0', 'earlyprop', 'later0', 'laterprop'})
+
     def test_discovery_resolves_official_league_id_and_paginates(self):
         urls = []
         def fetch(url):
