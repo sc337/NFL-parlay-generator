@@ -17,7 +17,7 @@ function render(){
   const when=new Date(g.game_time).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
   return '<div class="leg"><div class="leg-title">'+esc(g.game_label)+'</div><div class="leg-sub">'+esc(when)+' · '+esc(note)+'</div></div>';
  }).join('');
- const html='<details class="parlay-card"><summary>Full '+sport.toUpperCase()+' Slate · '+games.length+' '+(sport==='ufc'?'fights':'games')+'</summary><p class="summary">ESPN schedule · Public sportsbook references fill missing selections. Independent models and availability checks still apply.</p><div class="legs">'+rows+'</div></details>';
+ const html='<details class="parlay-card"><summary>Full '+sport.toUpperCase()+' Slate · '+games.length+' '+(sport==='ufc'?'fights':'games')+'</summary><p class="summary">ESPN schedule · Verified Polymarket and sportsbook references fill missing selections. Independent models and availability checks still apply.</p><div class="legs">'+rows+'</div></details>';
  host.hidden=false;if(host.__markup!==html){host.__markup=html;host.innerHTML=html}
 }
 window.PUBLIC_SLATE={set,render};

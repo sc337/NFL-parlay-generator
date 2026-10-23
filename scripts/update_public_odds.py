@@ -229,7 +229,7 @@ def enrich(sport, snapshot, events, ctx, now):
         # Store only identities needed for display, not ESPN's verbose team links.
         for side in ('home', 'away'):
             if side in mapped:
-                mapped[side] = {k: mapped[side].get(k) for k in ('id', 'displayName', 'abbreviation')}
+                mapped[side] = {k: mapped[side].get(k) for k in ('id', 'displayName', 'abbreviation', 'shortDisplayName', 'location')}
         output_games.append(mapped)
         if sport == 'ufc':
             continue
