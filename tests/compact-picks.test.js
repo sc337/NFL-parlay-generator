@@ -1,5 +1,11 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const api=require('../compact-picks.js');
+test('featured straight spells out its market without changing the line',()=>{
+ assert.equal(api.featuredSelection('Rec Yds','O 29.5'),'Over 29.5 receiving yards');assert.equal(api.featuredSelection('passing yards','U 249.5'),'Under 249.5 passing yards');assert.equal(api.featuredSelection('Winner','ML'),'Moneyline');assert.equal(api.featuredSelection('Team total','O 2.5'),'Over 2.5 team total');assert.equal(api.featuredSelection('PRA','O 35.5'),'Over 35.5 points + rebounds + assists');
+});
+test('featured status keeps price and lineup uncertainty visible without repeated source text',()=>{
+ assert.equal(api.featuredStatus('Kalshi · Lineup pending · Not final · Value unverified · Confirm participation'),'Lineup pending · Value unverified');assert.equal(api.featuredStatus('Kalshi · Value unverified'),'Value unverified');assert.equal(api.featuredStatus('Kalshi · Previous lineup · Not final · Value unverified'),'Lineup unconfirmed · Value unverified');assert.equal(api.featuredStatus('Verify current price · Goalies unconfirmed'),'Verify current price · Goalies unconfirmed');
+});
 test('compact selections preserve the actual side, line, market and moneyline meaning',()=>{
  for(const [market,line,want] of [['Assists','O 5.5','Over 5.5 Assists'],['Spread','+3.5','+3.5 Spread'],['Winner','ML','Moneyline'],['Rec Yds','U 39.5','Under 39.5 Rec Yds'],['Total','O 221.5','Over 221.5 Total'],['PRA','O 35.5','Over 35.5 PRA']])assert.equal(api.selection(market,line),want);
 });
