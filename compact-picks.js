@@ -11,7 +11,7 @@ function selection(market,line){
 }
 function featuredSelection(market,line){
  const names={'rec yds':'receiving yards','receiving yards':'receiving yards','rush yds':'rushing yards','rushing yards':'rushing yards','pass yds':'passing yards','passing yards':'passing yards','rec':'receptions','receptions':'receptions','pass td':'passing touchdowns','passing touchdowns':'passing touchdowns','sog':'shots on goal','ks':'strikeouts','pra':'points + rebounds + assists','pts + reb + assist':'points + rebounds + assists','threes':'made threes','team total':'team total','winner':'winner'};
- const full=names[String(market||'').toLowerCase()]||String(market||'').toLowerCase();return selection(full,line);
+ const full=names[String(market||'').toLowerCase()]||(/^rbis?$/i.test(market)?'RBI':String(market||'').toLowerCase());return selection(full,line);
 }
 function featuredStatus(value){
  const parts=lineup(value).split(' · ').filter(x=>x&&!/^(?:Kalshi|Polymarket|ESPN|FanDuel|Caesars|Reference|Suggestion)$/i.test(x)).map(x=>x==='Confirm lineup/status'?'Lineup unconfirmed':x);
