@@ -1132,6 +1132,7 @@ function render(parlays){
     p.legs.forEach((l,i)=>{
       const d=document.createElement('div'); d.className='leg sport-visual-leg'; d.dataset.caesarsId=window.CAESARS_COMPARE?.register('nfl',l)||'';
       if(l.isAltLine||state.lineMode==='alt'&&l.type==='receptions'&&l.side==='over'){d.dataset.altLine='true';const milestone=window.NFL_ALT_LINES?.label?.(l);if(milestone)d.dataset.altLabel=milestone;}
+      d.dataset.eventTime=l.kickoff||'';d.dataset.matchup=l.gameLabel||'';
       if(state.mode==='multi')d.dataset.compactMatchup=[nflKickoff(l.kickoff),nflMatchup(l.gameLabel)].filter(Boolean).join(' · ');
       const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l,p.altIdea?'safe':null));const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
