@@ -9,6 +9,15 @@ function selection(market,line){
  if(side)return (side[1].toUpperCase()==='O'?'Over ':'Under ')+side[2]+' '+m;
  return [l,m].filter(Boolean).join(' ');
 }
+function featuredSelection(market,line){
+ const names={'rec yds':'receiving yards','receiving yards':'receiving yards','rush yds':'rushing yards','rushing yards':'rushing yards','pass yds':'passing yards','passing yards':'passing yards','rec':'receptions','receptions':'receptions','pass td':'passing touchdowns','passing touchdowns':'passing touchdowns','sog':'shots on goal','ks':'strikeouts','pra':'points + rebounds + assists','pts + reb + assist':'points + rebounds + assists','threes':'made threes','team total':'team total','winner':'winner'};
+ const full=names[String(market||'').toLowerCase()]||String(market||'').toLowerCase();return selection(full,line);
+}
+function featuredStatus(value){
+ const parts=lineup(value).split(' · ').filter(x=>x&&!/^(?:Kalshi|Polymarket|ESPN|FanDuel|Caesars|Reference|Suggestion)$/i.test(x)).map(x=>x==='Confirm lineup/status'?'Lineup unconfirmed':x);
+ const hasLineup=parts.some(x=>/lineup|starters|goalies/i.test(x));
+ return [...new Set(parts.filter(x=>!(hasLineup&&x==='Confirm participation')))].join(' · ');
+}
 function matchup(value,sport){
  const parts=String(value||'').split(/\s+(?:vs\.?|at|@)\s+/i);
  if(parts.length!==2)return String(value||'');
@@ -32,12 +41,30 @@ function row(node,sport){
  media.classList.add('compact-pick-media');
  if(media.querySelector('.sport-photo')||media.querySelector('.mlb-player-photo'))media.classList.add('compact-player-media');
  const subject=title.textContent.replace(/^\d+\.\s*/,'');if(title.textContent!==subject)title.textContent=subject;
- const choice=document.createElement('div');choice.className='compact-pick-selection';choice.textContent=selection(heading.textContent,line.textContent);
+ const choice=document.createElement('div');choice.className='compact-pick-selection';choice.textContent=node.classList.contains('pick-row')?featuredSelection(heading.title||heading.textContent,line.textContent):selection(heading.textContent,line.textContent);
  const alt=tile.querySelector('.alt-tag');if(alt)choice.append(alt);
  title.after(choice);heading.hidden=true;line.hidden=true;
  const meta=node.querySelector('.leg-brief,.pick-meta');
  if(meta&&node.dataset.eventTime&&node.dataset.matchup){meta.title=meta.textContent;meta.textContent=metadata(sport,node.dataset.eventTime,node.dataset.matchup)}
  const warning=node.querySelector('.nba-lineup-status');if(warning){warning.title=warning.textContent;warning.textContent=lineup(warning.textContent)}
+}
+function featured(node){
+ if(node.dataset.featuredLayout||!node.dataset.pickLayout)return;
+ const host=node.closest('#pickOfDay'),details=host?.querySelector('.card-explanation'),copy=node.querySelector('.pick-copy'),meta=node.querySelector('.pick-meta'),media=node.querySelector('.compact-pick-media');
+ if(!host||!copy||!meta||!media)return;
+ node.dataset.featuredLayout='1';host.classList.add('featured-straight');
+ const heading=host.querySelector('#pickOfDayTitle');if(heading){heading.textContent='Featured straight';if(window.STUDY_POLICY){const badge=document.createElement('span');badge.className='featured-paper-badge';badge.textContent='Paper only';heading.append(badge)}}
+ const estimate=copy.querySelector('.pick-estimate');if(estimate&&details)details.append(estimate);
+ node.append(meta);
+ const foot=host.querySelector('.pick-foot');if(foot){foot.dataset.fullStatus=foot.textContent;foot.textContent=featuredStatus(foot.textContent);foot.hidden=!foot.textContent}
+ // Team picks show the selected team. Unmatched media is omitted rather than
+ // displaying an opponent as the selection's logo.
+ if(!media.classList.contains('compact-player-media')){
+  const name=node.querySelector('.pick-name')?.textContent.toLowerCase().replace(/[^a-z0-9]/g,'')||'';
+  const images=[...media.querySelectorAll('img')],selected=images.find(x=>name&&String(x.alt||'').toLowerCase().replace(/[^a-z0-9]/g,'').includes(name));
+  for(const image of images)if(image!==selected)image.remove();
+ }
+ if(!media.querySelector('img'))node.classList.add('featured-no-media');
 }
 function card(node,sport){
  const estimate=node.querySelector('.odds-label');if(estimate&&/ est\.$/i.test(estimate.textContent)){estimate.dataset.sourceLabel=estimate.textContent;estimate.textContent='Est.'}
@@ -68,6 +95,7 @@ function card(node,sport){
 function render(){
  const sport=document.body.dataset.sport||window.__ACTIVE_SPORT||'nfl';
  document.querySelectorAll('.leg.has-market-tile,.pick-row').forEach(x=>row(x,sport));
+ document.querySelectorAll('#pickOfDay .pick-row').forEach(featured);
  document.querySelectorAll('.parlay-card[data-compact]').forEach(x=>card(x,sport));
  document.querySelectorAll('#pickOfDay .pick-foot').forEach(x=>{const text=lineup(x.textContent);if(text!==x.textContent){x.title=x.textContent;x.textContent=text}});
 }
@@ -77,5 +105,5 @@ function start(){
  schedule();new MutationObserver(records=>{if(records.some(r=>r.target.closest?.('#results,#pickOfDayContent,#analysisSecondary,#nflParlayAlternatives')))schedule()}).observe(document.body,{childList:true,subtree:true});
 }
 if(typeof document!=='undefined')document.readyState==='loading'?document.addEventListener('DOMContentLoaded',start,{once:true}):start();
-return {selection,matchup,metadata,lineup,row,card};
+return {selection,featuredSelection,featuredStatus,matchup,metadata,lineup,row,featured,card};
 });
