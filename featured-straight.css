@@ -1,24 +1,26 @@
 /* A featured straight leads with the selection; supporting analysis stays in Details. */
 #pickOfDay.featured-straight:has(.pick-row){display:block!important;padding:14px 16px!important}
-#pickOfDay.featured-straight #pickOfDayTitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px!important;font-size:11px!important;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+#pickOfDay.featured-straight #pickOfDayTitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 9px!important;font-size:11px!important;font-weight:700;letter-spacing:.04em;color:var(--muted)}
 .featured-paper-badge{padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:9px;font-weight:650;letter-spacing:0;color:var(--muted)}
-#pickOfDay.featured-straight .pick-row{display:grid!important;grid-template-columns:minmax(0,1fr) 72px;grid-template-areas:"copy media" "price media" "meta meta";align-items:start;gap:7px 14px;min-width:0}
+#pickOfDay.featured-straight .pick-row{display:grid!important;grid-template-columns:minmax(0,1fr) 72px;grid-template-areas:"copy media" "price media" "meta meta";align-items:start;gap:5px 14px;min-width:0}
 #pickOfDay.featured-straight .pick-copy{grid-area:copy;gap:4px;min-width:0}
 #pickOfDay.featured-straight .pick-name{font-size:14px!important;line-height:1.3;color:var(--text)}
 #pickOfDay.featured-straight .compact-pick-selection{margin:0;font-size:clamp(21px,5.4vw,27px)!important;font-weight:800;line-height:1.15;letter-spacing:-.025em;color:var(--text);overflow-wrap:normal}
 #pickOfDay.featured-straight .compact-pick-selection .alt-tag{font-size:9px;letter-spacing:0}
 #pickOfDay.featured-straight .pick-row>.compact-pick-media{grid-area:media;align-self:start;width:72px;min-width:72px;max-width:72px;height:78px;min-height:78px;flex:none}
 #pickOfDay.featured-straight .compact-pick-media>img,#pickOfDay.featured-straight .compact-player-media>img:is(.sport-photo,.mlb-player-photo){width:72px!important;height:72px!important;object-fit:contain}
+#pickOfDay.featured-straight .sport-selected-media,#pickOfDay.featured-straight .sport-selected-media .sport-logo{width:72px!important;height:72px!important;object-fit:contain}
 #pickOfDay.featured-straight .compact-player-media>img:is(.sport-logo,.mlb-team-logo){width:23px!important;height:23px!important;right:0;bottom:0;background:var(--surface);border-radius:50%}
-#pickOfDay.featured-straight .compact-pick-price{grid-area:price;align-self:start;align-items:flex-start;width:auto;min-width:0;text-align:left}
-#pickOfDay.featured-straight .compact-pick-price .market-tile-price{font-size:20px;line-height:1.2;justify-content:flex-end;column-gap:6px;color:var(--text)}
+#pickOfDay.featured-straight .compact-pick-price{grid-area:price;align-self:start;align-items:flex-start;width:auto!important;min-width:0;min-height:0!important;margin:0!important;text-align:left}
+#pickOfDay.featured-straight .compact-pick-price .market-tile-price{display:inline-flex!important;flex-direction:row-reverse;flex-wrap:nowrap!important;align-items:center;justify-content:flex-end;gap:6px;margin:0!important;font-size:20px!important;line-height:1.2;color:var(--text);white-space:nowrap!important}
+#pickOfDay.featured-straight .compact-pick-price .source-price-copy{flex:none;white-space:nowrap;overflow-wrap:normal}
 #pickOfDay.featured-straight .compact-pick-price .source-logo img{height:11px!important;max-width:50px!important}
 #pickOfDay.featured-straight .compact-pick-price .source-logo[data-brand="espn"] img{max-width:none!important}
-#pickOfDay.featured-straight .pick-meta{grid-area:meta;margin:3px 0 0;font-size:11px!important;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
-#pickOfDay.featured-straight .pick-compact-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+#pickOfDay.featured-straight .pick-meta{grid-area:meta;margin:1px 0 0;font-size:11px!important;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+#pickOfDay.featured-straight .pick-compact-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:6px;border-top:1px solid var(--border)}
 #pickOfDay.featured-straight .pick-foot{flex:1;min-width:0;margin:0;font-size:10px!important;line-height:1.4;color:var(--amber,#d8aa52)}
 #pickOfDay.featured-straight .pick-compact-footer>.card-explanation{flex:none;margin:0}
 #pickOfDay.featured-straight .pick-compact-footer summary{font-size:12px;min-height:36px!important}
 #pickOfDay.featured-straight .featured-no-media{grid-template-columns:minmax(0,1fr);grid-template-areas:"copy" "price" "meta"}
 #pickOfDay.featured-straight .featured-no-media>.compact-pick-media{display:none}
-@media(max-width:360px){#pickOfDay.featured-straight .pick-row{grid-template-columns:minmax(0,1fr) 64px;gap:7px 10px}#pickOfDay.featured-straight .pick-row>.compact-pick-media{width:64px;min-width:64px;max-width:64px}#pickOfDay.featured-straight .compact-pick-selection{font-size:20px!important}#pickOfDay.featured-straight .compact-pick-media>img,#pickOfDay.featured-straight .compact-player-media>img:is(.sport-photo,.mlb-player-photo){width:64px!important;height:64px!important}}
+@media(max-width:360px){#pickOfDay.featured-straight .pick-row{grid-template-columns:minmax(0,1fr) 64px;gap:5px 10px}#pickOfDay.featured-straight .pick-row>.compact-pick-media{width:64px;min-width:64px;max-width:64px}#pickOfDay.featured-straight .compact-pick-selection{font-size:20px!important}#pickOfDay.featured-straight .compact-pick-media>img,#pickOfDay.featured-straight .compact-player-media>img:is(.sport-photo,.mlb-player-photo),#pickOfDay.featured-straight .sport-selected-media,#pickOfDay.featured-straight .sport-selected-media .sport-logo{width:64px!important;height:64px!important}}
