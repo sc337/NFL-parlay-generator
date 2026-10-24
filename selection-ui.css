@@ -50,6 +50,8 @@ select.line-options-source{display:none!important}
 .simple-filters button[hidden],.simple-filters small[hidden]{display:none!important}
 .simple-filters .reset-filters{justify-self:end;width:auto;min-height:32px!important;padding:4px 0;border:0;background:transparent;color:var(--blue,#8ab4ff);font-size:12px;cursor:pointer}
 .simple-filters .filter-markets-empty{color:var(--muted);font-size:12px}
+.simple-filters .filter-market-grid button[data-availability="unavailable"]{display:flex;flex-direction:column;gap:3px;background:var(--surface2,#202833)!important;color:var(--muted)!important;border-color:var(--border,#34414f)!important;cursor:not-allowed}
+.simple-filters .filter-market-grid button[data-availability="unavailable"]::after{content:'No quotes available';font-size:10px;font-weight:400;line-height:1.2}
 
 /* Keep Lines full width despite older sport-specific form layouts. */
 .simple-filters .team-line-filters{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}

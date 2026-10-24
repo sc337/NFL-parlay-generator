@@ -39,9 +39,12 @@ function tidyFilters(s){
   if(shortMarkets[kind]&&button.textContent!==shortMarkets[kind]){if(!button.title)button.title=button.textContent;button.textContent=shortMarkets[kind]}
   let unavailable=button.disabled;
   if(s==='nfl'&&window.NFL_PARLAY_STATE?.games?.length){unavailable=!window.NFL_PARLAY_STATE.games.some(g=>(!window.SLATE_UI||window.SLATE_UI.matches('nfl',{},g.commence_time))&&g.markets?.some(m=>m.type===kind&&Number.isFinite(m.price)&&m.price!==0));}
-  button.hidden=unavailable;button.setAttribute('aria-pressed',String(button.classList.contains('active')));
+  button.hidden=false;button.disabled=unavailable;
+  button.dataset.availability=unavailable?'unavailable':'available';
+  button.setAttribute('aria-label',button.textContent+(unavailable?' · No quotes available':''));
+  button.setAttribute('aria-pressed',String(button.classList.contains('active')));
  }
- const visible=buttons.filter(b=>!b.hidden),selected=visible.filter(b=>b.classList.contains('active'));
+ const visible=buttons.filter(b=>!b.disabled),selected=visible.filter(b=>b.classList.contains('active'));
  let empty=host.querySelector('.filter-markets-empty');if(!empty){empty=document.createElement('small');empty.className='filter-markets-empty';empty.textContent='No markets available for this selection.';grid.after(empty)}empty.hidden=visible.length>0;
  const lines=$('#'+s+'LinesSelect'),lineLabel={both:'Both',standard:'Standard',alt:'ALT'}[lines?.value];
  const summary=root.querySelector('summary'),marketLabel=!visible.length?'No markets':selected.length===visible.length?'All markets':selected.length+' markets';
