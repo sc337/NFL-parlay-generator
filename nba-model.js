@@ -33,11 +33,14 @@ function matchup(m,ctx){
 }
 function marketFallback(m,match){
  const Q=window.PICK_QUALITY;if(!Q?.markets||!Q?.quote)return null;
- const rows=Q.markets('nba');let groups=moneylineGroups.get(rows);if(!groups){groups=new Map();for(const row of rows)if(['moneyline','spread','total'].includes(row.kind)){const key=row.kind+'|'+String(row.game_id)+(row.kind==='moneyline'?'':'|'+row.ticker+'|'+num(row.line));if(!groups.has(key))groups.set(key,[]);groups.get(key).push(row)}moneylineGroups.set(rows,groups)}
+ // Reference sides have distinct IDs; pair only the same verified provider,
+ // event, market family and normalized threshold. Never mix book/exchange sides.
+ const pairKeyFor=row=>{if(row.referenceOnly){const id=String(row.ticker||'').match(/^ESPN:(\d+):(\d+):(spread|total):(home|away|over|under):[-\d.]+$/);if(!id||id[1]!==String(row.game_id)||id[3]!==row.kind||!window.ESPN_EVIDENCE?.contract('nba',row))return null;return ['reference',row.source,id[1],id[2],row.kind,num(row.line)].join('|')}return row.kind+'|'+String(row.game_id)+(row.kind==='moneyline'?'':'|'+row.ticker+'|'+num(row.line))};
+ const rows=Q.markets('nba');let groups=moneylineGroups.get(rows);if(!groups){groups=new Map();for(const row of rows)if(['moneyline','spread','total'].includes(row.kind)){const key=pairKeyFor(row);if(key===null)continue;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(row)}moneylineGroups.set(rows,groups)}
  const usable=x=>x.context_unmatched!==true&&x._invalidRoster!==true&&x.game_status==='pre'&&Math.abs(Date.parse(x.game_time)-match.start)<=300000;
- const pairKey=m.kind+'|'+String(m.game_id)+(m.kind==='moneyline'?'':'|'+m.ticker+'|'+num(m.line));
- const candidates=(groups.get(pairKey)||[]).filter(x=>m.kind==='moneyline'||m.ticker&&x.ticker===m.ticker&&num(x.line)===num(m.line));
- const quotes=predicate=>candidates.filter(x=>usable(x)&&predicate(x)).map(x=>({m:x,q:Q.quote('nba',x)})).filter(({m:x,q})=>q.p>0&&q.p<1&&Date.now()-Date.parse(q.checkedAt)>=-300000&&Date.now()-Date.parse(q.checkedAt)<=30*60000&&Number(x.volume)>=50&&num(x.spread)!==null&&x.spread>=0&&x.spread<=.08).sort((a,b)=>Date.parse(b.q.checkedAt)-Date.parse(a.q.checkedAt)||a.m.spread-b.m.spread||String(a.m.selection_id).localeCompare(String(b.m.selection_id)));
+ const pairKey=pairKeyFor(m);
+ const candidates=(groups.get(pairKey)||[]).filter(x=>m.referenceOnly?x.referenceOnly&&num(x.line)===num(m.line):m.kind==='moneyline'||m.ticker&&x.ticker===m.ticker&&num(x.line)===num(m.line));
+ const quotes=predicate=>candidates.filter(x=>usable(x)&&predicate(x)).map(x=>({m:x,q:Q.quote('nba',x)})).filter(({m:x,q})=>q.p>0&&q.p<1&&Date.now()-Date.parse(q.checkedAt)>=-300000&&Date.now()-Date.parse(q.checkedAt)<=30*60000&&(x.referenceOnly?!!window.ESPN_EVIDENCE?.contract('nba',x):Number(x.volume)>=50&&num(x.spread)!==null&&x.spread>=0&&x.spread<=.08)).sort((a,b)=>Date.parse(b.q.checkedAt)-Date.parse(a.q.checkedAt)||a.m.spread-b.m.spread||String(a.m.selection_id).localeCompare(String(b.m.selection_id)));
  const a=quotes(x=>m.kind==='moneyline'?x.team_code===match.g.away&&x.side==='yes':x.side==='yes')[0],h=quotes(x=>m.kind==='moneyline'?x.team_code===match.g.home&&x.side==='yes':x.side==='no')[0];if(!a||!h)return null;
  const sum=a.q.p+h.q.p;if(sum<.97||sum>1.15||a.q.source!==h.q.source||Math.abs(Date.parse(a.q.checkedAt)-Date.parse(h.q.checkedAt))>5*60000)return null;
  const marketP=(m.kind==='moneyline'?(m.team_code===match.g.home?h.q.p:a.q.p):(m.side==='no'?h.q.p:a.q.p))/sum;

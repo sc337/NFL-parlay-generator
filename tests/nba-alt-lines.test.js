@@ -23,6 +23,7 @@ function dashboard(saved){
  for(const file of ['market-guards.js','nba-alt-lines.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx);
  return {w,nodes,select,modeSelect,gameSelect,gameField,captures,risks,writes,rows};
 }
+test('NBA profile candidates survive a rejecting default pre-screen',async()=>{const r=dashboard();r.w.PICK_QUALITY.assess=(s,m,f,o={})=>({pass:!!o.nbaProfile,rank:1,conservativeP:.7,coverage:.7,quote:{p:.7}});await r.w.NBA_DASHBOARD.load();assert.ok(r.captures.some(c=>c.legs.length===2))});
 test('NBA line filter is visible outside the collapsed markets and controls picks, cards and saved preference',async()=>{
  const r=dashboard();await r.w.NBA_DASHBOARD.load();assert.equal(r.select.value,'both');assert.equal(r.nodes.get('#nbaLineFilters').hidden,false);
  assert.deepEqual([...new Set(r.captures.map(x=>x.profile))],['safe','balanced','long']);assert.match(r.nodes.get('#results').innerHTML,/data-profile="safe"/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/profile-pass|data-profile="(?:balanced|long)"/);
