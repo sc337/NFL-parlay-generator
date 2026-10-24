@@ -34,3 +34,18 @@ test('failed refresh uses the unavailable state rather than republishing cached 
 test('logos are local and the feed row adds no odds requests',()=>{
  const source=fs.readFileSync('source-branding.js','utf8');assert.doesNotMatch(source,/\bfetch\s*\(|apiKey|localStorage/);assert.match(source,/Escape/);assert.match(source,/aria-expanded/);assert.match(source,/source-name-sr/);
 });
+test('ESPN prices show only odds beside the logo and retain full attribution through redraws',()=>{
+ const fixture=fs.readFileSync('tests/nhl-display.test.js','utf8'),env={module:{exports:{}},Date,Map,Number,String,Set};
+ vm.runInNewContext(fixture.slice(fixture.indexOf('class Element'),fixture.indexOf("test('PRA"))+';this.make=el;',env);
+ env.document={readyState:'loading',addEventListener(){},createElement:tag=>{
+  const node=env.make(tag,'');node.addEventListener=()=>{};return node;
+ }};
+ vm.runInNewContext(fs.readFileSync('source-branding.js','utf8'),env);
+ for(const text of ['DraftKings via ESPN -115 · Reference','ESPN +127 · Reference']){
+  const node=env.make('small','market-tile-price',text);node.replaceChildren=(...children)=>{node.textContent='';node.append(...children)};
+  env.module.exports.decorate(node);const copy=node.querySelector('.source-price-copy');
+  assert.equal(copy.children.filter(x=>!x.classList.contains('source-name-sr')).map(x=>x.textContent).join(''),text.includes('-115')?'-115':'+127');
+  assert.equal(node.textContent,text);assert.equal(node.title,text);assert.ok(node.querySelector('.source-logo'));
+  env.module.exports.decorate(node);assert.equal(node.querySelector('.source-price-copy'),copy);
+ }
+});
