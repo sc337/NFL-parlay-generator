@@ -60,13 +60,13 @@ function decorate(node,explicit){
  // Preserve the original textContent for existing price compaction and screen
  // readers, while the actual logo carries the visible provider name.
  const expression=id==='espn'?/^(.*?\b)(ESPN)(\s+.*)$/i:new RegExp('^('+names[id]+')(\\s+.*)$','i'),match=text.match(expression);
- const espnOdds=id==='espn'&&/[+-]\d{2,}(?:\.\d+)?/.exec(text);
- if(espnOdds){
+ const compactOdds=(id==='espn'||id==='polymarket')&&/[+-]\d{2,}(?:\.\d+)?/.exec(text);
+ if(compactOdds){
   // Keep attribution available without crowding the visible price column.
   node.title=text;
   const before=document.createElement('span'),odds=document.createElement('span'),after=document.createElement('span');
   before.className=after.className='source-name-sr';
-  before.textContent=text.slice(0,espnOdds.index);odds.textContent=espnOdds[0];after.textContent=text.slice(espnOdds.index+espnOdds[0].length);
+  before.textContent=text.slice(0,compactOdds.index);odds.textContent=compactOdds[0];after.textContent=text.slice(compactOdds.index+compactOdds[0].length);
   copy.append(before,odds,after);
  }else if(match){
   if(id==='espn'){
