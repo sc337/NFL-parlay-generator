@@ -98,6 +98,7 @@ function card(node,sport){
   }
  }
  const shared=node.querySelector('.shared-source-label'),explanation=node.querySelector('.card-explanation');
+ if(explanation)for(const note of [...node.children].filter(x=>x.classList.contains('summary')||x.classList.contains('card-thesis')||x.classList.contains('quality-market-row')&&x.textContent.length>100))explanation.append(note);
  if(shared&&explanation&&!shared.closest('.card-explanation'))explanation.append(shared);
  const thesis=node.querySelector('.card-thesis');if(sport==='nfl'&&thesis&&/^Multi-game\b/i.test(thesis.textContent)&&explanation&&!thesis.closest('.card-explanation'))explanation.append(thesis);
 }
