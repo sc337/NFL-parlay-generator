@@ -1,11 +1,11 @@
-/* Selection beside the subject, with a separate price row for long references. */
+/* Parlay legs: price/source on the left, subject media and selection alongside. */
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-row{align-items:center;gap:8px;min-height:0;flex:none}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-row>.compact-pick-media{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;min-width:40px;max-width:40px;height:40px;min-height:40px;gap:0;margin:0}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-media>img{flex:none;width:30px!important;height:30px!important;object-fit:contain;margin:0}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-player-media>img:is(.sport-photo,.mlb-player-photo){width:38px!important;height:38px!important}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-player-media>img:is(.sport-logo,.mlb-team-logo){position:absolute;right:0;bottom:0;width:16px!important;height:16px!important;border-radius:50%;background:var(--surface);box-shadow:0 0 0 1px var(--surface)}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-media:not(.compact-player-media):has(>img+img)>img{width:20px!important;height:24px!important}
-:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{display:grid!important;grid-template-columns:40px minmax(0,1fr);grid-template-areas:"media copy" "media price";align-items:start;gap:3px 8px;min-width:0;padding:7px 0!important}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{display:grid!important;grid-template-columns:88px 40px minmax(0,1fr);grid-template-areas:"price media copy";align-items:center;gap:8px;min-width:0;padding:12px 0!important}
 :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row>.compact-pick-media{grid-area:media;align-self:center}
 :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-media>.sport-selected-media{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px}
 :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .sport-selected-media .sport-logo{width:30px!important;height:30px!important;object-fit:contain}
@@ -15,8 +15,8 @@
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price>.market-tile-heading,:is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price>.market-tile-line{display:none!important}
 :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price .market-tile-price{display:inline-flex!important;flex-direction:row-reverse;flex-wrap:nowrap!important;align-items:center;justify-content:flex-start;column-gap:4px;row-gap:3px;margin:0;font-size:13px;line-height:1.25;color:var(--text);max-width:100%;font-variant-numeric:tabular-nums}
 .compact-pick-price .source-price-copy{flex:none;white-space:nowrap;overflow-wrap:normal}
-:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row>.compact-pick-price{grid-area:price;justify-self:start;align-self:start;width:fit-content!important;min-width:0;max-width:100%;min-height:0!important;text-align:left}
-:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-price .market-tile-price{flex-wrap:wrap!important;justify-content:flex-end;max-width:100%;white-space:normal!important}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row>.compact-pick-price{grid-area:price;justify-self:start;align-self:center;width:100%!important;min-width:0;max-width:100%;min-height:0!important;text-align:left}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-price .market-tile-price{display:flex!important;flex-direction:column!important;align-items:flex-start;flex-wrap:wrap!important;justify-content:flex-start;gap:5px;max-width:100%;white-space:normal!important;font-size:12px}
 :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-price .source-price-copy{flex:0 1 auto;max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .compact-pick-price .source-logo img{height:9px!important;max-width:38px!important}
 .compact-pick-price .source-logo[data-brand="espn"]{width:32px;height:10px}
@@ -31,7 +31,8 @@
 #parlaySwipeHint .carousel-position{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .card-quote-footer:has(>.card-explanation:only-child){justify-content:flex-end}
 @media(max-width:600px){
- :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{padding:7px 0!important;gap:3px 7px}
+ :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row{grid-template-columns:76px 32px minmax(0,1fr);padding:11px 0!important;gap:7px}
+ :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row>.compact-pick-media{width:32px;min-width:32px;max-width:32px}
  :is(#results,#analysisSecondary,#nflParlayAlternatives,#pickOfDay) .compact-pick-price{width:80px}
  :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row .leg-title{font-size:13px}
  .compact-pick-selection{font-size:12px}
