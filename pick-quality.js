@@ -137,7 +137,7 @@ function unsupportedAltUnder(m){
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
  const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
- const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(!nbaProfile||nbaProfile==='safe');
+ const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
  const selectionMode=options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
