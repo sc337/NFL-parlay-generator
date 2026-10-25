@@ -31,6 +31,7 @@ async function change(host,index,undoEntries,undoBanned){
  const settingsAtStart=settings(),sequence=window.__NFL_GENERATION_SEQUENCE;
  const current=()=>s===sport()&&token===window.__SPORT_TOKEN&&settings()===settingsAtStart&&(s!=='nfl'||window.__NFL_GENERATION_SEQUENCE===(sequence||0)+1);
  const previous=[...grid.childNodes],pod=document.getElementById('pickOfDay'),podNodes=pod?[...pod.childNodes]:null;
+ const auxiliary=['nflPropCoverage','nflCompletionMarkets'].map(id=>document.getElementById(id)).filter(Boolean).map(node=>({node,children:[...node.childNodes]}));
  const labels=['resultsTitle','dataStatus','modeTitle'].map(id=>{const n=document.getElementById(id);return [n,n?.textContent]});
  busy=true;active={...rule,cards:[]};document.body.classList.add('parlay-swap-busy');grid.setAttribute('aria-busy','true');
  // Preserve real nodes (and their listeners), including any entered offer.
@@ -44,7 +45,7 @@ async function change(host,index,undoEntries,undoBanned){
  }catch(error){console.warn('Parlay replacement unavailable',error)}finally{
   const same=current();
   active=null;busy=false;document.body.classList.remove('parlay-swap-busy');grid.removeAttribute('aria-busy');
-  if(same){grid.replaceChildren(...previous);if(pod)pod.replaceChildren(...podNodes);for(const [n,text]of labels)if(n)n.textContent=text;}
+  if(same){grid.replaceChildren(...previous);if(pod)pod.replaceChildren(...podNodes);for(const {node,children}of auxiliary)node.replaceChildren(...children);for(const [n,text]of labels)if(n)n.textContent=text;}
   else replacement=null;
  }
  if(!replacement){if(s===sport()&&token===window.__SPORT_TOKEN){notify(undoEntries?'Original legs no longer qualify. Ticket kept.':'No qualifying replacement. Ticket kept.');host.querySelector('[data-swap-index="'+(index??0)+'"]')?.focus({preventScroll:true});}return;}
