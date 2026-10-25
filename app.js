@@ -645,7 +645,7 @@ function distinctProfileBuild(p,previous){
 }
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
-  if(window.PICK_QUALITY){const ideas=window.NFL_PARLAY_IDEAS?.active?.(state);const x=ideas?window.NFL_PARLAY_IDEAS.assess(m,window.PICK_QUALITY.gameFor('nfl',m),state):window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m,variant),{parlay:true});const score=x.pass&&(!window.NFL_ALT_IDEAS?.active?.(state,variant)||x.conservativeP>=.55)?profileSelectionScore(x,variant):-999;return score>-900?score+(window.SELECTION_UI?.locked?.('nfl',m)?10000:0)+((state.moreCushion||variant==='safe')?Math.min(3,window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
+  if(window.PICK_QUALITY){const ideas=window.NFL_PARLAY_IDEAS?.active?.(state);const x=ideas?window.NFL_PARLAY_IDEAS.assess(m,window.PICK_QUALITY.gameFor('nfl',m),state):window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m,variant),{parlay:true});const conservative=variant==='safe'?window.CONSERVATIVE_POLICY?.assess('nfl',m,x):null;const score=conservative?conservative.rank:x.pass&&(!window.NFL_ALT_IDEAS?.active?.(state,variant)||x.conservativeP>=.55)?profileSelectionScore(x,variant):-999;return score>-900?score+(window.SELECTION_UI?.locked?.('nfl',m)?10000:0)+((state.moreCushion||variant==='safe')?Math.min(3,window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
   const q=marketQuality(m,variant);
   if(q<=-900) return q;
   const implied=impliedProbability(m.price)*100;
@@ -989,6 +989,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   if(ideas){if(!window.NFL_PARLAY_IDEAS.checkBuild(legs,state).pass)return null;}
   else if(window.PICK_QUALITY&&!window.PICK_QUALITY.checkBuild('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m,isSgp?variant:null)})),isSgp).pass)return null;
   if(!legs?.length || legs.length>4 || legs.some(m=>!isParlayEligible(m))) return null;
+  if(variant==='safe'&&window.CONSERVATIVE_POLICY&&legs.some(m=>!window.CONSERVATIVE_POLICY.assess('nfl',m,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m,variant),{parlay:true})).pass))return null;
   if(state.requirePlayerProp&&!legs.some(m=>m.player))return null;
   const players=legs.map(l=>l.player).filter(Boolean);
   if(new Set(players).size!==players.length)return null;
@@ -1010,8 +1011,8 @@ function packageParlay(legs,variant,isSgp,meta={}){
     corr,
     scriptName:ideas?'Reference-market idea':meta.scriptName||'',
     thesis:meta.thesis||'',
-    summary:likelihood?'Prioritizes buffered model likelihood, stable roles and evidence. Estimates are unvalidated; these selections can be poor value at the current price. Verify exact lines and the combined sportsbook offer.':ideas?({safe:'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Recent context checked, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
-    ({safe:'Prioritizes buffered likelihood with a penalty for excessive juice.',balanced:'Balances evidence, buffered likelihood and price discipline; rejects legs above 78% quote-implied probability.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'Cushion is a small preference, not evidence of value. ':'')+(isSgp
+    summary:likelihood?'Prioritizes buffered model likelihood, stable roles and evidence. Estimates are unvalidated; these selections can be poor value at the current price. Verify exact lines and the combined sportsbook offer.':ideas?({safe:window.CONSERVATIVE_POLICY?.description||'Prefers shorter reference prices and available cushion.',balanced:'Balances reference price and threshold difficulty.',long:'Uses tougher thresholds within the same participation safeguards.'}[variant]+' Recent context checked, not a proven edge. Verify exact thresholds and SGP price on Caesars.'):
+    ({safe:window.CONSERVATIVE_POLICY?.description||'Prioritizes buffered likelihood with a penalty for excessive juice.',balanced:'Balances evidence, buffered likelihood and price discipline; rejects legs above 78% quote-implied probability.',long:'Targets higher reference payouts within the shared quality checks.'}[variant]||'')+' '+(state.moreCushion?'Cushion is a small preference, not evidence of value. ':'')+(isSgp
       ? (meta.scriptName ? meta.scriptName+': '+meta.thesis : (corr>5?'Built around one coherent game script with positively related legs.':'Constraint-checked SGP with no opposing or duplicate game markets.'))
       : 'One leg per game. Combined model probability remains unvalidated; separate games do not guarantee independence.')
   };

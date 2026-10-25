@@ -1,0 +1,16 @@
+(function(factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(typeof window!=='undefined')window.CONSERVATIVE_POLICY=api;})(()=>{'use strict';
+const minProbability=.75,maxPrice=.85;
+const families={nfl:new Set(['player_pass_yds','player_rush_yds','player_reception_yds','player_receptions','player_pass_tds']),nba:new Set(['points','rebounds','assists','threes','pra'])};
+function milestone(s,m){const family=String(m.marketKey||m.kind||'').replace(/_alternate$/,'');return !!m.player&&families[s]?.has(family)&&['yes','over'].includes(String(m.quoteSide||m.side).toLowerCase())&&Number.isFinite(m.point??m.line);}
+function assess(s,m,q){
+ const p=q?.conservativeP,price=q?.quote?.p;
+ if(!q?.pass)return {pass:false,reason:q?.reason||'Selection failed quality checks',rank:-999};
+ if(!Number.isFinite(p)||p<minProbability)return {pass:false,reason:'Conservative needs at least 75% buffered estimated likelihood',rank:-999};
+ if(!Number.isFinite(price)||price<=0||price>maxPrice)return {pass:false,reason:'Conservative quote unavailable or too short',rank:-999};
+ if(price>p)return {pass:false,reason:'Price exceeds buffered estimated likelihood',rank:-999};
+ // Probability leads; a milestone bonus breaks close comparisons only.
+ // These are unvalidated estimates, never a measured hit rate or verified edge.
+ return {pass:true,rank:p*160+(q.coverage||0)*4+(milestone(s,m)?2:0),reason:null};
+}
+return {assess,milestone,minProbability,maxPrice,description:'Targets 75%+ buffered estimated likelihood per leg; favors quoted player milestones. Estimates remain unvalidated. Verify exact lines and combined sportsbook odds.'};
+});
