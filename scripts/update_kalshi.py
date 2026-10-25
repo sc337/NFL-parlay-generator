@@ -13,7 +13,9 @@ def fetch_json(url,timeout=20):
  req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.1','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
 def fetch_series(s):
  # The caller isolates failed families; never manufacture rows or timestamps
- # for an unavailable family. Empty successful responses remain va for base in BASES:
+ # for an unavailable family. Empty successful responses remain valid.
+ last=None
+ for base in BASES:
   for attempt in range(3):
    try:
     rows=[];cursor=None;seen=set()
@@ -29,7 +31,6 @@ def fetch_series(s):
    except Exception as e:
     last=e
     if attempt<2:time.sleep(attempt+1)
-st=e
  raise RuntimeError('Market family unavailable: '+s) from last
 def prob(m):
  vals=[]
