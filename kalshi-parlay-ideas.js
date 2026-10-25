@@ -79,8 +79,8 @@ function report(games,state){
 function diagnostics(report){
  if(!report)return '';
  const esc=window.MARKET_GUARDS.esc,fmt=o=>(o>0?'+':'')+o;
- const reasons=report.reasons?.length?'<details><summary>Why selections were excluded</summary>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'';
- const watch=report.priceWatch||[],summary=report.screened?'<p>Data and availability checks: '+report.dataReady+' of '+report.checked+' passed. Value screen: '+report.eligible.length+' passed.</p>':'';
+ const watch=report.priceWatch||[],summary=report.screened?'<p>'+report.eligible.length+' of '+report.checked+' selections qualified.</p>':'';
+ const reasons=report.reasons?.length?'<details><summary>View screening details</summary><p>Data and availability: '+report.dataReady+' of '+report.checked+' passed.</p>'+report.reasons.map(([reason,n])=>'<p>'+esc(reason)+' · '+n+'</p>').join('')+'</details>':'';
  if(!watch.length)return summary+reasons;
  const labels={modelStatus:'Model validation',limitedCoverage:'Limited coverage',modelUncertainty:'Model uncertainty',missingInputs:'Missing inputs',empirical:'Learned buffer'};
  return summary+reasons+'<details><summary>Price watch · '+watch.length+' selections</summary><p>Passed the non-price checks. These are not qualified picks. Targets hold the current estimate fixed; refreshing prices can change that estimate. Recheck the model, availability and exact same line before using a new price.</p>'+watch.map(({market:m,quality:q})=>'<div class="leg"><div class="leg-title">'+esc(m.name||m.label||m.player||m.type)+'</div><div class="leg-sub">Current '+esc(fmt(q.quote.odds))+' · Minimum acceptable '+esc(fmt(q.minimumOdds))+' · Price gap '+(q.priceGap*100).toFixed(1)+' percentage points</div><div class="leg-reason">Selection buffer '+(q.buffer*100).toFixed(1)+' points: '+Object.entries(q.bufferParts).filter(([,value])=>value>0).map(([key,value])=>esc(labels[key]||key)+' '+(value*100).toFixed(1)).join(' · ')+'</div></div>').join('')+'</details>';
