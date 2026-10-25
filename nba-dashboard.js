@@ -43,7 +43,7 @@ function model(m){if(forecastCache.has(m))return forecastCache.get(m);const f=wi
 function eligible(m,featured=false){if(!G.pregame(m)||m.game_status!=='pre'||!window.SPORT_MARKETS.allowed('nba',m)||!window.NBA_ALT_LINES.allowed(m,lineMode)||window.SLATE_UI&&!window.SLATE_UI.matches('nba',m)||!(m.referenceOnly||Number(m.volume)>=50&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=.08))return false;const f=model(m);return !!f&&Q.assess('nba',m,f,{featured,parlay:!featured}).pass}
 function ranked(){return markets.filter(m=>{if(!G.pregame(m)||m.game_status!=='pre'||!window.SPORT_MARKETS.allowed('nba',m)||!window.NBA_ALT_LINES.allowed(m,lineMode)||window.SLATE_UI&&!window.SLATE_UI.matches('nba',m)||!(m.referenceOnly||Number(m.volume)>=50&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=.08)||!model(m))return false;return PROFILES.some(profile=>{const q=assessProfile(m,profile);return q.pass&&profile.allows(q)})}).sort((a,b)=>String(a.selection_id).localeCompare(String(b.selection_id)))}
 const PROFILES=[
- {key:'safe',name:'Conservative',allows:q=>q.profileP>=.50&&q.profileP<=.85&&q.profileBufferedP>=.55,score:q=>q.profileBufferedP*100+(q.coverage||0)*12-(q.juicePenalty||0),description:'Prioritizes buffered win likelihood within price limits. Market-informed selections do not establish value.'},
+ {key:'safe',name:'Conservative',allows:q=>q.profileP>=.50&&q.profileP<=.85&&q.profileBufferedP>=.55,score:q=>q.conservativeRank??(q.profileBufferedP*100+(q.coverage||0)*12-(q.juicePenalty||0)),description:window.CONSERVATIVE_POLICY?.description||'Prioritizes buffered win likelihood within price limits. Market-informed selections do not establish value.'},
  {key:'balanced',name:'Balanced',allows:q=>q.profileP>=.35&&q.profileP<=.80,score:q=>(q.coverage||0)*20-Math.abs(q.profileBufferedP-.52)*45-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Balances buffered likelihood, evidence and price; positive value is not required for team markets. Shared scoring drivers receive a concentration penalty, not an independence claim. Estimates remain unvalidated.'},
  {key:'long',name:'Lotto',allows:q=>q.profileP<=.65,score:q=>(1-q.profileP)*35+q.profileBufferedP*35+(q.coverage||0)*15-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Targets higher payouts and higher variance. Experimental estimates remain unvalidated.'}
 ];
@@ -60,7 +60,7 @@ function profileFits(legs,checks,profile,previous=[]){
   return old.risk-risk>=.03&&common<=legs.length-(legs.length>=3?2:1);
  });
 }
-function assessProfile(m,profile){const q=Q.assess('nba',m,model(m),{parlay:true,nbaProfile:profile?.key}),price=Number(q.quote?.p??m.probability),buffered=Number(q.conservativeP??q.modelP??model(m)?.modelP??price);return {...q,profileP:Number.isFinite(price)?price:.5,profileBufferedP:Number.isFinite(buffered)?buffered:.5}}
+function assessProfile(m,profile){const q=Q.assess('nba',m,model(m),{parlay:true,nbaProfile:profile?.key}),price=Number(q.quote?.p??m.probability),buffered=Number(q.conservativeP??q.modelP??model(m)?.modelP??price);const conservative=profile?.key==='safe'?window.CONSERVATIVE_POLICY?.assess('nba',m,q):null;return {...q,...(conservative?{pass:q.pass&&conservative.pass,reason:conservative.reason,conservativeRank:conservative.rank}:{}),profileP:Number.isFinite(price)?price:.5,profileBufferedP:Number.isFinite(buffered)?buffered:.5}}
 function unavailableBuild(rows,count,sgp,mode){
  const label=mode==='alt'?'ALT ':'';
  let available=rows.length?1:0;

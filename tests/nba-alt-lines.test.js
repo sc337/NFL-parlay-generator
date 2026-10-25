@@ -116,3 +116,10 @@ test('new NBA combo and defensive props cannot duplicate or overlap the same pla
   assert.equal(A.compatibleSet([base,{...other,player:'Other',player_id:'q',team_code:'BOS'}]),true,kind);
  }
 });
+test('NBA Conservative applies milestone policy while other profiles remain available',async()=>{
+ const r=dashboard();r.w.CONSERVATIVE_POLICY=require('../conservative-policy.js');
+ r.w.PICK_QUALITY.assess=()=>({pass:true,rank:1,conservativeP:.70,coverage:.8,quote:{p:.65}});
+ await r.w.NBA_DASHBOARD.load();assert.equal(r.captures.some(c=>c.profile==='safe'&&c.legs.length),false);
+ r.captures.length=0;r.w.PICK_QUALITY.assess=()=>({pass:true,rank:1,conservativeP:.80,coverage:.8,quote:{p:.76}});
+ await r.w.NBA_DASHBOARD.load();assert.equal(r.captures.some(c=>c.profile==='safe'&&c.legs.length===2),true);
+});
