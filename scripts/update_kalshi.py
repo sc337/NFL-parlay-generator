@@ -1,4 +1,4 @@
-import json,re,sys
+import json,re,sys,time
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from urllib.parse import urlencode
@@ -13,20 +13,23 @@ def fetch_json(url,timeout=20):
  req=Request(url,headers={'User-Agent':'NFL-parlay-generator/2.1','Accept':'application/json'});return json.loads(urlopen(req,timeout=timeout).read().decode())
 def fetch_series(s):
  # The caller isolates failed families; never manufacture rows or timestamps
- # for an unavailable family. Empty successful responses remain valid.
- for base in BASES:
-  try:
-   rows=[];cursor=None;seen=set()
-   while True:
-    params={'status':'open','limit':1000,'series_ticker':s,'mve_filter':'exclude'}
-    if cursor:params['cursor']=cursor
-    payload=fetch_json(base+'?'+urlencode(params))
-    if not isinstance(payload.get('markets'),list):raise ValueError('Invalid market response')
-    rows.extend(payload['markets']);cursor=payload.get('cursor')
-    if not cursor:return rows
-    if cursor in seen:raise ValueError('Repeated market cursor')
-    seen.add(cursor)
-  except Exception as e:last=e
+ # for an unavailable family. Empty successful responses remain va for base in BASES:
+  for attempt in range(3):
+   try:
+    rows=[];cursor=None;seen=set()
+    while True:
+     params={'status':'open','limit':1000,'series_ticker':s,'mve_filter':'exclude'}
+     if cursor:params['cursor']=cursor
+     payload=fetch_json(base+'?'+urlencode(params))
+     if not isinstance(payload.get('markets'),list):raise ValueError('Invalid market response')
+     rows.extend(payload['markets']);cursor=payload.get('cursor')
+     if not cursor:return rows
+     if cursor in seen:raise ValueError('Repeated market cursor')
+     seen.add(cursor)
+   except Exception as e:
+    last=e
+    if attempt<2:time.sleep(attempt+1)
+st=e
  raise RuntimeError('Market family unavailable: '+s) from last
 def prob(m):
  vals=[]
