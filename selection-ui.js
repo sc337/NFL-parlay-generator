@@ -1,8 +1,9 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),sport=()=>window.__ACTIVE_SPORT||'nfl';
-// Compatibility hooks used by sport generators; picks are no longer manually locked or excluded.
-function excluded(){return false;}
-function accepts(){return true;}
+// Replacement constraints exist only while finding a complete compatible ticket.
+function excluded(s,m){return window.PARLAY_SWAP?.excluded(s,m)||false;}
+function locked(s,m){return window.PARLAY_SWAP?.locked(s,m)||false;}
+function accepts(s,legs){return window.PARLAY_SWAP?.accepts(s,legs)??true;}
 const labels={screened:'Recommended picks',ideas:'Other picks · Value unverified'};
 function refresh(){const s=sport();if(s==='nfl')window.generate?.();else window[s.toUpperCase()+'_DASHBOARD']?.refresh?.();}
 function select(mode){const s=sport();mode=mode==='ideas'?'ideas':'screened';window.DASHBOARD_UI?.put(s,'selectionMode',mode);if(s==='nfl'){const el=$('#nflRecommendationTier');if(el){el.value=mode;el.dispatchEvent(new Event('change',{bubbles:true}));return}}refresh();}
@@ -118,6 +119,6 @@ function mount(){
 let queued=false;function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;observer?.disconnect();mount();observe()})}
 let observer;function observe(){observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-sport']})}
 function init(){observer=new MutationObserver(schedule);mount();observe();}
-window.SELECTION_UI={select,refresh,labels,excluded,accepts,mountLines,mountBuilder};
+window.SELECTION_UI={select,refresh,labels,excluded,locked,accepts,mountLines,mountBuilder};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else init();
 })();

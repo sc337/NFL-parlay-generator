@@ -1,0 +1,10 @@
+/* Small visual control, full touch target. Reserve room without squeezing copy. */
+ .leg:has(>.parlay-leg-swap){position:relative}
+.parlay-leg-swap{width:32px;min-height:44px;display:grid;place-items:center;border:0;border-radius:9px;background:transparent;color:var(--muted,#8591a3);font-size:20px;cursor:pointer;touch-action:manipulation;flex:none}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row:has(>.parlay-leg-swap){grid-template-columns:40px minmax(0,1fr) 32px 80px;grid-template-areas:"media copy swap price";column-gap:6px}
+:is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row>.parlay-leg-swap{grid-area:swap;align-self:center}
+.parlay-leg-swap:hover,.parlay-leg-swap:focus-visible{color:var(--text,#e9eef5);background:var(--panel,#263346);outline:2px solid currentColor;outline-offset:-3px}
+.parlay-swap-notice{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:10000;max-width:calc(100vw - 28px);width:max-content;box-sizing:border-box;display:flex;align-items:center;gap:18px;padding:10px 15px;border-radius:12px;background:var(--panel,#1d2938);color:var(--text,#e9eef5);border:1px solid var(--border,#435064);box-shadow:0 8px 30px #0003;font-size:13px}
+.parlay-swap-notice[hidden]{display:none}
+.parlay-swap-notice button{min-height:36px;border:0;background:transparent;color:inherit;font-weight:700;cursor:pointer}
+.parlay-swap-busy :is(#sportSwitch,#slateControls,#parlayControls,#results,#analysisSecondary,#nflParlayAlternatives,#feedRefresh){pointer-events:none;opacity:.65}

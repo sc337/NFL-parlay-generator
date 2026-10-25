@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+const {key,constraints}=require('../parlay-swap.js');
+const a={ticker:'A',side:'yes',kind:'points',line:20.5,player:'A'},b={ticker:'B',side:'yes',kind:'points',line:15.5,player:'B'},c={ticker:'C',side:'yes',kind:'points',line:10.5,player:'C'};
+assert.notEqual(key(a),key({...a,side:'no'}));
+assert.notEqual(key(a),key({...a,line:21.5}));
+assert.equal(key(a),key({...a,gameLabel:'Display-only enrichment'}));
+const rule=constraints('nba',[a],new Set([key(b)]));
+assert.equal(rule.locked('nba',a),true);
+assert.equal(rule.locked('nfl',a),false);
+assert.equal(rule.excluded('nba',b),true);
+assert.equal(rule.accepts('nba',[a,c]),true);
+assert.equal(rule.accepts('nba',[a,b]),false);
+assert.equal(rule.accepts('nba',[c]),false);
+assert.equal(rule.accepts('nfl',[b]),true);
+console.log('Swap identities and retained/excluded selection constraints passed');

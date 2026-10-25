@@ -97,6 +97,7 @@ function summarize(s,entries,{sgp=false,offer=null,checkedAt=null}={}){
 // belong to this exact rendered build; they never overwrite any feed quote.
 function attach(host,s,entries,options={}){
  if(!host?.appendChild||typeof document==='undefined')return;
+ window.PARLAY_SWAP?.bind(host,s,entries);
  const risk=summarize(s,entries,options);if(!risk.pass)return;
  const detail=document.createElement('details');detail.className='card-explanation parlay-risk';
 

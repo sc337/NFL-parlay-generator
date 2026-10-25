@@ -317,3 +317,18 @@ The shared Filters drawer, Best Straight label, two distinct straight alternativ
 Cross-source duplicate games are blocked by provider identity or verified close-time matchup identity. NCAAF schedule requests include all groups and exact Eastern event dates. NFL family requests paginate and fail the refresh on transport errors so original prices/timestamps are retained. Settlement attempts persist retry times and prioritize unattempted results; NFL score lookups also have a per-run budget.
 
 NBA minutes and MLB opportunity stress scenarios are advisory. NHL team projections can use confirmed goalie save histories with minimum samples and shrinkage; missing evidence retains team averages. NBA joint scenarios require held-out pair rules and otherwise remain unavailable. These are experimental estimates, not validated betting edges. The new model version starts a separate prospective cohort. Performance reports expose version cohorts and unresolved-result counts; backlog clearance and statistical validation require subsequent successful refreshes and settled events.
+
+### Replace one parlay leg
+
+Tap the small swap icon beside a leg to find the next qualifying selection. The
+remaining legs and their positions stay fixed. The existing sport builder reruns
+its current filters, ranking, profile, freshness and compatibility checks; no
+weaker eligibility policy is introduced. Replaced selections are skipped during
+subsequent swaps in this tab until reload. If a complete replacement cannot
+qualify, the existing ticket and any entered offer stay intact.
+
+A successful swap rebuilds odds and risk details and clears the previous combined
+sportsbook offer. The short Undo action rechecks the original selections against
+current eligibility before restoring them. Other displayed tickets remain intact.
+The feature is available on generated cards wired to the shared risk panel;
+reference-only NFL idea cards are unchanged. No wager is placed.
