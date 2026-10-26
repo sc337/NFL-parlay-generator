@@ -9,7 +9,7 @@ function assessProfile(s,m,q,variant='safe'){
  if(!q?.pass)return {pass:false,reason:q?.reason||"Selection failed quality checks",rank:-999};
  const p=q.conservativeP,price=q.quote?.p;
  if(!Number.isFinite(p)||p<minimum)return {pass:false,reason:Math.round(minimum*100)+"% buffered likelihood required",rank:-999};
- if(!Number.isFinite(price)||price<=0||price>maxPrice||price>p)return {pass:false,reason:"Price exceeds buffered likelihood or price limit",rank:-999};
+ if(!Number.isFinite(price)||price<=0||price>maxPrice||(variant==='safe'&&price>p))return {pass:false,reason:"Price exceeds buffered likelihood or price limit",rank:-999};
  const rank=variant==='safe'?p*160+(q.coverage||0)*4+(milestone(s,m)?2:0):variant==='balanced'?p*100+(q.coverage||0)*12+(p-price)*20:(1-price)*60+p*45+(q.coverage||0)*12;
  return {pass:true,rank,reason:null};
 }

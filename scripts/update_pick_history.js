@@ -19,7 +19,7 @@ function runtime(sport,{dataDir=path.join(root,'data'),capture,now}={}){
   const ClockDate=now==null?Date:class extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}};
   const ctx=vm.createContext({URL,Date:ClockDate,window,document,fetch,console,setTimeout(){},localStorage:{getItem:()=>null},state:{games:[]},impliedProbability:o=>o>0?100/(o+100):Math.abs(o)/(Math.abs(o)+100)});
   const run=file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});
-  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('study-policy.js');run('starter-status.js');run('espn-evidence.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
+  run('market-guards.js');run('data/model-calibration.js');run('model-calibration.js');run('model-core.js');run('data/model-learning.js');run('model-learning.js');run('study-policy.js');run('starter-status.js');run('espn-evidence.js');run('conservative-policy.js');run('pick-quality.js');run('parlay-risk.js');run('sport-markets.js');
   return{window,ctx,run};
 }
 

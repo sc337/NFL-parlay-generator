@@ -28,12 +28,10 @@ test('joint ranking can prefer a lower individual score with better shared outco
 test('reference-mode combination checks retain null model probability and label their price inputs',()=>{
  const p=build({ideas:true}).run();assert.ok(p);assert.equal(p.risk.modelP,null);assert.ok(p.risk.referenceP>.3);assert.equal(p.risk.validated,false);assert.match(p.summary,/Reference prices supply scenario inputs/);assert.match(p.summary,/not a proven edge/);
 });
-test('risk bands and joint ordering omit unavailable profiles rather than relabel the same build',()=>{
- const r=build(),safe=r.run();assert.ok(safe);assert.equal(r.run('balanced',[safe]),null);assert.equal(r.run('long',[safe]),null);assert.equal(r.run('safe',[safe]),null);
- const legs=names=>names.map(name=>({name,player:name,type:'receiving'})),p=(value,names)=>({legs:legs(names),risk:{referenceP:value}});
- assert.equal(r.ctx.sgpProfileFits(p(.20,['x','y','z']),'balanced',[p(.40,['a','b','c'])]),true);
- assert.equal(r.ctx.sgpProfileFits(p(.29,['x','y','z']),'balanced',[p(.31,['a','b','c'])]),false);
- assert.equal(r.ctx.sgpProfileFits(p(.10,['a','b','z']),'long',[p(.40,['a','b','c'])]),false);
+test('joint bands and exposure overlap do not reject otherwise checked builds',()=>{
+ const r=build(),safe=r.run();assert.ok(safe);for(const key of ['balanced','long','safe'])assert.ok(r.run(key,[safe]));
+ for(const p of [.10,.29,.49,.8])assert.equal(r.ctx.sgpProfileFits({risk:{pass:true,modelP:p}},'balanced',[safe]),true);
+ assert.equal(r.ctx.sgpProfileFits({risk:{pass:false,modelP:.8}},'safe',[]),false);
 });
 test('unknown team identities cannot fabricate joint risk and failed build gates remain blocked',()=>{
  const r=build();
@@ -57,7 +55,7 @@ test('four same-offense receivers are blocked for overs and unders without forci
 });
 test('assumed correlation uplift alone cannot create a Conservative label',()=>{
  const r=build(),p={legs:[{name:'a'},{name:'b'},{name:'c'},{name:'d'}],risk:{referenceP:.38,independentP:.19,scenario:{sensitivity:[.31,.42]}}};
- assert.equal(r.ctx.sgpLikelihood(p),.19);assert.equal(r.ctx.sgpProfileFits(p,'safe',[]),false);assert.equal(r.ctx.sgpProfileFits(p,'balanced',[]),true);
+ assert.equal(r.ctx.sgpLikelihood(p),.19);p.risk.pass=true;assert.equal(r.ctx.sgpProfileFits(p,'safe',[]),true);assert.equal(r.ctx.sgpProfileFits(p,'balanced',[]),true);
 });
 test('NFL Balanced compares weakest-leg evidence inside the same joint-risk band',()=>{
  const r=build({markets:[{type:'passing',player:'A',team:'Home',score:120,p:.7,c:.9},{type:'receiving',player:'B',team:'Away',score:119,p:.35,c:.6},{type:'receiving',player:'C',team:'Away',score:116,p:.6,c:.9}]});

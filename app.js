@@ -620,9 +620,8 @@ function marketQuality(m,variant){
   return q;
 }
 
-function profileSelectionScore(q,variant){return window.CONSERVATIVE_POLICY.assessProfile('nfl',{},q,variant).rank;}
+function profileSelectionScore(q,variant){return window.CONSERVATIVE_POLICY?.assessProfile('nfl',{},q,variant)?.rank??-999;}
 function distinctProfileBuild(p,previous){return !!p;}
-function profileOverlapPenalty(legs,previous){return previous.filter(Boolean).reduce((sum,p)=>sum+legs.filter(m=>p.legs.some(x=>sgpExposure(x)===sgpExposure(m))).length*2,0);}
 function candidateScore(m,risk,variant='balanced'){
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
   if(window.PICK_QUALITY){const ideas=window.NFL_PARLAY_IDEAS?.active?.(state);const x=ideas?window.NFL_PARLAY_IDEAS.assess(m,window.PICK_QUALITY.gameFor('nfl',m),state):window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m,variant),{parlay:true});const conservative=window.CONSERVATIVE_POLICY?.assessProfile('nfl',m,x,variant);const score=conservative?conservative.rank:x.pass&&(!window.NFL_ALT_IDEAS?.active?.(state,variant)||x.conservativeP>=.55)?profileSelectionScore(x,variant):-999;return score>-900?score+(window.SELECTION_UI?.locked?.('nfl',m)?10000:0)+((state.moreCushion||variant==='safe')?Math.min(3,window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
@@ -800,6 +799,7 @@ function sgpLikelihood(p){
 }
 function sgpProfileFits(p,variant,previous){return p?.risk?.pass===true&&Number.isFinite(sgpLikelihood(p));}
 function pickDistinctAlternative(game,count,risk,variant,previous){
+  const profileOverlapPenalty=(legs,previous)=>{const exposure=m=>[m.gameId||'',m.player||m.team||'Game',String(m.marketKey||m.type).replace(/_alternate$/,'')].join('|');return previous.filter(Boolean).reduce((sum,p)=>sum+legs.filter(m=>p.legs.some(x=>exposure(x)===exposure(m))).length*2,0)};
   const ideas=!!window.NFL_PARLAY_IDEAS?.active?.(state);
   const scores=new Map(),checks=new Map();
   const balancePenalty=legs=>variant==='balanced'&&window.MARKET_GUARDS?.balancedPenalty?window.MARKET_GUARDS.balancedPenalty(legs.map(m=>{if(!checks.has(m))checks.set(m,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true}));return checks.get(m)}),legs.map(m=>({...m,canonical_event_id:'nfl:'+game.id}))):0;
@@ -914,6 +914,7 @@ function propFamily(m){
 }
 
 function buildMulti(count,risk,variant,previous=[]){
+  const profileOverlapPenalty=(legs,previous)=>{const exposure=m=>[m.gameId||'',m.player||m.team||'Game',String(m.marketKey||m.type).replace(/_alternate$/,'')].join('|');return previous.filter(Boolean).reduce((sum,p)=>sum+legs.filter(m=>p.legs.some(x=>exposure(x)===exposure(m))).length*2,0)};
   count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
   const checks=new Map(),balancePenalty=legs=>variant==='balanced'&&window.MARKET_GUARDS?.balancedPenalty?window.MARKET_GUARDS.balancedPenalty(legs.map(m=>{const key=m.ticker||m.name;if(!checks.has(key))checks.set(key,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true}));return checks.get(key)}),legs):0;
   window.NFL_MODEL_V3?.enrich?.();
@@ -1046,7 +1047,8 @@ function render(parlays){
   const profileOrder={safe:0,balanced:1,long:2};
   const requestedCount=Number($('#legsSelect')?.value)||2;
   const shownCount=sgpResult?.count||requestedCount;
-  const valid=parlays.filter(p=>p&&p.legs?.length===shownCount).sort((a,b)=>(profileOrder[a.profile]??9)-(profileOrder[b.profile]??9));
+  const displayedSignatures=new Set();
+  const valid=parlays.filter(p=>{if(!p||p.legs?.length!==shownCount)return false;const key=parlaySignature(p);if(displayedSignatures.has(key))return false;displayedSignatures.add(key);return true;}).sort((a,b)=>(profileOrder[a.profile]??9)-(profileOrder[b.profile]??9));
   updateNflProfileAvailability(parlays);
   if(!valid.length){
     const count=Number($('#legsSelect')?.value)||2;

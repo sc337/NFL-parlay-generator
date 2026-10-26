@@ -17,16 +17,16 @@ function dashboard(saved){
  const now=Date.now(),rows=['a','b'].flatMap(game_id=>[{game_id,kind:'total',side:'yes',line:220.5,probability:.5},{game_id,kind:'total',side:'yes',line:210.5,probability:.7}]).map((m,i)=>({...m,label:'Over '+m.line,selection_id:String(i),game_time:new Date(now+86400000).toISOString(),game_status:'pre',volume:100,spread:.02}));
  const w={__ACTIVE_SPORT:'nba',__SPORT_TOKEN:1,DASHBOARD_UI:{begin(){},end(){},get:(sport,key,fallback)=>typeof saved==='object'?saved[key]??fallback:key==='lines'?saved??fallback:fallback,put:(...args)=>writes.push(args)},
   MARKET_GUARDS:{esc:String,pregame:()=>true,fresh:()=>true,unique:rows=>rows,bestBuild:rows=>rows.slice(0,2),independent:()=>true},
-  PICK_QUALITY:{prepare(){},forecast:(s,m,f)=>f,assess:(s,m)=>({pass:!m.blocked,rank:1}),quoteLabel:()=>'-110',note:()=>'',estimateOdds:()=>200},
+  PICK_QUALITY:{prepare(){},forecast:(s,m,f)=>f,assess:(s,m)=>({pass:!m.blocked,rank:1,conservativeP:.80,quote:{p:.70}}),quoteLabel:()=>'-110',note:()=>'',estimateOdds:()=>200},
   NBA_MODEL:{estimate:()=>({modelP:.7,method:'fixture'})},SPORT_MARKETS:{allowed:m=>true,sync(){}},SLATE_UI:{matches:()=>true},RECOMMENDATION_CAPTURE:(s,x)=>captures.push(x),PARLAY_RISK:{attach:(host,s,entries,options)=>risks.push(options)}};
  const ctx={window:w,document,Date,console,fetch:async url=>({ok:true,json:async()=>url.includes('kalshi')?{markets:rows,updated_at:new Date(now).toISOString()}:{}})};
- for(const file of ['market-guards.js','nba-alt-lines.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx);
+ for(const file of ['conservative-policy.js','market-guards.js','nba-alt-lines.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx);
  return {w,nodes,select,modeSelect,gameSelect,gameField,captures,risks,writes,rows};
 }
 test('NBA profile candidates survive a rejecting default pre-screen',async()=>{const r=dashboard();r.w.PICK_QUALITY.assess=(s,m,f,o={})=>({pass:!!o.nbaProfile,rank:1,conservativeP:.7,coverage:.7,quote:{p:.7}});await r.w.NBA_DASHBOARD.load();assert.ok(r.captures.some(c=>c.legs.length===2))});
 test('NBA line filter is visible outside the collapsed markets and controls picks, cards and saved preference',async()=>{
  const r=dashboard();await r.w.NBA_DASHBOARD.load();assert.equal(r.select.value,'both');assert.equal(r.nodes.get('#nbaLineFilters').hidden,false);
- assert.deepEqual([...new Set(r.captures.map(x=>x.profile))],['safe','balanced','long']);assert.match(r.nodes.get('#results').innerHTML,/data-profile="safe"/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/profile-pass|data-profile="(?:balanced|long)"/);
+ assert.deepEqual([...new Set(r.captures.map(x=>x.profile))],['safe','balanced','long']);assert.match(r.nodes.get('#results').innerHTML,/data-profile="safe"/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/profile-pass/);
  const alt=r.rows[1],standard=r.rows[0];assert.equal(r.w.NBA_DASHBOARD.eligible(alt),true);assert.equal(r.w.NBA_DASHBOARD.eligible(standard),true);
  r.select.change({target:{value:'alt'}});assert.equal(r.w.NBA_DASHBOARD.eligible(alt),true);assert.equal(r.w.NBA_DASHBOARD.eligible(standard),false);
  assert.match(r.nodes.get('#results').innerHTML,/data-alt-line="true"/);assert.match(r.nodes.get('#results').innerHTML,/class="alt-tag">ALT/);assert.deepEqual(r.writes.at(-1),['nba','lines','alt']);
@@ -85,28 +85,20 @@ test('NBA empty states distinguish ALT shortage, team concentration and profile 
  const A=dashboard().w.NBA_DASHBOARD,rows=['a','b','c','d'].map(player=>({game_id:'g',selection_id:player,ticker:player,player,team_code:'NYK',kind:'points',side:'yes',line:15.5}));
  assert.match(A.unavailableBuild(rows,4,true,'both'),/Only 2 compatible qualifying legs.*NYK only; maximum two per team/);
  assert.match(A.unavailableBuild(rows.slice(0,1),4,true,'alt'),/Only 1 compatible qualifying ALT leg.*Try Both lines or fewer legs/);
- assert.match(A.unavailableBuild(rows.slice(0,2),2,true,'both'),/No distinct profile meets the risk and combination checks/);
+ assert.match(A.unavailableBuild(rows.slice(0,2),2,true,'both'),/No build meets the per-leg likelihood, quality and compatibility checks/);
  assert.match(A.unavailableBuild([],3,true,'alt'),/Only 0 compatible qualifying ALT legs/);
 });
-test('NBA complete profile bands reject a lotto-like Balanced build and repeated exposures',()=>{
- const A=dashboard().w.NBA_DASHBOARD,legs=['a','b','c'].map((game_id,i)=>({game_id,kind:'points',player:'P'+i,side:'yes',line:20.5}));
- const checks=p=>legs.map(()=>({profileBufferedP:p}));
- assert.equal(A.profileFits(legs,checks(.70),{key:'safe'}),true);
- assert.equal(A.profileFits(legs,checks(.60),{key:'balanced'}),true);
- assert.equal(A.profileFits(legs,checks(.43),{key:'balanced'}),false);
- assert.equal(A.profileFits(legs,checks(.43),{key:'long'}),true);
- const previous=[{legs,risk:A.profileRisk(checks(.60))}];
- assert.equal(A.profileFits(legs.map(m=>({...m,line:22.5})),checks(.43),{key:'long'},previous),false,'changing only thresholds is not a distinct exposure');
- const changed=legs.map((m,i)=>i?{...m,player:'Other '+i,kind:'rebounds'}:m);
- assert.equal(A.profileFits(changed,checks(.43),{key:'long'},previous),true);
- assert.equal(A.profileFits(changed,checks(.52),{key:'long'},[{legs,risk:.16}]),false,'adjacent bands still need a three-point index gap');
+test('NBA per-leg minima replace joint bands and exposure separation',()=>{
+ const A=dashboard().w.NBA_DASHBOARD,legs=['a','b','c'].map(game_id=>({game_id,kind:'points'}));
+ for(const profile of A.PROFILES){const minimum={safe:.75,balanced:.65,long:.50}[profile.key],checks=p=>legs.map(()=>({pass:true,profileBufferedP:p}));
+  assert.equal(A.profileFits(legs,checks(minimum),profile),true);
+  assert.equal(A.profileFits(legs,checks(minimum-.001),profile),false);
+  assert.equal(A.profileFits(legs,checks(.8),profile,[{legs,risk:.8}]),true);
+ }
 });
-test('NBA passes instead of filling every profile with the same risk',async()=>{
+test('NBA strong legs can fill each profile; blocked legs never populate cards',async()=>{
  const r=dashboard();await r.w.NBA_DASHBOARD.load();
- assert.ok(r.captures.find(x=>x.profile==='safe').legs.length);
- assert.equal(r.captures.find(x=>x.profile==='balanced').legs.length,0);
- assert.equal(r.captures.find(x=>x.profile==='long').legs.length,0);
- assert.doesNotMatch(r.nodes.get('#results').innerHTML,/profile-pass|data-profile="(?:balanced|long)"/);
+ for(const key of ['safe','balanced','long'])assert.ok(r.captures.find(x=>x.profile===key).legs.length);
  r.rows.forEach(m=>m.blocked=true);r.w.NBA_DASHBOARD.refresh();assert.match(r.nodes.get('#results').innerHTML,/class="empty"/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/parlay-card/);
 });
 test('new NBA combo and defensive props cannot duplicate or overlap the same player in an SGP',()=>{

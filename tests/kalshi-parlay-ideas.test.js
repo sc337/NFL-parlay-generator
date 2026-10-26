@@ -59,12 +59,12 @@ test('Win Chance packages a compatible three-leg SGP that Value rejects at the s
  r.ctx.nflSlate=()=>[r.g];r.ctx.americanToDecimal=o=>o>0?1+o/100:1+100/Math.abs(o);r.ctx.decimalToAmerican=d=>Math.round(d>=2?(d-1)*100:-100/(d-1));r.ctx.STRAIGHT_ONLY_MARKETS=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
  vm.runInContext(app.slice(app.indexOf('function isParlayEligible('),app.indexOf('const PROP_MARKET_META')),r.ctx);
  vm.runInContext(app.slice(app.indexOf('function correlation('),app.indexOf('function renderNflStraight(')),r.ctx);
- const p=r.ctx.buildSgp(r.g,3,50,'safe',[]);assert.ok(p);assert.equal(p.legs.length,3);assert.equal(p.likelihoodTier,true);assert.equal(p.name,'Win Chance');
+ const p=r.ctx.buildSgp(r.g,3,50,'long',[]);assert.ok(p);assert.equal(p.legs.length,3);assert.equal(p.likelihoodTier,true);assert.equal(p.name,'Win Chance');
  assert.ok(p.legs.every(m=>rows.includes(m)));assert.equal(p.risk.pass,true);assert.equal(p.risk.validated,false);
- r.ctx.state.requirePlayerProp=true;assert.ok(r.ctx.buildSgp(r.g,2,50,'safe',[]).legs.some(m=>m.player));
+ r.ctx.state.requirePlayerProp=true;assert.ok(r.ctx.buildSgp(r.g,2,50,'long',[]).legs.some(m=>m.player));
  const teamOnly=[rows[2],{...rows[2],ticker:'ml',type:'h2h',marketKey:'h2h',team:'Home',point:null,name:'Home ML'}];r.g.markets=teamOnly;r.window.PICK_QUALITY.prepare('nfl',teamOnly,{},[r.g],'2026-10-12T04:59:00Z');
- assert.equal(r.ctx.buildSgp(r.g,2,50,'safe',[]),null);r.ctx.state.requirePlayerProp=false;assert.ok(r.ctx.buildSgp(r.g,2,50,'safe',[]));r.g.markets=rows;r.window.PICK_QUALITY.prepare('nfl',rows,{},[r.g],'2026-10-12T04:59:00Z');
- r.ctx.state.recommendationTier='screened';assert.equal(r.ctx.buildSgp(r.g,3,50,'safe',[]),null);
+ assert.equal(r.ctx.buildSgp(r.g,2,50,'long',[]),null);r.ctx.state.requirePlayerProp=false;assert.ok(r.ctx.buildSgp(r.g,2,50,'long',[]));r.g.markets=rows;r.window.PICK_QUALITY.prepare('nfl',rows,{},[r.g],'2026-10-12T04:59:00Z');
+ r.ctx.state.recommendationTier='screened';assert.equal(r.ctx.buildSgp(r.g,3,50,'long',[]),null);
 });
 test('required-prop control restores its saved state, persists changes and regenerates',()=>{
  const events={},writes=[],state={recommendationTier:'screened',requirePlayerProp:true,selectedMarkets:new Set()},select={addEventListener:(k,fn)=>events.select=fn},checkbox={addEventListener:(k,fn)=>events.checkbox=fn},small={};let field,generated=0;

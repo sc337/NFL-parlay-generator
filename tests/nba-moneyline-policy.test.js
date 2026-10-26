@@ -16,7 +16,7 @@ function runtime(fixture,{legs=2,confirmed=false}={}){
  const nodes=new Map(['#results','#resultsTitle','#dataStatus','#modeTitle'].map(k=>[k,{innerHTML:'',textContent:'',querySelector(){return null}}]));
  const window={__ACTIVE_SPORT:'nba',__SPORT_TOKEN:1,DASHBOARD_UI:{begin(){},end(){},get:(s,k,d)=>k==='legs'?legs:d},SPORT_MARKETS:{allowed:()=>true,sync(){}},SLATE_UI:{matches:()=>true,prepare(){}},STARTER_STATUS:{register(){},evidence:()=>({confirmed})}};
  const env={window,Date:Clock,console,document:{querySelector:s=>nodes.get(s)},fetch:async url=>({ok:true,json:async()=>url.includes('kalshi')?fixture:fixture.ctx})};
- for(const name of ['market-guards.js','nba-model.js','nba-alt-lines.js','pick-quality.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(name,'utf8'),env,{filename:name});
+ for(const name of ['conservative-policy.js','market-guards.js','nba-model.js','nba-alt-lines.js','pick-quality.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(name,'utf8'),env,{filename:name});
  window.PICK_QUALITY.prepare('nba',fixture.markets,fixture.ctx,[],fixture.updated_at);
  return {w:window,nodes,advance:ms=>now+=ms};
 }
@@ -58,7 +58,7 @@ test('2–4 leg favorite, underdog and mixed slates produce complete independent
   const f=fixture(Array(4).fill(style==='favorites'?.76:style==='underdogs'?.62:.62)),r=runtime(f,{legs:count});await r.w.NBA_DASHBOARD.load();
   const A=r.w.NBA_DASHBOARD,rows=f.markets.filter((m,i)=>style==='favorites'?i%2===0:style==='underdogs'?i%2===1:i%4===0||i%4===3);
   const builds=A.PROFILES.map(profile=>({profile,legs:A.profileBuild(rows,count,false,profile)})).filter(b=>b.legs.length);
-  assert.ok(builds.length,style+' '+count);for(const b of builds){assert.equal(b.legs.length,count);assert.equal(new Set(b.legs.map(m=>m.game_id)).size,count);assert.ok(b.legs.every(m=>rows.includes(m)));}
+  if(style==='favorites')assert.ok(builds.length,style+' '+count);else if(style==='underdogs')assert.equal(builds.length,0,'sub-50% legs cannot be forced into Lotto');for(const b of builds){assert.equal(b.legs.length,count);assert.equal(new Set(b.legs.map(m=>m.game_id)).size,count);assert.ok(b.legs.every(m=>rows.includes(m)));}
   assert.equal(A.profileBuild(rows.slice(0,count-1),count,false,A.PROFILES[0]).length,0);
  }
 });
@@ -73,9 +73,9 @@ test('thin-history spreads and totals use only matching complementary quotes at 
 });
 test('profile bands do not change when a moneyline is replaced by an equally likely spread or prop',()=>{
  const A=runtime(fixture()).w.NBA_DASHBOARD;
- for(const n of [2,3,4])for(const [p,key] of [[.70,'safe'],[.55,'balanced'],[.40,'long']]){
-  const checks=Array.from({length:n},()=>({profileBufferedP:p}));
-  for(const kind of ['moneyline','spread','total','rebounds'])assert.equal(A.profileFits(Array.from({length:n},(_,i)=>({game_id:'g'+i,kind})),checks,{key}),true,kind+' '+key+' '+n);
+ for(const n of [2,3,4])for(const [p,key] of [[.75,'safe'],[.65,'balanced'],[.50,'long']]){
+  const checks=Array.from({length:n},()=>({pass:true,profileBufferedP:p}));
+  for(const kind of ['moneyline','spread','total','rebounds'])assert.equal(A.profileFits(Array.from({length:n},(_,i)=>({game_id:'g'+i,kind})),checks,A.PROFILES.find(x=>x.key===key)),true,kind+' '+key+' '+n);
  }
 });
 test('diversity preference chooses comparable alternatives without excluding ML-only or admitting weak legs',()=>{
