@@ -43,30 +43,24 @@ function model(m){if(forecastCache.has(m))return forecastCache.get(m);const f=wi
 function eligible(m,featured=false){if(!G.pregame(m)||m.game_status!=='pre'||!window.SPORT_MARKETS.allowed('nba',m)||!window.NBA_ALT_LINES.allowed(m,lineMode)||window.SLATE_UI&&!window.SLATE_UI.matches('nba',m)||!(m.referenceOnly||Number(m.volume)>=50&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=.08))return false;const f=model(m);return !!f&&Q.assess('nba',m,f,{featured,parlay:!featured}).pass}
 function ranked(){return markets.filter(m=>{if(!G.pregame(m)||m.game_status!=='pre'||!window.SPORT_MARKETS.allowed('nba',m)||!window.NBA_ALT_LINES.allowed(m,lineMode)||window.SLATE_UI&&!window.SLATE_UI.matches('nba',m)||!(m.referenceOnly||Number(m.volume)>=50&&Number.isFinite(m.spread)&&m.spread>=0&&m.spread<=.08)||!model(m))return false;return PROFILES.some(profile=>{const q=assessProfile(m,profile);return q.pass&&profile.allows(q)})}).sort((a,b)=>String(a.selection_id).localeCompare(String(b.selection_id)))}
 const PROFILES=[
- {key:'safe',name:'Conservative',allows:q=>q.profileP>=.50&&q.profileP<=.85&&q.profileBufferedP>=.55,score:q=>q.conservativeRank??(q.profileBufferedP*100+(q.coverage||0)*12-(q.juicePenalty||0)),description:window.CONSERVATIVE_POLICY?.description||'Prioritizes buffered win likelihood within price limits. Market-informed selections do not establish value.'},
- {key:'balanced',name:'Balanced',allows:q=>q.profileP>=.35&&q.profileP<=.80,score:q=>(q.coverage||0)*20-Math.abs(q.profileBufferedP-.52)*45-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Balances buffered likelihood, evidence and price; positive value is not required for team markets. Shared scoring drivers receive a concentration penalty, not an independence claim. Estimates remain unvalidated.'},
- {key:'long',name:'Lotto',allows:q=>q.profileP<=.65,score:q=>(1-q.profileP)*35+q.profileBufferedP*35+(q.coverage||0)*15-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Targets higher payouts and higher variance. Experimental estimates remain unvalidated.'}
+ {key:'safe',name:'Conservative',allows:q=>q.profileBufferedP>=.75,score:q=>q.conservativeRank??(q.profileBufferedP*100+(q.coverage||0)*12-(q.juicePenalty||0)),description:window.CONSERVATIVE_POLICY?.description||'Prioritizes buffered win likelihood within price limits. Market-informed selections do not establish value.'},
+ {key:'balanced',name:'Balanced',allows:q=>q.profileBufferedP>=.65,score:q=>(q.coverage||0)*20-Math.abs(q.profileBufferedP-.52)*45-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Requires 65%+ buffered estimated likelihood per leg. Balances evidence and price; positive value is not required for team markets. Shared scoring drivers receive a concentration penalty, not an independence claim. Estimates remain unvalidated.'},
+ {key:'long',name:'Lotto',allows:q=>q.profileBufferedP>=.50,score:q=>(1-q.profileP)*35+q.profileBufferedP*35+(q.coverage||0)*15-Math.max(0,q.profileP-q.profileBufferedP)*30,description:'Requires 50%+ buffered estimated likelihood per leg. Targets higher payouts and higher variance. Experimental estimates remain unvalidated.'}
 ];
 // Product of buffered leg estimates is a construction index, not a calibrated
 // joint probability (especially for SGPs). Never infer risk from payout alone.
 function profileRisk(checks){return checks.reduce((p,q)=>p*Math.max(0,Math.min(1,Number(q.profileBufferedP??q.conservativeP??q.modelP)||0)),1)}
 function profileFits(legs,checks,profile,previous=[]){
- const risk=profileRisk(checks);
- const category=risk>=Math.pow(.62,legs.length)?'safe':risk>=Math.pow(.44,legs.length)?'balanced':'long';
- if(category!==profile.key)return false;
- const exposure=m=>[m.game_id,m.player_id||m.player||m.team_code||'game',m.kind,['no','under'].includes(m.side)?'under':'over'].join('|');
- return previous.filter(b=>b.legs.length).every(old=>{
-  const common=legs.filter(m=>old.legs.some(x=>exposure(x)===exposure(m))).length;
-  return old.risk-risk>=.03&&common<=legs.length-(legs.length>=3?2:1);
- });
+ return checks.length===legs.length&&checks.every(q=>q.pass&&profile.allows(q));
 }
-function assessProfile(m,profile){const q=Q.assess('nba',m,model(m),{parlay:true,nbaProfile:profile?.key}),price=Number(q.quote?.p??m.probability),buffered=Number(q.conservativeP??q.modelP??model(m)?.modelP??price);const conservative=profile?.key==='safe'?window.CONSERVATIVE_POLICY?.assess('nba',m,q):null;return {...q,...(conservative?{pass:q.pass&&conservative.pass,reason:conservative.reason,conservativeRank:conservative.rank}:{}),profileP:Number.isFinite(price)?price:.5,profileBufferedP:Number.isFinite(buffered)?buffered:.5}}
+
+function assessProfile(m,profile){const q=Q.assess('nba',m,model(m),{parlay:true,nbaProfile:profile?.key}),price=Number(q.quote?.p??m.probability),buffered=Number(q.conservativeP??q.modelP??model(m)?.modelP??price);const conservative=window.CONSERVATIVE_POLICY?.assessProfile('nba',m,q,profile?.key);return {...q,...(conservative?{pass:q.pass&&conservative.pass,reason:conservative.reason,conservativeRank:conservative.rank}:{}),profileP:Number.isFinite(price)?price:.5,profileBufferedP:Number.isFinite(buffered)?buffered:.5}}
 function unavailableBuild(rows,count,sgp,mode){
  const label=mode==='alt'?'ALT ':'';
  let available=rows.length?1:0;
  if(sgp){for(let n=Math.min(count,4);n>=2;n--)if(buildSameGame(rows,n,()=>({pass:true,rank:1,coverage:1})).length===n){available=n;break}}
  else available=Math.min(count,G.unique(rows,Infinity).length);
- if(available>=count)return 'No distinct '+label+'profile meets the risk and combination checks. Try fewer legs or review Filters.';
+ if(available>=count)return 'No '+label+'build meets the per-leg likelihood, quality and compatibility checks. Try fewer legs or review Filters.';
  const teams=[...new Set(rows.filter(m=>m.player).map(m=>m.team_code||'unknown'))];
  const concentration=sgp&&teams.length===1&&new Set(rows.filter(m=>m.player).map(m=>m.player_id||m.player)).size>2?' Player props currently qualify from '+teams[0]+' only; maximum two per team.':'';
  return 'Only '+available+' compatible qualifying '+label+'leg'+(available===1?'':'s')+' available for a '+count+'-leg build.'+concentration+' '+(mode==='alt'?'Try Both lines or fewer legs.':'Try fewer legs or review Filters.');
@@ -81,7 +75,7 @@ function pendingAvailability(rows,qualified){
 function profileBuild(rows,count,sgp,profile,previous=[]){
  const assess=m=>assessProfile(m,profile);
  const candidates=rows.filter(m=>{const q=assess(m);return q.pass&&profile.allows(q)}).sort((a,b)=>profile.score(assess(b))-profile.score(assess(a))||String(a.selection_id||a.ticker).localeCompare(String(b.selection_id||b.ticker)));
- const shaped=m=>{const q=assess(m);return {...q,rank:profile.score(q)}};
+ const shaped=m=>{const q=assess(m);return {...q,rank:(q.conservativeRank??profile.score(q))-previous.reduce((sum,b)=>sum+(b.legs.some(x=>(x.selection_id||x.ticker)===(m.selection_id||m.ticker))?2:0),0)}};
  const options={balanced:profile.key==='balanced',diversityBonus:3,acceptBuild:(legs,checks)=>profileFits(legs,checks,profile,previous)};
  const build=sgp?buildSameGame(candidates,count,shaped,options):G.bestBuild(candidates,count,shaped,options);
  return build.length===count&&(sgp?compatibleSet(build):G.independent(build))?build:[];
@@ -117,6 +111,7 @@ function renderFresh(){
   const odds=!sgp?Q.estimateOdds('nba',legs):null;
   return '<article class="parlay-card" data-profile="'+profile.key+'"><div class="parlay-top"><div><span class="grade">EXPERIMENTAL</span><h3 class="parlay-name">'+profile.name+' · NBA '+(sgp?'Same Game':'Multi-Game')+' · '+count+' legs</h3></div><div class="odds-wrap"><span class="odds-label">'+(sgp?'Check book':'Price est.')+'</span><div class="odds">'+(sgp?'—':odds==null?'Unavailable':(odds>0?'+':'')+odds)+'</div></div></div><p class="summary">'+profile.description+' Profiles compare average buffered leg likelihood across all market types; comparable mixed-market builds receive a small preference. More legs reduce combined win likelihood. Joint estimates are unvalidated. '+summary+'</p><div class="legs">'+legs.map(leg).join('')+'</div></article>';
  }).join('')||'<div class="empty" role="status">'+esc(empty.trim())+'</div>';
+ if(!hasBuild)$('#results').innerHTML+='<p class="summary">'+PROFILES.map(profile=>{const checks=scoped.map(m=>assessProfile(m,profile)),qualified=checks.filter(q=>q.pass&&profile.allows(q)).length,reasons=[...new Set(checks.filter(q=>!q.pass).map(q=>q.reason).filter(Boolean))];return esc(profile.name+': '+qualified+' qualifying legs. '+(qualified>=count?'Build compatibility or complete-build checks failed.':reasons.join('; ')));}).join(' · ')+'</p>';
  window.EXTRA_PICKS?.show('nba',{rows:scoped.map(m=>({market:m,forecast:model(m)})),label:m=>(m.isAltLine?'ALT · ':'')+m.label,selected:[...builds.flatMap(x=>x.legs),straight].filter(Boolean),event:m=>m.game_label,media});
  builds.filter(({legs})=>legs.length===count).forEach(({profile,legs})=>window.PARLAY_RISK?.attach($('#results')?.querySelector?.('[data-profile="'+profile.key+'"]'),'nba',legs.map(m=>({market:m,forecast:model(m)})),{sgp}));
  window.COMPACT_UI?.refresh?.();window.PARLAY_GENERATOR?.syncLabel?.();
@@ -146,3 +141,4 @@ function controls(){
 }
 window.NBA_DASHBOARD={availableCount:()=>loaded?qualifiedCount:null,load,refresh:render,setLegs,model,eligible,profileBuild,PROFILES,buildSameGame,compatibleSet,profileFits,profileRisk,unavailableBuild,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
 })();
+
