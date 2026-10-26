@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-25T23:56:01.529Z",
+  "updated_at": "2026-10-26T00:03:53.613Z",
   "status": "critical",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-25T23:53:54.775889+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 239,
       "quotedMarkets": 239,
       "expiredQuotes": 0,
@@ -37,7 +37,7 @@
     },
     "nba": {
       "snapshotAt": "2026-10-25T23:54:32.597982+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 710,
       "quotedMarkets": 710,
       "expiredQuotes": 0,
@@ -180,7 +180,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-10-25T23:54:39.985040+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 5118,
       "quotedMarkets": 5118,
       "expiredQuotes": 0,
@@ -1076,7 +1076,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-10-25T23:53:50.974732+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 2114,
       "quotedMarkets": 2114,
       "expiredQuotes": 0,
@@ -1165,20 +1165,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-10-25T23:53:52.084290+00:00",
-      "ageMinutes": 2,
-      "markets": 1107,
-      "quotedMarkets": 1107,
+      "snapshotAt": "2026-10-26T00:03:51.579103+00:00",
+      "ageMinutes": 0,
+      "markets": 531,
+      "quotedMarkets": 531,
       "expiredQuotes": 0,
-      "playerMarkets": 548,
+      "playerMarkets": 0,
       "families": {
-        "moneyline": 118,
-        "spread": 130,
-        "total": 311,
-        "goals": 216,
-        "assists": 138,
-        "points": 186,
-        "saves": 8
+        "moneyline": 117,
+        "spread": 122,
+        "total": 292
       },
       "futureEvents": [
         {
@@ -1279,7 +1275,7 @@
         },
         {
           "id": "401892600",
-          "time": "2026-10-29T23:30Z"
+          "time": "2026-10-29T23:30:00+00:00"
         },
         {
           "id": "401892602",
@@ -1311,7 +1307,7 @@
         },
         {
           "id": "401892593",
-          "time": "2026-10-28T02:00:00+00:00"
+          "time": "2026-10-28T02:00Z"
         },
         {
           "id": "401892594",
@@ -1364,20 +1360,15 @@
         {
           "id": "401892581",
           "time": "2026-10-26T02:00Z"
-        },
-        {
-          "id": "401892580",
-          "time": "2026-10-26T00:00Z"
         }
       ],
       "playerCounts": {
-        "401892580": 278,
         "401892581": 270
       }
     },
     "ufc": {
       "snapshotAt": "2026-10-24T21:08:06.726967+00:00",
-      "ageMinutes": 1608,
+      "ageMinutes": 1616,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -1407,11 +1398,20 @@
       "changedAt": "2026-10-25T07:16:25.098Z"
     },
     {
+      "id": "nhl:props-missing",
+      "sport": "nhl",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-10-26T00:03:53.613Z",
+      "changedAt": "2026-10-26T00:03:53.613Z"
+    },
+    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 1608 minutes old.",
+      "message": "Feed is 1616 minutes old.",
       "firstSeen": "2026-10-24T21:39:33.232Z",
       "changedAt": "2026-10-24T23:09:43.425Z"
     },
@@ -1446,7 +1446,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-10-25T23:53:54.217552+00:00"
+      "at": "2026-10-26T00:03:53.589984+00:00"
     },
     "ufc": {
       "ok": false,
