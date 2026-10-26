@@ -104,7 +104,7 @@ function attach(host,s,entries,options={}){
  const summary=document.createElement('summary');summary.textContent='Risk & price check';
  const text=document.createElement('p'),status=document.createElement('p');
  const format=o=>(o>0?'+':'')+o;
- text.textContent=(risk.modelP==null?'Joint likelihood unavailable':'Estimated hit chance '+Math.round(risk.modelP*100)+'% · '+risk.profile+' risk')+' · '+risk.method+'. '+risk.warning+(risk.scenario?' Sensitivity '+risk.scenario.sensitivity.map(p=>Math.round(p*100)+'%').join('–')+' across '+risk.scenario.trials.toLocaleString()+' trials.':'')+(risk.minimumOdds!=null?' Needs better than '+format(risk.minimumOdds)+' at these exact lines.':'');
+ text.textContent=(risk.modelP==null?'Joint likelihood unavailable':'Estimated hit chance '+Math.round(risk.modelP*100)+'%'+(['nfl','nba'].includes(s)?'':' · '+risk.profile+' risk'))+' · '+risk.method+'. '+risk.warning+(risk.scenario?' Sensitivity '+risk.scenario.sensitivity.map(p=>Math.round(p*100)+'%').join('–')+' across '+risk.scenario.trials.toLocaleString()+' trials.':'')+(risk.minimumOdds!=null?' Needs better than '+format(risk.minimumOdds)+' at these exact lines.':'');
  status.className='price-check-status';status.setAttribute('role','status');
  if(window.STUDY_POLICY){
   const notice=document.createElement('p');notice.textContent='Paper study · Exact sportsbook price required';notice.className='quality-market-row';host.appendChild(notice);
