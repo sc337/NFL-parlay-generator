@@ -623,6 +623,7 @@ function marketQuality(m,variant){
 function profileSelectionScore(q,variant){return window.CONSERVATIVE_POLICY?.assessProfile('nfl',{},q,variant)?.rank??-999;}
 function distinctProfileBuild(p,previous){return !!p;}
 function candidateScore(m,risk,variant='balanced'){
+  if(!nflWorkloadCheck(m,variant).pass)return -999;
   if(window.NFL_ALT_LINES&&!window.NFL_ALT_LINES.matches(m,state.lineMode))return -999;
   if(window.PICK_QUALITY){const ideas=window.NFL_PARLAY_IDEAS?.active?.(state);const x=ideas?window.NFL_PARLAY_IDEAS.assess(m,window.PICK_QUALITY.gameFor('nfl',m),state):window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m,variant),{parlay:true});const conservative=window.CONSERVATIVE_POLICY?.assessProfile('nfl',m,x,variant);const score=conservative?conservative.rank:x.pass&&(!window.NFL_ALT_IDEAS?.active?.(state,variant)||x.conservativeP>=.55)?profileSelectionScore(x,variant):-999;return score>-900?score+(window.SELECTION_UI?.locked?.('nfl',m)?10000:0)+((state.moreCushion||variant==='safe')?Math.min(3,window.NFL_ALT_LINES?.cushionBonus?.(m)||0):0):-999;}
   const q=marketQuality(m,variant);
@@ -637,6 +638,25 @@ function candidateScore(m,risk,variant='balanced'){
   if(/_alternate$/.test(m.marketKey||'')) score-=4;
   if(m.type==='td') score-=3;
   return score;
+}
+
+// Explicit selection policy, not a calibrated probability estimate.
+function nflWorkloadCheck(m,variant='balanced'){
+  if(!m.player)return {pass:true};
+  const key=String(m.marketKey||'').replace(/_alternate$/,'');
+  const metric=key==='player_rush_yds'?'player_rush_attempts':
+    ['player_reception_yds','player_receptions'].includes(key)?'targets':
+    ['player_pass_yds','player_pass_tds'].includes(key)?'player_pass_attempts':null;
+  if(!metric)return {pass:true}; // Other markets retain their existing gates.
+  const h=m.propHistory,values=h?.opportunities?.[metric];
+  const reject=reason=>({pass:false,reason});
+  if(h?.source!=='nflverse completed plays'||!Array.isArray(values)||values.length<3||values.length!==h.games||values.some(v=>!Number.isFinite(v)||v<0))return reject('Verified workload history unavailable');
+  const recent=values.slice(-3),mean=recent.reduce((a,b)=>a+b,0)/recent.length;
+  // Lotto also requires demonstrated participation; price never overrides usage.
+  const floor=variant==='long'?1:metric==='player_pass_attempts'?20:metric==='player_rush_attempts'?6:3;
+  if(mean<floor||recent.filter(v=>v>0).length<3)return reject('Recent workload too limited');
+  if(variant!=='long'&&(h.roleStable!==true||['rising','falling'].includes(m.roleChange?.status)))return reject('Recent workload is not stable');
+  return {pass:true,metric,recentMean:mean,minimum:floor};
 }
 
 function playerCount(legs,player){
@@ -781,7 +801,15 @@ function sgpExposure(m){
 function sgpExposureOverlap(a,b){
   const keys=new Set(a.legs.map(sgpExposure));return b.legs.filter(m=>keys.has(sgpExposure(m))).length;
 }
-function sgpConcentrationPass(legs){
+function sgpConcentrationPass(legs,variant='long'){
+  if(variant!=='long'){
+    const players=new Map();
+    for(const m of legs){if(!m.player)continue;if(!m.team)return false;
+      const key=[m.gameId||m.kickoff||'',m.team].join('|');
+      if(!players.has(key))players.set(key,new Set());players.get(key).add(m.player);
+    }
+    if([...players.values()].some(p=>p.size>2))return false;
+  }
   const counts=new Map();
   for(const m of legs){
     if(!m.player||!['receiving','receptions'].includes(m.type))continue;
@@ -824,7 +852,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
     for(const beam of beams)for(const m of ranked){
       if(beam.legs.includes(m)||!coherentWithLegs(m,beam.legs,variant))continue;
       const legs=[...beam.legs,m],signature=parlaySignature({legs});
-      if(!sgpConcentrationPass(legs)){diagnostics.concentrationRejected++;continue;}
+      if(!sgpConcentrationPass(legs,variant)){diagnostics.concentrationRejected++;continue;}
       if(seen.has(signature))continue;seen.add(signature);
       const score=beam.score+scores.get(m);next.push({legs,score,objective:score-balancePenalty(legs)-profileOverlapPenalty(legs,previous)});
     }
