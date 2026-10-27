@@ -15,6 +15,16 @@ const early=record('nfl',{market,forecast,game},{updated_at:'2026-09-26T18:00:00
 assert.equal(early.checkpoint,null);
 const close=record('nfl',{market,forecast,game},{updated_at:'2026-09-27T19:00:00Z'},Date.parse('2026-09-27T19:00:00Z'));
 assert.equal(close.checkpoint,'6h');assert.notEqual(close.id,early.id,'pregame checkpoint cannot overwrite the first forecast');
+const late=record('nfl',{market,forecast,game},{updated_at:'2026-09-27T23:20:00Z'},Date.parse('2026-09-27T23:20:00Z'));
+assert.equal(late.checkpoint,'60m');
+const final=record('nfl',{market,forecast,game},{updated_at:'2026-09-27T23:50:00Z'},Date.parse('2026-09-27T23:50:00Z'));
+assert.equal(final.checkpoint,'15m');assert.notEqual(final.id,late.id);
+const studyForecast={...forecast,forecastVersion:'nfl-team-distribution-v1',featureAsOf:'2026-09-27T23:19:00Z',
+  studyVariants:Object.fromEntries(['market','formOnly','weatherOnly','halfForm','current'].map(name=>[name,{line:45,probability:.52}]))};
+const studyRow=record('nfl',{market,forecast:studyForecast,game},{updated_at:'2026-09-27T23:20:00Z'},Date.parse('2026-09-27T23:20:00Z'));
+assert.equal(studyRow.studyVariants.halfForm.line,45);assert.match(studyRow.id,/nfl-total-shadow-20261027-v1/);
+assert.equal(record('nfl',{market,forecast:{...studyForecast,featureAsOf:'2026-09-28T00:01:00Z'},game},
+  {updated_at:'2026-09-27T23:20:00Z'},Date.parse('2026-09-27T23:20:00Z')).studyVariants,null,'post-kickoff features are never studied');
 assert.equal(record('nfl',{market:{...market,quotedAt:'2026-09-28T00:00:01Z'},forecast,game},{},now),null,'reject post-kickoff quotes');
 assert.equal(record('nfl',{market:{...market,quotedAt:'2026-09-27T17:20:00Z'},forecast,game},{},now),null,'reject stale team-market quotes');
 assert(row.quotedEV>0);

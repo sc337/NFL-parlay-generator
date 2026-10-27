@@ -291,6 +291,11 @@ def cycle(publish_changes=True, sports=SPORTS):
         # Dedicated NFL/NHL quote publication must not wait for recommendation capture.
         if publish_changes:
             publish(names, results)
+            if sports == ('nfl',) and results.get('nfl'):
+                try:
+                    run(['python', 'scripts/refresh_forecast_worker.py', '--capture-only'], timeout=240)
+                except Exception as error:
+                    print('::error title=NFL forecast capture::' + str(error), flush=True)
         else:
             refresh_health(results)
         return results
