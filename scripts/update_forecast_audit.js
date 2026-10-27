@@ -64,9 +64,18 @@ function record(sport,entry,snapshot,now){
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   const contractId=[sport,ticker,side].join('|'),version=[f.modelVersion,f.forecastVersion].filter(Boolean).join('|')||null;
   const lead=Date.parse(eventTime)-now;
-  const checkpoint=sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)?lead<=6*3600000?'6h':lead<=24*3600000?'24h':null:null;
+  const checkpoint=sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)?
+    lead<=15*60000?'15m':lead<=60*60000?'60m':lead<=6*3600000?'6h':lead<=24*3600000?'24h':null:null;
+  const featureAsOf=f.featureAsOf||g.context?.updated_at||null;
+  const featureAt=Date.parse(featureAsOf);
+  const validFeature=Number.isFinite(featureAt)&&featureAt<=now+60000&&
+    featureAt<Date.parse(eventTime);
+  const studyVariants=sport==='nfl'&&m.type==='totals'&&validFeature&&f.studyVariants&&
+    Object.values(f.studyVariants).every(v=>finite(v?.line)!=null&&finite(v?.probability)>0&&finite(v?.probability)<1)?
+    Object.fromEntries(Object.entries(f.studyVariants).map(([name,v])=>[name,{line:finite(v.line),probability:finite(v.probability)}])):null;
+  const studyId=studyVariants?'nfl-total-shadow-20261027-v1':null;
   const publicGroup=m.referenceOnly?':public':'';
-  return {id:[contractId,version,checkpoint].filter(Boolean).join('|'),contractId,checkpoint,isAltLine:m.isAltLine===true,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
+  return {id:[contractId,version,studyId,checkpoint].filter(Boolean).join('|'),contractId,checkpoint,isAltLine:m.isAltLine===true,sport,ticker,side,event:g.away&&g.home?g.away+' @ '+g.home:m.game_label||m.fight||'',
     eventId:g.context?.event_id||m.game_id||g.id||null,eventTime,closeTime,recordedAt:new Date(now).toISOString(),
     market:m.marketKey||m.kind||m.type,marketGroup:(sport==='nfl'?(m.type==='td'?'touchdown_scorer':m.player?(m.marketKey||m.type):m.type==='h2h'?'moneyline':m.type):m.kind)+publicGroup,
     selection:m.name||m.label||m.title||'',point:finite(m.point??m.line),projectedLine:hasModel?projectedLine:null,
@@ -75,7 +84,8 @@ function record(sport,entry,snapshot,now){
     quotedEV:hasModel&&!experimental&&!anchored?modelP/ask-1:null,
     ablations:hasModel&&f.ablations?Object.fromEntries(Object.entries(f.ablations).filter(([,p])=>finite(p)>0&&finite(p)<1)):null,
     snapshotAt,
-    modelVersion:f.modelVersion||'legacy',studyId:'forward-20261022-v1',forecastVersion:f.forecastVersion||null,
+    modelVersion:f.modelVersion||'legacy',studyId:studyId||'forward-20261022-v1',forecastVersion:f.forecastVersion||null,
+    featureAsOf:validFeature?featureAsOf:null,studyVariants,
     marginProjection:hasModel?finite(f.projectedMargin):null,probabilityMethod:f.probabilityMethod||null,errorSample:finite(f.errorSample),
     sensitivity:entry.qualification?.sensitivity||null,
     player:m.player||f.player||null,team:m.team||m.team_code||null,
@@ -91,19 +101,29 @@ function record(sport,entry,snapshot,now){
       warnings:entry.qualification.warnings||[]}:null,result:null};
 }
 async function main(){
+  const nearOnly=process.argv.includes('--near-only');
+  const requestedSport=process.argv.find(x=>x.startsWith('--sport='))?.split('=')[1];
+  if(requestedSport&&!['mlb','nba','ncaaf','nfl','nhl','ufc'].includes(requestedSport))throw Error('Unknown audit sport');
   const now=Date.now(),old=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{records:[]};
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id)),added={};
-  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){
+  for(const sport of requestedSport?[requestedSport]:['mlb','nba','ncaaf','nfl','nhl','ufc']){
     try{
       const {snapshot,rows:choices}=await candidates(sport,{all:true});
       const updated=Date.parse(snapshot.updated_at||snapshot.generated_at);
-      if(!Number.isFinite(updated)||updated>now+60000||now-updated>90*60000)throw Error('Snapshot is stale or future dated');
-      track(rows,snapshot,sport,now);
-      for(const choice of choices){const r=record(sport,choice,snapshot,now);if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id);added[sport]=(added[sport]||0)+1}}
-    }catch(error){console.warn('Audit candidates unavailable for',sport,error)}
+      if(!Number.isFinite(updated)||updated>now+60000||now-updated>(nearOnly?30:90)*60000)throw Error('Snapshot is stale or future dated');
+      if(!nearOnly)track(rows,snapshot,sport,now);
+      for(const choice of choices){const r=record(sport,choice,snapshot,now);
+        if(nearOnly&&!(sport==='nfl'&&['totals','spreads','moneyline'].includes(r?.marketGroup)&&r.checkpoint))continue;
+        if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id);added[sport]=(added[sport]||0)+1}}
+    }catch(error){
+      if(nearOnly)throw error;
+      console.warn('Audit candidates unavailable for',sport,error);
+    }
   }
-  const pending=rows.filter(r=>!r.result),settled=rows.filter(r=>r.result).slice(-30000);
-  fs.writeFileSync(file,JSON.stringify({updated_at:new Date(now).toISOString(),records:[...settled,...pending]})+'\n');
+  if(!nearOnly||Object.values(added).some(Boolean)){
+    const pending=rows.filter(r=>!r.result),settled=rows.filter(r=>r.result).slice(-30000);
+    fs.writeFileSync(file,JSON.stringify({updated_at:new Date(now).toISOString(),records:[...settled,...pending]})+'\n');
+  }
   console.log('Forecast audit',rows.length,'records;',JSON.stringify(added),'new');
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,5 +1,10 @@
 import unittest
+import os
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 from datetime import datetime,timezone
+from scripts import refresh_forecast_worker as worker
 from scripts.refresh_forecast_worker import merge_records
 from scripts.settle_pick_history import settle_records
 
@@ -25,3 +30,34 @@ class ForecastWorker(unittest.TestCase):
         def offline(ticker):raise OSError('unavailable')
         self.assertEqual(settle_records(rows,offline,datetime(2026,10,22,tzinfo=timezone.utc),workers=4),0)
         self.assertNotIn('result',rows[0]);self.assertIn('settlementRetryAt',rows[0])
+
+    def test_near_capture_publishes_only_new_checkpoints(self):
+        with tempfile.TemporaryDirectory() as folder:
+            previous=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir();Path('data/forecast-audit.json').write_text('{"records":[]}\n')
+                with patch.object(worker,'run') as run, patch.object(worker,'publish_records') as publish:
+                    worker.capture_near_nfl()
+                    publish.assert_not_called()
+                    def add(_args,**_kwargs):Path('data/forecast-audit.json').write_text('{"records":[{"id":"new"}]}\n')
+                    run.side_effect=add
+                    worker.capture_near_nfl()
+                    publish.assert_called_once()
+                    self.assertIn('"new"',publish.call_args.args[0]['data/forecast-audit.json'])
+            finally:os.chdir(previous)
+
+    def test_regular_audit_attaches_final_score_before_reporting(self):
+        with tempfile.TemporaryDirectory() as folder:
+            previous=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir()
+                Path('data/forecast-audit.json').write_text('{"records":[{"id":"game","sport":"nfl","marketGroup":"totals"}]}')
+                Path('data/pick-history.json').write_text('{"records":[]}')
+                def score(rows,**_kwargs):rows[0]['actualTotal']=44;return 1
+                with patch.object(worker,'run') as run,patch.object(worker,'settle_records',return_value=0),\
+                     patch.object(worker,'settle_references',return_value=0),patch.object(worker,'add_nfl_totals',side_effect=score):
+                    worker.cycle(publish=False)
+                result=__import__('json').loads(Path('data/forecast-audit.json').read_text())
+                self.assertEqual(result['records'][0]['actualTotal'],44)
+                self.assertIn('scripts/build_forecast_report.js',run.call_args.args[0])
+            finally:os.chdir(previous)

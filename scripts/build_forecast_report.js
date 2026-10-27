@@ -1,5 +1,6 @@
 const fs=require('node:fs');
 const path=require('node:path');
+const {study:nflTotalStudy}=require('./nfl_total_study');
 const root=path.resolve(__dirname,'..');
 const file=path.join(root,'data/forecast-audit.json');
 const output=path.join(root,'data/forecast-report.json');
@@ -137,7 +138,7 @@ function build(rows,daily=[]){
   const pregameViolations=rows.filter(r=>!(Date.parse(r.recordedAt)<Date.parse(r.eventTime))||
     r.snapshotAt&&!(Date.parse(r.snapshotAt)<Date.parse(r.eventTime))).length;
   return {updated_at:new Date().toISOString(),method:'Immutable first observed pregame quote plus near-start NFL checkpoints; NFL line calibration uses the latest eligible snapshot per contract. Settled contract outcomes, or final ESPN score for half-point totals when settlement is missing; no postgame forecast backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger.',
-    pregameViolations,sports,nflTotals:totals(rows),nflLines:nflLineCalibration(rows),recommendations:recommendations(daily)};
+    pregameViolations,sports,nflTotals:totals(rows),nflTotalStudy:nflTotalStudy(rows),nflLines:nflLineCalibration(rows),recommendations:recommendations(daily)};
 }
 function main(){const rows=JSON.parse(fs.readFileSync(file,'utf8')).records||[];
   const archive=path.join(root,'data/daily-picks'),daily=fs.existsSync(archive)?fs.readdirSync(archive).filter(f=>/^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().slice(-90).flatMap(f=>JSON.parse(fs.readFileSync(path.join(archive,f),'utf8')).records||[]):[];

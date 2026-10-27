@@ -38,7 +38,7 @@ async function candidates(sport,{all=false}={}){
         noWeather:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,weather:{}}},m)?.modelP??null,
         noForm:w.NFL_MODEL_V3.evaluate({...game,context:{...game.context,recent_form:{}}},m)?.modelP??null
       }:null;
-      const forecast={modelP:m.modelProbability,rawModelP:m.rawModelProbability,modelVersion:m.modelVersion,forecastVersion:m.forecastVersion,probabilityMethod:m.probabilityMethod,projectedMargin:m.projectedMargin,opportunity:m.opportunity,roleChange:m.roleChange,sensitivity:m.sensitivity,baselines:m.baselines,confidence:m.modelConfidence,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations};
+      const forecast={modelP:m.modelProbability,rawModelP:m.rawModelProbability,modelVersion:m.modelVersion,forecastVersion:m.forecastVersion,probabilityMethod:m.probabilityMethod,projectedMargin:m.projectedMargin,studyVariants:m.studyVariants,featureAsOf:m.featureAsOf,opportunity:m.opportunity,roleChange:m.roleChange,sensitivity:m.sensitivity,baselines:m.baselines,confidence:m.modelConfidence,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,betEV:m.modelEV,projectedLine:m.projectedLine,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,ablations};
       return{market:m,forecast,game,qualification:w.PICK_QUALITY.assess(sport,m,forecast,{game})};
     })};
   }

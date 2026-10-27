@@ -24,14 +24,14 @@
     if(games<1)return null;
     return {awayPts,homePts,total:awayPts+homePts,homeMargin:homePts-awayPts,games,coverage:clamp(.12+.22*games/5,.12,.34)};
   }
-  function totalForecast(game,tp,line){
+  function totalForecast(game,tp,line,{formScale=1,weatherEnabled=true}={}){
     if(!tp||line==null)return null;
     // The offered total is the prior. Two recent games cannot justify a large
     // departure from it; the team-form component grows only with sample size.
-    const weight=tp.games/(tp.games+8);
+    const weight=formScale*tp.games/(tp.games+8);
     const w=game?.context?.weather||{};
     const wind=num(w.wind_mph),temp=num(w.temperature_f);
-    const weather=w.indoor===true?0:(wind!=null&&wind>=20?-2:wind!=null&&wind>=15?-1:0)+(temp!=null&&temp<=25?-.5:0);
+    const weather=!weatherEnabled||w.indoor===true?0:(wind!=null&&wind>=20?-2:wind!=null&&wind>=15?-1:0)+(temp!=null&&temp<=25?-.5:0);
     return clamp(line+(tp.total-line)*weight+weather,line-6,line+6);
   }
   function injuryPenalty(m){
@@ -85,11 +85,18 @@
     }
     let z=0,coverage=0;
     const tp=teamProjection(game);
-    let totalLine=null,marginLine=null,distributionP=null;
+    let totalLine=null,marginLine=null,distributionP=null,studyVariants=null;
     if(tp){
       if(m.type==='totals'&&num(m.point)!=null){
         const main=window.NFL_ALT_LINES?.mainLine?.(game,'totals');
-        totalLine=totalForecast(game,tp,num(main?.point)??num(m.point));
+        const anchor=num(main?.point)??num(m.point);
+        totalLine=totalForecast(game,tp,anchor);
+        const variants={market:anchor,formOnly:totalForecast(game,tp,anchor,{weatherEnabled:false}),
+          weatherOnly:totalForecast(game,tp,anchor,{formScale:0}),
+          halfForm:totalForecast(game,tp,anchor,{formScale:.5}),current:totalLine};
+        studyVariants=Object.fromEntries(Object.entries(variants).map(([name,line])=>[name,{
+          line,probability:m.side==='under'?normalCdf((num(m.point)-line)/TOTAL_SD):
+            1-normalCdf((num(m.point)-line)/TOTAL_SD)}]));
         if(totalLine!=null)distributionP=m.side==='under'?normalCdf((num(m.point)-totalLine)/TOTAL_SD):
           1-normalCdf((num(m.point)-totalLine)/TOTAL_SD);
         coverage+=tp.coverage;
@@ -137,7 +144,7 @@
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
     const quotedP=typeof window.MODEL_CORE?.implied==='function'?window.MODEL_CORE.implied(m.price):null;
     const ev=quotedP>0?modelP/quotedP-1:null;
-    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,forecastVersion:distributionP==null?null:'nfl-team-distribution-v1',probabilityMethod:distributionP==null?null:'Shared normal game distribution; provisional width',marketP,rawModelP:modelP,modelP,edge,ev,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,marginProjection:marginLine,lineEdge};
+    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,forecastVersion:distributionP==null?null:'nfl-team-distribution-v1',probabilityMethod:distributionP==null?null:'Shared normal game distribution; provisional width',marketP,rawModelP:modelP,modelP,edge,ev,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,marginProjection:marginLine,studyVariants,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
@@ -153,6 +160,7 @@
       m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;
       m.projectedMargin=p.marginProjection;m.forecastVersion=p.forecastVersion;m.probabilityMethod=p.probabilityMethod;
+      m.studyVariants=p.studyVariants;m.featureAsOf=g.context?.updated_at||null;
       m.modelEV=p.ev;m.modelConfidence=p.confidence;m.modelUncertainty=p.uncertainty;
     }
     enrichedRef=state.games;

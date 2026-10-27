@@ -59,7 +59,8 @@ class RefreshSafeguards(unittest.TestCase):
     def test_dedicated_nfl_publication_does_not_wait_for_recommendation_capture(self):
         with patch.object(worker,'refresh',return_value=True), patch.object(worker,'publish') as publish, patch.object(worker,'run') as run:
             self.assertEqual(worker.cycle(sports=('nfl',)),{'nfl':True})
-        run.assert_not_called();publish.assert_called_once()
+        run.assert_called_once_with(['python','scripts/refresh_forecast_worker.py','--capture-only'],timeout=240)
+        publish.assert_called_once()
 
     def test_nfl_context_reuse_never_refreshes_evidence_dates_or_copies_prices(self):
         old={'games':[{'id':'g','home':'H','away':'A','commence_time':'2026-10-23T00:15:00Z','context':{'updated_at':'old'},'markets':[{'ticker':'x','team':'H','player':'P','quoteSide':'yes','price':100,'propHistory':{'as_of':'old'}}]}]}
