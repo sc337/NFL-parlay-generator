@@ -54,7 +54,7 @@ test('current saved snapshot produces deterministic quoted ideas or passes witho
 });
 test('Win Chance packages a compatible three-leg SGP that Value rejects at the same prices',()=>{
  const r=setup();r.ctx.state.recommendationTier='likelihood';
- const rows=[{...r.m,name:'Home Runner Over 49.5',ticker:'home'},{...r.m,player:'Away Runner',team:'Away',name:'Away Runner Over 49.5',ticker:'away'},{...r.m,type:'totals',marketKey:'totals',player:null,team:null,point:44.5,name:'Over 44.5',ticker:'total'}].map(m=>({...m,modelProbability:.64,rawModelProbability:.64,marketProbability:.5,projectionCoverage:.7,modelUncertainty:.3,roleStability:.8,propHistory:{...m.propHistory,roleStable:true}}));
+ const rows=[{...r.m,name:'Home Runner Over 49.5',ticker:'home'},{...r.m,player:'Away Runner',team:'Away',name:'Away Runner Over 49.5',ticker:'away'},{...r.m,type:'totals',marketKey:'totals',player:null,team:null,point:44.5,name:'Over 44.5',ticker:'total'}].map(m=>({...m,modelProbability:.64,rawModelProbability:.64,marketProbability:.5,projectionCoverage:.7,modelUncertainty:.3,roleStability:.8,propHistory:{...m.propHistory,roleStable:true,opportunities:{player_rush_attempts:Array(m.propHistory.games).fill(10)}}}));
  r.g.markets=rows;r.window.PICK_QUALITY.prepare('nfl',rows,{},[r.g],'2026-10-12T04:59:00Z');
  r.ctx.nflSlate=()=>[r.g];r.ctx.americanToDecimal=o=>o>0?1+o/100:1+100/Math.abs(o);r.ctx.decimalToAmerican=d=>Math.round(d>=2?(d-1)*100:-100/(d-1));r.ctx.STRAIGHT_ONLY_MARKETS=new Set(['player_rush_attempts','player_pass_attempts','player_pass_completions']);
  vm.runInContext(app.slice(app.indexOf('function isParlayEligible('),app.indexOf('const PROP_MARKET_META')),r.ctx);

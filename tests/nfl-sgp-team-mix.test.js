@@ -72,7 +72,7 @@ test('complete combinations below the former top-24 cutoff reach the joint-risk 
 });
 test('one player threshold ladder cannot starve distinct players out of an ALT build',()=>{
  const rows=Array.from({length:30},(_,i)=>({type:'passing',player:'QB',team:'Home',score:200-i,point:i*10+9.5}));
- rows.push(...['RB','WR','OtherQB'].map((player,i)=>({type:'passing',player,team:'Away',score:100-i})));
+ rows.push(...['RB','WR','OtherQB'].map((player,i)=>({type:'passing',player,team:i===0?'Home':'Away',score:100-i})));
  const r=build({markets:rows});r.ctx.sgpCombinationRisk=()=>({pass:true,modelP:.5,independentP:.5,scenario:{sensitivity:[.5,.5]}});
  const p=r.run('safe',[],4);assert.ok(p);assert.equal(new Set(p.legs.map(m=>m.player)).size,4);
 });
@@ -92,4 +92,10 @@ test('Conservative cushion preference is shared by screened SGP and multi-game w
  vm.runInContext(source.slice(source.indexOf('function candidateScore('),source.indexOf('function playerCount(')),ctx);
  for(const mode of ['sgp','multi']){state.mode=mode;assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),103);assert.equal(ctx.candidateScore({},50,'safe'),100);assert.equal(ctx.candidateScore({cushionPoints:10},50,'balanced'),100)}
  window.PICK_QUALITY.assess=()=>({pass:false});assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),-999);
+});
+
+test('Conservative and Balanced cap all same-team players at two',()=>{
+ const r=build(),legs=['A','B','C'].map(player=>({player,team:'Home',type:'rushing'}));
+ for(const profile of ['safe','balanced'])assert.equal(r.ctx.sgpConcentrationPass(legs,profile),false);
+ assert.equal(r.ctx.sgpConcentrationPass(legs,'long'),true);
 });
