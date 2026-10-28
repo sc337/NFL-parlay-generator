@@ -5,7 +5,7 @@ test('balanced screening uses a smaller unvalidated buffer without weakening val
  assert.match(source,/limitedCoverage:\(1-coverage\)\*\.02/);
 });
 test('unvalidated longshot and disagreement safeguards remain present',()=>{
- assert.match(source,/q\.p<\.30\|\|p<\.45/);
+ assert.match(source,/\(!target&&q\.p<\.30\)\|\|p<\.45/);
  assert.match(source,/Math\.abs\(p-referenceP\)>\.18/);
 });
 test('provisional value is labeled and cannot claim verified value',()=>{

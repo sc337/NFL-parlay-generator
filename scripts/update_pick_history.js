@@ -43,7 +43,7 @@ async function candidates(sport,{all=false}={}){
     })};
   }
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
-  if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js')}
+  if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js');r.run('nba-prop-targets.js')}
   if(sport==='ncaaf')r.run('ncaaf-model.js');
   if(sport==='mlb'){r.run('mlb-totals-model.js');r.run('mlb-prop-model.js');}
   if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
