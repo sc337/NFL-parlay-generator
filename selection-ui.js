@@ -112,7 +112,7 @@ function mount(){
  const empty=$('#results > .empty');
  if(empty&&!exploring&&!empty.querySelector('.qualifying-heading')){const heading=document.createElement('strong');heading.className='qualifying-heading';heading.textContent='No qualifying picks';empty.prepend(heading);}
  if(empty&&!empty.querySelector('.empty-actions')){const actions=document.createElement('div');actions.className='empty-actions';
-  if(Number($('#legsSelect')?.value)>2){const b=document.createElement('button');b.type='button';b.textContent='Try 2 legs';b.onclick=()=>{const el=$('#legsSelect');el.value='2';el.dispatchEvent(new Event('change',{bubbles:true}))};actions.append(b)}
+  if(Number($('#legsSelect')?.value)>2&&empty.dataset.canBuildTwo!=='false'){const b=document.createElement('button');b.type='button';b.textContent='Try 2 legs';b.onclick=()=>{const el=$('#legsSelect');el.value='2';el.dispatchEvent(new Event('change',{bubbles:true}))};actions.append(b)}
   if(actions.children.length)empty.append(actions);
  }
 }

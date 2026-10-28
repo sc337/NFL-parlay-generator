@@ -84,7 +84,7 @@ test('NBA SGPs cap player props at two per team and search for qualified opponen
 test('NBA empty states distinguish ALT shortage, team concentration and profile constraints',()=>{
  const A=dashboard().w.NBA_DASHBOARD,rows=['a','b','c','d'].map(player=>({game_id:'g',selection_id:player,ticker:player,player,team_code:'NYK',kind:'points',side:'yes',line:15.5}));
  assert.match(A.unavailableBuild(rows,4,true,'both'),/Only 2 compatible qualifying legs.*NYK only; maximum two per team/);
- assert.match(A.unavailableBuild(rows.slice(0,1),4,true,'alt'),/Only 1 compatible qualifying ALT leg.*Try Both lines or fewer legs/);
+ assert.match(A.unavailableBuild(rows.slice(0,1),4,true,'alt'),/Only 1 compatible qualifying ALT leg.*Review Filters/);
  assert.match(A.unavailableBuild(rows.slice(0,2),2,true,'both'),/No build meets the per-leg likelihood, quality and compatibility checks/);
  assert.match(A.unavailableBuild([],3,true,'alt'),/Only 0 compatible qualifying ALT legs/);
 });

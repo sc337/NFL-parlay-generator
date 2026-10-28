@@ -332,3 +332,26 @@ sportsbook offer. The short Undo action rechecks the original selections against
 current eligibility before restoring them. Other displayed tickets remain intact.
 The feature is available on generated cards wired to the shared risk panel;
 reference-only NFL idea cards are unchanged. No wager is placed.
+
+
+### NBA Caesars-compatible research targets
+
+NBA ALT and Both filters now evaluate points, rebounds, assists, made threes,
+and points + rebounds + assists in integer milestones (N+ is Over N−0.5).
+Double-double and triple-double remain Yes milestones using the existing
+five-category history model. Standard-only continues to use quoted lines.
+
+These targets are model-only research candidates, **not a Caesars feed** or
+confirmation that Caesars offers the selection. They carry no exchange price,
+volume, spread, timestamp, or sportsbook odds. Cards say “Check Caesars”; no
+combined price or verified value is inferred. Enter the exact matching sportsbook
+offer in Risk & details for a paper price check. SGP joint probability and value
+remain unvalidated.
+
+Roster, pregame, context freshness, injury, five-game same-team samples (eight
+for double/triple-doubles), minutes, role and profile buffers remain required.
+The per-leg buffered minima stay 75% / 65% / 50%; an unpriced target is ranked
+near its profile threshold rather than choosing trivial 1+ milestones. Every SGP
+still uses distinct players and at most two props per team. Current targets are
+overs/Yes only; other NBA combo and defensive props retain their quoted path.
+Limited-history/traded-player fallback is not enabled by this change.

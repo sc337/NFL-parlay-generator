@@ -30,6 +30,7 @@ function id(s,m){return JSON.stringify([s,m.ticker||m.selection_id||JSON.stringi
 function prepare(s,markets,context={},games=[],at=null){if(s==='nfl')for(const g of games)for(const m of g.markets||[]){m.gameId=g.id}window.MARKET_GUARDS?.reconcile?.(s,markets);window.STARTER_STATUS?.register(s,markets,context,at);window.ESPN_EVIDENCE?.prepare(s,markets);const byTicker=new Map(),byGame=new Map();for(const g of games){byGame.set(g.id,g);for(const m of g.markets||[])if(m.ticker)byTicker.set(m.ticker,g)}data.set(s,{markets,context,games,at,byTicker,byGame});window.SOURCE_BRANDING?.register(s,markets,at);window.SLATE_UI?.prepare(s,markets,games)}
 function gameFor(s,m,game){return game||data.get(s)?.byGame?.get(m.gameId)||data.get(s)?.byTicker?.get(m.ticker)||data.get(s)?.games?.find(g=>g.id===m.gameId||(g.markets||[]).some(x=>x===m||x.ticker&&x.ticker===m.ticker))}
 function quote(s,m){
+ if(s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m))return {odds:null,p:null,source:'Model estimate',checkedAt:null};
  const price=num(m.price),p=price!=null?implied(price):num(m.yes_ask??m.quoteProbability);
  return {odds:p>0&&p<1?(price??american(p)):null,p,source:s==='nfl'?(m.source||gameFor(s,m)?.dataSource||'Reference feed'):(m.source||'Kalshi'),checkedAt:m.quotedAt||data.get(s)?.at||null};
 }
@@ -47,7 +48,7 @@ function forecast(s,m,f={}){
  const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
  return {...f,modelVersion:window.MODEL_LEARNING?.VERSION,baselines:{market:market,...(f.baselines||{})},modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:s==='nba'&&f.marketAnchored?null:ev,ev:f.experimental||s==='nba'&&f.marketAnchored?null:ev,calibrationValidated:active};
 }
-function quoteLabel(s,m){const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);if(m.referenceOnly)return q.source+' '+fmt(q.odds)+' · Reference';if(window.ODDS_DISPLAY)return window.ODDS_DISPLAY.label(q);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
+function quoteLabel(s,m){if(s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m))return 'Model estimate · Check Caesars';const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);if(m.referenceOnly)return q.source+' '+fmt(q.odds)+' · Reference';if(window.ODDS_DISPLAY)return window.ODDS_DISPLAY.label(q);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
 function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
 function participation(s,m,f,game,warnings){
  const ctx=data.get(s)?.context||{},g=gameFor(s,m,game),starter=window.STARTER_STATUS?.evidence(s,m,ctx);
@@ -136,9 +137,10 @@ function unsupportedAltUnder(m){
 }
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
+ const target=s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m)===true;
  const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
  const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
- const selectionMode=options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
+ const selectionMode=target?'ideas':options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
  const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
@@ -157,6 +159,7 @@ function assess(s,m,f={},options={}){
  const conservativeP=p==null?null:clamp(p-buffer,.001,.999),ev=p!=null&&q.p>0?p/q.p-1:null,conservativeEV=conservativeP!=null&&q.p>0?conservativeP/q.p-1:null;
  const warnings=[];let reason=null;
  if(window.SLATE_UI&&!window.SLATE_UI.matches(s,m,gameFor(s,m,options.game)?.commence_time))return {pass:false,rank:-Infinity,reason:'Outside selected date',warnings:[],quote:q};
+ if(target)warnings.push('Unpriced model target; verify Caesars offers this exact selection. No quoted odds or verified value.');
  if(!validated)warnings.push('Model unvalidated; value unverified');
  if(m.referenceOnly)warnings.push('Public reference odds; verify current sportsbook price');
  if(m.source==='Polymarket')warnings.push('Exchange reference; Caesars price, fees and player void rules can differ');
@@ -170,11 +173,11 @@ function assess(s,m,f={},options={}){
  else if(s==='nfl'&&window.NFL_ALT_LINES?.unsupportedIncrement?.(m))reason='ALT yardage requires a quoted 10-yard milestone';
  else if(Number.isFinite(start)&&start<=Date.now()||['in','post','Live','Final'].includes(m.game_status)||['in','post'].includes(g?.game_status))reason='Event already started';
  else if(!Number.isFinite(start))reason='Event start unverified';
- else if(!q.checkedAt)reason='Quote timestamp unavailable';
- else if(q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL))reason='Quote older than 30 minutes';
+ else if(!target&&!q.checkedAt)reason='Quote timestamp unavailable';
+ else if(!target&&q.checkedAt&&(!Number.isFinite(Date.parse(q.checkedAt))||Date.parse(q.checkedAt)>Date.now()+300000||quoteAge>TTL))reason='Quote older than 30 minutes';
  else if(m.context_unmatched===true)reason='Matchup context unverified';
  else if(m._invalidRoster===true)reason='Roster unverified';
- else if(!(q.p>0&&q.p<1))reason='Quote unavailable';
+ else if(!target&&!(q.p>0&&q.p<1))reason='Quote unavailable';
  else if(num(m.sourceQuality)!=null&&num(m.sourceQuality)<60)reason='Source quality too low';
  else if(!(p>0&&p<1)||coverage<minCoverage){
   const history=s==='nfl'&&m.player?m.propHistoryStatus:null;
@@ -209,9 +212,9 @@ function assess(s,m,f={},options={}){
  // model that still assumes the old role. Decreased roles remain excluded.
  if(!reason&&increasedRole&&!(f.opportunity?.sample>=5&&roleChange?.status==='rising'&&roleChange.ratio<=1.75&&sensitivity?.scenarios.length>=3&&sensitivity.pass))reason='Increased role needs a supported projection and robust opportunity scenarios';
  // Policy safeguards for provisional estimates, not measured confidence limits.
- if(!reason&&!validated&&(q.p<.30||p<.45)&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
+ if(!reason&&!validated&&((!target&&q.p<.30)||p<.45)&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
- if(!reason&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
+ if(!reason&&!target&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
  if(!reason&&options.featured&&likelihoodMode&&conservativeP<.55)reason='Featured pick needs stronger likelihood';
  // Pending reports are advisory for every sport. Specific injury, roster,
@@ -232,6 +235,7 @@ function assess(s,m,f={},options={}){
  if(!reason&&nbaTeam&&matchupMode&&q.p-conservativeP>.10)reason='NBA team-market price exceeds buffered likelihood by over 10 points';
  if(!reason&&likelihoodMode&&q.p>.85)reason='Price too short for Win Chance';
  if(!reason&&window.SELECTION_UI?.excluded?.(s,m))reason='Selection excluded by you';
+ if(!reason&&target&&options.featured)reason='Exact Caesars price required for a featured straight';
  const dataReason=reason,dataPass=!dataReason;
  if(!reason&&saferMode&&conservativeP<window.PARLAY_POLICY.minBufferedP)reason='Safer legs need at least 55% buffered likelihood';
  if(!reason&&saferMode&&q.p>window.PARLAY_POLICY.maxMarketP)reason='Price too short for safer parlay selection';
@@ -248,7 +252,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,selectionMode,dataPass,dataReason,pricePass:!(nbaTeam&&anchored)&&clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:nbaTeam&&anchored?null:ev,conservativeEV:nbaTeam&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
+ return {pass:!reason,reason,modelOnly:target,selectionMode,dataPass,dataReason,pricePass:!(nbaTeam&&anchored)&&clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:nbaTeam&&anchored?null:ev,conservativeEV:nbaTeam&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));
