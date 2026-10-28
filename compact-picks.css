@@ -40,3 +40,14 @@
  .compact-pick-selection{font-size:12px}
  :is(#results,#analysisSecondary,#nflParlayAlternatives)>.parlay-card .compact-pick-row .leg-brief,.compact-pick-row .nba-lineup-status{font-size:10.5px}
 }
+
+.parlay-card .odds-wrap[data-unpriced="true"]{display:none!important}
+.market-tile-price.model-metrics{display:flex!important;flex-direction:column;align-items:flex-end;gap:4px;white-space:nowrap}
+.model-hit-estimate{display:inline-block;padding:4px 7px;border-radius:7px;font-size:12px;font-weight:700;line-height:1.3}
+.model-metrics[data-band="high"] .model-hit-estimate{color:#24685c;background:#e5f3ed}
+.model-metrics[data-band="medium"] .model-hit-estimate{color:#294bc3;background:#eaf0ff}
+.model-metrics[data-band="speculative"] .model-hit-estimate{color:#6638aa;background:#f0eafa}
+.model-projection{font-size:11px;font-weight:500;color:var(--muted);line-height:1.3}
+[data-theme="dark"] .model-metrics[data-band="high"] .model-hit-estimate{color:#a5e3cf;background:#193c34}
+[data-theme="dark"] .model-metrics[data-band="medium"] .model-hit-estimate{color:#b7c9ff;background:#202f55}
+[data-theme="dark"] .model-metrics[data-band="speculative"] .model-hit-estimate{color:#d7bcff;background:#382650}

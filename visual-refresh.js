@@ -127,6 +127,12 @@ function compactParlays(){
         const market=subText.match(/\b(?:Market|Kalshi)\s+(\d+)%/i);
         const ask=subText.match(/\bKalshi ask\s+(\d+)¢/i);
         price.textContent=quote?.textContent.trim()|| (ask?'Kalshi '+ask[1]+'¢':market?'Mkt '+market[1]+'%':'Check price');
+        if(leg.dataset.modelEstimate){
+          price.textContent='';price.classList.add('model-metrics');price.dataset.band=leg.dataset.estimateBand;
+          const estimate=document.createElement('span');estimate.className='model-hit-estimate';estimate.textContent='Est. '+leg.dataset.modelEstimate+'%';price.append(estimate);
+          if(leg.dataset.modelProjection){const projection=document.createElement('span');projection.className='model-projection';projection.textContent='Proj. '+leg.dataset.modelProjection;price.append(projection)}
+          price.title='Buffered model estimate, not measured accuracy or sportsbook odds. Projection is the expected stat total.';
+        }
         const parts=price.textContent.match(/^(FanDuel|Kalshi|Caesars|Reference)\s+([+−-]?\d+(?:\.\d+)?¢?)$/);
         if(parts){tile.dataset.quoteSource=parts[1];const source=document.createElement('span'),odds=document.createElement('span');source.className='quote-source';source.textContent=parts[1]+' ';odds.className='quote-price';odds.textContent=parts[2];price.textContent='';price.append(source,odds);}
         tile.setAttribute('aria-label',(leg.dataset.altLine==='true'?'ALT ':'')+selection.market+' '+line.textContent+', '+price.textContent);
