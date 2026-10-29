@@ -12,3 +12,13 @@ test('legacy reception snapshots use count variance and preserve the quoted line
  const price=r.m.price,f=r.window.NFL_MODEL_V3.evaluate(r.g,r.m);
  assert.equal(r.m.type,'receptions');assert.ok(f.sd>=1.2&&f.sd<2);assert.equal(r.m.point,5.5);assert.equal(r.m.price,price);
 });
+test('display hit estimates share one history distribution across ALT thresholds and ignore quote changes',()=>{
+ const r=setup(),api=r.window.NFL_MODEL_V3;
+ const f=api.evaluate(r.g,r.m),high=api.evaluate(r.g,{...r.m,point:65.5}),quote=api.evaluate(r.g,{...r.m,prob:.7,marketProbability:.7,price:-230});
+ assert.ok(f.estimatedHitProbability>high.estimatedHitProbability);
+ assert.equal(f.estimatedHitProbability,quote.estimatedHitProbability);
+ assert.ok(Math.abs(f.estimatedHitProbability+api.evaluate(r.g,{...r.m,side:'under'}).estimatedHitProbability-1)<1e-8);
+ assert.match(api.propSummary(r.g,r.m),/Projected 81.3 · Est. hit \d+% · Experimental · 4 games/);
+ assert.match(api.propSummary(r.g,{...r.m,point:45}),/unavailable/);
+ delete r.m.propHistory;assert.match(api.propSummary(r.g,r.m),/unavailable/);
+});
