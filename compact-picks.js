@@ -45,6 +45,17 @@ function row(node,sport){
  const choice=document.createElement('div');choice.className='compact-pick-selection';choice.textContent=node.classList.contains('pick-row')?featuredSelection(heading.title||heading.textContent,line.textContent):selection(heading.textContent,line.textContent);
  const alt=tile.querySelector('.alt-tag');if(alt)choice.append(alt);
  title.after(choice);heading.hidden=true;line.hidden=true;
+ if(sport==='nfl'&&(node.dataset.nflEstimate||node.dataset.nflProjectionUnavailable)){
+  const metrics=document.createElement('div');metrics.className='nfl-visible-projection model-metrics';
+  if(node.dataset.nflEstimate){
+   const p=Number(node.dataset.nflEstimate);metrics.dataset.band=p>=75?'high':p>=65?'medium':'speculative';
+   const hit=document.createElement('span');hit.className='model-hit-estimate';hit.textContent='Est. '+p+'%';
+   const projection=document.createElement('span');projection.className='model-projection';projection.textContent='Proj. '+node.dataset.nflProjection;
+   metrics.append(hit,projection);metrics.title='Experimental history-based estimate · '+node.dataset.nflSample+' completed games · Assumes participation; not measured accuracy or joint parlay probability';
+  }else{metrics.classList.add('model-projection');metrics.textContent='Projection unavailable';}
+  copy.append(metrics);
+ }
+
  const meta=node.querySelector('.leg-brief,.pick-meta');
  if(meta&&node.dataset.eventTime&&node.dataset.matchup){meta.title=meta.textContent;meta.textContent=metadata(sport,node.dataset.eventTime,node.dataset.matchup)}
  const warning=node.querySelector('.nba-lineup-status');if(warning){warning.title=warning.textContent;warning.textContent=lineup(warning.textContent)}
@@ -67,7 +78,7 @@ function featured(node){
  if(!host||!copy||!meta||!media)return;
  node.dataset.featuredLayout='1';host.classList.add('featured-straight');
  const heading=host.querySelector('#pickOfDayTitle');if(heading){heading.textContent='Featured straight';if(window.STUDY_POLICY){const badge=document.createElement('span');badge.className='featured-paper-badge';badge.textContent='Paper only';heading.append(badge)}}
- const estimate=copy.querySelector('.pick-estimate');if(estimate&&details)details.append(estimate);
+ const estimate=copy.querySelector('.pick-estimate');if(estimate&&details&&document.body?.dataset?.sport!=='nfl')details.append(estimate);
  node.append(meta);
  const foot=host.querySelector('.pick-foot');if(foot){foot.dataset.fullStatus=foot.textContent;foot.textContent=featuredStatus(foot.textContent);foot.hidden=!foot.textContent}
  // Team picks show the selected team. Unmatched media is omitted rather than

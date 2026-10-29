@@ -1114,7 +1114,15 @@ function render(parlays){
       const lineComparison=window.NFL_ALT_LINES?.comparisonText?.(l,state.games.find(g=>g.id===l.gameId)||state.games.find(g=>(g.markets||[]).some(m=>m===l||m.ticker&&m.ticker===l.ticker)));
       if(lineComparison)metrics.push(lineComparison);
       const propSummary=window.NFL_MODEL_V3?.propSummary?.(window.PICK_QUALITY?.gameFor?.('nfl',l),l);
-      if(propSummary)metrics.push(propSummary);
+      if(propSummary){
+        metrics.push(propSummary);
+        const f=window.NFL_MODEL_V3?.evaluate?.(window.PICK_QUALITY?.gameFor?.('nfl',l),l);
+        if(Number.isFinite(f?.estimatedHitProbability)&&Number.isFinite(f?.projection)){
+          d.dataset.nflEstimate=String(Math.round(f.estimatedHitProbability*100));
+          d.dataset.nflProjection=f.projection.toFixed(1);
+          d.dataset.nflSample=String(f.historyGames||0);
+        }else d.dataset.nflProjectionUnavailable='true';
+      }
       else if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
       if(!p.altIdea&&!p.ideaTier&&!p.likelihoodTier&&l.nflV3Tier==='model'&&quality?.tier!=='suggestion'){
         if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
