@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-10-29T03:20:41.433Z",
-  "status": "warning",
+  "updated_at": "2026-10-29T03:20:46.802Z",
+  "status": "critical",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-10-29T03:09:25.729716+00:00",
@@ -127,16 +127,16 @@
       "playerCounts": {}
     },
     "ncaaf": {
-      "snapshotAt": "2026-10-29T03:10:06.219352+00:00",
-      "ageMinutes": 11,
-      "markets": 6253,
-      "quotedMarkets": 6253,
+      "snapshotAt": "2026-10-29T03:20:06.950828+00:00",
+      "ageMinutes": 1,
+      "markets": 6355,
+      "quotedMarkets": 6355,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "spread": 2806,
-        "total": 2902,
-        "moneyline": 545
+        "moneyline": 545,
+        "spread": 2912,
+        "total": 2898
       },
       "futureEvents": [
         {
@@ -1505,8 +1505,8 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-10-29T03:09:23.563638+00:00",
-      "ageMinutes": 11,
+      "snapshotAt": "2026-10-29T03:19:24.865378+00:00",
+      "ageMinutes": 1,
       "markets": 196,
       "quotedMarkets": 196,
       "expiredQuotes": 0,
@@ -1613,11 +1613,20 @@
   },
   "alerts": [
     {
+      "id": "pipeline:refresh-failed",
+      "sport": null,
+      "code": "refresh-failed",
+      "severity": "critical",
+      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
+      "firstSeen": "2026-10-29T03:20:46.802Z",
+      "changedAt": "2026-10-29T03:20:46.802Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
       "severity": "warning",
-      "message": "2324 upcoming markets lack verified start times.",
+      "message": "2314 upcoming markets lack verified start times.",
       "firstSeen": "2026-10-25T07:16:25.098Z",
       "changedAt": "2026-10-25T07:16:25.098Z"
     }
@@ -1626,8 +1635,8 @@
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/40785042681",
   "refreshResults": {
     "mlb": {
-      "ok": true,
-      "at": "2026-10-29T03:10:37.201095+00:00"
+      "ok": false,
+      "at": "2026-10-29T03:20:46.785397+00:00"
     },
     "nba": {
       "ok": true,
@@ -1635,7 +1644,7 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-10-29T03:10:37.201095+00:00"
+      "at": "2026-10-29T03:20:46.785397+00:00"
     },
     "nfl": {
       "ok": true,
@@ -1647,7 +1656,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-10-29T03:10:37.201095+00:00"
+      "at": "2026-10-29T03:20:46.785397+00:00"
     }
   }
 }
