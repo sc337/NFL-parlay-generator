@@ -67,3 +67,20 @@ test('row layout retains the price, ALT tag and provisional lineup warning throu
  const findDetail=details.querySelector.bind(details);details.querySelector=selector=>selector==='summary'?summary:findDetail(selector);
  const source=fs.readFileSync('selection-ui.js','utf8');vm.runInNewContext(source.slice(source.indexOf('function tidyCards(){'),source.indexOf('let countState='))+';tidyCards();',{document:{body:{classList:{contains:()=>false}},querySelectorAll:()=>[card]}});assert.equal(summary.textContent,'Risk & details');
 });
+test('NFL estimates remain visible after compact layout without replacing quote or source',()=>{
+ const fixture=fs.readFileSync('tests/nhl-display.test.js','utf8'),env={module:{exports:{}},Date,Map,Number,String,Set,document:{readyState:'loading',addEventListener(){},createElement:tag=>env.make(tag)}};
+ vm.runInNewContext(fixture.slice(fixture.indexOf('class Element'),fixture.indexOf("test('PRA"))+';this.make=el;',env);
+ vm.runInNewContext(fs.readFileSync('compact-picks.js','utf8'),env);
+ const el=env.make;
+ for(const available of [true,false]){
+  const row=el('div','leg'),copy=el('div','sport-visual-copy'),title=el('div','leg-title','1. Tucker Kraft'),tile=el('div','market-tile'),price=el('small','market-tile-price','Kalshi -400');
+  copy.append(title);tile.append(el('span','market-tile-heading','Rec Yds'),el('strong','market-tile-line','20+'),price);row.append(copy,tile);
+  const find=row.querySelector.bind(row);row.querySelector=selector=>selector.split(',').map(s=>find(s)).find(Boolean)||null;
+  if(available)Object.assign(row.dataset,{nflEstimate:'79',nflProjection:'43.4',nflSample:'5'});else row.dataset.nflProjectionUnavailable='true';
+  env.module.exports.row(row,'nfl');env.module.exports.row(row,'nfl');
+  assert.equal(copy.querySelectorAll('.nfl-visible-projection').length,1);
+  const metrics=copy.querySelector('.nfl-visible-projection');assert.equal(metrics.closest('details'),null);
+  if(available){assert.equal(metrics.querySelector('.model-hit-estimate').textContent,'Est. 79%');assert.equal(metrics.querySelector('.model-projection').textContent,'Proj. 43.4');assert.equal(metrics.dataset.band,'high');assert.match(metrics.title,/Experimental.*5 completed games/)}else assert.equal(metrics.textContent,'Projection unavailable');
+  assert.equal(price.textContent,'Kalshi -400');assert.equal(price.parentElement,tile);
+ }
+});
