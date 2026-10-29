@@ -1113,7 +1113,9 @@ function render(parlays){
       if(quality?.pass&&quality.warnings?.length)metrics.push(...quality.warnings);
       const lineComparison=window.NFL_ALT_LINES?.comparisonText?.(l,state.games.find(g=>g.id===l.gameId)||state.games.find(g=>(g.markets||[]).some(m=>m===l||m.ticker&&m.ticker===l.ticker)));
       if(lineComparison)metrics.push(lineComparison);
-      if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
+      const propSummary=window.NFL_MODEL_V3?.propSummary?.(window.PICK_QUALITY?.gameFor?.('nfl',l),l);
+      if(propSummary)metrics.push(propSummary);
+      else if(Number.isFinite(pl)&&Number.isFinite(ln))metrics.push('Projection '+pl.toFixed(1)+' · Line '+ln);
       if(!p.altIdea&&!p.ideaTier&&!p.likelihoodTier&&l.nflV3Tier==='model'&&quality?.tier!=='suggestion'){
         if(Number.isFinite(mp))metrics.push('Model '+Math.round(mp*100)+'%');
         if(Number.isFinite(mk))metrics.push('Market '+Math.round(mk*100)+'%');
