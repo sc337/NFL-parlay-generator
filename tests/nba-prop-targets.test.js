@@ -65,3 +65,45 @@ test('unpriced targets form complete 2–4 leg SGPs while keeping player and tea
   }
  }
 });
+
+test('Longshots research is isolated from standard targets, featured picks and parlays',()=>{
+ const {window:w,row,context,sandbox}=fixture();vm.runInNewContext(fs.readFileSync('nba-longshots.js','utf8'),sandbox);
+ const research=w.NBA_PROP_TARGETS.expand([row],context,{longshots:true});assert.ok(research.length);
+ assert.ok(research.every(m=>{const p=w.NBA_MODEL.estimate(m,context).modelP;return p>=.20&&p<=.45}));
+ const picks=w.NBA_LONGSHOTS.choose(research,context,m=>w.NBA_MODEL.estimate(m,context));assert.equal(picks.length,1);
+ const {market:m,forecast:f,quality:q}=picks[0];assert.equal(q.pass,true);assert.equal(q.modelOnly,true);assert.equal(q.valueQualified,false);assert.equal(q.quote.odds,null);
+ assert.equal(w.PICK_QUALITY.assess('nba',m,f).pass,false);
+ assert.equal(w.PICK_QUALITY.assess('nba',m,f,{longshotResearch:true,parlay:true}).pass,false);
+ assert.equal(w.PICK_QUALITY.assess('nba',m,f,{longshotResearch:true,featured:true}).pass,false);
+ assert.ok(!w.NBA_PROP_TARGETS.expand([row],context).some(x=>x.line===m.line&&x.kind===m.kind));
+});
+test('Longshots retain history, availability, role, date and roster checks',()=>{
+ for(const change of ['thin','availability','out','stale','started','roster','falling','uncertain']){
+  const {window:w,row,context,sandbox}=fixture();vm.runInNewContext(fs.readFileSync('nba-longshots.js','utf8'),sandbox);
+  const research=w.NBA_PROP_TARGETS.expand([row],context,{longshots:true});
+  if(change==='thin')context.players.p.games=context.players.p.games.slice(0,7);
+  if(change==='availability')context.players.p.availability_checked=false;
+  if(change==='out')context.players.p.injury_status='out';
+  if(change==='stale')context.updated_at=new Date(now-5*3600000).toISOString();
+  if(change==='started')research.forEach(m=>m.game_time=new Date(now-1).toISOString());
+  if(change==='roster')context.players.p.team='OTHER';
+  const model=m=>{const f=w.NBA_MODEL.estimate(m,context);return !f?null:change==='falling'?{...f,roleChange:{status:'falling'}}:change==='uncertain'?{...f,roleStability:.7}:f};
+  assert.equal(w.NBA_LONGSHOTS.choose(research,context,model).length,0,change);
+ }
+});
+test('Longshots shortlist is deterministic, capped at three unique players and leaves main inputs unchanged',()=>{
+ const {window:w,row,context,sandbox}=fixture();vm.runInNewContext(fs.readFileSync('nba-longshots.js','utf8'),sandbox);
+ const rows=[];for(let i=0;i<5;i++){const id='p'+i;context.players[id]={...context.players.p,id,name:'Player '+i};rows.push({...row,player_id:id,player:'Player '+i})}
+ const targets=w.NBA_PROP_TARGETS.expand(rows,context,{longshots:true}),before=JSON.stringify(targets),model=m=>w.NBA_MODEL.estimate(m,context);
+ const a=w.NBA_LONGSHOTS.choose(targets,context,model),b=w.NBA_LONGSHOTS.choose([...targets].reverse(),context,model);
+ assert.equal(a.length,3);assert.equal(new Set(a.map(x=>x.market.player_id)).size,3);assert.deepEqual(a.map(x=>x.market.selection_id),b.map(x=>x.market.selection_id));assert.equal(JSON.stringify(targets),before);
+});
+test('Longshots render visible metrics, honest unpriced labels, an empty state and clear on navigation',()=>{
+ const {window:w,row,context,sandbox}=fixture(),host={hidden:false,innerHTML:'',querySelector:()=>null,replaceChildren(){this.innerHTML=''}};
+ sandbox.document={body:null,createElement:()=>host,querySelector:()=>({after(){}})};w.MARKET_GUARDS={esc:s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')};w.__ACTIVE_SPORT='nba';
+ vm.runInNewContext(fs.readFileSync('nba-longshots.js','utf8'),sandbox);
+ const rows=w.NBA_PROP_TARGETS.expand([{...row,player:'<Player>'}],context,{longshots:true}),model=m=>w.NBA_MODEL.estimate(m,context);
+ w.NBA_LONGSHOTS.show({rows,context,model});assert.match(host.innerHTML,/Longshots/);assert.match(host.innerHTML,/Est\. \d+%/);assert.match(host.innerHTML,/Buffered \d+%/);assert.match(host.innerHTML,/Proj\./);assert.match(host.innerHTML,/Unpriced target · Availability and value unchecked/);assert.match(host.innerHTML,/&lt;Player&gt;/);assert.doesNotMatch(host.innerHTML,/<h3><Player>/);assert.match(host.innerHTML,/Model price threshold \+\d+/);
+ w.NBA_LONGSHOTS.show({rows:[],context,model});assert.match(host.innerHTML,/No qualifying longshots/);assert.doesNotMatch(host.innerHTML,/longshot-pick/);
+ w.__ACTIVE_SPORT='nfl';w.NBA_LONGSHOTS.show({rows,context,model});assert.equal(host.hidden,true);assert.equal(host.innerHTML,'');
+});

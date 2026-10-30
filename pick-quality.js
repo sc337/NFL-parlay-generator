@@ -138,6 +138,7 @@ function unsupportedAltUnder(m){
 function assess(s,m,f={},options={}){
  if(s==='nfl')window.NFL_ALT_LINES?.normalize?.(m);
  const target=s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m)===true;
+ const longshotResearch=s==='nba'&&!!m.player&&options.longshotResearch===true&&!options.parlay&&!options.featured;
  const nbaMoneyline=s==='nba'&&m.kind==='moneyline',nbaTeam=s==='nba'&&['moneyline','spread','total'].includes(m.kind),nbaProfile=nbaTeam?options.nbaProfile:null;
  const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
  const selectionMode=target?'ideas':options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
@@ -212,7 +213,7 @@ function assess(s,m,f={},options={}){
  // model that still assumes the old role. Decreased roles remain excluded.
  if(!reason&&increasedRole&&!(f.opportunity?.sample>=5&&roleChange?.status==='rising'&&roleChange.ratio<=1.75&&sensitivity?.scenarios.length>=3&&sensitivity.pass))reason='Increased role needs a supported projection and robust opportunity scenarios';
  // Policy safeguards for provisional estimates, not measured confidence limits.
- if(!reason&&!validated&&((!target&&q.p<.30)||p<.45)&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
+ if(!reason&&!validated&&((!target&&q.p<.30)||p<.45)&&!(longshotResearch&&p>=.20&&(target||q.p>=.15))&&!(nbaTeam&&anchored&&q.p>=.30&&p>=.30))reason='Unvalidated longshot; insufficient reliability';
  const referenceP=market>0&&market<1?market:q.p;
  if(!reason&&!target&&!validated&&Math.abs(p-referenceP)>.18)reason='Model disagrees too strongly with market';
  if(!reason&&num(m.spread)!=null&&(num(m.spread)<0||num(m.spread)>.10))reason='Quote spread too wide';
