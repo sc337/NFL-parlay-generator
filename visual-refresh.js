@@ -59,6 +59,8 @@ function compactBrief(sport,sub,opponent=''){
 }
 function selectionParts(value,sub=''){
   const text=value.replace(/^\d+\.\s*/,'').trim().replace(/\s+(?:ALT|alternate)(?:\s+line)?$/i,'').trim();
+  const milestone=text.match(/^(.+?)\s+(Double Double|Triple Double)\s*\((Yes|No)\)$/i);
+  if(milestone)return {subject:milestone[1],market:milestone[2],line:milestone[3]};
   const total=text.match(/^([OU])\s+([\d.]+)$/i);
   if(total)return {subject:'Game total',market:'Total',line:total[1].toUpperCase()+' '+total[2]};
   const teamTotal=text.match(/^(.+?)\s+Team(?:\s+Total)?\s+([OU])\s+([\d.]+)$/i);

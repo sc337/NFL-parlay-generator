@@ -56,6 +56,12 @@ function row(node,sport){
   copy.append(metrics);
  }
 
+ if(sport==='nba'&&node.dataset.nbaEstimate){
+  const metrics=document.createElement('div');metrics.className='nba-visible-projection model-metrics';metrics.dataset.band=node.dataset.nbaEstimateBand;
+  const hit=document.createElement('span');hit.className='model-hit-estimate';hit.textContent=(node.dataset.nbaEstimateLabel||'Est.')+' '+node.dataset.nbaEstimate+'%';
+  const projection=document.createElement('span');projection.className='model-projection';projection.textContent='Proj. '+node.dataset.nbaProjection;
+  metrics.append(hit,projection);metrics.title='Buffered experimental estimate, not measured accuracy or joint parlay probability. Market estimates are explicitly labeled.';copy.append(metrics);
+ }
  const meta=node.querySelector('.leg-brief,.pick-meta');
  if(meta&&node.dataset.eventTime&&node.dataset.matchup){meta.title=meta.textContent;meta.textContent=metadata(sport,node.dataset.eventTime,node.dataset.matchup)}
  const warning=node.querySelector('.nba-lineup-status');if(warning){warning.title=warning.textContent;warning.textContent=lineup(warning.textContent)}
