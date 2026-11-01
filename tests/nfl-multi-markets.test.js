@@ -7,7 +7,7 @@ function build(markets,count=2){
  return context.buildMulti(count,50,'balanced');
 }
 const ml=(price=-130)=>({type:'h2h',marketKey:'h2h',price,name:'Winner',team:'Team'});
-const prop=(player,type='receiving')=>({type,marketKey:type==='receiving'?'player_reception_yds':'player_rush_yds',player,price:-120,name:player});
+const prop=(player,type='receiving')=>({type,marketKey:type==='receiving'?'player_reception_yds':'player_rush_yds',player,price:-120,name:player,propHistory:{source:'nflverse completed plays',games:3,roleStable:true,opportunities:{targets:[5,5,5],player_rush_attempts:[10,10,10]}}});
 test('moneyline-only NFL selection builds two through four legs across distinct games',()=>{for(let count=2;count<=4;count++){const p=build(Array.from({length:6},()=>ml()),count);assert.equal(p.legs.length,count);assert.equal(new Set(p.legs.map(l=>l.gameLabel)).size,count)}});
 test('single prop family fills requested slots from distinct players and games',()=>{assert.equal(build([prop('A'),prop('B'),prop('C')],3).legs.length,3)});
 test('multi-game diversity still prefers different available prop families',()=>{const p=build([prop('A'),prop('B'),prop('C','rushing')]);assert.equal(new Set(p.legs.map(l=>l.type)).size,2)});
