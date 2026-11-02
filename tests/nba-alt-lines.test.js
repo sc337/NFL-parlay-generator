@@ -127,3 +127,9 @@ test('switching sports during a yielded NBA calculation cannot commit a partial 
  const r=dashboard({},true),base=r.rows[0];for(let i=0;i<1500;i++)r.rows.push({...base,selection_id:'extra'+i});
  const pending=r.w.NBA_DASHBOARD.load();setTimeout(()=>{r.w.__ACTIVE_SPORT='nfl';r.w.__SPORT_TOKEN++},0);await pending;assert.equal(r.captures.length,0);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/parlay-card/);
 });
+test('timed-out NBA loading clears the skeleton and exposes a retry message',async()=>{
+ const r=dashboard({},true);r.w.NBA_COMPUTE.check=()=>{const error=Error('NBA calculation took too long. Refresh markets to retry.');error.name='TimeoutError';throw error};await r.w.NBA_DASHBOARD.load();assert.match(r.nodes.get('#results').innerHTML,/Refresh markets to retry/);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/dashboard-skeleton/);
+});
+test('timed-out NBA regeneration settles its promise and leaves a retryable error',async()=>{
+ const r=dashboard({},true);await r.w.NBA_DASHBOARD.load();r.w.NBA_COMPUTE.check=()=>{const error=Error('NBA calculation took too long. Refresh markets to retry.');error.name='TimeoutError';throw error};await r.w.NBA_DASHBOARD.refresh();assert.match(r.nodes.get('#results').innerHTML,/Refresh markets to retry/);assert.match(r.nodes.get('#dataStatus').textContent,/took too long/);
+});
