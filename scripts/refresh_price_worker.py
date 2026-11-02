@@ -287,7 +287,7 @@ def cycle(publish_changes=True, sports=SPORTS):
     with ThreadPoolExecutor(max_workers=len(sports)) as pool:
         results = dict(zip(sports, pool.map(refresh, sports)))
     names = [name for sport, ok in results.items() if ok for name in FILES[sport]]
-    if sports in (('nhl',), ('nfl',)):
+    if sports in (('nhl',), ('nfl',), ('nba',)):
         # Dedicated NFL/NHL quote publication must not wait for recommendation capture.
         if publish_changes:
             publish(names, results)
