@@ -29,3 +29,10 @@ test('profile enhancement preserves existing profile buttons and their listeners
  vm.runInNewContext(source.slice(source.indexOf('function variants(){'),source.indexOf('function persist(){'))+';variants();variants();',{$,window,document:{createElement(){throw Error('Must retain buttons')}},requestAnimationFrame(){}});
  assert.equal(replacements,0);
 });
+
+test('NBA sorting assesses each market/profile once per render, then rechecks on the next render',()=>{
+ const source=fs.readFileSync('nba-dashboard.js','utf8');let calls=0,blocked=false;const window={};
+ const env={window,Map,Number,Q:{assess(){calls++;return {pass:!blocked,conservativeP:.8}}},model:()=>({modelP:.8})};
+ vm.runInNewContext(source.slice(source.indexOf('let assessmentCache=null;'),source.indexOf('function unavailableBuild'))+';window.assess=assessProfile;window.start=()=>assessmentCache=new Map();window.end=()=>assessmentCache=null;',env);
+ const m={},profile={key:'safe'};window.start();window.assess(m,profile);window.assess(m,profile);assert.equal(calls,1);window.assess(m,{key:'balanced'});assert.equal(calls,2);window.end();blocked=true;window.start();assert.equal(window.assess(m,profile).pass,false);assert.equal(calls,3);window.end();window.assess(m,profile);assert.equal(calls,4);
+});
