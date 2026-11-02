@@ -93,6 +93,25 @@ jobs:
           python scripts/update_espn_evidence.py --sport nfl
           python scripts/publish_nfl_snapshot.py
 
+  nba-prices:
+    concurrency:
+      group: nba-backup-price-snapshot
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Refresh and publish NBA independently
+        run: python -u scripts/refresh_price_worker.py --sports nba
+
   update:
     concurrency:
       group: kalshi-snapshot
@@ -283,6 +302,8 @@ jobs:
           git restore data/daily-picks.json 2>/dev/null || true
           git restore data/dashboard-health.json 2>/dev/null || true
           git restore data/daily-picks 2>/dev/null || true
+          # All intended outputs are backed up above; discard other collector side effects.
+          git restore --worktree -- data
           git pull --rebase origin main
           python scripts/preserve_newer_nfl.py /tmp/kalshi-nfl.json data/kalshi-nfl.json
           python scripts/preserve_newer_snapshot.py /tmp/kalshi-ufc.json data/kalshi-ufc.json
@@ -303,7 +324,7 @@ jobs:
           mkdir -p data/daily-picks
           cp /tmp/daily-pick-archive/*.json data/daily-picks/
 
-          python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(SPORTS, True))"
+          python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(('mlb','ncaaf','nfl','nhl','ufc'), True))"
           git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
           if git diff --cached --quiet; then
             echo "No market changes"
@@ -334,6 +355,7 @@ jobs:
             cp data/dashboard-health.json /tmp/dashboard-health.json
             mkdir -p /tmp/daily-pick-archive
             cp data/daily-picks/*.json /tmp/daily-pick-archive/
+            git restore --worktree -- data
             git reset --hard HEAD~1
             git pull --rebase origin main
             python scripts/preserve_newer_nfl.py /tmp/kalshi-nfl.json data/kalshi-nfl.json
