@@ -10,3 +10,14 @@ test('indexed reconciliation preserves first matching group across provider iden
  for(const m of expected){const group=groups.find(g=>G.sameEvent(g,m));if(group)m.canonical_event_id=group.canonical_event_id;else{m.canonical_event_id=m.canonical_event_id||(G.gameKey(m)?'nba:'+G.gameKey(m):'');groups.push(m)}}
  G.reconcile('nba',rows);assert.deepEqual(rows,expected)}
 });
+test('message tasks finish batches even when browser timers never fire',async()=>{
+ let clock=0,posts=0;const window={};class Channel{constructor(){this.port1={};this.port2={postMessage:()=>{posts++;setImmediate(()=>this.port1.onmessage())}}}}
+ vm.runInNewContext(fs.readFileSync('nba-compute.js','utf8'),{window,Date,performance:{now:()=>clock++},MessageChannel:Channel,setTimeout(){throw Error('Timer-based yielding must not run')}});
+ let count=0;await window.NBA_COMPUTE.each(Array(100).fill(0),()=>count++);assert.equal(count,100);assert.ok(posts>0);
+});
+test('native scheduler yielding takes precedence over throttled timers',async()=>{
+ let clock=0,yields=0;const window={scheduler:{yield:async()=>{yields++}}};vm.runInNewContext(fs.readFileSync('nba-compute.js','utf8'),{window,Date,performance:{now:()=>clock++},setTimeout(){throw Error('No timer waits')}});await window.NBA_COMPUTE.each(Array(100).fill(0),()=>{});assert.ok(yields>0);
+});
+test('a stalled calculation times out instead of remaining indefinitely busy',async()=>{
+ let clock=0;class Clock extends Date{static now(){return clock++}}const window={scheduler:{yield:async()=>{}}};vm.runInNewContext(fs.readFileSync('nba-compute.js','utf8'),{window,Date:Clock,performance:{now:()=>clock++},setTimeout});await assert.rejects(window.NBA_COMPUTE.each(Array(100).fill(0),()=>{},{until:5}),{name:'TimeoutError'});
+});

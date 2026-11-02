@@ -114,18 +114,24 @@ function renderSync(prepared){
  const run=()=>window.STARTER_STATUS?.withCache?window.STARTER_STATUS.withCache(()=>renderFresh(prepared)):renderFresh(prepared);
  try{return window.NBA_MODEL.withCache?window.NBA_MODEL.withCache(run):run()}finally{assessmentCache=null;featuredChecks=null}
 }
+function progress(message){const status=$('#dataStatus');if(status)status.textContent=message;const button=$('#generateBtn');if(button){button.disabled=true;button.textContent=message;button.setAttribute?.('aria-busy','true')}}
+function failure(message){const status=$('#dataStatus'),results=$('#results'),pick=$('#pickOfDayContent');if(status)status.textContent=message;if(results)results.innerHTML='<div class="empty" role="status">'+esc(message)+'</div>';if(pick)pick.textContent=message;window.NBA_LONGSHOTS?.clear?.()}
 async function renderAsync(){
  const revision=++renderRevision,token=window.__SPORT_TOKEN,rows=markets,ctx=context,stamp=snapshotAt,ui=window.DASHBOARD_UI?.begin('nba');
- const current=()=>revision===renderRevision&&token===window.__SPORT_TOKEN&&window.__ACTIVE_SPORT==='nba'&&rows===markets&&ctx===context;
+ const expires=Date.now()+30000;
+ const current=()=>{const active=revision===renderRevision&&token===window.__SPORT_TOKEN&&window.__ACTIVE_SPORT==='nba'&&rows===markets&&ctx===context;if(active)window.NBA_COMPUTE.check(expires);return active};
  try{
   while(current()){
    const starter=window.STARTER_STATUS?.payload?.(),manual=JSON.stringify(window.STARTER_STATUS?.manual?.()||[]);
    const until=window.NBA_COMPUTE.boundary([rows,ctx,starter,window.STARTER_STATUS?.manual?.(),window.MODEL_CALIBRATION_DATA,window.MODEL_LEARNING_DATA]);
+   progress('Checking NBA markets…');
    await G.reconcileAsync('nba',rows,{current});
    Q.prepare('nba',rows,ctx,[],stamp,{reconciled:true});
    const forecasts=new Map(),checks=new Map(),featured=new Map(),research=new Map();
+   progress('Calculating NBA projections…');
    const visible=m=>G.pregame(m)&&m.game_status==='pre'&&window.SPORT_MARKETS.allowed('nba',m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m));
    await window.NBA_COMPUTE.each([...rows,...longshotTargets].filter(visible),m=>{const f=window.NBA_MODEL.estimate(m,ctx);forecasts.set(m,f?Q.forecast('nba',m,f):null)},{current});
+   progress('Checking NBA eligibility…');
    await window.NBA_COMPUTE.each(rows,m=>{
     const f=forecasts.get(m);if(!visible(m)||!window.NBA_ALT_LINES.allowed(m,lineMode))return;
     checks.set(m,new Map(PROFILES.map(profile=>[profile.key,profileAssessment(m,profile,f)])));
@@ -133,6 +139,7 @@ async function renderAsync(){
    },{current});
    await window.NBA_COMPUTE.each([...rows,...longshotTargets].filter(visible),m=>{const f=forecasts.get(m);if(visible(m)&&f&&m.player&&f.modelP>=.20&&f.modelP<=.45)research.set(m,Q.assess('nba',m,f,{longshotResearch:true}))},{current});
    if(!current())return;
+   progress('Building NBA parlays…');
    controls();
    const pool=ranked(forecasts,checks),sgp=buildMode==='sgp',scoped=sgp?pool.filter(m=>String(m.game_id)===selectedGame):pool,count=window.DASHBOARD_UI?.get('nba','legs',2)||2,builds=[];
    for(const profile of PROFILES){const legs=await profileBuildAsync(scoped,count,sgp,profile,builds,checks,current);builds.push({profile,legs,risk:profileRisk(legs.map(m=>checks.get(m).get(profile.key)))})}
@@ -145,7 +152,7 @@ async function renderAsync(){
    forecastCache.clear();for(const [m,f]of forecasts)forecastCache.set(m,f);
    return renderSync({checks,featured,research,pool,builds,canBuildTwo,longshots,until});
   }
- }catch(error){if(error.name!=='AbortError')throw error}
+ }catch(error){if(error.name!=='AbortError'&&revision===renderRevision&&token===window.__SPORT_TOKEN&&window.__ACTIVE_SPORT==='nba'){failure(error.message||'NBA update failed. Refresh markets to retry.')}}
  finally{window.DASHBOARD_UI?.end(ui)}
 }
 function renderFresh(prepared){
@@ -181,10 +188,10 @@ function renderFresh(prepared){
  window.NBA_LONGSHOTS?.show({rows:[...markets,...longshotTargets].filter(m=>(!sgp||String(m.game_id)===selectedGame)&&G.pregame(m)&&window.SPORT_MARKETS.allowed('nba',m)&&(!window.SLATE_UI||window.SLATE_UI.matches('nba',m))),context,model,media,picks:prepared?.longshots,quality:prepared?m=>prepared.research.get(m):undefined});
  window.COMPACT_UI?.refresh?.();window.PARLAY_GENERATOR?.syncLabel?.();
 }
-async function load({force=false}={}){const starterRequest=window.STARTER_STATUS?.load?.();renderRevision++;const request=++sequence,token=window.__SPORT_TOKEN,ui=window.DASHBOARD_UI?.begin('nba');try{const [d,ctx]=await Promise.all(['kalshi-nba.json','nba-context.json'].map(file=>window.SNAPSHOT_JSON.load(file,{force})));if(starterRequest)await starterRequest;if(!G.fresh(d,.5))throw Error('NBA feed stale');if(!Array.isArray(d.markets))throw Error('Invalid NBA feed');if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;window.PUBLIC_SLATE?.set('nba',d);const current=()=>window.__ACTIVE_SPORT==='nba'&&token===window.__SPORT_TOKEN&&request===sequence;
+async function load({force=false}={}){const starterRequest=window.STARTER_STATUS?.load?.();renderRevision++;const request=++sequence,token=window.__SPORT_TOKEN,ui=window.DASHBOARD_UI?.begin('nba');try{const [d,ctx]=await Promise.all(['kalshi-nba.json','nba-context.json'].map(file=>window.SNAPSHOT_JSON.load(file,{force})));if(starterRequest)await starterRequest;if(!G.fresh(d,.5))throw Error('NBA feed stale');if(!Array.isArray(d.markets))throw Error('Invalid NBA feed');if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;window.PUBLIC_SLATE?.set('nba',d);const expires=Date.now()+30000,current=()=>{const active=window.__ACTIVE_SPORT==='nba'&&token===window.__SPORT_TOKEN&&request===sequence;if(active)window.NBA_COMPUTE?.check(expires);return active};progress('Preparing NBA player targets…');
  const targets=window.NBA_COMPUTE&&window.NBA_PROP_TARGETS?.expandAsync?await window.NBA_PROP_TARGETS.expandAsync(d.markets,ctx,{current}):window.NBA_PROP_TARGETS?.expand(d.markets,ctx)||[];
  const longshots=window.NBA_COMPUTE&&window.NBA_PROP_TARGETS?.expandAsync?await window.NBA_PROP_TARGETS.expandAsync(d.markets,ctx,{current,longshots:true}):window.NBA_PROP_TARGETS?.expand(d.markets,ctx,{longshots:true})||[];
- if(!current())return;context=ctx;markets=[...window.NBA_ALT_LINES.classify(d.markets),...targets];longshotTargets=longshots;snapshotAt=d.updated_at;loaded=Date.now();window.FEED_FRESHNESS?.set?.('nba',snapshotAt);await render()}catch(e){if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;markets=[];longshotTargets=[];window.NBA_LONGSHOTS?.clear?.();loaded=0;Q.prepare('nba',[]);$('#dataStatus').textContent=e.message;window.PICK_OF_DAY?.show('nba');$('#results').innerHTML='<div class="empty">'+esc(e.message)+' · Refresh markets.</div>'}finally{window.DASHBOARD_UI?.end(ui)}}
+ if(!current())return;context=ctx;markets=[...window.NBA_ALT_LINES.classify(d.markets),...targets];longshotTargets=longshots;snapshotAt=d.updated_at;loaded=Date.now();window.FEED_FRESHNESS?.set?.('nba',snapshotAt);window.SPORT_MARKETS.sync('nba',markets,requestRender);controls();await render()}catch(e){if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;markets=[];longshotTargets=[];window.NBA_LONGSHOTS?.clear?.();loaded=0;Q.prepare('nba',[]);$('#dataStatus').textContent=e.message;window.PICK_OF_DAY?.show('nba');$('#results').innerHTML='<div class="empty">'+esc(e.message)+' · Refresh markets.</div>'}finally{window.DASHBOARD_UI?.end(ui)}}
 let pendingRender=null;
 function requestRender(){
  const token=window.__SPORT_TOKEN;
