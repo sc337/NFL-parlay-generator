@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-function runtime(){const now=Date.now(),start=new Date(now+3600000).toISOString(),store=new Map();let rows=[];const w={};const context={games:{1:{away:'BOS',home:'NYK',start,season_type:2}},players:{a:{team:'BOS',name:'One Name'},b:{team:'BOS',name:'Two Name'},c:{team:'BOS',name:'Three Name'},d:{team:'BOS',name:'Four Name'},e:{team:'BOS',name:'Five Name'}}};
- const ctx=vm.createContext({window:w,Date,URL,localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},fetch:async()=>({ok:true,json:async()=>({schemaVersion:1,records:rows})})});
+function runtime(Clock=Date){const now=Clock.now(),start=new Date(now+3600000).toISOString(),store=new Map();let rows=[];const w={};const context={games:{1:{away:'BOS',home:'NYK',start,season_type:2}},players:{a:{team:'BOS',name:'One Name'},b:{team:'BOS',name:'Two Name'},c:{team:'BOS',name:'Three Name'},d:{team:'BOS',name:'Four Name'},e:{team:'BOS',name:'Five Name'}}};
+ const ctx=vm.createContext({window:w,Date:Clock,URL,localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},fetch:async()=>({ok:true,json:async()=>({schemaVersion:1,records:rows})})});
  vm.runInContext(fs.readFileSync('starter-status.js','utf8'),ctx);vm.runInContext(fs.readFileSync('pick-quality.js','utf8'),ctx);
  const m={game_id:'1',team_code:'BOS',game_time:start,game_status:'pre',kind:'moneyline',yes_ask:.6,probability:.61};
  w.PICK_QUALITY.prepare('nba',[m],context,[],new Date(now).toISOString());return {w,S:w.STARTER_STATUS,m,context,start,now,setRows:r=>rows=r};}
@@ -30,4 +30,16 @@ test('probable and public role context are informational and never confirm proje
  r.setRows([row(r,{status:'projected',method:'public_page',positions:{'One Name':'PG'},game_context:{referees:['Ref One'],reference_lines:{total:{value:'220.5 Pts',book:'FanDuel'}}}}),row(r,{role:'availability',players:['One Name'],status:'probable'})]);await r.S.load(true);
  const ev=r.S.evidence('nba',prop,r.context);assert.equal(ev.confirmedPlayer,false);assert.equal(ev.confirmed,false);assert.equal(ev.blocked,null);assert.match(ev.note,/Availability: probable/);assert.match(ev.note,/position: PG/);assert.match(ev.note,/Referees: Ref One/);assert.match(ev.note,/reference only: total 220.5 Pts \(FanDuel\)/);
  r.setRows([row(r,{status:'projected',method:'public_page',checked_at:new Date(r.now-31*60000).toISOString(),game_context:{referees:['Stale Ref']}})]);await r.S.load(true);assert.doesNotMatch(r.S.evidence('nba',prop,r.context).note,/Stale Ref/);
+});
+
+test('yielded calculation scope resets after a report update or manual exclusion',async()=>{
+ const r=runtime(),scope={},prop={...r.m,player:'One Name',player_id:'a'};r.setRows([row(r),row(r,{team:'NYK'})]);await r.S.load(true);
+ const evidence=()=>r.S.withCache(()=>r.S.evidence('nba',prop,r.context),scope);assert.equal(evidence().confirmedPlayer,true);assert.equal(evidence().confirmedPlayer,true);
+ r.S.save({...row(r),role:'availability',players:['One Name'],status:'out',attested:true});assert.equal(evidence().blocked,'Player unavailable');r.S.clear('nba','1');
+ r.setRows([row(r,{checked_at:new Date(r.now-31*60000).toISOString()}),row(r,{team:'NYK'})]);await r.S.load(true);assert.equal(evidence().confirmedPlayer,false);
+});
+
+test('a yielded evidence scope cannot retain confirmations past their expiry',async()=>{
+ let now=Date.now();class Clock extends Date{static now(){return now}}const r=runtime(Clock),scope={};r.setRows([row(r),row(r,{team:'NYK'})]);await r.S.load(true);
+ const evidence=()=>r.S.withCache(()=>r.S.evidence('nba',r.m,r.context),scope);assert.equal(evidence().confirmed,true);now+=31*60000;assert.equal(evidence().confirmed,false);
 });

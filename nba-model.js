@@ -21,15 +21,22 @@ function rosterEvidence(ctx,teams){
  for(const p of players){const rows=(p.games||[]).slice(-5),avg=rows.reduce((sum,r)=>sum+(num(r.minutes)||0),0)/Math.max(1,rows.length);minutes+=avg;retained+=avg*rows.filter(r=>r.team===p.team).length/Math.max(1,rows.length);if(avg>=20&&/out|doubtful|questionable|suspended|inactive/i.test(p.injury_status||''))keyAbsences.push(p.name||p.id)}
  return {continuity:minutes>0?retained/minutes:null,keyAbsences};
 }
+// Reuse team/roster work within an explicit calculation scope. Game identity
+// and context/start freshness are still checked before every cache lookup.
+let batch=null;
+function withCache(run,scope){if(batch)return run();batch=scope||new WeakMap();try{return run()}finally{batch=null}}
 function matchup(m,ctx){
  const now=Date.now(),at=Date.parse(ctx?.updated_at),g=ctx?.games?.[String(m.game_id)],start=Date.parse(g?.start);
  if(!g||!Number.isFinite(at)||at>now+300000||now-at>4*3600000||!Number.isFinite(start)||start<=now||at>=start||m.game_status!=='pre'||Math.abs(start-Date.parse(m.game_time))>300000||![2,3].includes(g.season_type))return null;
+ const key=String(m.game_id)+'|'+(['moneyline','spread','total'].includes(m.kind)?'team':'prop');
+ let cache=batch?.get(ctx);if(batch&&!cache){cache=new Map();batch.set(ctx,cache)}if(cache?.has(key))return cache.get(key);
  const away=team(ctx.teams?.[g.away]?.games,now,start),home=team(ctx.teams?.[g.home]?.games,now,start);
  // A market fallback can cover missing team samples, never invalid game identity or context.
  if((!away||!home)&&!['moneyline','spread','total'].includes(m.kind))return null;
  const neutral={pace:100,off:113,def:113,n:0,recent:0,last:0,ageDays:Infinity};
  const roster=rosterEvidence(ctx,[g.away,g.home]),a=away||neutral,h=home||neutral,pace=(a.pace+h.pace)/2,rest=t=>start-t.last<36*3600000?-1:0;
- return {g,start,pace,away:pace*(a.off+h.def)/200+rest(a),home:pace*(h.off+a.def)/200+(g.neutral?0:2)+rest(h),roster,thinHistory:Math.min(a.recent,h.recent)<5||roster.keyAbsences.length>0||roster.continuity!==null&&roster.continuity<.8,historyAgeDays:Math.max(a.ageDays,h.ageDays),recentGames:Math.min(a.recent,h.recent),coverage:clamp(.4+.012*Math.min(a.n,h.n),.45,.65)};
+ const result={g,start,pace,away:pace*(a.off+h.def)/200+rest(a),home:pace*(h.off+a.def)/200+(g.neutral?0:2)+rest(h),roster,thinHistory:Math.min(a.recent,h.recent)<5||roster.keyAbsences.length>0||roster.continuity!==null&&roster.continuity<.8,historyAgeDays:Math.max(a.ageDays,h.ageDays),recentGames:Math.min(a.recent,h.recent),coverage:clamp(.4+.012*Math.min(a.n,h.n),.45,.65)};
+ if(cache)cache.set(key,result);return result;
 }
 function marketFallback(m,match){
  const Q=window.PICK_QUALITY;if(!Q?.markets||!Q?.quote)return null;
@@ -84,5 +91,5 @@ function estimate(m,ctx){const match=matchup(m,ctx);if(!match)return null;let ma
  if(match.thinHistory){marketBasis=marketFallback(m,match);if(!marketBasis)return null;modelP=marketBasis.marketP*(1-marketBasis.independentWeight)+modelP*marketBasis.independentWeight;}}
  return {marketAnchored:!!marketBasis,marketBasis,historyAgeDays:match.historyAgeDays,recentGames:match.recentGames,rosterEvidence:match.roster,selectionMode:['moneyline','spread','total'].includes(m.kind)?'ideas':undefined,modelP:clamp(modelP,.01,.99),rawModelP:clamp(modelP,.01,.99),marketP:num(m.probability),projectedLine:marketBasis?null:projectedLine,projectedMinutes,usageRate,opportunity,roleChange,sensitivity,baselines,modelVersion:window.MODEL_LEARNING?.VERSION,projectedTotal:marketBasis?null:match.home+match.away,projectedMargin:marketBasis?null:match.home-match.away,pace:match.pace,coverage:match.coverage,roleStability,conditionalOnPlaying,experimental:true,uncertainty:match.thinHistory?.8:.55,betEV:null,method:marketBasis?'Market-informed likelihood; '+marketBasis.reason.toLowerCase()+', value unverified':m.kind==='double_double'||m.kind==='triple_double'?'Recent verified box-score rate for 10+ in two or three of points, rebounds, assists, steals and blocks':PROPS.includes(m.kind)?'Recent same-team per-minute production, projected minutes and paired-stat variance':'Possession-based offense/defense, pace, home court and rest',sources:ctx.sources};
 }
-window.NBA_MODEL={estimate,matchup,team,PROPS,cdf};
+window.NBA_MODEL={estimate,matchup,team,PROPS,cdf,withCache};
 })();

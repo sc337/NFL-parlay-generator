@@ -22,16 +22,19 @@ function nbaLineup(gid,start,team){
  const previous=[...(payload.nba_lineup_history||[])].filter(r=>valid(r)&&Date.parse(r.start_time)<now&&now-Date.parse(r.start_time)<=7*86400000&&r.players.every(name=>roster.filter(p=>p.team===team&&key(p.name)===key(name)).length===1)).sort((a,b)=>Date.parse(b.start_time)-Date.parse(a.start_time)||Date.parse(b.checked_at)-Date.parse(a.checked_at))[0];
  return previous?{...previous,game_id:String(gid),start_time:new Date(start).toISOString(),previous_game_id:previous.game_id,status:'projected',basis:'previous',game_context:undefined,rows:[previous]}:{status:'unknown',basis:'unavailable',rows:[]};
 }
-// Cache only within one synchronous calculation. Never retain an availability
-// decision across user actions, feed updates, or a report's expiry boundary.
+// Default caches cover one synchronous calculation. An explicit computation
+// scope can span yielded batches; reports, manual edits and expiry reset it.
 let calculation=null;
-function withCache(run){
+function withCache(run,scope){
  if(calculation)return run();
+ const signature=JSON.stringify(manual);
+ if(scope?.value&&scope.payload===payload&&scope.manual===signature&&Date.now()<scope.value.until){calculation=scope.value;try{return run()}finally{calculation=null}}
  const now=Date.now(),times=[...(payload.records||[]),...(payload.nba_lineup_history||[]),...manual].flatMap(r=>{
   const at=Date.parse(r.checked_at),start=Date.parse(r.start_time);
   return [at-300000,at+(r.method==='manual'?2*3600000:TTL),at+86400000,start,start+7*86400000,Date.parse(r.expires_at)];
  }).filter(t=>Number.isFinite(t)&&t>now);
  calculation={rows:new Map(),evidence:new WeakMap(),until:Math.min(Infinity,...times)};
+ if(scope){scope.value=calculation;scope.payload=payload;scope.manual=signature}
  try{return run()}finally{calculation=null}
 }
 function resolve(s,gid,start,team,role,player){

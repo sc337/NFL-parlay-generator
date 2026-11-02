@@ -10,7 +10,7 @@ test('NBA ALT limits cover team and player markets and keep exact quoted thresho
  const reference={game_id:'g',kind:'total',side:'yes',line:220.5,probability:.5};A.classify([reference]);assert.equal(A.allowed(reference,'alt'),false);
  const publicQuote={...reference,referenceOnly:true,line:210.5};A.classify([reference,publicQuote]);assert.equal(publicQuote.isAltLine,false);assert.equal(A.allowed(publicQuote,'alt'),false);
 });
-function dashboard(saved){
+function dashboard(saved,cooperative=false){
  const nodes=new Map(),writes=[],select={addEventListener(type,fn){this.change=fn}},modeSelect={addEventListener(type,fn){this.change=fn}},gameSelect={addEventListener(type,fn){this.change=fn}},gameField={},captures=[],risks=[],host={querySelector(){return null},before(field){nodes.set('#nbaLineFilters',field)}};
  nodes.set('#nbaMarketFilters',host);for(const key of ['#results','#resultsTitle','#dataStatus','#modeTitle'])nodes.set(key,{innerHTML:'',textContent:'',querySelector(){return null}});
  const document={querySelector:s=>nodes.get(s),createElement:()=>({hidden:false,querySelector:s=>s==='#nbaModeSelect'?modeSelect:s==='#nbaGameSelect'?gameSelect:s==='#nbaGameField'?gameField:select})};
@@ -19,8 +19,9 @@ function dashboard(saved){
   MARKET_GUARDS:{esc:String,pregame:()=>true,fresh:()=>true,unique:rows=>rows,bestBuild:rows=>rows.slice(0,2),independent:()=>true},
   PICK_QUALITY:{prepare(){},forecast:(s,m,f)=>f,assess:(s,m)=>({pass:!m.blocked,rank:1,conservativeP:.80,quote:{p:.70}}),quoteLabel:()=>'-110',note:()=>'',estimateOdds:()=>200},
   NBA_MODEL:{estimate:()=>({modelP:.7,method:'fixture'})},SPORT_MARKETS:{allowed:m=>true,sync(){}},SLATE_UI:{matches:()=>true},RECOMMENDATION_CAPTURE:(s,x)=>captures.push(x),PARLAY_RISK:{attach:(host,s,entries,options)=>risks.push(options)}};
- const ctx={window:w,document,Date,console,requestAnimationFrame:fn=>fn(),fetch:async url=>({ok:true,json:async()=>url.includes('kalshi')?{markets:rows,updated_at:new Date(now).toISOString()}:{}})};
+ const ctx={window:w,document,Date,console,setTimeout,performance,requestAnimationFrame:fn=>fn(),fetch:async url=>({ok:true,json:async()=>url.includes('kalshi')?{markets:rows,updated_at:new Date(now).toISOString()}:{}})};
  w.SNAPSHOT_JSON={load:async file=>(await ctx.fetch(file)).json()};
+ if(cooperative)vm.runInNewContext(fs.readFileSync('nba-compute.js','utf8'),ctx);
  for(const file of ['conservative-policy.js','market-guards.js','nba-alt-lines.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(file,'utf8'),ctx);
  return {w,nodes,select,modeSelect,gameSelect,gameField,captures,risks,writes,rows};
 }
@@ -117,3 +118,12 @@ test('NBA Conservative applies milestone policy while other profiles remain avai
  await r.w.NBA_DASHBOARD.load();assert.equal(r.captures.some(c=>c.profile==='safe'&&c.legs.length===2),true);
 });
 
+
+test('cooperative NBA rendering keeps all profile selections identical to synchronous rendering',async()=>{
+ for(const mode of ['multi','sgp']){const sync=dashboard({mode}),async=dashboard({mode},true);await sync.w.NBA_DASHBOARD.load();await async.w.NBA_DASHBOARD.load();const signature=r=>r.captures.map(c=>({profile:c.profile,legs:Array.from(c.legs,x=>x.market.selection_id)}));assert.deepEqual(signature(async),signature(sync));const normalize=html=>html.replace(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/g,'<time>');assert.equal(normalize(async.nodes.get('#results').innerHTML),normalize(sync.nodes.get('#results').innerHTML))}
+});
+
+test('switching sports during a yielded NBA calculation cannot commit a partial ticket',async()=>{
+ const r=dashboard({},true),base=r.rows[0];for(let i=0;i<1500;i++)r.rows.push({...base,selection_id:'extra'+i});
+ const pending=r.w.NBA_DASHBOARD.load();setTimeout(()=>{r.w.__ACTIVE_SPORT='nfl';r.w.__SPORT_TOKEN++},0);await pending;assert.equal(r.captures.length,0);assert.doesNotMatch(r.nodes.get('#results').innerHTML,/parlay-card/);
+});
