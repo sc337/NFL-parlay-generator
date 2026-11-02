@@ -21,7 +21,7 @@ function compatibleSet(legs){
  return true;
 }
 function buildSameGame(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityBonus=0}={}){
- if(!Number.isInteger(n)||n<2||n>4)return [];
+ if(!Number.isInteger(n)||n<2||n>3)return [];
  const groups=new Map(),candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank))
   .sort((a,b)=>(Number(window.SELECTION_UI?.locked?.('nba',b.m))-Number(window.SELECTION_UI?.locked?.('nba',a.m)))*10000||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker)))
   .filter(({m})=>{const key=m.player_id||m.player||(['moneyline','spread'].includes(m.kind)?'team-side':m.kind),count=groups.get(key)||0;groups.set(key,count+1);return count<6}).slice(0,80);
@@ -130,7 +130,7 @@ function renderFresh(){
  window.COMPACT_UI?.refresh?.();window.PARLAY_GENERATOR?.syncLabel?.();
 }
 async function load(){const starterRequest=window.STARTER_STATUS?.load?.();const request=++sequence,token=window.__SPORT_TOKEN,ui=window.DASHBOARD_UI?.begin('nba');try{const [r,c]=await Promise.all([fetch('data/kalshi-nba.json?ts='+Date.now(),{cache:'no-store'}),fetch('data/nba-context.json?ts='+Date.now(),{cache:'no-store'})]);if(!r.ok||!c.ok)throw Error('NBA feed unavailable');const d=await r.json(),ctx=await c.json();if(starterRequest)await starterRequest;if(!G.fresh(d,.5))throw Error('NBA feed stale');if(!Array.isArray(d.markets))throw Error('Invalid NBA feed');if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;window.PUBLIC_SLATE?.set('nba',d);context=ctx;markets=[...window.NBA_ALT_LINES.classify(d.markets),...(window.NBA_PROP_TARGETS?.expand(d.markets,ctx)||[])];longshotTargets=window.NBA_PROP_TARGETS?.expand(d.markets,ctx,{longshots:true})||[];snapshotAt=d.updated_at;loaded=Date.now();window.FEED_FRESHNESS?.set?.('nba',snapshotAt);render()}catch(e){if(window.__ACTIVE_SPORT!=='nba'||token!==window.__SPORT_TOKEN||request!==sequence)return;markets=[];longshotTargets=[];window.NBA_LONGSHOTS?.clear?.();loaded=0;Q.prepare('nba',[]);$('#dataStatus').textContent=e.message;window.PICK_OF_DAY?.show('nba');$('#results').innerHTML='<div class="empty">'+esc(e.message)+' · Refresh markets.</div>'}finally{window.DASHBOARD_UI?.end(ui)}}
-function setLegs(n){window.DASHBOARD_UI?.put('nba','legs',Math.max(2,Math.min(4,Math.floor(+n)||2)));render()}
+function setLegs(n){window.DASHBOARD_UI?.put('nba','legs',Math.max(2,Math.min(3,Math.floor(+n)||2)));render()}
 function controls(){
  const host=$('#nbaMarketFilters');if(!host?.querySelector)return;
  let field=$('#nbaLineFilters');
@@ -154,4 +154,5 @@ function controls(){
 }
 window.NBA_DASHBOARD={visibleLegEstimate,availableCount:()=>loaded?qualifiedCount:null,load,refresh:render,setLegs,model,eligible,profileBuild,PROFILES,buildSameGame,compatibleSet,profileFits,profileRisk,unavailableBuild,showCached(){if(!loaded||Date.now()-loaded>60000)return false;render();return true},historyPicks:()=>ranked().map(m=>({market:m,forecast:model(m)}))};
 })();
+
 

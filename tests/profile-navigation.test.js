@@ -20,7 +20,8 @@ for(const sport of ['nba','nfl'])test(sport+' navigation follows complete profil
  r.dots.children[2].click();r.flush();assert.equal(r.position.textContent,'3 of 3');assert.equal(r.dots.children[2].attributes['aria-current'],'true');
  r.show(['Conservative','Lotto']);assert.deepEqual([...r.dots.children].map(b=>b.textContent),['Conservative','Lotto']);assert.equal(r.position.textContent,'1 of 2');
  r.dots.children[1].click();r.flush();assert.equal(r.position.textContent,'2 of 2');
- r.show(['Balanced']);assert.equal(r.hint.hidden,false);assert.equal(r.dots.children.length,1);assert.equal(r.dots.children[0].textContent,'Balanced');assert.equal(r.position.hidden,true);assert.equal(r.gridClasses.has('nfl-carousel'),false);
+ r.show(['Balanced']);assert.equal(r.hint.hidden,true);assert.equal(r.dots.children.length,1);assert.equal(r.dots.children[0].textContent,'Balanced');assert.equal(r.position.hidden,true);assert.equal(r.gridClasses.has('nfl-carousel'),false);
  r.show([]);assert.equal(r.hint.hidden,true);assert.equal(r.gridClasses.has('nfl-carousel'),false);
- r.show(['Balanced','Lotto']);r.show(['Conservative','Lotto']);assert.deepEqual([...r.dots.children].map(b=>b.textContent),['Conservative','Lotto']);assert.equal(r.position.hidden,false);
+ r.show(['Balanced','Lotto']);r.show(['Conservative','Lotto']);assert.deepEqual([...r.dots.children].map(b=>b.textContent),['Conservative','Lotto']);assert.equal(r.position.hidden,true);
 });
+

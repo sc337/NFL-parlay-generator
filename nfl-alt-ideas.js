@@ -30,7 +30,7 @@ function manualCheck(game,{player,marketKey,milestone,odds},now=Date.now()){
  return {pass:true,reason:'History and availability checked only. Individual price missing; milestone probability unavailable.',market:line,modeled:false};
 }
 function review(game,legs,offer,now=Date.now()){
- if(!Array.isArray(legs)||legs.length<2||legs.length>4||new Set(legs.map(l=>l.player)).size!==legs.length)return {pass:false,message:'Use 2–4 distinct players.'};
+ if(!Array.isArray(legs)||legs.length<2||legs.length>3||new Set(legs.map(l=>l.player)).size!==legs.length)return {pass:false,message:'Use 2–3 distinct players.'};
  const checks=legs.map(l=>manualCheck(game,l,now));
  const receivers=new Map();for(const c of checks){const m=c.market;if(m&&['receiving','receptions'].includes(m.type))receivers.set(m.team,(receivers.get(m.team)||0)+1);}
  if([...receivers.values()].some(n=>n>2))return {pass:false,message:'Use at most two receiver props from one offense.',checks};
@@ -61,3 +61,4 @@ function mount(game,state){
 }
 window.NFL_ALT_IDEAS={active,manualCheck,review,mount};
 })();
+

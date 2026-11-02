@@ -873,7 +873,7 @@ function pickDistinctAlternative(game,count,risk,variant,previous){
   return null;
 }
 function buildSgp(game,count,risk,variant,previous=[]){
-  count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
+  count=Math.max(2,Math.min(3,Math.floor(Number(count))||2));
   window.NFL_ALT_LINES?.classify?.(game);
   return pickDistinctAlternative(game,count,risk,variant,previous);
 }
@@ -915,7 +915,7 @@ function propFamily(m){
 
 function buildMulti(count,risk,variant,previous=[]){
   const profileOverlapPenalty=(legs,previous)=>{const exposure=m=>[m.gameId||'',m.player||m.team||'Game',String(m.marketKey||m.type).replace(/_alternate$/,'')].join('|');return previous.filter(Boolean).reduce((sum,p)=>sum+legs.filter(m=>p.legs.some(x=>exposure(x)===exposure(m))).length*2,0)};
-  count=Math.max(2,Math.min(4,Math.floor(Number(count))||2));
+  count=Math.max(2,Math.min(3,Math.floor(Number(count))||2));
   const checks=new Map(),balancePenalty=legs=>variant==='balanced'&&window.MARKET_GUARDS?.balancedPenalty?window.MARKET_GUARDS.balancedPenalty(legs.map(m=>{const key=m.ticker||m.name;if(!checks.has(key))checks.set(key,window.PICK_QUALITY.assess('nfl',m,nflQualityForecast(m),{parlay:true}));return checks.get(key)}),legs):0;
   window.NFL_MODEL_V3?.enrich?.();
   const targetRisk=Math.max(0,Math.min(100,risk + (variant==='safe'?-18:variant==='long'?24:0)));
@@ -955,7 +955,7 @@ function packageParlay(legs,variant,isSgp,meta={}){
   const ideas=window.NFL_PARLAY_IDEAS?.active?.(state),likelihood=state.recommendationTier==='likelihood';
   if(ideas){if(!window.NFL_PARLAY_IDEAS.checkBuild(legs,state).pass)return null;}
   else if(window.PICK_QUALITY&&!window.PICK_QUALITY.checkBuild('nfl',legs.map(m=>({market:m,forecast:nflQualityForecast(m,isSgp?variant:null)})),isSgp).pass)return null;
-  if(!legs?.length || legs.length>4 || legs.some(m=>!isParlayEligible(m))) return null;
+  if(!legs?.length || legs.length>3 || legs.some(m=>!isParlayEligible(m))) return null;
   if(legs.some(m=>candidateScore(m,state.risk,variant)<=-900))return null;
   if(state.requirePlayerProp&&!legs.some(m=>m.player))return null;
   const players=legs.map(l=>l.player).filter(Boolean);
@@ -1180,7 +1180,7 @@ async function generate(){const request=window.__NFL_GENERATION_SEQUENCE=(window
   window.NFL_PROJECTIONS?.enrich?.();
   window.NFL_MODEL_V3?.enrich?.();if(typeof prepareNflQuality==='function')prepareNflQuality();
   if(window.SLATE_UI)hydrateGames();
-  const count=Math.max(2,Math.min(4,Math.floor(Number($('#legsSelect').value))||2));
+  const count=Math.max(2,Math.min(3,Math.floor(Number($('#legsSelect').value))||2));
   $('#legsSelect').value=String(count);
   const variants=state.recommendationTier==='likelihood'?['safe']:['safe','balanced','long'];
   let parlays,sgpResult;
@@ -1263,4 +1263,5 @@ $('#clearKeyBtn').addEventListener('click',()=>{
 });
 
 loadData();
+
 

@@ -9,8 +9,8 @@ function setup(saved={},blocked=false){
 }
 test('preferences preserve independent sport settings and reject invalid counts',()=>{
  const a=setup({sport:'nhl',nfl:{legs:4,mode:'multi',markets:['rushing','bogus']},nhl:{legs:2,date:'2026-10-06'},mlb:{legs:99}});
- assert.equal(a.ui.getSport(),'nhl');assert.equal(a.ui.get('nfl','legs',3),4);assert.equal(a.ui.get('nhl','legs',3),2);assert.equal(a.ui.get('mlb','legs',2),2);assert.deepEqual([...a.ui.get('nfl','markets',[])],['rushing']);
- a.ui.put('mlb','legs',5);a.ui.selectSport('mlb');assert.equal(a.ui.get('mlb','legs',2),4);assert.equal(a.node.value,'4');assert.equal(a.ui.get('nfl','legs',3),4);assert.equal(JSON.parse(a.storage.get('sportsDashboardUIV2')).sport,'mlb');
+ assert.equal(a.ui.getSport(),'nhl');assert.equal(a.ui.get('nfl','legs',3),3);assert.equal(a.ui.get('nhl','legs',3),2);assert.equal(a.ui.get('mlb','legs',2),2);assert.deepEqual([...a.ui.get('nfl','markets',[])],['rushing']);
+ a.ui.put('mlb','legs',5);a.ui.selectSport('mlb');assert.equal(a.ui.get('mlb','legs',2),3);assert.equal(a.node.value,'3');assert.equal(a.ui.get('nfl','legs',3),3);assert.equal(JSON.parse(a.storage.get('sportsDashboardUIV2')).sport,'mlb');
 });
 test('quiet refresh preserves cards and reserves height until the newest request settles',()=>{
  const a=setup(),first=a.ui.begin('nfl');a.ui.placeholder('nfl');assert.equal(a.node.innerHTML,'existing picks');assert.equal(a.node.style.minHeight,'440px');assert.equal(a.node.attrs['aria-busy'],'true');
@@ -19,14 +19,14 @@ test('quiet refresh preserves cards and reserves height until the newest request
 test('sport switching invalidates earlier refresh completion and uses league-specific loading',()=>{
  const a=setup(),old=a.ui.begin('nfl');a.window.__ACTIVE_SPORT='nhl';a.window.__SPORT_TOKEN++;a.ui.selectSport('nhl');assert.equal(a.node.innerHTML,'');a.node.cards=false;a.ui.placeholder('nhl');assert.match(a.node.innerHTML,/NHL recommendations/);const current=a.ui.begin('nhl');a.ui.end(old);a.flush();assert.equal(a.ui.isUpdating(),true);a.ui.end(current);a.flush();assert.equal(a.ui.isUpdating(),false);
 });
-test('blocked storage does not break controls or loading',()=>{const a=setup({},true);a.ui.put('nfl','legs',4);assert.equal(a.ui.get('nfl','legs',2),4);a.ui.end(a.ui.begin('nfl'));a.flush()});
+test('blocked storage does not break controls or loading',()=>{const a=setup({},true);a.ui.put('nfl','legs',4);assert.equal(a.ui.get('nfl','legs',2),3);a.ui.end(a.ui.begin('nfl'));a.flush()});
 test('Generate ignores repeated clicks and regenerates once for a changed leg count',async()=>{
  const a=setup(),frames=[],button={setAttribute(){},removeAttribute(){}},select={value:'3'};let count=0,resolve;
  a.window.generate=()=>{count++;return new Promise(r=>resolve=r)};a.window.NFL_NO_DEMO={hasLiveGames:()=>true};
  const doc={readyState:'loading',addEventListener(){},querySelector:s=>s==='#generateBtn'?button:s==='#legsSelect'?select:null};
  vm.runInNewContext(fs.readFileSync('parlay-generator.js','utf8'),{window:a.window,document:doc,requestAnimationFrame:f=>frames.push(f),console});
  const run=a.window.PARLAY_GENERATOR.run();a.window.PARLAY_GENERATOR.run();while(frames.length)frames.shift()();await Promise.resolve();assert.equal(count,1);assert.equal(button.disabled,true);
- select.value='4';a.window.PARLAY_GENERATOR.run();resolve();await run;while(frames.length)frames.shift()();await Promise.resolve();assert.equal(count,2);resolve();await Promise.resolve();
+ select.value='2';a.window.PARLAY_GENERATOR.run();resolve();await run;while(frames.length)frames.shift()();await Promise.resolve();assert.equal(count,2);resolve();await Promise.resolve();
 });
 
 test('new visits and removed Bankroll preferences open NFL while saved sports remain selected',()=>{assert.equal(setup().ui.getSport(),'nfl');assert.equal(setup({sport:'bankroll'}).ui.getSport(),'nfl');assert.equal(setup({sport:'nfl'}).ui.getSport(),'nfl')});
@@ -42,3 +42,4 @@ test('successful generation closes filters for every sport without changing thei
 });
 
 test('new NFL categories and one-time migration flags persist across visits',()=>{const r=setup({nfl:{markets:['passing_tds','completions','td'],scorerCompletionsAdded:true}});assert.deepEqual([...r.ui.get('nfl','markets',[])],['passing_tds','completions','td']);assert.equal(r.ui.get('nfl','scorerCompletionsAdded',false),true);r.ui.put('nfl','markets',['td']);assert.deepEqual([...r.ui.get('nfl','markets',[])],['td']);});
+

@@ -357,3 +357,8 @@ overs/Yes only; other NBA combo and defensive props retain their quoted path.
 Limited-history/traded-player fallback is not enabled by this change.
 
 NFL player-prop cards show a projected stat, experimental estimated hit percentage, and completed-game sample size when verified recent nflverse history supports the exact market. The hit percentage uses the existing player outcome distribution before market-price blending, so changing the offered price does not change it and ALT thresholds share one distribution. This display is separate from the buffered selection estimate used by the value screen. Integer lines with push outcomes currently show unavailable rather than a misleading binary probability. Insufficient or stale history also shows unavailable. These are unvalidated marginal estimates, not a joint SGP probability; the existing roster, injury, price and selection gates still apply.
+
+
+### Dashboard cleanup and three-leg limit
+
+All sports offer two or three legs. Saved larger preferences clamp to three; sport setters and shared builders enforce the same ceiling. The legacy Today’s Card panel is retired. Profile buttons remain, with redundant swipe instructions and counters removed. Internal rating/pairing scores are omitted from cards; projections, estimated probabilities, price/source, freshness, swaps and Risk & details remain. Filters hide unavailable markets without changing saved selections, and fixed single-mode fields are omitted. ALT policy explanations remain in Filters.

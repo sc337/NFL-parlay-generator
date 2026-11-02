@@ -145,7 +145,7 @@ function compactParlays(){
     });
     if(sport==='ncaaf'){const warning=card.querySelector('.quality-market-row');if(warning){const brief=document.createElement('p');brief.className='quality-market-row compact-college-status';const experimental=/experimental/i.test(details.textContent);brief.textContent=[experimental?'Experimental':'Value unverified',/starters|lineups|injur/i.test(warning.textContent)?'Confirm starters':null].filter(Boolean).join(' · ');warning.before(brief);details.append(warning);}}
     const footer=card.querySelector('.card-footer'),pairing=footer?.querySelector('.correlation');
-    if(pairing){const note=document.createElement('div');note.className='card-detail-row';note.append(pairing);if(sport==='nfl'&&/Pairing score/i.test(note.textContent)){const small=document.createElement('small');small.textContent='Internal pairing heuristic, not a probability.';note.append(small)}details.append(note)}
+    pairing?.remove();
     footer?.querySelector('.corr-map')?.remove();
     const score=footer?.firstElementChild;
     if(sport==='ufc'){const dates=[...new Set(legs.map(l=>l.dataset.eventDate).filter(Boolean))];if(dates.length){const event=document.createElement('p');event.className='card-thesis';event.textContent=dates.map(d=>compactDate(d+'T12:00:00Z',true)).join(' · ');card.querySelector('.parlay-top').after(event)}}
@@ -160,7 +160,7 @@ function compactParlays(){
     if(score&&sport==='ufc')score.textContent=score.textContent.replace(/^Rating/,'Model rating');
     if(score&&sport==='mlb')score.textContent=score.textContent.replace('MLB quality','Model rating')+' · Not win chance';
     if(score&&sport==='nfl')score.textContent=score.textContent.replace('Confidence','Rating').replace(/^Rating/,'Model rating');
-    if(score){score.title='Selection score, not the chance this parlay wins';const definition=document.createElement('div');definition.className='card-detail-row';definition.append(score);const note=document.createElement('small');note.textContent=['ncaaf','nhl'].includes(sport)?'Selection quality, not win probability.':'Model rating, not win probability.';definition.append(note);details.append(definition)}
+    score?.remove();
     if(footer&&!footer.children.length)footer.remove();
     const sources=legs.map(leg=>leg.querySelector('.market-tile')?.dataset.quoteSource||leg.querySelector('.leg-quote')?.textContent.match(/^(Kalshi|FanDuel|Caesars|Reference)\s/)?.[1]);
     const priceLabel=card.querySelector('.odds-label');if(priceLabel&&!card.querySelector('.quote-unavailable')){priceLabel.textContent=estimateLabel(sources);priceLabel.title='Estimate from the displayed source prices, not a current sportsbook parlay offer. Verify the same selections and combined price at your book.';}
@@ -195,3 +195,4 @@ function mount(){
 window.DISPLAY_COPY={sharedSource,estimateLabel,shortMarket,date:compactDate,matchup:shortMatchup,mlbTeam:shortMlbTeam};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 })();
+

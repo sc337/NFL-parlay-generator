@@ -40,7 +40,7 @@ function tidyFilters(s){
   if(shortMarkets[kind]&&button.textContent!==shortMarkets[kind]){if(!button.title)button.title=button.textContent;button.textContent=shortMarkets[kind]}
   let unavailable=button.disabled;
   if(s==='nfl'&&window.NFL_PARLAY_STATE?.games?.length){unavailable=!window.NFL_PARLAY_STATE.games.some(g=>(!window.SLATE_UI||window.SLATE_UI.matches('nfl',{},g.commence_time))&&g.markets?.some(m=>m.type===kind&&Number.isFinite(m.price)&&m.price!==0));}
-  button.hidden=false;button.disabled=unavailable;
+  button.hidden=unavailable;button.disabled=unavailable;
   button.dataset.availability=unavailable?'unavailable':'available';
   button.setAttribute('aria-label',button.textContent+(unavailable?' · No quotes available':''));
   button.setAttribute('aria-pressed',String(button.classList.contains('active')));
@@ -63,7 +63,7 @@ function mountBuilder(s){
  if(nbaMode&&nbaMode.parentElement!==modeHost)modeHost.append(nbaMode);
  if(nflMode)nflMode.hidden=s!=='nfl';if(nbaMode)nbaMode.hidden=s!=='nba';
  let fixed=$('#builderFixedMode');if(!fixed){fixed=document.createElement('div');fixed.id='builderFixedMode';fixed.className='builder-fixed-mode';modeHost.append(fixed)}
- fixed.hidden=['nfl','nba'].includes(s);const fixedLabel=s==='ufc'?'Multi-Fight':'Multi-Game';if(fixed.textContent!==fixedLabel)fixed.textContent=fixedLabel;
+ fixed.hidden=true;$('#builderMode').hidden=!['nfl','nba'].includes(s);const fixedLabel=s==='ufc'?'Multi-Fight':'Multi-Game';if(fixed.textContent!==fixedLabel)fixed.textContent=fixedLabel;
  const source=$('#nbaModeSelect');if(source){
   let group=$('#nbaModeButtons');if(!group){group=document.createElement('div');group.id='nbaModeButtons';group.className='builder-mode-buttons';group.setAttribute('role','group');group.setAttribute('aria-label','Game mode');
    for(const option of source.options){const b=document.createElement('button');b.type='button';b.dataset.modeValue=option.value;b.textContent=option.textContent;group.append(b)}
@@ -122,3 +122,4 @@ function init(){observer=new MutationObserver(schedule);mount();observe();}
 window.SELECTION_UI={select,refresh,labels,excluded,locked,accepts,mountLines,mountBuilder};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else init();
 })();
+

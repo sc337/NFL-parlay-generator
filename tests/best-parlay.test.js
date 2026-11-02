@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 function nfl(mode='multi'){
  const source=fs.readFileSync('app.js','utf8'),nodes=new Map(),window={__ACTIVE_SPORT:'nfl',__SPORT_TOKEN:1};
  const game={id:'1',markets:[{player:'Player'}]};let output=[],previous=[];
- const builds={safe:{score:75,legs:[1,2,3,4]},balanced:{score:90,legs:[5,6,7,8]},long:{score:80,legs:[9,10,11,12]}};
+ const builds={safe:{score:75,legs:[1,2,3]},balanced:{score:90,legs:[5,6,7]},long:{score:80,legs:[9,10,11]}};
  const context=vm.createContext({window,state:{games:[game],mode,risk:50,apiKey:''},$:s=>{if(!nodes.has(s))nodes.set(s,{value:s==='#legsSelect'?'4':'1',textContent:'',innerHTML:''});return nodes.get(s)},
   nflSlate:()=>[game],ensurePropsForGame:async()=>{},ensurePropsForMultiGame:async()=>{},countPlayerProps:()=>1,
   buildMulti:(_n,_r,v)=>builds[v],buildSgp:(_g,_n,_r,v,prev)=>{previous.push(prev);return builds[v]},
@@ -30,3 +30,4 @@ test('NFL unavailable profile slots reach the renderer for honest pass labels, n
 });
 test('missing NFL profiles leave no availability notice beside the available options',()=>{const source=fs.readFileSync('app.js','utf8'),note={},ctx=vm.createContext({$:s=>s==='#profileAvailability'?note:{value:'4'}});vm.runInContext(source.slice(source.indexOf('function updateNflProfileAvailability('),source.indexOf('function render(parlays)')),ctx);ctx.updateNflProfileAvailability([null,{},{}]);assert.equal(note.hidden,true);assert.equal(note.textContent,'');ctx.updateNflProfileAvailability([{},{},{}]);assert.equal(note.hidden,true);assert.equal(note.textContent,'');ctx.updateNflProfileAvailability([null,null,null]);assert.equal(note.hidden,true)});
 test('switching sports during an NFL SGP lookup cannot render the previous sport',async()=>{let finish;const source=fs.readFileSync('app.js','utf8'),window={__ACTIVE_SPORT:'nfl',__SPORT_TOKEN:1};let rendered=0;const g={id:'game'},ctx=vm.createContext({window,state:{games:[g],mode:'sgp',risk:50,apiKey:'fixture'},$:()=>({value:'2'}),nflSlate:()=>[g],ensurePropsForGame:()=>new Promise(resolve=>finish=resolve),render:()=>rendered++});vm.runInContext(source.slice(source.indexOf('async function generate(){'),source.indexOf('window.generate=generate;')),ctx);const pending=ctx.generate();window.__ACTIVE_SPORT='nhl';window.__SPORT_TOKEN++;finish();await pending;assert.equal(rendered,0)});
+

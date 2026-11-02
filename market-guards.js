@@ -51,7 +51,7 @@ function balancedPenalty(checks,markets=[]){
  return 70*(1-weakest)+40*(1-Math.min(...coverages))+30*(mean-weakest)+6*shared;
 }
 function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityBonus=0}={}){
- if(!Number.isInteger(n)||n<2||n>4)return [];
+ if(!Number.isInteger(n)||n<2||n>3)return [];
  const perGame=new Map(),perFamily=new Map();
  const candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank)).sort((a,b)=>(Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,a.m))*-10000+Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,b.m))*10000)||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker))).filter(({m})=>{const key=gameKey(m),family=key+'|'+m.kind,n=perGame.get(key)||0,k=perFamily.get(family)||0;if(n>=(diversityBonus?8:4)||diversityBonus&&k>=2)return false;perGame.set(key,n+1);perFamily.set(family,k+1);return true}).slice(0,diversityBonus?240:120);
  let beams=[{legs:[],checks:[],score:0,minCoverage:1}];
@@ -93,3 +93,4 @@ function watchlist(rows,sport){const selected=unique(rows.filter(m=>m&&(m.label|
  if(!selected.length)return '<div class="empty">No current '+esc(sport)+' markets with available ask prices.</div>';
  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">WATCHLIST</span><h3 class="parlay-name">'+esc(sport)+' markets to review</h3></div></div><p class="summary">Market prices only. No independent positive EV has been established. Check your book’s odds before betting.</p><div class="legs">'+selected.map((m,i)=>'<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.label||m.title)+'</div><div class="leg-sub">'+esc(m.game_label||m.fight||'Upcoming event')+' · '+esc(window.PICK_QUALITY?.quoteLabel(sport.toLowerCase(),m)||'Reference price')+(m.referenceOnly?'':' · Volume '+Math.round(+m.volume||0))+'</div></div>').join('')+'</div></article>'}
 window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,sameEvent,reconcile,independent,unique,bestBuild,balancedPenalty,improveTypes,estOdds,watchlist};})();
+

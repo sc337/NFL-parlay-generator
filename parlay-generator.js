@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const clamp=n=>Math.max(2,Math.min(4,Math.floor(Number(n))||2));
+const clamp=n=>Math.max(2,Math.min(3,Math.floor(Number(n))||2));
 function sport(){return window.__ACTIVE_SPORT||'nfl'}
 function count(){return clamp(document.querySelector('#legsSelect')?.value)}
 let running=null,queued=false;
@@ -50,3 +50,4 @@ function init(){
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init,{once:true}):init();
 window.PARLAY_GENERATOR={run,syncLabel,count};
 })();
+
