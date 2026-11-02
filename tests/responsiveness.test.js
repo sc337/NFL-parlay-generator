@@ -16,7 +16,7 @@ test('failed downloads are retryable and unsupported files cannot expand cache',
 });
 test('NBA filter bursts yield for feedback, coalesce and discard work after sport changes',async()=>{
  const source=fs.readFileSync('nba-dashboard.js','utf8'),frames=[],window={__SPORT_TOKEN:1,__ACTIVE_SPORT:'nba',DASHBOARD_UI:{begin(){return {}},end(){}}};let renders=0;
- vm.runInNewContext(source.slice(source.indexOf('let pendingRender=null;'),source.indexOf('function setLegs'))+';window.requestRender=requestRender;', {window,requestAnimationFrame:fn=>frames.push(fn),render:()=>renders++});
+ vm.runInNewContext('let renderRevision=0;'+source.slice(source.indexOf('let pendingRender=null;'),source.indexOf('function setLegs'))+';window.requestRender=requestRender;', {window,requestAnimationFrame:fn=>frames.push(fn),render:()=>renders++});
  const a=window.requestRender(),b=window.requestRender();assert.equal(a,b);assert.equal(renders,0);frames.shift()();frames.shift()();await a;assert.equal(renders,1);
  const c=window.requestRender();window.__ACTIVE_SPORT='nfl';window.__SPORT_TOKEN=2;frames.shift()();frames.shift()();await c;assert.equal(renders,1);
 });

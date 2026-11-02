@@ -4,8 +4,8 @@ const labels={points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'Thre
 const caps={points:80,rebounds:35,assists:25,threes:15,pra:120};
 const registered=new WeakSet();
 function isTarget(m){return !!m&&registered.has(m)}
-function expand(rows,context,{longshots=false}={}){
- const bases=new Map(),out=[];
+function* iterate(rows,context,{longshots=false}={}){
+ const bases=new Map();
  for(const m of rows)if(m.player_verified===true&&m.player_id&&m.player&&m.game_status==='pre'&&!m.context_unmatched&&!m._invalidRoster){
   const p=context.players?.[String(m.player_id)];if(p?.team===m.team_code)bases.set([m.game_id,m.player_id].join('|'),m);
  }
@@ -19,16 +19,18 @@ function expand(rows,context,{longshots=false}={}){
     label:base.player+' '+(milestone?label:'Over '+line+' '+label)});
    registered.add(m);return m;
   };
-  const probe=create(milestone?null:.5),forecast=window.NBA_MODEL.estimate(probe,context);if(!forecast)continue;
-  if(milestone){if(!longshots)out.push(probe);continue}
+  const probe=create(milestone?null:.5),forecast=window.NBA_MODEL.estimate(probe,context);if(!forecast){yield null;continue;}
+  if(milestone){if(!longshots)yield probe;else yield null;continue}
   const maximum=Math.min(caps[kind],Math.max(1,Math.ceil(forecast.projectedLine*1.5+3)));
   for(let target=1;target<=maximum;target++){
    const m=target===1?probe:create(target-.5),f=target===1?forecast:window.NBA_MODEL.estimate(m,context);
    // Avoid trivial milestones and very speculative tails; profile buffers still apply.
-   if(f&&f.modelP>=(longshots?.20:.50)&&f.modelP<=(longshots?.45:.92))out.push(m);
+   yield f&&f.modelP>=(longshots?.20:.50)&&f.modelP<=(longshots?.45:.92)?m:null;
   }
  }
- return out;
+
 }
-window.NBA_PROP_TARGETS={expand,isTarget,labels};
+function expand(rows,context,options){const run=()=>[...iterate(rows,context,options)].filter(Boolean);return window.NBA_MODEL.withCache?window.NBA_MODEL.withCache(run):run()}
+async function expandAsync(rows,context,options={}){return window.NBA_COMPUTE.collect(iterate(rows,context,options),options)}
+window.NBA_PROP_TARGETS={expand,expandAsync,isTarget,labels};
 })();

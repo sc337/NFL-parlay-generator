@@ -17,18 +17,29 @@ function sameEvent(a,b){
  const ka=matchupKey(a),kb=matchupKey(b),ta=startOf(a),tb=startOf(b);
  return ka.includes('|')&&ka===kb&&Number.isFinite(ta)&&Number.isFinite(tb)&&Math.abs(ta-tb)<=15*60000&&String(a.game_number||'')===String(b.game_number||'');
 }
-function reconcile(sport,rows){
+function* reconcileSteps(sport,rows){
  // NFL rows already carry verified parent-game IDs. Do not pin a redundant
  // canonical ID onto them: callers may replace an entry's game context.
  if(sport==='nfl'&&rows.every(m=>m.gameId!=null&&String(m.gameId)!==''))return rows;
- const groups=[];
+ const groups=[],keys=new Map(),ids=new Map(),tickers=new Map(),matchups=new Map();
+ const info=m=>({key:gameKey(m),id:(m.game_id??m.gameId)==null?null:String(m.game_id??m.gameId),ticker:m.event_ticker?String(m.event_ticker).replace(/^[^-]+-/,''):null,matchup:matchupKey(m),start:startOf(m),number:String(m.game_number||'')});
+ const add=(map,key,g,empty=false)=>{if(key!=null&&(empty||key!=='')&&!map.has(key))map.set(key,g)};
  for(const m of rows){
-  const group=groups.find(g=>sameEvent(g,m));
-  if(group)m.canonical_event_id=group.canonical_event_id;
-  else {m.canonical_event_id=m.canonical_event_id||(gameKey(m)?sport+':'+gameKey(m):'');groups.push(m);}
+  yield null;
+  const x=info(m),matches=[keys.get(x.key),ids.get(x.id),tickers.get(x.ticker)].filter(Boolean);
+  if(x.matchup.includes('|')&&Number.isFinite(x.start))for(const g of matchups.get(x.matchup+'|'+x.number)||[])if(Math.abs(g.start-x.start)<=15*60000)matches.push(g);
+  const group=matches.reduce((best,g)=>!best||g.index<best.index?g:best,null);
+  if(group)m.canonical_event_id=group.row.canonical_event_id;
+  else {
+   m.canonical_event_id=m.canonical_event_id||(gameKey(m)?sport+':'+gameKey(m):'');
+   const g={...x,key:gameKey(m),row:m,index:groups.length};groups.push(g);add(keys,g.key,g);add(ids,g.id,g,true);add(tickers,g.ticker,g,true);
+   if(g.matchup.includes('|')&&Number.isFinite(g.start)){const key=g.matchup+'|'+g.number;if(!matchups.has(key))matchups.set(key,[]);matchups.get(key).push(g)}
+  }
  }
  return rows;
 }
+function reconcile(sport,rows){const steps=reconcileSteps(sport,rows);let next;do{next=steps.next()}while(!next.done);return next.value}
+async function reconcileAsync(sport,rows,execution){return window.NBA_COMPUTE.run(reconcileSteps(sport,rows),execution)}
 function independent(rows){return rows.length>0&&rows.every((m,i)=>gameKey(m)&&!rows.slice(0,i).some(x=>sameEvent(x,m)));}
 const unique=(rows,n)=>{const out=[],seen=new Set();for(const m of rows){const k=gameKey(m);if(!k||seen.has(k))continue;seen.add(k);out.push(m);if(out.length===n)break}return out};
 // Optimize a complete independent-game build. Never reuse a game or a player,
@@ -50,7 +61,7 @@ function balancedPenalty(checks,markets=[]){
  }
  return 70*(1-weakest)+40*(1-Math.min(...coverages))+30*(mean-weakest)+6*shared;
 }
-function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityBonus=0}={}){
+function* buildSteps(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityBonus=0}={}){
  if(!Number.isInteger(n)||n<2||n>3)return [];
  const perGame=new Map(),perFamily=new Map();
  const candidates=rows.map(m=>({m,q:assess(m)})).filter(x=>x.q?.pass&&Number.isFinite(x.q.rank)).sort((a,b)=>(Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,a.m))*-10000+Number(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,b.m))*10000)||b.q.rank-a.q.rank||String(a.m.selection_id||a.m.ticker).localeCompare(String(b.m.selection_id||b.m.ticker))).filter(({m})=>{const key=gameKey(m),family=key+'|'+m.kind,n=perGame.get(key)||0,k=perFamily.get(family)||0;if(n>=(diversityBonus?8:4)||diversityBonus&&k>=2)return false;perGame.set(key,n+1);perFamily.set(family,k+1);return true}).slice(0,diversityBonus?240:120);
@@ -58,6 +69,7 @@ function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityB
  for(let i=0;i<n;i++){
   const next=[];
   for(const b of beams)for(const {m,q} of candidates){
+   yield null;
    if(b.legs.some(x=>sameEvent(x,m)||m.player&&x.player===m.player)||!gameKey(m))continue;
    const legs=[...b.legs,m],minCoverage=Math.min(b.minCoverage,q.coverage||0),score=b.score+q.rank+(window.SELECTION_UI?.locked?.(window.__ACTIVE_SPORT,m)?10000:0);
    const checks=[...b.checks,q];if(legs.length===n&&!acceptBuild(legs,checks))continue;
@@ -68,6 +80,8 @@ function bestBuild(rows,n,assess,{balanced=false,acceptBuild=()=>true,diversityB
  }
  return beams.find(b=>!window.SELECTION_UI?.accepts||window.SELECTION_UI.accepts(window.__ACTIVE_SPORT,b.legs))?.legs||[];
 }
+function bestBuild(...args){const steps=buildSteps(...args);let next;do{next=steps.next()}while(!next.done);return next.value}
+async function bestBuildAsync(rows,n,assess,options,execution){return window.NBA_COMPUTE.run(buildSteps(rows,n,assess,options),execution)}
 // Only change market family when the candidate raises confidence and the
 // caller confirms win probability, evidence, and value are not reduced.
 function improveTypes(selected,pool,{key=gameKey,family=m=>m.kind,confidence,valid=()=>true}){
@@ -92,5 +106,5 @@ const estOdds=rows=>{if(!independent(rows))return null;let d=1;for(const m of ro
 function watchlist(rows,sport){const selected=unique(rows.filter(m=>m&&(m.label||m.title)&&quote(m)!==null).sort((a,b)=>(+b.volume||0)-(+a.volume||0)),8);
  if(!selected.length)return '<div class="empty">No current '+esc(sport)+' markets with available ask prices.</div>';
  return '<article class="parlay-card"><div class="parlay-top"><div><span class="grade">WATCHLIST</span><h3 class="parlay-name">'+esc(sport)+' markets to review</h3></div></div><p class="summary">Market prices only. No independent positive EV has been established. Check your book’s odds before betting.</p><div class="legs">'+selected.map((m,i)=>'<div class="leg"><div class="leg-title">'+(i+1)+'. '+esc(m.label||m.title)+'</div><div class="leg-sub">'+esc(m.game_label||m.fight||'Upcoming event')+' · '+esc(window.PICK_QUALITY?.quoteLabel(sport.toLowerCase(),m)||'Reference price')+(m.referenceOnly?'':' · Volume '+Math.round(+m.volume||0))+'</div></div>').join('')+'</div></article>'}
-window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,sameEvent,reconcile,independent,unique,bestBuild,balancedPenalty,improveTypes,estOdds,watchlist};})();
+window.MARKET_GUARDS={esc,fresh,pregame,futureDated,quote,ev,gameKey,sameEvent,reconcile,reconcileAsync,independent,unique,bestBuild,bestBuildAsync,balancedPenalty,improveTypes,estOdds,watchlist};})();
 
