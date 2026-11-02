@@ -50,6 +50,11 @@ function build(data,previous={},now=Date.now(),refreshStatus='success'){
   try{const snapshot=data['kalshi-'+sport+'.json'];if(!snapshot)throw Error('Snapshot missing or unreadable');const checked=checkSport(sport,snapshot,previous.sports?.[sport],now,data[sport+'-context.json']);sports[sport]=checked.summary;alerts.push(...checked.alerts)}
   catch(error){sports[sport]={error:error.message};alerts.push({id:sport+':unavailable',sport,code:'unavailable',severity:'critical',message:error.message})}
  }
+ // A successful old cycle does not mean its bounded worker is still alive.
+ for(const [sport,row] of Object.entries(previous.refreshResults||{})){
+  const age=now-Date.parse(row.at);
+  if(sports[sport]?.futureEvents?.length&&sports[sport].ageMinutes>30&&(!Number.isFinite(age)||age>1800000))alerts.push({id:sport+':worker-overdue',sport,code:'worker-overdue',severity:'warning',message:'No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.'});
+ }
  const archive=data['daily-picks.json'];
  const performance=data['forecast-report.json'];
  if(performance&&(!Number.isFinite(Date.parse(performance.updated_at))||now-Date.parse(performance.updated_at)>6*3600000))alerts.push({id:'pipeline:evaluation-stale',sport:null,code:'evaluation-stale',severity:'warning',message:'Performance recording/settlement report is stale; betting edge remains unverified.'});
