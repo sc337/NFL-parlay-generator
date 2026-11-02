@@ -50,7 +50,7 @@ function tidyFilters(s){
  const lines=$('#'+s+'LinesSelect'),lineLabel={both:'Both',standard:'Standard',alt:'ALT'}[lines?.value];
  const summary=root.querySelector('summary'),marketLabel=!visible.length?'No markets':selected.length===visible.length?'All markets':selected.length+' markets';
  const text=['Filters',lineLabel,marketLabel].filter(Boolean).join(' · ');if(summary.textContent!==text)summary.textContent=text;
- let reset=root.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset';root.lastElementChild.append(reset)}reset.onclick=resetFilters;reset.textContent='Reset';reset.hidden=(!lines||lines.value==='both')&&selected.length===visible.length;
+ let reset=root.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset';root.lastElementChild.append(reset)}reset.onclick=resetFilters;if(reset.textContent!=='Reset')reset.textContent='Reset';reset.hidden=(!lines||lines.value==='both')&&selected.length===visible.length;
 }
 // Shared builder owns layout; sport modules continue to own values and events.
 function mountBuilder(s){
@@ -97,7 +97,6 @@ function mount(){
   let filters=$('#sharedSportFilters');if(!filters){filters=document.createElement('details');filters.id='sharedSportFilters';filters.innerHTML='<summary>Filters</summary><div class="shared-filter-body"></div>';panel.after(filters)}filters.hidden=false;
   for(const id of ['mlbLineFilters','ncaafLineFilters','nhlMarketFilters','nbaLineFilters','mlbMarketFilters','ncaafMarketFilters','nbaMarketFilters','ufcMarketFilters']){const el=$('#'+id);if(el&&el.parentElement!==filters.lastElementChild)filters.lastElementChild.append(el)}
   let reset=filters.querySelector('.reset-filters');if(!reset){reset=document.createElement('button');reset.type='button';reset.className='reset-filters';reset.textContent='Reset filters';filters.lastElementChild.append(reset);reset.onclick=()=>{const current=sport();window.DASHBOARD_UI?.put(current,'lines','both');const api=window[current.toUpperCase()+'_DASHBOARD'];api?.setLineMode?.('both');if(window.SPORT_MARKETS?.options[current])window.SPORT_MARKETS.set(current,window.SPORT_MARKETS.options[current].map(x=>x[0]));const line=$('#'+current+'LinesSelect');if(line){line.value='both';line.dispatchEvent(new Event('change',{bubbles:true}))}if(current==='nhl')api?.setMarkets?.(['moneyline','spread','total','goals','assists','points','shots','saves']);refresh();};}
-  filters.querySelector('summary').textContent='Filters';
  }else if($('#sharedSportFilters'))$('#sharedSportFilters').hidden=true;
  mountLines();
  tidyFilters(s);

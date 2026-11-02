@@ -16,6 +16,7 @@ function runtime(fixture,{legs=2,confirmed=false}={}){
  const nodes=new Map(['#results','#resultsTitle','#dataStatus','#modeTitle'].map(k=>[k,{innerHTML:'',textContent:'',querySelector(){return null}}]));
  const window={__ACTIVE_SPORT:'nba',__SPORT_TOKEN:1,DASHBOARD_UI:{begin(){},end(){},get:(s,k,d)=>k==='legs'?legs:d},SPORT_MARKETS:{allowed:()=>true,sync(){}},SLATE_UI:{matches:()=>true,prepare(){}},STARTER_STATUS:{register(){},evidence:()=>({confirmed})}};
  const env={window,Date:Clock,console,document:{querySelector:s=>nodes.get(s)},fetch:async url=>({ok:true,json:async()=>url.includes('kalshi')?fixture:fixture.ctx})};
+ window.SNAPSHOT_JSON={load:async file=>(await env.fetch(file)).json()};
  for(const name of ['conservative-policy.js','market-guards.js','nba-model.js','nba-alt-lines.js','pick-quality.js','nba-dashboard.js'])vm.runInNewContext(fs.readFileSync(name,'utf8'),env,{filename:name});
  window.PICK_QUALITY.prepare('nba',fixture.markets,fixture.ctx,[],fixture.updated_at);
  return {w:window,nodes,advance:ms=>now+=ms};

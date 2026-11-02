@@ -262,7 +262,7 @@ def publish(names, results=None):
                 except (OSError, ValueError):
                     existing = {}
                 candidate = reconcile_snapshot(candidate, existing)
-                raw = json.dumps(candidate).encode()
+                raw = json.dumps(candidate, separators=(',', ':')).encode()
                 if candidate == existing:
                     continue
                 Path(name).parent.mkdir(parents=True, exist_ok=True)

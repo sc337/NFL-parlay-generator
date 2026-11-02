@@ -280,8 +280,8 @@ def main():
             if not next_cursor or next_cursor == cursor: break
             cursor = next_cursor
         else: raise RuntimeError('NBA market pagination limit exceeded')
-    Path('data/nba-context.json').write_text(json.dumps(ctx)+'\n')
-    Path('data/kalshi-nba.json').write_text(json.dumps({'updated_at': now.isoformat(), 'source': 'Kalshi', 'markets': rows, 'series': SERIES})+'\n')
+    Path('data/nba-context.json').write_text(json.dumps(ctx, separators=(',', ':'))+'\n')
+    Path('data/kalshi-nba.json').write_text(json.dumps({'updated_at': now.isoformat(), 'source': 'Kalshi', 'markets': rows, 'series': SERIES}, separators=(',', ':'))+'\n')
     print('NBA', len(rows), 'schedule-verified quotes')
 
 if __name__ == '__main__':
