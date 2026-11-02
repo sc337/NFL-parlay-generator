@@ -62,8 +62,8 @@ test('NBA same-game optimizer rejects conflicting, redundant and impossible comb
  const under=m('under','total',{side:'no',line:40.5}),second=m('p2','points',{player:'Two',player_id:'2'});
  assert.equal(A.compatibleSet([under,p,second]),false);assert.equal(A.compatibleSet([{...under,line:42.5},p,second]),true);
  const rows=[money,spread,total,p,q,{...q,selection_id:'blocked',ticker:'blocked',blocked:true,rank:100}];
- const build=A.buildSameGame(rows,4,assess);assert.equal(build.length,4);assert.equal(A.compatibleSet(build),true);assert.ok(build.every(x=>!x.blocked));
- assert.deepEqual([...build.map(x=>x.selection_id)],[...A.buildSameGame([...rows].reverse(),4,assess).map(x=>x.selection_id)]);
+ const build=A.buildSameGame(rows,3,assess);assert.equal(build.length,3);assert.equal(A.compatibleSet(build),true);assert.ok(build.every(x=>!x.blocked));
+ assert.deepEqual([...build.map(x=>x.selection_id)],[...A.buildSameGame([...rows].reverse(),3,assess).map(x=>x.selection_id)]);
  assert.equal(A.buildSameGame([money,spread],2,assess).length,0);assert.equal(A.buildSameGame(rows,5,assess).length,0);
 });
 test('NBA Balanced same-game builds account for shared scoring exposure',()=>{
@@ -76,10 +76,10 @@ test('NBA SGPs cap player props at two per team and search for qualified opponen
  const A=dashboard().w.NBA_DASHBOARD,make=(id,team,rank)=>({game_id:'g',selection_id:id,ticker:id,player:id,team_code:team,kind:'points',side:'yes',line:15.5,rank});
  const home=[make('a','NYK',100),make('b','NYK',99),make('c','NYK',98),make('d','NYK',97)],away=[make('e','PHI',50),make('f','PHI',49)],assess=m=>({pass:true,rank:m.rank,coverage:.8});
  assert.equal(A.buildSameGame(home,4,assess).length,0);assert.equal(A.buildSameGame(home,3,assess).length,0);assert.equal(A.buildSameGame(home,2,assess).length,2);
- const build=A.buildSameGame([...home,...away],4,assess);assert.equal(build.length,4);assert.equal(build.filter(m=>m.team_code==='NYK').length,2);assert.equal(build.filter(m=>m.team_code==='PHI').length,2);
+ const build=A.buildSameGame([...home,...away],3,assess);assert.equal(build.length,3);assert.equal(build.filter(m=>m.team_code==='NYK').length,2);assert.equal(build.filter(m=>m.team_code==='PHI').length,1);
  assert.equal(A.buildSameGame([...home,...away],4,m=>({...assess(m),pass:m.team_code!=='PHI'})).length,0,'never fill with blocked opponents');
  const lines=[{game_id:'g',selection_id:'total',ticker:'total',kind:'total',side:'yes',line:220.5,rank:20},{game_id:'g',selection_id:'spread',ticker:'spread',kind:'spread',team_code:'NYK',side:'yes',line:2.5,rank:20}];
- assert.equal(A.buildSameGame([...home,...lines],4,assess).length,4,'team lines do not count as player props');
+ assert.equal(A.buildSameGame([...home,...lines],3,assess).length,3,'team lines do not count as player props');
 });
 test('NBA empty states distinguish ALT shortage, team concentration and profile constraints',()=>{
  const A=dashboard().w.NBA_DASHBOARD,rows=['a','b','c','d'].map(player=>({game_id:'g',selection_id:player,ticker:player,player,team_code:'NYK',kind:'points',side:'yes',line:15.5}));
@@ -115,3 +115,4 @@ test('NBA Conservative applies milestone policy while other profiles remain avai
  r.captures.length=0;r.w.PICK_QUALITY.assess=()=>({pass:true,rank:1,conservativeP:.80,coverage:.8,quote:{p:.76}});
  await r.w.NBA_DASHBOARD.load();assert.equal(r.captures.some(c=>c.profile==='safe'&&c.legs.length===2),true);
 });
+

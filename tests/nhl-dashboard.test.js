@@ -19,7 +19,7 @@ test('NHL shows compact market-only picks and one leg per distinct game',async()
  assert.equal((html.match(/data-matchup="Bruins \d+ vs Rangers \d+"/g)||[]).length,2);
  assert.equal(app.daily().market.game_id,'10');
  assert.match(app.daily().note,/Market only/);
- app.window.NHL_DASHBOARD.setLegs(6);assert.match(app.nodes.get('#results').innerHTML,/2 of 4/);
+ app.window.NHL_DASHBOARD.setLegs(6);assert.match(app.nodes.get('#results').innerHTML,/2 of 3/);
  assert.doesNotMatch(app.nodes.get('#results').innerHTML,/parlay-card/);
 });
 test('missing, stale, live and wide quotes cannot qualify',async()=>{
@@ -229,3 +229,4 @@ test('NHL team-line ranking balances price advantage against raw win chance',asy
  app.data.markets=[make('expensive',.85,.84),make('value',.76,.6)];app.window.NHL_MODEL={estimate:m=>m.forecast};await app.window.NHL_DASHBOARD.load();
  assert.equal(app.daily().market.game_id,'value');assert.ok(app.nodes.get('#results').innerHTML.indexOf('Pick value')<app.nodes.get('#results').innerHTML.indexOf('Pick expensive'));
 });
+

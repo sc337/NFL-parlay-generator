@@ -47,7 +47,7 @@ test('targets retain fresh context, sample, injury, roster and role requirements
  context.players.p.injury_status='Out';assert.equal(w.PICK_QUALITY.assess('nba',m,f).pass,false);
 });
 
-test('unpriced targets form complete 2–4 leg SGPs while keeping player and team compatibility',()=>{
+test('unpriced targets form complete 2–3 leg SGPs while keeping player and team compatibility',()=>{
  const {window:w,row,context,sandbox}=fixture();
  const rows=[];
  for(let i=0;i<4;i++){
@@ -59,7 +59,7 @@ test('unpriced targets form complete 2–4 leg SGPs while keeping player and tea
  for(const profile of w.NBA_DASHBOARD.PROFILES){
   const minimum={safe:.75,balanced:.65,long:.50}[profile.key];
   const assess=m=>{const q=w.PICK_QUALITY.assess('nba',m,w.NBA_MODEL.estimate(m,context),{parlay:true});const p=w.CONSERVATIVE_POLICY.assessProfile('nba',m,q,profile.key);return {...q,pass:q.pass&&p.pass,rank:p.rank}};
-  for(const count of [2,3,4]){
+  for(const count of [2,3]){
    const build=w.NBA_DASHBOARD.buildSameGame(targets,count,assess);assert.equal(build.length,count,profile.key+' '+count);assert.equal(new Set(build.map(m=>m.player_id)).size,count);
    for(const m of build)assert.ok(assess(m).conservativeP>=minimum);
   }
@@ -107,3 +107,4 @@ test('Longshots render visible metrics, honest unpriced labels, an empty state a
  w.NBA_LONGSHOTS.show({rows:[],context,model});assert.match(host.innerHTML,/No qualifying longshots/);assert.doesNotMatch(host.innerHTML,/longshot-pick/);
  w.__ACTIVE_SPORT='nfl';w.NBA_LONGSHOTS.show({rows,context,model});assert.equal(host.hidden,true);assert.equal(host.innerHTML,'');
 });
+

@@ -57,7 +57,7 @@ test('capture refuses market-only MLB filler at every requested leg count',async
   fs.writeFileSync(path.join(dir,'kalshi-mlb.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),markets}));
   fs.writeFileSync(path.join(dir,'mlb-context.json'),JSON.stringify({updated_at:new Date(actualNow).toISOString(),games:[],players:{},pitchers:{}}));
   const result=await collect('mlb',dir,actualNow,'fixture');
-  assert.equal(result.records.length,0);assert.ok(result.status.passes.some(r=>r.requestedLegs===4&&r.reason==='No qualifying build'));assert.ok(result.status.passes.every(r=>r.requestedLegs<=4));
+  assert.equal(result.records.length,0);assert.ok(result.status.passes.some(r=>r.requestedLegs===3&&r.reason==='No qualifying build'));assert.ok(result.status.passes.every(r=>r.requestedLegs<=3));
  }finally{fs.rmSync(dir,{recursive:true,force:true})}
 });
 test('NFL archive loads the browser builder after preference initialization changes',async()=>{
@@ -66,3 +66,4 @@ test('NFL archive loads the browser builder after preference initialization chan
  const games=[['New Orleans Saints','Tampa Bay Buccaneers'],['Buffalo Bills','Miami Dolphins'],['Kansas City Chiefs','Denver Broncos']].map(([away,home],i)=>({id:'g'+i,away,home,game_status:'pre',commence_time:kickoff,dataSource:'Kalshi',markets:[{ticker:'NFL'+i,type:'h2h',marketKey:'h2h',team:away,name:away+' ML',price:-150,quoteProbability:.6,marketProbability:.59,sourceQuality:80,source:'Kalshi'}]}));
  try{fs.writeFileSync(path.join(directory,'kalshi-nfl.json'),JSON.stringify({updated_at:new Date(current).toISOString(),games}));const out=await collect('nfl',directory,current,'test');assert.ok(out.status.passes.some(r=>r.mode==='multi'),'The default builder must execute and record quality passes without browser preferences');assert.equal(out.records.length,0,'Thin projections must not be archived as picks');assert.ok(out.records.every(r=>r.snapshotAt===new Date(current).toISOString()))}finally{fs.rmSync(directory,{recursive:true,force:true})}
 });
+

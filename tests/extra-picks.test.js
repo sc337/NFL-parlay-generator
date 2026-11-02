@@ -23,10 +23,11 @@ test('opposing outcomes and different lines remain distinct and output is bounde
  assert.notEqual(a.api.key({...base,side:'over'}),a.api.key({...base,side:'under'}));assert.notEqual(a.api.key({...base,point:20}),a.api.key({...base,point:30}));
  const rows=Array.from({length:20},(_,i)=>({market:{ticker:String(i),rank:i}}));assert.equal(a.api.choose('nfl',rows).length,2);assert.equal(a.api.choose('nfl',rows)[0].market.rank,19);
 });
-test('selector and all sport entry points honor the four-leg cap, including saved six-leg preferences',()=>{
+test('selector and all sport entry points honor the three-leg cap, including saved six-leg preferences',()=>{
  const events={},window={};vm.runInNewContext(fs.readFileSync('dashboard-smooth.js','utf8'),{window,document:{addEventListener:(k,f)=>events[k]=f},localStorage:{getItem:()=>JSON.stringify({nfl:{legs:6},mlb:{legs:5}}),setItem(){} }});
- assert.equal(window.DASHBOARD_UI.get('nfl','legs',3),4);assert.equal(window.DASHBOARD_UI.get('mlb','legs',2),4);
- window.DASHBOARD_UI.put('nhl','legs',99);assert.equal(window.DASHBOARD_UI.get('nhl','legs',2),4);
- const selector=fs.readFileSync('index.html','utf8').match(/<select id="legsSelect">(.*?)<\/select>/)[1];assert.doesNotMatch(selector,/<option>5|<option>6/);
- for(const s of ['mlb','ncaaf','nhl','ufc'])assert.match(fs.readFileSync(s+'-dashboard.js','utf8'),/Math.min\(4,Math.floor\(Number\(n\)\)/);
+ assert.equal(window.DASHBOARD_UI.get('nfl','legs',3),3);assert.equal(window.DASHBOARD_UI.get('mlb','legs',2),3);
+ window.DASHBOARD_UI.put('nhl','legs',99);assert.equal(window.DASHBOARD_UI.get('nhl','legs',2),3);
+ const selector=fs.readFileSync('index.html','utf8').match(/<select id="legsSelect">(.*?)<\/select>/)[1];assert.doesNotMatch(selector,/<option>4|<option>5|<option>6/);
+ for(const s of ['mlb','ncaaf','nhl','ufc'])assert.match(fs.readFileSync(s+'-dashboard.js','utf8'),/Math.min\(3,Math.floor\(Number\(n\)\)/);
 });
+

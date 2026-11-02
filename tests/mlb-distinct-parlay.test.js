@@ -12,7 +12,7 @@ test('odds cannot multiply same-game prices across market families or ID types',
  assert.equal(g.estOdds([a,{game_id:13,event_ticker:'KXMLBGAME-26OCT051700CWSCLE',yes_ask:.5}]),233);
 });
 
-test('legacy six-leg MLB requests cap at four and retain distinct matchups and dates',async()=>{
+test('legacy six-leg MLB requests cap at three and retain distinct matchups and dates',async()=>{
  const start=new Date(Date.now()+48*3600000).toISOString(),later=new Date(Date.now()+96*3600000).toISOString();
  const pairs=['CWSCLE','SDMIL','NYYTB'];
  const markets=pairs.flatMap((pair,i)=>[
@@ -28,9 +28,10 @@ test('legacy six-leg MLB requests cap at four and retain distinct matchups and d
  await window.MLB_DASHBOARD.load();window.MLB_DASHBOARD.setLegs(6);
  const html=nodes.get('#results').innerHTML;
  assert.equal((html.match(/class="leg mlb-leg"/g)||[]).length,3);
- assert.match(html,/3 of 4 legs available/);
+ assert.match(html,/Best 3-Leg/);
  assert.match(html,/Starts /);
  assert.match(html,/Market-only; no independent estimate/);
  assert.doesNotMatch(html,/ · Model \d+%/);
  assert.doesNotMatch(html,/Independent games/);
 });
+

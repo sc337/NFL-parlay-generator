@@ -88,11 +88,11 @@ test('empty prop notices are hidden without creating an empty extra-picks card',
  assert.match(fs.readFileSync('nhl-dashboard.js','utf8'),/empty secondary-props-empty/);
 });
 
-test('ratings and model estimates stay in Details while partial-leg notices remain visible',()=>{
+test('ratings are removed and model estimates stay in Details while partial-leg notices remain visible',()=>{
  for(const sport of ['nfl','mlb','ncaaf','nhl','ufc']){
   const card=slip(true),footer=card.querySelector('.card-footer'),score=el('span','score','Model rating 87/100'),partial=el('span','','4 of 6 legs available');
   footer.append(score,partial);const app=display([card],sport);app.run();
-  assert.equal(score.closest('.card-explanation'),card.querySelector('.card-explanation'));
+  assert.equal(score.parentElement,null);
   assert.equal(partial.parentElement,footer);assert.equal(footer.textContent,'4 of 6 legs available');
   assert.doesNotMatch(card.querySelector('.leg-brief').textContent,/87|89|Exp|Model/);
   assert.match(card.querySelector('.card-explanation').textContent,/89%/);
@@ -135,3 +135,4 @@ test('college warning stays compact while full uncertainty and starter checks re
  assert.equal(card.querySelector('.compact-college-status').textContent,'Experimental · Confirm starters');assert.equal(warning.parentElement,card.querySelector('.card-explanation'));assert.match(warning.textContent,/value unverified/);assert.match(warning.textContent,/starters unconfirmed/);
  app.run();assert.equal(card.querySelectorAll('.compact-college-status').length,1);
 });
+

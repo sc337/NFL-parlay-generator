@@ -38,8 +38,8 @@ test('unknown team identities cannot fabricate joint risk and failed build gates
  r.ctx.window.PICK_QUALITY.checkBuild=()=>({pass:false,checks:[]});assert.equal(r.run(),null);
  const u=build({markets:[{type:'passing',player:'X',team:'Unknown',score:100},{type:'passing',player:'Y',team:'Unknown',score:99}]});assert.equal(u.run('safe',[],2),null);
 });
-test('legacy requests cap at four and incomplete SGPs are omitted',()=>{
- const r=build();const p=r.run('safe',[],5);assert.ok(p);assert.equal(p.legs.length,4);r.game.markets=r.game.markets.slice(0,1);assert.equal(r.run(),null);
+test('legacy requests cap at three and incomplete SGPs are omitted',()=>{
+ const r=build();const p=r.run('safe',[],5);assert.ok(p);assert.equal(p.legs.length,3);r.game.markets=r.game.markets.slice(0,1);assert.equal(r.run(),null);
 });
 test('flipping every direction or moving thresholds cannot masquerade as distinct profile exposure',()=>{
  const r=build(),legs=['A','B','C','D'].map(player=>({player,type:'receptions',marketKey:'player_receptions',side:'over',point:.5,name:player+' over'}));
@@ -74,7 +74,7 @@ test('one player threshold ladder cannot starve distinct players out of an ALT b
  const rows=Array.from({length:30},(_,i)=>({type:'passing',player:'QB',team:'Home',score:200-i,point:i*10+9.5}));
  rows.push(...['RB','WR','OtherQB'].map((player,i)=>({type:'passing',player,team:'Away',score:100-i})));
  const r=build({markets:rows});r.ctx.sgpCombinationRisk=()=>({pass:true,modelP:.5,independentP:.5,scenario:{sensitivity:[.5,.5]}});
- const p=r.run('safe',[],4);assert.ok(p);assert.equal(new Set(p.legs.map(m=>m.player)).size,4);
+ const p=r.run('safe',[],3);assert.ok(p);assert.equal(new Set(p.legs.map(m=>m.player)).size,3);
 });
 test('fallback uses the largest qualifying smaller count and records the requested size',()=>{
  const r=build(),calls=[];r.ctx.buildSgp=(game,count,risk,variant)=>{calls.push(count);game.sgpSearchDiagnostics={qualified:12,compatible:0};return count===3&&variant==='safe'?{legs:[{},{},{}],profile:variant}:null};
@@ -93,3 +93,4 @@ test('Conservative cushion preference is shared by screened SGP and multi-game w
  for(const mode of ['sgp','multi']){state.mode=mode;assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),103);assert.equal(ctx.candidateScore({},50,'safe'),100);assert.equal(ctx.candidateScore({cushionPoints:10},50,'balanced'),100)}
  window.PICK_QUALITY.assess=()=>({pass:false});assert.equal(ctx.candidateScore({cushionPoints:10},50,'safe'),-999);
 });
+

@@ -8,10 +8,11 @@ function build(markets,count=2){
 }
 const ml=(price=-130)=>({type:'h2h',marketKey:'h2h',price,name:'Winner',team:'Team'});
 const prop=(player,type='receiving')=>({type,marketKey:type==='receiving'?'player_reception_yds':'player_rush_yds',player,price:-120,name:player});
-test('moneyline-only NFL selection builds two through four legs across distinct games',()=>{for(let count=2;count<=4;count++){const p=build(Array.from({length:6},()=>ml()),count);assert.equal(p.legs.length,count);assert.equal(new Set(p.legs.map(l=>l.gameLabel)).size,count)}});
+test('moneyline-only NFL selection builds two through three legs across distinct games',()=>{for(let count=2;count<=3;count++){const p=build(Array.from({length:6},()=>ml()),count);assert.equal(p.legs.length,count);assert.equal(new Set(p.legs.map(l=>l.gameLabel)).size,count)}});
 test('single prop family fills requested slots from distinct players and games',()=>{assert.equal(build([prop('A'),prop('B'),prop('C')],3).legs.length,3)});
 test('multi-game diversity still prefers different available prop families',()=>{const p=build([prop('A'),prop('B'),prop('C','rushing')]);assert.equal(new Set(p.legs.map(l=>l.type)).size,2)});
 test('completion does not reuse games, duplicate players, or out-of-band quotes',()=>{assert.equal(build([[ml(),ml()],ml(900)]),null);assert.equal(build([prop('A'),prop('A')]),null);const p=build([ml(),ml(),ml(900)],3);assert.equal(p,null)});
 
 
-test('legacy six-leg requests clamp to four legs',()=>{assert.equal(build(Array.from({length:6},()=>ml()),6).legs.length,4)});
+test('legacy six-leg requests clamp to three legs',()=>{assert.equal(build(Array.from({length:6},()=>ml()),6).legs.length,3)});
+

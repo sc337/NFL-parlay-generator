@@ -24,9 +24,9 @@ test('strong legs can qualify for every profile without mandatory risk separatio
  assert.equal(c.profileSelectionScore(q(.50),'safe'),-999);assert.equal(c.profileSelectionScore(q(.60),'balanced'),-999);
  const build={legs:[{name:'a'},{name:'b'}]};assert.equal(c.distinctProfileBuild(build,[build]),true);
 });
-test('real multi-game builder enforces per-leg minima at 2–4 legs and keeps one game per leg',()=>{
+test('real multi-game builder enforces per-leg minima at 2–3 legs and keeps one game per leg',()=>{
  const policy=require('../conservative-policy.js');
- for(const n of [2,3,4]){const b=builder(),previous=[];for(const key of ['safe','balanced','long']){
+ for(const n of [2,3]){const b=builder(),previous=[];for(const key of ['safe','balanced','long']){
   const p=b.run(n,key,previous);assert.ok(p,key+' should qualify');assert.equal(p.legs.length,n);assert.equal(new Set(p.legs.map(l=>l.gameId)).size,n);
   for(const m of p.legs){const check=b.ctx.window.PICK_QUALITY.assess('nfl',m,b.ctx.nflQualityForecast(m,key),{parlay:true});assert.ok(check.conservativeP>=policy.thresholds[key]);}
   previous.push(p);
@@ -38,3 +38,4 @@ test('strong single-tier slate is allowed in all profiles; requiring props still
  b.ctx.state.requirePlayerProp=true;for(const key of ['safe','balanced','long'])assert.equal(b.run(2,key),null);
 });
 test('profile history freezes quotes, deduplicates and never invents SGP returns',()=>{const storage=new Map(),window={NFL_PARLAY_STATE:{games:[]},PICK_QUALITY:{odds:o=>Math.abs(o)>=100,decimal:o=>o>0?1+o/100:1+100/Math.abs(o)}};vm.runInNewContext(fs.readFileSync('nfl-profile-history.js','utf8'),{window,localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},Date});const legs=['a','b'].map(name=>({name,gameId:name,type:'h2h',team:name,price:100,modelProbability:.6,kickoff:new Date(Date.now()+3600000).toISOString()}));const p={profile:'safe',legs};window.NFL_PROFILE_HISTORY.record([p],'sgp');window.NFL_PROFILE_HISTORY.record([p],'sgp');assert.equal(window.NFL_PROFILE_HISTORY.rows().length,1);legs[0].price=500;assert.equal(window.NFL_PROFILE_HISTORY.rows()[0].legs[0].odds,100);window.NFL_MODEL_TRACKER={rows:()=>window.NFL_PROFILE_HISTORY.rows()[0].legs.map(l=>({id:l.id,result:'win'}))};const m=window.NFL_PROFILE_HISTORY.metrics().safe;assert.equal(m.hitRate,1);assert.equal(m.referenceROI,null)});
+

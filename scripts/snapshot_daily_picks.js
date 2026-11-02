@@ -26,7 +26,7 @@ function legRecord(sport,entry,snapshot,now){
 }
 function captureRecord(sport,build,snapshot,now,version){
  const at=snapshot.updated_at||snapshot.generated_at,age=now-Date.parse(at);
- if(!Number.isFinite(age)||age< -300000||age>1800000||!build.legs?.length||build.legs.length>4||build.requestedLegs>4||build.requestedLegs&&build.legs.length!==build.requestedLegs)return null;
+ if(!Number.isFinite(age)||age< -300000||age>1800000||!build.legs?.length||build.legs.length>3||build.requestedLegs>3||build.requestedLegs&&build.legs.length!==build.requestedLegs)return null;
  const legs=build.legs.map(entry=>legRecord(sport,entry,snapshot,now));
  if(legs.some(l=>!l))return null;
  const mode=build.mode||'multi',day=dayKey(now),signature=legs.map(l=>[l.id,l.selection,l.line]).sort().map(x=>JSON.stringify(x)).join('|');
@@ -69,7 +69,7 @@ async function collect(sport,dataDir,now,version){
   for(const game of snapshot.games||[])r.window.NFL_ALT_LINES.classify(game);
   r.window.NFL_CONFIDENCE.refresh();
   vm.runInContext('renderNflStraight()',r.ctx);
-  for(let n=2;n<=4;n++){r.ctx.previousMulti=[];r.ctx.previousSgp=[];for(const profile of ['safe','balanced','long']){
+  for(let n=2;n<=3;n++){r.ctx.previousMulti=[];r.ctx.previousSgp=[];for(const profile of ['safe','balanced','long']){
    const multi=vm.runInContext(`buildMulti(${n},50,${JSON.stringify(profile)},previousMulti)`,r.ctx);
    const emit=(p,mode,game)=>{capture(sport,{risk:p?.risk,mode,profile:p?.name||profile,requestedLegs:n,gameId:game?.id,legs:(p?.legs||[]).map(m=>({market:m,forecast:{modelP:m.modelProbability,rawModelP:m.rawModelProbability,confidence:m.modelConfidence,modelVersion:m.modelVersion,opportunity:m.opportunity,roleChange:m.roleChange,baselines:m.baselines,coverage:m.projectionCoverage,uncertainty:m.modelUncertainty,roleStability:m.roleStability,marketP:m.marketProbability,experimental:m.tdExperimental||m.nflPropExperimental,marketAnchored:m.marketAnchored,projectedLine:m.projectedLine},game:game||(snapshot.games||[]).find(g=>g.commence_time===m.kickoff&&(g.markets||[]).some(x=>x.ticker===m.ticker))}))})};
    emit(multi,'multi');if(multi)r.ctx.previousMulti.push(multi);
@@ -82,7 +82,7 @@ async function collect(sport,dataDir,now,version){
   if(['mlb','ncaaf'].includes(sport))r.run('team-alt-lines.js');
   if(sport==='nba'){r.run('nba-model.js');r.run('nba-alt-lines.js')}if(sport==='mlb'){r.run('mlb-totals-model.js');r.run('mlb-prop-model.js');}if(sport==='ncaaf')r.run('ncaaf-model.js');if(sport==='nhl'){r.run('nhl-model.js');r.run('nhl-alt-lines.js')}
   r.run(sport+'-dashboard.js');const api=r.window[sport.toUpperCase()+'_DASHBOARD'];await api.load();
-  for(let n=2;n<=4;n++)api.setLegs(n);
+  for(let n=2;n<=3;n++)api.setLegs(n);
  }
  return {records,status:{captured:records.length,passes,snapshotAt:snapshot.updated_at||snapshot.generated_at}};
 }
@@ -107,4 +107,5 @@ async function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1});
 module.exports={main,collect,captureRecord,legRecord,mergeRecords,settle,dayKey};
+
 

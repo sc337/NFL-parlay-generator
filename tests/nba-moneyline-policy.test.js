@@ -53,8 +53,8 @@ test('key-player injury and changed roster history reduce independent reliance i
   const forecast=r.w.NBA_MODEL.estimate(f.markets[0],f.ctx);assert.equal(forecast.marketAnchored,true);assert.ok(forecast.marketBasis.independentWeight<=.125);assert.match(forecast.marketBasis.reason,change==='injury'?/availability/:/Roster/);
  }
 });
-test('2–4 leg favorite, underdog and mixed slates produce complete independent profiles without padding',async()=>{
- for(const count of [2,3,4])for(const style of ['favorites','underdogs','mixed']){
+test('2–3 leg favorite, underdog and mixed slates produce complete independent profiles without padding',async()=>{
+ for(const count of [2,3])for(const style of ['favorites','underdogs','mixed']){
   const f=fixture(Array(4).fill(style==='favorites'?.76:style==='underdogs'?.62:.62)),r=runtime(f,{legs:count});await r.w.NBA_DASHBOARD.load();
   const A=r.w.NBA_DASHBOARD,rows=f.markets.filter((m,i)=>style==='favorites'?i%2===0:style==='underdogs'?i%2===1:i%4===0||i%4===3);
   const builds=A.PROFILES.map(profile=>({profile,legs:A.profileBuild(rows,count,false,profile)})).filter(b=>b.legs.length);
@@ -73,14 +73,14 @@ test('thin-history spreads and totals use only matching complementary quotes at 
 });
 test('profile bands do not change when a moneyline is replaced by an equally likely spread or prop',()=>{
  const A=runtime(fixture()).w.NBA_DASHBOARD;
- for(const n of [2,3,4])for(const [p,key] of [[.75,'safe'],[.65,'balanced'],[.50,'long']]){
+ for(const n of [2,3])for(const [p,key] of [[.75,'safe'],[.65,'balanced'],[.50,'long']]){
   const checks=Array.from({length:n},()=>({pass:true,profileBufferedP:p}));
   for(const kind of ['moneyline','spread','total','rebounds'])assert.equal(A.profileFits(Array.from({length:n},(_,i)=>({game_id:'g'+i,kind})),checks,A.PROFILES.find(x=>x.key===key)),true,kind+' '+key+' '+n);
  }
 });
 test('diversity preference chooses comparable alternatives without excluding ML-only or admitting weak legs',()=>{
  const G=runtime(fixture()).w.MARKET_GUARDS,check=m=>({pass:!m.blocked,rank:m.rank,coverage:.8});
- for(const n of [2,3,4]){
+ for(const n of [2,3]){
   const rows=Array.from({length:n},(_,i)=>({selection_id:'ml'+i,game_id:'g'+i,kind:'moneyline',rank:100})),alt={selection_id:'spread',game_id:'g'+(n-1),kind:'spread',rank:99};
   assert.ok(G.bestBuild([...rows,alt],n,check,{diversityBonus:3}).includes(alt));
   assert.ok(G.bestBuild([...rows,{...alt,rank:85}],n,check,{diversityBonus:3}).every(m=>m.kind==='moneyline'));
@@ -94,3 +94,4 @@ test('team-market profile rules cannot bypass player-prop price or availability 
  assert.equal(Q.assess('nba',m,forecast,{parlay:true,nbaProfile:'balanced'}).pass,false);
  f.ctx.players.p.injury_status='Questionable';assert.match(Q.assess('nba',m,{...forecast,modelP:.8},{parlay:true,nbaProfile:'safe'}).reason,/availability uncertain/);
 });
+
