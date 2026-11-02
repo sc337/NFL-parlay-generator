@@ -18,7 +18,7 @@ async function run(){
      else throw Error('NFL generator unavailable');
    }else if(s==='nba'){
      if(!window.NBA_DASHBOARD?.setLegs)throw Error('NBA generator unavailable');
-     window.NBA_DASHBOARD.setLegs(n);
+     await window.NBA_DASHBOARD.setLegs(n);
    }else if(s==='mlb'){
      if(!window.MLB_DASHBOARD?.setLegs)throw Error('MLB generator unavailable');
      window.MLB_DASHBOARD.setLegs(n);

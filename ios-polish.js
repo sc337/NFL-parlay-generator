@@ -14,22 +14,22 @@ function update(){
   const s=sport(),raw=source(),age=minutes(s),unavailable=/unavailable|no live|error|failed/i.test(raw),loading=/loading|refreshing|initializing|waiting|checking/i.test(raw),delayed=/\bdelayed\b|\bstale\b/i.test(raw)||age!==null&&age>30;
   const status=document.querySelector('.header-status');
   document.body.classList.toggle('feed-delayed',!!delayed&&!loading&&!unavailable);
-  if(status){status.classList.toggle('is-delayed',!!delayed&&!loading&&!unavailable);status.classList.toggle('is-unavailable',unavailable);const badge=status.querySelector('#statusLabel');const short=label(s,{loading,unavailable,delayed});if(badge&&short)badge.textContent=short;status.title=raw}
+  if(status){status.classList.toggle('is-delayed',!!delayed&&!loading&&!unavailable);status.classList.toggle('is-unavailable',unavailable);const badge=status.querySelector('#statusLabel');const short=label(s,{loading,unavailable,delayed});if(badge&&short&&badge.textContent!==short)badge.textContent=short;status.title=raw}
 }
 function set(s,stamp){const ms=Date.parse(stamp||'');if(Number.isFinite(ms)){snapshots[s]=ms;update()}}
 async function refresh(){
   const button=document.querySelector('#feedRefresh');if(!button||button.disabled)return;
-  const active=sport();button.disabled=true;button.classList.add('refreshing');
+  const active=sport();button.disabled=true;button.classList.add('refreshing');button.setAttribute('aria-busy','true');
   try{
     const status=document.querySelector('#dataStatus');if(status)status.textContent='Refreshing '+active.toUpperCase()+' markets…';
     update();
     if(active==='nfl')await window.NFL_NO_DEMO?.load?.();
-    else if(active==='nba')await window.NBA_DASHBOARD?.load?.();
+    else if(active==='nba')await window.NBA_DASHBOARD?.load?.({force:true});
     else if(active==='mlb')await window.MLB_DASHBOARD?.load?.();
     else if(active==='ncaaf')await window.NCAAF_DASHBOARD?.load?.();
     else if(active==='nhl')await window.NHL_DASHBOARD?.load?.();
     else if(active==='ufc')await window.UFC_DASHBOARD?.load?.();
-  }finally{button.disabled=false;button.classList.remove('refreshing');update()}
+  }finally{button.disabled=false;button.classList.remove('refreshing');button.removeAttribute('aria-busy');update()}
 }
 function mount(){
   const status=document.querySelector('.header-status');
