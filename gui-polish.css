@@ -1,0 +1,47 @@
+/* One interaction accent; warnings describe availability, never win certainty. */
+:root{--gui-accent:#285bdb;--gui-selected:#eaf0ff;--gui-warning:#936009;--gui-warning-bg:#fff5dc}
+[data-theme="dark"]{--gui-accent:#a8bfff;--gui-selected:#243352;--gui-warning:#f1c66f;--gui-warning-bg:#392f1e}
+#recommendationToolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 2px 10px;min-height:26px}
+#recommendationToolbar h2{font-size:15px;letter-spacing:.01em;margin:0;color:var(--text)}
+#recommendationUpdate{font-size:12px;color:var(--muted);min-width:72px;text-align:right}
+#recommendationUpdate:not(:empty)::before{content:'';display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:var(--gui-accent)}
+html[data-theme] body #pickOfDay{border-inline-start:3px solid var(--gui-accent)!important;padding:18px!important;box-shadow:0 4px 18px #00000008}
+html[data-theme] body #pickOfDayTitle{color:var(--text)!important;font-size:13px!important;letter-spacing:0}
+#parlayControls{box-shadow:none!important}
+#parlayControls summary{color:var(--muted)}
+html[data-theme] body #results>.empty{min-height:154px!important;padding:24px!important;text-align:left;border:1px solid var(--border)!important;background:var(--surface)!important;color:var(--muted)!important;border-radius:14px}
+#results>.empty .qualifying-heading{font-size:16px;color:var(--text);margin-bottom:8px}
+#results>.empty .empty-message,.pick-pass{font-size:13px;line-height:1.6}
+.empty-actions{justify-content:flex-start;gap:10px;margin-top:14px}
+.empty-actions button{min-height:44px;padding:10px 16px;border:1px solid var(--border);border-radius:9px;font:inherit;font-size:13px;font-weight:650;cursor:pointer;background:var(--surface2);color:var(--text)}
+.empty-actions [data-empty-action="next"]{background:var(--gui-selected);color:var(--gui-accent);border-color:var(--gui-accent)}
+.empty-actions [data-empty-action="refresh"]{background:var(--gui-warning-bg);color:var(--gui-warning)}
+html[data-theme] body :is(.pick-foot,.nba-lineup-status)[data-tone="warning"],.header-status:is(.is-delayed,.is-unavailable){color:var(--gui-warning)!important}
+html[data-theme] body .model-metrics[data-band] .model-hit-estimate{color:var(--text);background:var(--surface2);border:1px solid var(--border)}
+#legCountButtons{display:flex;gap:6px}#legCountButtons button{flex:1;min-height:46px;border:1px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--text);font:inherit;font-size:13px;font-weight:650;white-space:nowrap}
+.gui-native-legs{position:absolute!important;width:1px!important;height:1px!important;opacity:0;pointer-events:none;clip-path:inset(50%)}
+.gui-native-legs:focus-visible+#legCountButtons{outline:2px solid var(--gui-accent);outline-offset:3px}
+:is(#slateControls,#legCountButtons,.builder-mode-buttons,.line-options-buttons) button[aria-pressed="true"],.mode-tabs .tab.active{background:var(--gui-selected)!important;color:var(--gui-accent)!important;border-color:var(--gui-accent)!important;box-shadow:inset 0 -2px var(--gui-accent)!important}
+:is(#slateControls,#legCountButtons,.builder-mode-buttons,.line-options-buttons,.empty-actions) button:focus-visible{outline:2px solid var(--gui-accent);outline-offset:3px}
+:is(#slateControls,#legCountButtons,.builder-mode-buttons,.line-options-buttons,.empty-actions) button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none!important}
+#slateControls button,.builder-mode-buttons button,.line-options-buttons button,.mode-tabs button,#gameSelect,#nbaGameSelect{min-height:46px!important;touch-action:manipulation}
+#results>.parlay-card{box-shadow:0 4px 18px #00000008}
+:is(#results,#nflParlayAlternatives) .compact-pick-row .leg-title{font-size:14px!important;line-height:1.4}
+.compact-pick-selection{font-size:13px!important;line-height:1.5}
+:is(.nfl-visible-projection,.nba-visible-projection){font-variant-numeric:tabular-nums;gap:6px 10px;line-height:1.5}
+.compact-pick-price{font-variant-numeric:tabular-nums}
+#results .leg+.leg{border-top:1px solid var(--border)}
+#nflParlayAlternatives{margin-top:14px}#nflParlayAlternatives>summary{color:var(--muted);font-size:13px;min-height:44px}
+@media(max-width:600px){
+ #slateControls{gap:10px!important;flex-wrap:wrap}.slate-shortcuts{display:flex;gap:6px}
+ #slateControls .slate-date{min-height:46px}#slateControls input{font-size:16px;min-height:46px}
+ #sharedBuilder .builder-main-row{gap:12px}#builderLegs{min-width:130px}
+ #pickOfDay.featured-straight .pick-row{grid-template-columns:minmax(0,1fr) 56px;gap:8px 12px}
+ #pickOfDay.featured-straight .pick-row>.compact-pick-media{width:56px;min-width:56px;max-width:56px;height:60px;min-height:60px}
+ #pickOfDay.featured-straight .compact-pick-media>img{width:56px!important;height:56px!important}
+ #pickOfDay.featured-straight .compact-player-media>img.sport-logo{width:20px!important;height:20px!important}
+ #results>.parlay-card .compact-pick-row{grid-template-columns:36px minmax(0,1fr) 80px!important;gap:8px!important}
+ #results>.parlay-card .compact-pick-row>.compact-pick-media{width:36px!important;min-width:36px!important;max-width:36px!important}
+ #results>.parlay-card .leg-brief{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){#results *,#pickOfDay *,#recommendationUpdate{animation:none!important;transition:none!important}}
