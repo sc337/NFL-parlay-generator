@@ -31,3 +31,27 @@ test('Today, next slate and custom dates share a local-day filter; started and u
 });
 test('NFL game associations resolve times and next slate follows new quotes without retaining yesterday',()=>{const w=setup(),a=w.SLATE_UI,m={ticker:'prop'},time=new Date(Date.now()+86400000).toISOString();a.prepare('nfl',[m],[{commence_time:time,markets:[m]}]);a.set('nfl','next');assert.equal(a.matches('nfl',m),true);a.prepare('nfl',[]);assert.match(a.empty('nfl','Fresh',false),/No upcoming quoted events/);assert.match(a.empty('nfl','Feed unavailable',false),/Feed unavailable/);a.prepare('nfl',[{game_time:time}]);assert.match(a.empty('nfl','Fresh',false),/No qualifying straight/)});
 test('odds format conversion preserves actual source and sportsbook quotes are never shown as Kalshi cents',()=>{for(const [saved,expected] of [['american','Kalshi -150'],['decimal','Kalshi 1.67'],['cents','Kalshi 60¢']]){const w=setup(saved);assert.equal(w.ODDS_DISPLAY.label({odds:-150,p:.6,source:'Kalshi'}),expected);assert.match(w.ODDS_DISPLAY.label({odds:150,p:.4,source:'FanDuel'}),/^FanDuel /);assert.doesNotMatch(w.ODDS_DISPLAY.label({odds:150,p:.4,source:'Caesars'}),/¢/);assert.equal(w.ODDS_DISPLAY.label({odds:null,p:null,source:'Kalshi'}),'Quote unavailable')}});
+test('empty status updates preserve heading and action identity and settle without observer churn',()=>{
+ let mutations=0,clicks=0;
+ class Node{
+  constructor(text='',className=''){this.value=text;this.className=className;this.childNodes=[]}
+  get textContent(){return this.childNodes.length?this.childNodes.map(n=>n.textContent).join(''):this.value}
+  set textContent(value){mutations++;this.value=value;this.childNodes=[]}
+  matches(selector){return selector.split(',').includes('.'+this.className)}
+  querySelector(selector){return this.childNodes.find(n=>n.matches(selector))||null}
+  insertBefore(node,before){mutations++;node.parent=this;const i=this.childNodes.indexOf(before);this.childNodes.splice(i<0?this.childNodes.length:i,0,node)}
+  remove(){mutations++;this.parent.childNodes.splice(this.parent.childNodes.indexOf(this),1)}
+ }
+ const empty=new Node(),heading=new Node('No qualifying picks','qualifying-heading'),actions=new Node('Try 2 legs','empty-actions'),status=new Node('Fresh');actions.click=()=>clicks++;
+ for(const child of [heading,new Node('Old message'),actions])empty.insertBefore(child,null);
+ const document={readyState:'loading',addEventListener(){},createElement:()=>new Node(),querySelector:s=>s==='#dataStatus'?status:null,querySelectorAll:()=>[empty]},window={__ACTIVE_SPORT:'nfl'};
+ vm.runInNewContext(fs.readFileSync('slate-ui.js','utf8'),{window,document,localStorage:{getItem(){}},Date,Map,Set});
+ window.SLATE_UI.prepare('nfl',[]);
+ for(const state of ['Fresh','Feed delayed']){
+  status.textContent=state;window.SLATE_UI.tidyEmpty();
+  assert.equal(empty.childNodes[0],heading);assert.equal(empty.childNodes.at(-1),actions);
+  assert.match(empty.textContent,state==='Fresh'?/No upcoming quoted events/:/Feed unavailable or delayed/);
+  mutations=0;for(let i=0;i<100;i++)window.SLATE_UI.tidyEmpty();assert.equal(mutations,0);
+ }
+ actions.click();assert.equal(clicks,1);
+});
