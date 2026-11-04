@@ -45,3 +45,8 @@ html[data-theme] body .model-metrics[data-band] .model-hit-estimate{color:var(--
  #results>.parlay-card .leg-brief{font-size:11px!important}
 }
 @media(prefers-reduced-motion:reduce){#results *,#pickOfDay *,#recommendationUpdate{animation:none!important;transition:none!important}}
+/* Override the legacy builder's high-specificity sizing without duplicating controls. */
+body[data-sport] #sharedBuilder select.gui-native-legs{width:1px!important;height:1px!important;min-height:1px!important;padding:0!important;border:0!important}
+html[data-theme] body[data-sport] #sharedBuilder :is(.mode-tabs,.builder-mode-buttons) button{min-height:46px!important}
+html[data-theme] body[data-sport] #sharedBuilder :is(.mode-tabs button.active,.builder-mode-buttons button[aria-pressed="true"]){background:var(--gui-selected)!important;color:var(--gui-accent)!important;box-shadow:inset 0 -2px var(--gui-accent)!important}
+@media(max-width:420px){#sharedBuilder .builder-main-row{grid-template-columns:minmax(0,1fr)!important;gap:12px}#builderLegs{min-width:0}#legCountButtons{max-width:220px}}
