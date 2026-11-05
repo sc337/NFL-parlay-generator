@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-05T22:43:34.637Z",
+  "updated_at": "2026-11-05T22:43:38.637Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -1210,20 +1210,20 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-05T21:53:45.681042+00:00",
-      "ageMinutes": 50,
-      "markets": 3252,
-      "quotedMarkets": 3252,
-      "expiredQuotes": 3252,
-      "playerMarkets": 2426,
+      "snapshotAt": "2026-11-05T22:43:28.807677+00:00",
+      "ageMinutes": 0,
+      "markets": 3266,
+      "quotedMarkets": 3266,
+      "expiredQuotes": 0,
+      "playerMarkets": 2438,
       "families": {
-        "moneyline": 112,
+        "moneyline": 114,
         "spread": 220,
         "total": 494,
-        "goals": 1012,
-        "assists": 576,
+        "goals": 1020,
+        "assists": 578,
         "points": 808,
-        "saves": 30
+        "saves": 32
       },
       "futureEvents": [
         {
@@ -1256,7 +1256,7 @@
         },
         {
           "id": "401892689",
-          "time": "2026-11-11T03:00Z"
+          "time": "2026-11-11T03:00:00+00:00"
         },
         {
           "id": "401892687",
@@ -1340,7 +1340,7 @@
         },
         {
           "id": "401892668",
-          "time": "2026-11-08T01:00:00+00:00"
+          "time": "2026-11-08T01:00Z"
         },
         {
           "id": "401892666",
@@ -1356,7 +1356,7 @@
         },
         {
           "id": "401892664",
-          "time": "2026-11-07T22:00Z"
+          "time": "2026-11-07T22:00:00+00:00"
         },
         {
           "id": "401892663",
@@ -1425,13 +1425,13 @@
       ],
       "playerCounts": {
         "401892648": 242,
-        "401892649": 246,
+        "401892649": 250,
         "401892650": 228,
         "401892651": 254,
-        "401892652": 236,
-        "401892653": 258,
-        "401892654": 238,
-        "401892655": 210,
+        "401892652": 238,
+        "401892653": 260,
+        "401892654": 236,
+        "401892655": 216,
         "401892657": 270,
         "401892658": 244
       }
@@ -1556,24 +1556,6 @@
       "changedAt": "2026-11-05T22:43:34.637Z"
     },
     {
-      "id": "nhl:stale",
-      "sport": "nhl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 50 minutes old.",
-      "firstSeen": "2026-11-05T22:43:34.637Z",
-      "changedAt": "2026-11-05T22:43:34.637Z"
-    },
-    {
-      "id": "nhl:native-quotes-stale",
-      "sport": "nhl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "3252 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-05T22:43:34.637Z",
-      "changedAt": "2026-11-05T22:43:34.637Z"
-    },
-    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
@@ -1610,15 +1592,6 @@
       "changedAt": "2026-11-05T22:43:34.637Z"
     },
     {
-      "id": "nhl:worker-overdue",
-      "sport": "nhl",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-05T22:43:34.637Z",
-      "changedAt": "2026-11-05T22:43:34.637Z"
-    },
-    {
       "id": "ufc:worker-overdue",
       "sport": "ufc",
       "code": "worker-overdue",
@@ -1646,7 +1619,20 @@
       "changedAt": "2026-11-05T17:06:30.599Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:stale",
+      "resolvedAt": "2026-11-05T22:43:38.637Z"
+    },
+    {
+      "id": "nhl:native-quotes-stale",
+      "resolvedAt": "2026-11-05T22:43:38.637Z"
+    },
+    {
+      "id": "nhl:worker-overdue",
+      "resolvedAt": "2026-11-05T22:43:38.637Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/42123845170",
   "refreshResults": {
     "mlb": {
@@ -1667,7 +1653,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-05T21:53:55.547224+00:00"
+      "at": "2026-11-05T22:43:38.618312+00:00"
     },
     "ufc": {
       "ok": true,
