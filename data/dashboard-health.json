@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-07T21:20:10.133Z",
+  "updated_at": "2026-11-07T21:21:43.723Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-07T21:09:55.775722+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-11-07T21:19:55.875032+00:00",
+      "ageMinutes": 2,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-07T21:18:44.960602+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "markets": 4635,
       "quotedMarkets": 4635,
       "expiredQuotes": 0,
@@ -180,16 +180,16 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-07T21:11:15.455391+00:00",
-      "ageMinutes": 9,
-      "markets": 3607,
-      "quotedMarkets": 3607,
+      "snapshotAt": "2026-11-07T21:21:08.324100+00:00",
+      "ageMinutes": 1,
+      "markets": 3582,
+      "quotedMarkets": 3582,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "spread": 1740,
-        "total": 1334,
-        "moneyline": 533
+        "spread": 1752,
+        "total": 1298,
+        "moneyline": 532
       },
       "futureEvents": [
         {
@@ -314,7 +314,7 @@
         },
         {
           "id": "401866463",
-          "time": "2026-11-12T00:30:00+00:00"
+          "time": "2026-11-12T00:30Z"
         },
         {
           "id": "401866462",
@@ -1113,7 +1113,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-07T21:19:37.410377+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 7530,
       "quotedMarkets": 7530,
       "expiredQuotes": 0,
@@ -1263,7 +1263,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-07T21:18:13.639482+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "markets": 2769,
       "quotedMarkets": 2769,
       "expiredQuotes": 0,
@@ -1477,8 +1477,8 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-11-07T21:09:57.954960+00:00",
-      "ageMinutes": 10,
+      "snapshotAt": "2026-11-07T21:19:57.052048+00:00",
+      "ageMinutes": 2,
       "markets": 252,
       "quotedMarkets": 252,
       "expiredQuotes": 0,
@@ -1765,15 +1765,6 @@
   },
   "alerts": [
     {
-      "id": "ncaaf:starts-missing",
-      "sport": "ncaaf",
-      "code": "starts-missing",
-      "severity": "warning",
-      "message": "730 upcoming markets lack verified start times.",
-      "firstSeen": "2026-11-07T21:18:19.470Z",
-      "changedAt": "2026-11-07T21:18:19.470Z"
-    },
-    {
       "id": "pipeline:evaluation-stale",
       "sport": null,
       "code": "evaluation-stale",
@@ -1792,12 +1783,17 @@
       "changedAt": "2026-11-07T19:12:11.873Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "ncaaf:starts-missing",
+      "resolvedAt": "2026-11-07T21:21:43.723Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/42399674980",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-11-07T21:11:54.547494+00:00"
+      "at": "2026-11-07T21:21:43.702305+00:00"
     },
     "nba": {
       "ok": true,
@@ -1805,7 +1801,7 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-11-07T21:11:54.547494+00:00"
+      "at": "2026-11-07T21:21:43.702305+00:00"
     },
     "nfl": {
       "ok": true,
@@ -1817,7 +1813,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-11-07T21:11:54.547494+00:00"
+      "at": "2026-11-07T21:21:43.702305+00:00"
     }
   }
 }
