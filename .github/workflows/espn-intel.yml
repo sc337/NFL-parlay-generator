@@ -1,0 +1,36 @@
+name: Automatic ESPN matchup lookup
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update_espn_intel.py'
+      - 'scripts/publish_espn_intel.py'
+      - '.github/workflows/espn-intel.yml'
+  schedule:
+    - cron: '7,37 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: espn-matchup-intel
+  cancel-in-progress: false
+jobs:
+  lookup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify ESPN identity and freshness guards
+        run: |
+          python -m unittest discover -s tests -p 'test_espn_intel.py'
+          node --test tests/espn-intel.test.js
+      - name: Look up current games, previews and expert picks
+        run: python scripts/update_espn_intel.py
+      - name: Publish independently of market prices
+        run: python scripts/publish_espn_intel.py
