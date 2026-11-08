@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-08T07:03:45.141Z",
+  "updated_at": "2026-11-08T07:03:57.453Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-08T06:52:50.850104+00:00",
-      "ageMinutes": 11,
+      "snapshotAt": "2026-11-08T07:02:50.697532+00:00",
+      "ageMinutes": 1,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -189,16 +189,16 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-08T06:53:21.447896+00:00",
-      "ageMinutes": 10,
-      "markets": 2218,
-      "quotedMarkets": 2218,
+      "snapshotAt": "2026-11-08T07:03:20.951684+00:00",
+      "ageMinutes": 1,
+      "markets": 2201,
+      "quotedMarkets": 2201,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 522,
-        "spread": 1014,
-        "total": 682
+        "moneyline": 525,
+        "spread": 1000,
+        "total": 676
       },
       "futureEvents": [
         {
@@ -1114,6 +1114,10 @@
           "time": "2026-11-15T00:45:00+00:00"
         },
         {
+          "id": "401858519",
+          "time": "2026-11-15T00:30:00+00:00"
+        },
+        {
           "id": "6603610",
           "time": "2026-11-14T06:00:00+00:00"
         }
@@ -1488,8 +1492,8 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-11-08T06:52:50.789539+00:00",
-      "ageMinutes": 11,
+      "snapshotAt": "2026-11-08T07:02:50.486383+00:00",
+      "ageMinutes": 1,
       "markets": 24,
       "quotedMarkets": 24,
       "expiredQuotes": 0,
@@ -1556,15 +1560,6 @@
   },
   "alerts": [
     {
-      "id": "ncaaf:starts-missing",
-      "sport": "ncaaf",
-      "code": "starts-missing",
-      "severity": "warning",
-      "message": "456 upcoming markets lack verified start times.",
-      "firstSeen": "2026-11-08T05:02:27.397Z",
-      "changedAt": "2026-11-08T05:02:27.397Z"
-    },
-    {
       "id": "pipeline:evaluation-stale",
       "sport": null,
       "code": "evaluation-stale",
@@ -1583,12 +1578,17 @@
       "changedAt": "2026-11-08T05:53:45.642Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "ncaaf:starts-missing",
+      "resolvedAt": "2026-11-08T07:03:57.453Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/42434520319",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-11-08T06:53:58.275588+00:00"
+      "at": "2026-11-08T07:03:57.427839+00:00"
     },
     "nba": {
       "ok": true,
@@ -1596,7 +1596,7 @@
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-11-08T06:53:58.275588+00:00"
+      "at": "2026-11-08T07:03:57.427839+00:00"
     },
     "nfl": {
       "ok": true,
@@ -1608,7 +1608,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-11-08T06:53:58.275588+00:00"
+      "at": "2026-11-08T07:03:57.427839+00:00"
     }
   }
 }
