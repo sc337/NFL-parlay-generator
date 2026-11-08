@@ -362,3 +362,25 @@ NFL player-prop cards show a projected stat, experimental estimated hit percenta
 ### Dashboard cleanup and three-leg limit
 
 All sports offer two or three legs. Saved larger preferences clamp to three; sport setters and shared builders enforce the same ceiling. The legacy Today’s Card panel is retired. Profile buttons remain, with redundant swipe instructions and counters removed. Internal rating/pairing scores are omitted from cards; projections, estimated probabilities, price/source, freshness, swaps and Risk & details remain. Filters hide unavailable markets without changing saved selections, and fixed single-mode fields are omitted. ALT policy explanations remain in Filters.
+
+### Automatic ESPN matchup lookup
+
+The NFL **ESPN Matchup Intel** panel follows the selected slate date and looks up
+current matchup probabilities, season stats, dated injuries, and attributed expert
+score picks. `scripts/update_espn_intel.py` discovers weekly preview stories from
+ESPN's news feed and related stories, then joins each article section to the exact
+ESPN game ID. It does not require uploaded PDFs or a hard-coded weekly article ID.
+Only non-premium stories are processed. The panel links to the original reporting
+and keeps editorial score picks separate from model probabilities and market prices.
+
+`.github/workflows/espn-intel.yml` refreshes the separate
+`data/espn-intel-nfl.json` snapshot every 30 minutes (subject to Actions scheduling),
+on relevant code pushes, or on manual dispatch. Browser reads refresh every five
+minutes while visible. Failed game lookups retain their original check timestamp;
+failed or older-than-two-hour game data is not presented as current intelligence.
+This work runs independently of price refreshes and does not alter pick selection.
+ESPN feed schemas and editorial formats may change; absent picks remain unavailable.
+
+Check locally with `python -m unittest discover -s tests -p test_espn_intel.py`
+and `node --test tests/espn-intel.test.js`. Refresh with
+`python scripts/update_espn_intel.py`.

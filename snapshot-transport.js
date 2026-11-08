@@ -4,7 +4,7 @@
   const root = 'https://raw.githubusercontent.com/sc337/NFL-parlay-generator/main/';
   const files = new Set(['kalshi-nfl.json','kalshi-mlb.json','kalshi-ncaaf.json',
     'kalshi-nhl.json','kalshi-ufc.json','daily-picks.json','dashboard-health.json',
-    'nhl-context.json','mlb-context.json','ncaaf-context.json','sports-media.json']);
+    'espn-intel-nfl.json','nhl-context.json','mlb-context.json','ncaaf-context.json','sports-media.json']);
   window.fetch = async function(input, init) {
     const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, document.baseURI);
     const file = url.pathname.split('/').pop();
