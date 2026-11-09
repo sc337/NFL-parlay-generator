@@ -43,17 +43,9 @@ function propReport(game,state,forecast,isEligible=()=>true){
  }).sort((a,b)=>Number(b.qualified)-Number(a.qualified)||a.player.localeCompare(b.player));
  return {loadedQuotes:loaded.length,selectedQuotes,players,qualifiedPlayers:players.filter(x=>x.qualified).length};
 }
-function renderPropCoverage(game,state,forecast,isEligible){
- let details=$('#nflPropCoverage');
- if(!details){details=document.createElement('details');details.id='nflPropCoverage';details.className='nfl-prop-coverage';$('#results')?.after(details);}
- details.hidden=state.mode!=='sgp'||!game;
- if(details.hidden)return;
- const report=propReport(game,state,forecast,isEligible),summary=document.createElement('summary'),intro=document.createElement('p'),list=document.createElement('ul');
- summary.textContent='Player props · '+report.qualifiedPlayers+' qualifying player'+(report.qualifiedPlayers===1?'':'s');
- intro.textContent=report.loadedQuotes+' player quotes loaded; '+report.selectedQuotes+' match the selected markets and line rules. Every matching threshold is screened. '+(state.lineMode==='alt'?'ALT yardage uses quoted 10-yard milestones; player ALT unders are excluded.':'');
- for(const row of report.players){const item=document.createElement('li'),name=document.createElement('strong'),reason=document.createElement('p');name.textContent=row.player+' · '+row.category;reason.textContent=row.reason;item.append(name,reason);list.append(item);}
- if(window.NFL_ALT_IDEAS?.active?.(state))summary.textContent='Player props · '+report.qualifiedPlayers+' eligible idea players · Value unchecked';
- const open=details.open;details.replaceChildren(summary,intro,list);details.open=open;
+// Coverage calculations remain available; the diagnostic panel is retired.
+function renderPropCoverage(){
+ if(typeof document!=='undefined')$('#nflPropCoverage')?.remove();
 }
 function mount(){
  const controls=$('#parlayControls'),tier=$('#nflRecommendationTierWrap'),markets=$('#nflMarketFilters');
@@ -71,8 +63,8 @@ function mount(){
  const quality=$('.quality-settings'),home=$('.parlay-options-row');
  function sync(){
   const nfl=(window.__ACTIVE_SPORT||'nfl')==='nfl';main.hidden=filters.hidden=!nfl;
-  const manual=$('#nflManualAlt');if(manual)manual.hidden=!nfl||!window.NFL_ALT_IDEAS?.active?.(window.NFL_PARLAY_STATE);
-  const coverage=$('#nflPropCoverage');if(coverage)coverage.hidden=!nfl||window.NFL_PARLAY_STATE?.mode!=='sgp';
+  $('#nflManualAlt')?.remove();
+  $('#nflPropCoverage')?.remove();
   if(quality&&!$('#sharedBuilder')){const target=nfl?main:home;if(target&&quality.parentElement!==target)target.append(quality);}
  }
  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-sport']});sync();
