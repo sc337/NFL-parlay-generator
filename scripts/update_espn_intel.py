@@ -1,4 +1,4 @@
-"""Automatic NFL ESPN lookup. Editorial scores remain separate from model inputs.
+"""Automatic multi-sport ESPN lookup. Editorial scores remain separate from model inputs.
 
 Discover current stories from the news feed and one level of related links;
 join preview sections by ESPN event ID, never by fuzzy team names.
@@ -14,6 +14,15 @@ from urllib.request import Request, urlopen
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/'
 CONTENT = 'https://content.core.api.espn.com/v1/sports/news/'
+SPORTS = {'nfl': 'football/nfl', 'nba': 'basketball/nba', 'nhl': 'hockey/nhl',
+          'mlb': 'baseball/mlb', 'ncaaf': 'football/college-football', 'ufc': 'mma/ufc'}
+METRICS = {
+ 'nfl': ['totalPointsPerGame','totalPointsPerGameAllowed','rushingYardsPerGame','rushingYardsPerGameAllowed','passingYardsPerGame','passingYardsPerGameAllowed'],
+ 'nba': ['avgPoints','avgPointsAgainst','avgRebounds','avgAssists','fieldGoalPct','threePointFieldGoalPct'],
+ 'nhl': ['avgGoals','avgGoalsAgainst','avgShots','avgShotsAgainst','powerPlayPct','penaltyKillPct'],
+ 'mlb': ['runs','avg','onBasePct','slugAvg','ERA','WHIP'],
+ 'ufc': []}
+METRICS['ncaaf'] = METRICS['nfl']
 OUTPUT = Path('data/espn-intel-nfl.json')
 
 
@@ -105,7 +114,7 @@ def expert_picks(article, event, now):
     return output
 
 
-def normalize(event, summary, stories, now):
+def normalize(event, summary, stories, now, sport="nfl"):
     comp = event['competitions'][0]; competitors = comp['competitors']
     teams = [{'id': str(c['team']['id']), 'name': c['team']['displayName'], 'code': c['team']['abbreviation'], 'side': c['homeAway']} for c in competitors]
     ids = {t['id'] for t in teams}
@@ -128,7 +137,7 @@ def normalize(event, summary, stories, now):
     for block in summary.get('boxscore', {}).get('teams', []):
         tid = str(block.get('team', {}).get('id'))
         if tid in ids:
-            stats.append({'teamId': tid, 'values': {s['name']: plain(s.get('displayValue')) for s in block.get('statistics', []) if s.get('name') in ('totalPointsPerGame', 'totalPointsPerGameAllowed', 'rushingYardsPerGame', 'rushingYardsPerGameAllowed', 'passingYardsPerGame', 'passingYardsPerGameAllowed')}})
+            stats.append({'teamId': tid, 'values': {s['name']: plain(s.get('displayValue')) for s in block.get('statistics', []) if s.get('name') in METRICS[sport]}})
     injuries = []
     for block in summary.get('injuries', []):
         tid = str(block.get('team', {}).get('id'))
@@ -147,49 +156,88 @@ def normalize(event, summary, stories, now):
             source = article_meta(article); break
     preview = summary.get('article', {})
     preview = article_meta(preview) if str(preview.get('gameId')) == str(event['id']) and not preview.get('premium') and recent(preview.get('published'), now) and link(preview) else None
-    return {'eventId': str(event['id']), 'startAt': event['date'], 'teams': teams, 'checkedAt': now.isoformat(), 'status': 'ok',
+    return {'sport': sport, 'eventId': str(event['id']), 'startAt': event['date'], 'teams': teams, 'checkedAt': now.isoformat(), 'status': 'ok',
             'probabilities': probabilities, 'statistics': stats, 'injuries': injuries, 'expertPicks': picks, 'expertSource': source,
-            'preview': preview, 'url': 'https://www.espn.com/nfl/game/_/gameId/'+str(event['id'])}
+            'preview': preview, 'url': 'https://www.espn.com/'+('college-football' if sport == 'ncaaf' else sport)+'/game/_/gameId/'+str(event['id'])}
 
 
-def build(previous, now, fetch=get):
+def build(previous, now, fetch=get, sport="nfl"):
+    base = 'https://site.api.espn.com/apis/site/v2/sports/'+SPORTS[sport]+'/'
     try:
-        board = fetch(BASE+'scoreboard')
+        # ESPN daily scoreboards reject date ranges for several leagues.
+        def board_day(offset):
+            day = (now+timedelta(days=offset)).strftime('%Y%m%d')
+            result = fetch(base+'scoreboard?dates='+day+'&limit=500'+('&groups=80' if sport=='ncaaf' else ''))
+            if not isinstance(result.get('events'), list):
+                raise ValueError('Invalid scoreboard')
+            return result['events']
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            days = list(pool.map(board_day, range(-1, 9)))
+        board = {'events': list({str(e['id']): e for day in days for e in day}.values())}
         if not isinstance(board.get('events'), list):
             raise ValueError('Invalid scoreboard')
     except (OSError, ValueError):
         return {**previous, 'lastAttemptAt': now.isoformat(), 'status': 'unavailable'}
     news_ok = True
     try:
-        news = fetch(BASE+'news?limit=50')
+        news = fetch(base+'news?limit=50') if sport in ('nfl','ncaaf') else {}
         stories = discover(news, now, fetch)
     except (OSError, ValueError):
         stories = []; news_ok = False
-    events = [e for e in board['events'] if instant(e.get('date')) and now < instant(e['date']) <= now+timedelta(days=8) and not e['competitions'][0].get('status', {}).get('type', {}).get('completed')][:20]
+    events = [e for e in board['events'] if instant(e.get('date')) and now < instant(e['date']) <= now+timedelta(days=8) and not e['competitions'][0].get('status', {}).get('type', {}).get('completed')][:160]
     old = {g['eventId']: g for g in previous.get('games', [])}
     def one(event):
         try:
-            return normalize(event, fetch(BASE+'summary?event='+str(event['id'])), stories, now)
+            if sport == 'ufc':
+                return normalize_fights(event, now)
+            return normalize(event, fetch(base+'summary?event='+str(event['id'])), stories, now, sport)
         except (OSError, ValueError, KeyError, TypeError):
             cached = old.get(str(event['id']))
-            ids = {str(c['team']['id']) for c in event['competitions'][0]['competitors']}
+            ids = {str(c.get('team', c.get('athlete', {})).get('id')) for c in event['competitions'][0]['competitors']}
             if cached and instant(cached.get('startAt')) == instant(event['date']) and {t['id'] for t in cached.get('teams', [])} == ids:
                 return {**cached, 'status': 'unavailable'}  # Never renew cached checkedAt.
             return None
     with ThreadPoolExecutor(max_workers=4) as pool:
-        games = [g for g in pool.map(one, events) if g]
+        games = [row for g in pool.map(one, events) if g for row in (g if isinstance(g, list) else [g])]
     return {'schemaVersion': 1, 'updatedAt': now.isoformat(), 'lastAttemptAt': now.isoformat(),
-            'status': 'ok' if len(games) == len(events) and all(g['status']=='ok' for g in games) else 'partial',
+            'sport': sport, 'status': 'ok' if (sport == 'ufc' or len(games) == len(events)) and all(g['status']=='ok' for g in games) else 'partial',
             'editorialStatus': 'available' if stories else 'unavailable' if not news_ok else 'no-current-stories',
             'games': games}
 
 
+def normalize_fights(event, now):
+    games = []
+    for comp in event.get('competitions', []):
+        start = comp.get('date') or event.get('date')
+        if not instant(start) or instant(start) <= now or comp.get('status', {}).get('type', {}).get('completed'):
+            continue
+        fighters = []
+        for c in comp.get('competitors', []):
+            a = c.get('athlete', {})
+            if not a.get('id') or not a.get('displayName'):
+                continue
+            fighters.append({'id': str(a['id']), 'name': a['displayName'], 'code': a['displayName'], 'side': c.get('homeAway', ''),
+                             'record': next((r.get('summary') for r in c.get('records', []) if r.get('type') == 'total'), None)})
+        if len(fighters) != 2 or fighters[0]['id'] == fighters[1]['id']:
+            continue
+        games.append({'sport':'ufc', 'eventId':str(event['id'])+':'+str(comp['id']), 'startAt':start,
+                      'teams':fighters, 'checkedAt':now.isoformat(), 'status':'ok', 'eventName':plain(event.get('name')),
+                      'probabilities':[], 'statistics':[], 'injuries':[], 'expertPicks':[],
+                      'url':'https://www.espn.com/mma/fightcenter/_/id/'+str(event['id'])})
+    return games
+
+
 def main():
-    previous = json.loads(OUTPUT.read_text()) if OUTPUT.exists() else {'schemaVersion': 1, 'games': []}
-    result = build(previous, datetime.now(timezone.utc))
-    OUTPUT.parent.mkdir(exist_ok=True)
-    temp = OUTPUT.with_suffix('.tmp'); temp.write_text(json.dumps(result, separators=(',', ':'))+'\n'); temp.replace(OUTPUT)
-    print('ESPN lookup:', result['status'], len(result['games']), 'games;', sum(bool(g.get('expertPicks')) for g in result['games']), 'with expert picks')
+    now = datetime.now(timezone.utc)
+    def update(sport):
+        output = Path('data/espn-intel-'+sport+'.json')
+        previous = json.loads(output.read_text()) if output.exists() else {'schemaVersion':1, 'sport':sport, 'games':[]}
+        result = build(previous, now, sport=sport)
+        output.parent.mkdir(exist_ok=True)
+        temp = output.with_suffix('.tmp'); temp.write_text(json.dumps(result, separators=(',', ':'))+'\n'); temp.replace(output)
+        print('ESPN', sport, result['status'], len(result['games']), 'matchups')
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        list(pool.map(update, SPORTS))
 
 
 if __name__ == '__main__':

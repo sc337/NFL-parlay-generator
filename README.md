@@ -365,7 +365,7 @@ All sports offer two or three legs. Saved larger preferences clamp to three; spo
 
 ### Automatic ESPN matchup lookup
 
-The NFL **ESPN Matchup Intel** panel follows the selected slate date and looks up
+The NFL, NBA, NHL, MLB, NCAAF, and UFC **ESPN Matchup Intel** panel follows the selected slate date and looks up
 current matchup probabilities, season stats, dated injuries, and attributed expert
 score picks. `scripts/update_espn_intel.py` discovers weekly preview stories from
 ESPN's news feed and related stories, then joins each article section to the exact
@@ -374,7 +374,7 @@ Only non-premium stories are processed. The panel links to the original reportin
 and keeps editorial score picks separate from model probabilities and market prices.
 
 `.github/workflows/espn-intel.yml` refreshes the separate
-`data/espn-intel-nfl.json` snapshot every 30 minutes (subject to Actions scheduling),
+`data/espn-intel-<sport>.json` snapshots every 30 minutes (subject to Actions scheduling),
 on relevant code pushes, or on manual dispatch. Browser reads refresh every five
 minutes while visible. Failed game lookups retain their original check timestamp;
 failed or older-than-two-hour game data is not presented as current intelligence.
@@ -384,3 +384,5 @@ ESPN feed schemas and editorial formats may change; absent picks remain unavaila
 Check locally with `python -m unittest discover -s tests -p test_espn_intel.py`
 and `node --test tests/espn-intel.test.js`. Refresh with
 `python scripts/update_espn_intel.py`.
+
+ESPN intel uses daily scoreboards for the next eight days and sport-specific season comparisons. UFC lists individual bouts and available fighter records. Analyst score extraction remains limited to supported football previews; absent probabilities, stats, and reports are never invented. Intel remains research-only and does not change selection or projection logic.

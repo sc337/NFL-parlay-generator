@@ -9,3 +9,12 @@ test('editorial scores stay separate from win probabilities',()=>{const html=gam
 
 test('disagreement is explicit and details start collapsed',()=>{const html=gameHTML({...g,expertPicks:[{author:'Example',winnerId:'b',scores:{a:17,b:24}}]},now);assert(html.includes('Analysts differ from ESPN model'));assert(!html.includes('<details open'));assert(html.includes('Research only · Does not change picks'));assert(html.includes('Game winner only'))});
 test('missing statistics stay missing and QB reports are visible',()=>{const html=gameHTML({...g,statistics:[{teamId:'a',values:{totalPointsPerGame:'24.5'}}],injuries:[{teamId:'b',player:'Example QB',position:'QB',status:'Out',reportedAt:g.checkedAt}]},now);assert(html.includes('24.5'));assert(html.includes('—'));assert(html.includes('QB availability'));assert(html.includes('Example QB — Out'))});
+test('all six sports render their own comparisons without football labels',()=>{
+ const {SPORTS}=require('../espn-intel.js');assert.equal(SPORTS.length,6);
+ for(const [sport,key,label] of [['nba','avgPoints','Points scored'],['nhl','avgGoals','Goals scored'],['mlb','ERA','ERA'],['ncaaf','passingYardsPerGame','Passing yards']]){
+  const html=gameHTML({...g,sport,statistics:[{teamId:'a',values:{[key]:'12.5'}}]},now);
+  assert(html.includes(label));assert(html.includes('12.5'));if(sport!=='ncaaf')assert(!html.includes('Passing yards'));
+ }
+ const html=gameHTML({...g,sport:'ufc',eventName:'UFC card',teams:[{id:'a',name:'Fighter A',code:'A',record:'10-2'},{id:'b',name:'Fighter B',code:'B'}],probabilities:[]},now);
+ assert(html.includes('10-2'));assert(html.includes('Fighter B'));assert(!html.includes('Injury reports'));
+});

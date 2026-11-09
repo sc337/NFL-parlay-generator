@@ -47,9 +47,37 @@ class IntelTests(unittest.TestCase):
     def test_partial_failure_keeps_dated_cache(self):
         cached = {'eventId':'123','startAt':EVENT['date'],'teams':[{'id':'1'},{'id':'2'}], 'checkedAt':'2026-11-06T00:00Z'}
         def fetch(url):
-            if url.endswith('scoreboard'):return {'events':[EVENT]}
+            if 'scoreboard?' in url:return {'events':[EVENT]}
             if 'news?' in url:return {'articles':[]}
             raise OSError('offline')
         result=build({'games':[cached]},NOW,fetch)
         self.assertEqual(result['games'][0]['checkedAt'],cached['checkedAt'])
         self.assertEqual(result['games'][0]['status'],'unavailable')
+
+    def test_other_sports_use_correct_endpoint_and_statistics(self):
+        from scripts.update_espn_intel import SPORTS, METRICS
+        for sport in ('nba','nhl','mlb','ncaaf'):
+            calls=[]
+            metric=METRICS[sport][0]
+            def fetch(url):
+                calls.append(url)
+                if 'scoreboard?' in url: return {'events':[EVENT]}
+                if 'news?' in url: return {'articles':[]}
+                return {'header':EVENT,'boxscore':{'teams':[{'team':{'id':'1'},'statistics':[{'name':metric,'displayValue':'12.3'},{'name':'unknown','displayValue':'999'}]}]}}
+            result=build({'games':[]},NOW,fetch,sport)
+            self.assertEqual(len(result['games']),1)
+            self.assertEqual(result['games'][0]['sport'],sport)
+            self.assertEqual(result['games'][0]['statistics'][0]['values'],{metric:'12.3'})
+            self.assertTrue(all(SPORTS[sport] in url for url in calls))
+            self.assertTrue(any('dates=20261109' in url for url in calls))
+
+    def test_ufc_keeps_each_bout_separate(self):
+        from scripts.update_espn_intel import normalize_fights
+        def bout(id, names):
+            return {'id':id,'competitors':[{'athlete':{'id':str(i),'displayName':n}} for i,n in enumerate(names)]}
+        event={'id':'card','name':'UFC card','date':EVENT['date'],'competitions':[bout('1',['A','B']),bout('2',['C','D'])]}
+        rows=normalize_fights(event,NOW)
+        self.assertEqual([r['eventId'] for r in rows],['card:1','card:2'])
+        self.assertEqual(rows[1]['teams'][0]['name'],'C')
+        self.assertEqual(rows[0]['probabilities'],[])
+        self.assertEqual(normalize_fights({**event,'date':'2026-11-01T00:00Z'},NOW),[])
