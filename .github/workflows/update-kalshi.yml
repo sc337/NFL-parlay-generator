@@ -220,7 +220,7 @@ jobs:
             'data/kalshi-nfl.json','data/kalshi-ncaaf.json','data/kalshi-ufc.json',
             'data/kalshi-mlb.json','data/kalshi-nhl.json','data/nhl-context.json','data/mlb-context.json','data/ncaaf-context.json','data/sports-media.json',
             'data/pick-history.json','data/model-calibration.js','data/model-learning.js',
-            'data/forecast-audit.json','data/forecast-report.json','data/daily-picks.json','data/dashboard-health.json'
+            'data/forecast-audit.json','data/forecast-audit-nfl.json','data/forecast-report.json','data/daily-picks.json','data/dashboard-health.json'
           ]
           for name in files:
               p=pathlib.Path(name)
@@ -247,7 +247,7 @@ jobs:
                   raise SystemExit(f'INVALID NHL CONTEXT: {name} has no games object')
               elif name == 'data/ncaaf-context.json' and not isinstance(data.get('games'), dict):
                   raise SystemExit(f'INVALID NCAAF CONTEXT: {name} has no games object')
-              elif name == 'data/forecast-audit.json' and not isinstance(data.get('records'), list):
+              elif name in ('data/forecast-audit.json','data/forecast-audit-nfl.json') and not isinstance(data.get('records'), list):
                   raise SystemExit(f'INVALID AUDIT: {name} has no records array')
               elif name == 'data/daily-picks.json' and not isinstance(data.get('records'), list):
                   raise SystemExit('INVALID DAILY PICKS: records array missing')
@@ -280,6 +280,7 @@ jobs:
           cp data/model-calibration.js /tmp/model-calibration.js
           cp data/model-learning.js /tmp/model-learning.js
           cp data/forecast-audit.json /tmp/forecast-audit.json
+          cp data/forecast-audit-nfl.json /tmp/forecast-audit-nfl.json
           cp data/forecast-report.json /tmp/forecast-report.json
           cp data/daily-picks.json /tmp/daily-picks.json
           cp data/dashboard-health.json /tmp/dashboard-health.json
@@ -298,6 +299,7 @@ jobs:
           git restore data/model-calibration.js 2>/dev/null || true
           git restore data/model-learning.js 2>/dev/null || true
           git restore data/forecast-audit.json 2>/dev/null || true
+          git restore data/forecast-audit-nfl.json 2>/dev/null || true
           git restore data/forecast-report.json 2>/dev/null || true
           git restore data/daily-picks.json 2>/dev/null || true
           git restore data/dashboard-health.json 2>/dev/null || true
@@ -318,6 +320,7 @@ jobs:
           cp /tmp/model-calibration.js data/model-calibration.js
           cp /tmp/model-learning.js data/model-learning.js
           python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit.json data/forecast-audit.json
+          python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit-nfl.json data/forecast-audit-nfl.json
           node scripts/build_forecast_report.js
           python scripts/preserve_newer_snapshot.py /tmp/daily-picks.json data/daily-picks.json
           python scripts/preserve_newer_snapshot.py /tmp/dashboard-health.json data/dashboard-health.json
@@ -325,7 +328,7 @@ jobs:
           cp /tmp/daily-pick-archive/*.json data/daily-picks/
 
           python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(('mlb','ncaaf','nfl','nhl','ufc'), True))"
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-audit-nfl.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -350,6 +353,7 @@ jobs:
             cp data/model-calibration.js /tmp/model-calibration.js
             cp data/model-learning.js /tmp/model-learning.js
             cp data/forecast-audit.json /tmp/forecast-audit.json
+            cp data/forecast-audit-nfl.json /tmp/forecast-audit-nfl.json
             cp data/forecast-report.json /tmp/forecast-report.json
             cp data/daily-picks.json /tmp/daily-picks.json
             cp data/dashboard-health.json /tmp/dashboard-health.json
@@ -371,13 +375,14 @@ jobs:
             cp /tmp/model-calibration.js data/model-calibration.js
             cp /tmp/model-learning.js data/model-learning.js
             python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit.json data/forecast-audit.json
+            python scripts/refresh_forecast_worker.py --reconcile /tmp/forecast-audit-nfl.json data/forecast-audit-nfl.json
             node scripts/build_forecast_report.js
             python scripts/preserve_newer_snapshot.py /tmp/daily-picks.json data/daily-picks.json
             python scripts/preserve_newer_snapshot.py /tmp/dashboard-health.json data/dashboard-health.json
             mkdir -p data/daily-picks
             cp /tmp/daily-pick-archive/*.json data/daily-picks/
             python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(SPORTS, True))"
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-audit-nfl.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0

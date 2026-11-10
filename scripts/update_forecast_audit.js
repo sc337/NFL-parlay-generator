@@ -4,6 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {candidates}=require('./update_pick_history');
 const {track}=require('./track_price_movement');
+const auditStore=require('./forecast_audit_store');
 const root=path.resolve(__dirname,'..');
 const file=path.join(root,'data/forecast-audit.json');
 const months={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
@@ -104,7 +105,7 @@ async function main(){
   const nearOnly=process.argv.includes('--near-only');
   const requestedSport=process.argv.find(x=>x.startsWith('--sport='))?.split('=')[1];
   if(requestedSport&&!['mlb','nba','ncaaf','nfl','nhl','ufc'].includes(requestedSport))throw Error('Unknown audit sport');
-  const now=Date.now(),old=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{records:[]};
+  const now=Date.now(),old=auditStore.load();
   const rows=Array.isArray(old.records)?old.records:[],seen=new Set(rows.map(r=>r.id)),added={};
   for(const sport of requestedSport?[requestedSport]:['mlb','nba','ncaaf','nfl','nhl','ufc']){
     try{
@@ -122,7 +123,7 @@ async function main(){
   }
   if(!nearOnly||Object.values(added).some(Boolean)){
     const pending=rows.filter(r=>!r.result),settled=rows.filter(r=>r.result).slice(-30000);
-    fs.writeFileSync(file,JSON.stringify({updated_at:new Date(now).toISOString(),records:[...settled,...pending]})+'\n');
+    auditStore.save({updated_at:new Date(now).toISOString(),records:[...settled,...pending]});
   }
   console.log('Forecast audit',rows.length,'records;',JSON.stringify(added),'new');
 }

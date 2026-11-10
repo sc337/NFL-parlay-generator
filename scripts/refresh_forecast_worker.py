@@ -19,7 +19,7 @@ except ModuleNotFoundError:
     from settle_espn_reference import settle_references
     from settle_forecast_audit import add_nfl_totals
 
-ARCHIVES = ('data/forecast-audit.json', 'data/pick-history.json')
+ARCHIVES = ('data/forecast-audit.json', 'data/forecast-audit-nfl.json', 'data/pick-history.json')
 
 def merge_records(existing, incoming):
     records = {r['id']: r for r in existing}
@@ -47,7 +47,12 @@ def merge_records(existing, incoming):
 def reconcile(source, target):
     incoming = json.loads(Path(source).read_text())
     current = json.loads(Path(target).read_text()) if Path(target).exists() else {'records':[]}
-    merged = {**incoming,'records':merge_records(current['records'],incoming['records']),
+    records = merge_records(current['records'], incoming['records'])
+    if target == 'data/forecast-audit.json':
+        records = [r for r in records if r.get('sport') != 'nfl']
+    elif target == 'data/forecast-audit-nfl.json':
+        records = [r for r in records if r.get('sport') == 'nfl']
+    merged = {**incoming,'records':records,
               'updated_at':datetime.now(timezone.utc).isoformat()}
     Path(target).write_text(json.dumps(merged, separators=(',',':'))+'\n')
 
@@ -55,13 +60,14 @@ def cycle(publish=True):
     # Capture first so slow/outage settlement cannot erase today's evidence.
     run(['node','scripts/update_forecast_audit.js'], timeout=180)
     run(['node','scripts/update_pick_history.js'], timeout=180)
-    payloads = {name:json.loads(Path(name).read_text()) for name in ARCHIVES}
+    payloads = {name:json.loads(Path(name).read_text()) if Path(name).exists() else {'records':[]}
+                for name in ARCHIVES}
     # Publish the capture checkpoint before any upstream outcome requests.
     # A settlement outage/timeout cannot hold current prospective records back.
     if publish:publish_records({name:Path(name).read_text() for name in ARCHIVES})
     rows = [r for payload in payloads.values() for r in payload['records']]
     changed = settle_records(rows,limit=240,workers=8) + settle_references(rows,limit=60,workers=6)
-    changed += add_nfl_totals(payloads['data/forecast-audit.json']['records'],limit=100)
+    changed += add_nfl_totals(payloads['data/forecast-audit-nfl.json']['records'],limit=100)
     for name,payload in payloads.items():
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()
         Path(name).write_text(json.dumps(payload,separators=(',',':'))+'\n')
@@ -72,19 +78,22 @@ def cycle(publish=True):
 
 def capture_near_nfl():
     """Publish fresh NFL checkpoints and verified final totals after a price refresh."""
-    name='data/forecast-audit.json'
-    before=Path(name).read_bytes()
+    names=ARCHIVES[:2]
+    before={name:Path(name).read_bytes() if Path(name).exists() else b'' for name in names}
     run(['node','scripts/update_forecast_audit.js','--sport=nfl','--near-only'],timeout=180)
+    name='data/forecast-audit-nfl.json'
+    if not Path(name).exists():
+        return
     captured=Path(name).read_bytes()
     payload=json.loads(captured)
     add_nfl_totals(payload['records'],limit=30)
     candidate=(json.dumps(payload,separators=(',',':'))+'\n').encode()
     if candidate != captured:Path(name).write_bytes(candidate)
-    after=Path(name).read_bytes()
+    after={item:Path(item).read_bytes() if Path(item).exists() else b'' for item in names}
     if after != before:
         run(['git','config','user.name','github-actions[bot]'])
         run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'])
-        publish_records({name:after.decode()})
+        publish_records({item:raw.decode() for item,raw in after.items() if raw})
 
 def publish_records(saved):
     for attempt in range(3):
