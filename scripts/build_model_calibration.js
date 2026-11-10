@@ -42,7 +42,7 @@ function build(payload,previous={sports:{}}){const sports={};for(const sport of 
     sports[sport][key]={...fit(current.length?current:versioned,prior?.modelVersion===version&&(prior.forecastVersion||null)===forecastVersion?prior:{},cohort),modelVersion:version,...(forecastVersion?{forecastVersion}:{})};
   }
 }return {updated_at:new Date().toISOString(),sports}}
-function main(){const payload=JSON.parse(fs.readFileSync(history,'utf8'));const audit=path.join(root,'data/forecast-audit.json');if(fs.existsSync(audit)){const seen=new Set(payload.records.map(r=>r.id));payload.records.push(...(JSON.parse(fs.readFileSync(audit,'utf8')).records||[]).filter(r=>!seen.has(r.id)))}let previous={sports:{}};
+function main(){const payload=JSON.parse(fs.readFileSync(history,'utf8'));const audit=require('./forecast_audit_store').load();{const seen=new Set(payload.records.map(r=>r.id));payload.records.push(...audit.records.filter(r=>!seen.has(r.id)))}let previous={sports:{}};
   if(fs.existsSync(output)){try{previous=JSON.parse(fs.readFileSync(output,'utf8').replace(/^window\.MODEL_CALIBRATION_DATA=/,'').replace(/;\s*$/,''))}catch{}}
   const data=build(payload,previous);fs.writeFileSync(output,'window.MODEL_CALIBRATION_DATA='+JSON.stringify(data)+';\n');
   console.log('Calibration',Object.entries(data.sports).map(([s,groups])=>s+': '+Object.entries(groups).map(([g,r])=>g+' '+(r.active?'active':'off')+' ('+r.distinctEvents+' events)').join(', ')).join('; '));

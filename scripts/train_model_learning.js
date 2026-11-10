@@ -72,6 +72,6 @@ function build(rows,now=Date.now()){
  }
  return {schemaVersion:1,modelVersion:L.VERSION,updated_at:new Date(now).toISOString(),method:'Versioned pregame forecasts only; outcome availability enforced; whole events and UTC dates separated; event-weighted scores',sports};
 }
-function main(){const target=path.join(root,'data/model-learning.js'),audit=path.join(root,'data/forecast-audit.json'),rows=fs.existsSync(audit)?JSON.parse(fs.readFileSync(audit,'utf8')).records||[]:[],data=build(rows);fs.writeFileSync(target,'window.MODEL_LEARNING_DATA='+JSON.stringify(data)+';\n');console.log('Learning rules:',Object.entries(data.sports).map(([s,x])=>s+' '+x.report.distinctEvents+' versioned events').join('; '));}
+function main(){const target=path.join(root,'data/model-learning.js'),rows=require('./forecast_audit_store').load().records,data=build(rows);fs.writeFileSync(target,'window.MODEL_LEARNING_DATA='+JSON.stringify(data)+';\n');console.log('Learning rules:',Object.entries(data.sports).map(([s,x])=>s+' '+x.report.distinctEvents+' versioned events').join('; '));}
 if(require.main===module)main();
 module.exports={fitBuffer,pairs,fitPair,walkForward,baselineGate,build,pairLoss};

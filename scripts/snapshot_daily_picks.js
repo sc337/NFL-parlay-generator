@@ -92,8 +92,8 @@ async function main({dataDir=process.env.SNAPSHOT_DATA_DIR||path.join(root,'data
  fs.mkdirSync(archiveDir,{recursive:true});
  const dailyFile=path.join(archiveDir,day+'.json'),old=fs.existsSync(dailyFile)?JSON.parse(fs.readFileSync(dailyFile,'utf8')):{records:[]},records=[],sports={};
  for(const sport of ['mlb','nba','ncaaf','nfl','nhl','ufc']){try{const started=Date.now();const result=await collect(sport,dataDir,now,version);records.push(...result.records);sports[sport]=result.status;console.log(sport+':',result.records.length,'captures in',Math.round((Date.now()-started)/1000),'seconds')}catch(error){sports[sport]={error:error.message};console.warn('Daily snapshot unavailable:',sport,error.message)}}
- const merged=mergeRecords(old.records||[],records),auditFile=path.join(dataDir,'forecast-audit.json');
- const audit=fs.existsSync(auditFile)?JSON.parse(fs.readFileSync(auditFile,'utf8')):{records:[]};settle(merged,audit);
+ const merged=mergeRecords(old.records||[],records);
+ const audit=require('./forecast_audit_store').load(dataDir);settle(merged,audit);
  // Preserve every captured forecast. Settlement may update outcomes, never prices.
  const payload={schemaVersion:1,timezone,day,updated_at:new Date(now).toISOString(),sports,records:merged};fs.writeFileSync(dailyFile,JSON.stringify(payload,null,2)+'\n');
  const archiveDates=fs.readdirSync(archiveDir).filter(name=>/^\d{4}-\d{2}-\d{2}\.json$/.test(name)).map(name=>name.slice(0,-5)).sort();

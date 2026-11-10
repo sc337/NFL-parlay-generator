@@ -5,7 +5,7 @@ on:
     - cron: '7,37 * * * *'
   push:
     branches: [main]
-    paths: ['.github/workflows/forecast-audit.yml', 'scripts/refresh_forecast_worker.py', 'scripts/update_forecast_audit.js', 'scripts/build_forecast_report.js', 'scripts/nfl_total_study.js', 'scripts/settle_forecast_audit.py', 'nfl-projection-engine.js', 'scripts/update_pick_history.js', 'scripts/settle_pick_history.py', 'scripts/settle_espn_reference.py', 'study-policy.js']
+    paths: ['.github/workflows/forecast-audit.yml', 'scripts/refresh_forecast_worker.py', 'scripts/forecast_audit_store.js', 'scripts/update_forecast_audit.js', 'scripts/build_forecast_report.js', 'scripts/nfl_total_study.js', 'scripts/settle_forecast_audit.py', 'nfl-projection-engine.js', 'scripts/update_pick_history.js', 'scripts/settle_pick_history.py', 'scripts/settle_espn_reference.py', 'study-policy.js']
 permissions:
   contents: write
 concurrency:

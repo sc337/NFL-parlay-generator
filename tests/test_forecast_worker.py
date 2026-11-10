@@ -9,6 +9,23 @@ from scripts.refresh_forecast_worker import merge_records
 from scripts.settle_pick_history import settle_records
 
 class ForecastWorker(unittest.TestCase):
+    def test_reconcile_keeps_sports_in_separate_files(self):
+        with tempfile.TemporaryDirectory() as folder:
+            previous=os.getcwd()
+            try:
+                os.chdir(folder);Path('data').mkdir()
+                mixed='{"records":[{"id":"n","sport":"nfl"},{"id":"b","sport":"nba"}]}'
+                Path('incoming.json').write_text(mixed)
+                Path('data/forecast-audit.json').write_text(mixed)
+                worker.reconcile('incoming.json','data/forecast-audit.json')
+                worker.reconcile('incoming.json','data/forecast-audit-nfl.json')
+                import json
+                general=json.loads(Path('data/forecast-audit.json').read_text())['records']
+                nfl=json.loads(Path('data/forecast-audit-nfl.json').read_text())['records']
+                self.assertEqual([r['id'] for r in general],['b'])
+                self.assertEqual([r['id'] for r in nfl],['n'])
+            finally:os.chdir(previous)
+
     def test_racing_publish_preserves_original_prediction_and_new_outcome(self):
         old={'id':'a','recordedAt':'2026-10-20T10:00:00Z','modelP':.6,'ask':.5,'result':None}
         late={**old,'recordedAt':'2026-10-20T11:00:00Z','modelP':.9,'ask':.8,'result':'win','settledAt':'2026-10-21T12:00:00Z'}
@@ -39,11 +56,11 @@ class ForecastWorker(unittest.TestCase):
                 with patch.object(worker,'run') as run, patch.object(worker,'publish_records') as publish:
                     worker.capture_near_nfl()
                     publish.assert_not_called()
-                    def add(_args,**_kwargs):Path('data/forecast-audit.json').write_text('{"records":[{"id":"new"}]}\n')
+                    def add(_args,**_kwargs):Path('data/forecast-audit-nfl.json').write_text('{"records":[{"id":"new","sport":"nfl"}]}\n')
                     run.side_effect=add
                     worker.capture_near_nfl()
                     publish.assert_called_once()
-                    self.assertIn('"new"',publish.call_args.args[0]['data/forecast-audit.json'])
+                    self.assertIn('"new"',publish.call_args.args[0]['data/forecast-audit-nfl.json'])
             finally:os.chdir(previous)
 
     def test_regular_audit_attaches_final_score_before_reporting(self):
@@ -51,13 +68,14 @@ class ForecastWorker(unittest.TestCase):
             previous=os.getcwd()
             try:
                 os.chdir(folder);Path('data').mkdir()
-                Path('data/forecast-audit.json').write_text('{"records":[{"id":"game","sport":"nfl","marketGroup":"totals"}]}')
+                Path('data/forecast-audit.json').write_text('{"records":[]}')
+                Path('data/forecast-audit-nfl.json').write_text('{"records":[{"id":"game","sport":"nfl","marketGroup":"totals"}]}')
                 Path('data/pick-history.json').write_text('{"records":[]}')
                 def score(rows,**_kwargs):rows[0]['actualTotal']=44;return 1
                 with patch.object(worker,'run') as run,patch.object(worker,'settle_records',return_value=0),\
                      patch.object(worker,'settle_references',return_value=0),patch.object(worker,'add_nfl_totals',side_effect=score):
                     worker.cycle(publish=False)
-                result=__import__('json').loads(Path('data/forecast-audit.json').read_text())
+                result=__import__('json').loads(Path('data/forecast-audit-nfl.json').read_text())
                 self.assertEqual(result['records'][0]['actualTotal'],44)
                 self.assertIn('scripts/build_forecast_report.js',run.call_args.args[0])
             finally:os.chdir(previous)

@@ -16,6 +16,7 @@ except ImportError:
     from settle_espn_reference import settle_references
 
 FILE = Path(__file__).resolve().parent.parent / 'data/forecast-audit.json'
+NFL_FILE = FILE.with_name('forecast-audit-nfl.json')
 SUMMARY = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?'
 
 
@@ -75,14 +76,15 @@ def add_nfl_totals(records, fetch=final_total, now=None, limit=100):
 
 
 def main():
-    if not FILE.exists():
+    payloads = {file: json.loads(file.read_text()) for file in (FILE, NFL_FILE) if file.exists()}
+    if not payloads:
         return
-    payload = json.loads(FILE.read_text())
-    records = payload.get('records', [])
+    records = [row for payload in payloads.values() for row in payload.get('records', [])]
     changed = settle_records(records, limit=100) + settle_references(records, limit=100) + add_nfl_totals(records)
     if changed or any(r.get('settlementAttemptAt') or r.get('scoreAttemptAt') for r in records):
-        payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-        FILE.write_text(json.dumps(payload, separators=(',', ':')) + '\n')
+        for file, payload in payloads.items():
+            payload['updated_at'] = datetime.now(timezone.utc).isoformat()
+            file.write_text(json.dumps(payload, separators=(',', ':')) + '\n')
     print('Audit outcomes updated', changed)
 
 
