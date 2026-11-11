@@ -18,3 +18,14 @@ test('all six sports render their own comparisons without football labels',()=>{
  const html=gameHTML({...g,sport:'ufc',eventName:'UFC card',teams:[{id:'a',name:'Fighter A',code:'A',record:'10-2'},{id:'b',name:'Fighter B',code:'B'}],probabilities:[]},now);
  assert(html.includes('10-2'));assert(html.includes('Fighter B'));assert(!html.includes('Injury reports'));
 });
+test('evidence stays compact, attributed and escaped; season leaders start collapsed',()=>{
+ const row={label:'Prop context',kind:'Preview report',text:'<script>Example starter</script>',url:'https://www.espn.com/nfl/preview?gameId=1',publishedAt:g.checkedAt};
+ const html=gameHTML({...g,evidence:[row,row,row,row],leaders:[{teamId:'a',player:'Example',category:'Passing yards',value:'1,000'}]},now);
+ assert.equal((html.match(/class="intel-takeaway"/g)||[]).length,3);assert(html.includes('Preview report'));assert(html.includes('&lt;script&gt;'));assert(!html.includes('<script>'));assert(html.includes('Season leaders'));assert(!html.includes('<details open'));assert(html.includes('Does not confirm starters'));
+ assert(!gameHTML({...g,evidence:[{...row,url:'javascript:alert(1)'}]},now).includes('intel-takeaway'));
+ assert(!gameHTML({...g,evidence:[{...row,publishedAt:'2020-01-01T00:00Z'}]},now).includes('intel-takeaway'));
+});
+test('availability caveats show without duplicate QB alert; recent results remain collapsed',()=>{
+ const html=gameHTML({...g,evidence:[{label:'Availability',kind:'Injury report',text:'Example — Questionable',publishedAt:g.checkedAt,url:'https://www.espn.com/nfl/'},{label:'Prop context',kind:'Preview report',text:'Example is set to play.',caveat:'Availability unconfirmed',publishedAt:g.checkedAt,url:'https://www.espn.com/nfl/'}],injuries:[{teamId:'a',player:'Example',position:'QB',status:'Questionable'}],recentResults:[{teamId:'a',games:[{date:'2026-11-01T18:00Z',opponent:'OPP',result:'W',score:'20-10'}]}]},now);
+ assert(html.includes('Availability unconfirmed'));assert(!html.includes('QB availability'));assert(html.includes('Recent results'));assert(html.includes('20-10'));assert(!html.includes('<details open'));
+});

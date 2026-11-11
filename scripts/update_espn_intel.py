@@ -114,6 +114,118 @@ def expert_picks(article, event, now):
     return output
 
 
+def valid_preview(article, event, now):
+    return (isinstance(article, dict) and str(article.get('gameId')) == str(event['id'])
+            and not article.get('premium') and recent(article.get('published'), now)
+            and instant(article['published']) < instant(event['date']) and bool(link(article)))
+
+
+def hydrate_preview(summary, event, now, fetch=get):
+    """Read only the exact event's public preview; editorial failure never drops a game."""
+    article = summary.get('article') or {}
+    if not valid_preview(article, event, now) or article.get('story'):
+        return summary
+    aid = str(article.get('id', ''))
+    if not aid.isdigit():
+        return summary
+    try:
+        content = fetch(CONTENT+aid)
+        full = next((a for a in content.get('headlines', []) if str(a.get('id')) == aid), {})
+        # The summary binds article ID to game ID. Reject an explicit conflicting binding.
+        if full and str(full.get('gameId', event['id'])) == str(event['id']):
+            merged = {**article, **full, 'gameId': str(event['id'])}
+            if valid_preview(merged, event, now):
+                return {**summary, 'article': merged}
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return summary
+
+
+def matchup_evidence(summary, event, now, teams, stats, injuries, sport):
+    """Conservative evidence, not predictions. Never infer a replacement or starting role."""
+    url = 'https://www.espn.com/'+('college-football' if sport == 'ncaaf' else sport)+'/game/_/gameId/'+str(event['id'])
+    evidence = []
+    relevant = [r for r in injuries if re.search(r'out|doubtful|questionable|inactive', r['status'], re.I)]
+    if relevant:
+        r = relevant[0]
+        evidence.append({'label':'Availability', 'kind':'Injury report',
+                         'text':r['player']+' — '+r['status'], 'url':url, 'publishedAt':r['reportedAt']})
+    # Describe both sides without turning a season average into an asserted betting edge.
+    pair = {'nfl':('passingYardsPerGame','passingYardsPerGameAllowed','pass yards/game','opponent allowed'),
+            'ncaaf':('passingYardsPerGame','passingYardsPerGameAllowed','pass yards/game','opponent allowed'),
+            'nba':('avgPoints','avgPointsAgainst','points/game','opponent allowed'),
+            'nhl':('avgGoals','avgGoalsAgainst','goals/game','opponent allowed')}.get(sport)
+    values = {r['teamId']:r['values'] for r in stats}
+    if pair:
+        attack, defense, unit, allowed = pair
+        for t in teams:
+            opponent = next(x for x in teams if x['id'] != t['id'])
+            a = values.get(t['id'], {}).get(attack); b = values.get(opponent['id'], {}).get(defense)
+            if a is not None and b is not None:
+                evidence.append({'label':'Matchup', 'kind':'Season statistics',
+                                 'text':f"{t['code']}: {a} {unit} · {opponent['code']}: {b} {allowed}",
+                                 'url':url, 'publishedAt':None})
+                break
+    article = summary.get('article') or {}
+    if valid_preview(article, event, now):
+        # A single short attributed excerpt, never a generated claim or a truncated sentence.
+        # Limit the entire preview excerpt to 24 words; skip quotes, motivation and speculation.
+        paragraphs = re.split(r'</p>|<br\s*/?>|[\r\n]+', article.get('story', ''), flags=re.I)
+        for paragraph in paragraphs:
+            text = plain(paragraph)
+            if any(q in text for q in ('“','”','"')):
+                continue
+            protected = re.sub(r'\b(?:[A-Z]\.){2,}', lambda m: m[0].replace('.', '\u2024'), text)
+            for sentence in re.split(r'(?<=[.!?])\s+(?=[A-Z])', protected):
+                sentence = sentence.replace('\u2024', '.')
+                if (5 <= len(sentence.split()) <= 24 and
+                    re.search(r'\b(starting|starter|first home start|set to play|ruled out|will miss|replacing|replaced|workload|snaps|targets|carries|minutes restriction)\b', sentence, re.I) and
+                    not re.search(r'\b(could|might|may|would|last season|last year)\b', sentence, re.I)):
+                    conflicts = [r for r in relevant if re.search(r'\b'+re.escape(r['player'].split()[-1])+r'\b', sentence, re.I) and re.search(r'set to play|starting|starter|start', sentence, re.I)]
+                    evidence.append({'label':'Prop context', 'kind':'Preview report', 'text':sentence,
+                                     'caveat': 'Availability unconfirmed · ESPN injury report: '+conflicts[0]['status'] if conflicts else None,
+                                     'url':link(article), 'publishedAt':article['published']})
+                    return evidence[:3]
+    return evidence[:3]
+
+
+def season_leaders(summary, ids):
+    rows = []
+    for block in summary.get('leaders', []):
+        tid = str(block.get('team', {}).get('id'))
+        if tid not in ids:
+            continue
+        for category in block.get('leaders', [])[:3]:
+            for entry in category.get('leaders', [])[:1]:
+                a = entry.get('athlete', {})
+                if a.get('displayName') and entry.get('displayValue'):
+                    rows.append({'teamId':tid, 'player':plain(a['displayName'])[:100],
+                                 'category':plain(category.get('displayName'))[:60],
+                                 'value':plain(entry['displayValue'])[:120]})
+    return rows[:6]
+
+
+def recent_results(summary, ids, now):
+    output = []
+    for block in summary.get('lastFiveGames', []):
+        tid = str(block.get('team', {}).get('id'))
+        if tid not in ids:
+            continue
+        rows = []
+        for row in block.get('events', []):
+            date = instant(row.get('gameDate'))
+            if not date or date >= now or row.get('gameResult') not in ('W','L','T'):
+                continue
+            if tid not in (str(row.get('homeTeamId')), str(row.get('awayTeamId'))):
+                continue
+            rows.append({'date':row['gameDate'], 'result':row['gameResult'],
+                         'opponent':plain(row.get('opponent', {}).get('abbreviation'))[:12],
+                         'score':plain(row.get('score'))[:30]})
+        if rows:
+            output.append({'teamId':tid, 'games':sorted(rows, key=lambda r:r['date'], reverse=True)[:5]})
+    return output[:2]
+
+
 def normalize(event, summary, stories, now, sport="nfl"):
     comp = event['competitions'][0]; competitors = comp['competitors']
     teams = [{'id': str(c['team']['id']), 'name': c['team']['displayName'], 'code': c['team']['abbreviation'], 'side': c['homeAway']} for c in competitors]
@@ -155,10 +267,11 @@ def normalize(event, summary, stories, now, sport="nfl"):
         if picks:
             source = article_meta(article); break
     preview = summary.get('article', {})
-    preview = article_meta(preview) if str(preview.get('gameId')) == str(event['id']) and not preview.get('premium') and recent(preview.get('published'), now) and link(preview) else None
+    preview = article_meta(preview) if valid_preview(preview, event, now) else None
     return {'sport': sport, 'eventId': str(event['id']), 'startAt': event['date'], 'teams': teams, 'checkedAt': now.isoformat(), 'status': 'ok',
             'probabilities': probabilities, 'statistics': stats, 'injuries': injuries, 'expertPicks': picks, 'expertSource': source,
-            'preview': preview, 'url': 'https://www.espn.com/'+('college-football' if sport == 'ncaaf' else sport)+'/game/_/gameId/'+str(event['id'])}
+            'evidence': matchup_evidence(summary, event, now, teams, stats, injuries, sport),
+            'recentResults': recent_results(summary, ids, now), 'leaders': season_leaders(summary, ids), 'preview': preview, 'url': 'https://www.espn.com/'+('college-football' if sport == 'ncaaf' else sport)+'/game/_/gameId/'+str(event['id'])}
 
 
 def build(previous, now, fetch=get, sport="nfl"):
@@ -190,7 +303,9 @@ def build(previous, now, fetch=get, sport="nfl"):
         try:
             if sport == 'ufc':
                 return normalize_fights(event, now)
-            return normalize(event, fetch(base+'summary?event='+str(event['id'])), stories, now, sport)
+            summary = fetch(base+'summary?event='+str(event['id']))
+            summary = hydrate_preview(summary, event, now, fetch)
+            return normalize(event, summary, stories, now, sport)
         except (OSError, ValueError, KeyError, TypeError):
             cached = old.get(str(event['id']))
             ids = {str(c.get('team', c.get('athlete', {})).get('id')) for c in event['competitions'][0]['competitors']}

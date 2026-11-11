@@ -81,3 +81,45 @@ class IntelTests(unittest.TestCase):
         self.assertEqual(rows[1]['teams'][0]['name'],'C')
         self.assertEqual(rows[0]['probabilities'],[])
         self.assertEqual(normalize_fights({**event,'date':'2026-11-01T00:00Z'},NOW),[])
+
+    def test_preview_story_evidence_is_short_attributed_and_not_a_prediction(self):
+        article = {**ARTICLE, 'gameId':'123', 'story':'J.J. Example is set to play despite a hip injury.\n\n“We must win,” said Example.'}
+        g = normalize(EVENT, {'header':EVENT,'article':article}, [], NOW)
+        self.assertEqual(g['evidence'][0]['kind'], 'Preview report')
+        self.assertEqual(g['evidence'][0]['text'], 'J.J. Example is set to play despite a hip injury.')
+        self.assertLessEqual(len(g['evidence'][0]['text'].split()),24)
+        for changes in ({'premium':True},{'gameId':'999'},{'published':'2020-01-01T00:00Z'},{'published':EVENT['date']}):
+            self.assertEqual(normalize(EVENT,{'header':EVENT,'article':{**article,**changes}},[],NOW)['evidence'],[])
+
+    def test_preview_hydration_does_not_cross_game_or_fail_matchup(self):
+        from scripts.update_espn_intel import hydrate_preview
+        article={**ARTICLE,'gameId':'123','story':''}
+        summary={'header':EVENT,'article':article}
+        for full in ({**article,'gameId':'999','story':'Wrong game'}, {**article,'premium':True,'story':'Paid content'}):
+            self.assertEqual(hydrate_preview(summary,EVENT,NOW,lambda url:{'headlines':[full]}),summary)
+        def fail(url): raise OSError('offline')
+        self.assertEqual(hydrate_preview(summary,EVENT,NOW,fail),summary)
+        hydrated=hydrate_preview(summary,EVENT,NOW,lambda url:{'headlines':[{**article,'story':'Full story'}]})
+        self.assertEqual(hydrated['article']['story'],'Full story')
+
+    def test_leaders_and_matchup_statistics_are_bound_to_teams(self):
+        summary={'header':EVENT,'leaders':[{'team':{'id':'999'},'leaders':[{'displayName':'Passing','leaders':[{'athlete':{'displayName':'Wrong'},'displayValue':'999'}]}]}],
+                 'boxscore':{'teams':[{'team':{'id':'1'},'statistics':[{'name':'passingYardsPerGame','displayValue':'250'}]},{'team':{'id':'2'},'statistics':[{'name':'passingYardsPerGameAllowed','displayValue':'280'}]}]}}
+        g=normalize(EVENT,summary,[],NOW)
+        self.assertEqual(g['leaders'],[])
+        self.assertEqual(g['evidence'][0]['kind'],'Season statistics')
+        self.assertIn('250',g['evidence'][0]['text'])
+        self.assertIn('280',g['evidence'][0]['text'])
+
+    def test_preview_playing_claim_does_not_override_injury_report(self):
+        article={**ARTICLE,'gameId':'123','story':'Example is set to play on Sunday.'}
+        summary={'header':EVENT,'article':article,'injuries':[{'team':{'id':'1'},'injuries':[{'athlete':{'displayName':'John Example','position':{'abbreviation':'QB'}},'status':'Questionable','date':'2026-11-07T12:00Z'}]}]}
+        g=normalize(EVENT,summary,[],NOW)
+        self.assertEqual(g['evidence'][0]['text'],'John Example — Questionable')
+        self.assertIn('Availability unconfirmed',g['evidence'][1]['caveat'])
+
+    def test_recent_results_exclude_future_and_wrong_team(self):
+        from scripts.update_espn_intel import recent_results
+        row={'gameDate':'2026-11-01T18:00Z','homeTeamId':'1','awayTeamId':'9','gameResult':'W','score':'20-10','opponent':{'abbreviation':'OPP'}}
+        summary={'lastFiveGames':[{'team':{'id':'1'},'events':[row,{**row,'gameDate':EVENT['date']},{**row,'homeTeamId':'8'}]}]}
+        self.assertEqual(recent_results(summary,{'1','2'},NOW),[{'teamId':'1','games':[{'date':row['gameDate'],'result':'W','score':'20-10','opponent':'OPP'}]}])
