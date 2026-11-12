@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-12T12:59:40.103Z",
-  "status": "healthy",
+  "updated_at": "2026-11-12T13:07:11.980Z",
+  "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-12T12:57:02.402506+00:00",
-      "ageMinutes": 3,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-12T12:57:15.330801+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 2424,
       "quotedMarkets": 2424,
       "expiredQuotes": 0,
@@ -166,7 +166,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-11-12T12:58:47.185929+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "markets": 8666,
       "quotedMarkets": 8666,
       "expiredQuotes": 0,
@@ -1078,7 +1078,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-12T12:57:02.945282+00:00",
-      "ageMinutes": 3,
+      "ageMinutes": 10,
       "markets": 6149,
       "quotedMarkets": 6149,
       "expiredQuotes": 0,
@@ -1223,19 +1223,19 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-12T12:57:07.348105+00:00",
-      "ageMinutes": 3,
-      "markets": 2408,
-      "quotedMarkets": 2408,
+      "snapshotAt": "2026-11-12T13:07:05.806817+00:00",
+      "ageMinutes": 0,
+      "markets": 2832,
+      "quotedMarkets": 2832,
       "expiredQuotes": 0,
-      "playerMarkets": 1608,
+      "playerMarkets": 2034,
       "families": {
         "moneyline": 96,
         "spread": 216,
-        "total": 488,
-        "goals": 716,
-        "assists": 386,
-        "points": 506
+        "total": 486,
+        "goals": 916,
+        "assists": 488,
+        "points": 630
       },
       "futureEvents": [
         {
@@ -1392,7 +1392,7 @@
         },
         {
           "id": "401892704",
-          "time": "2026-11-13T02:00:00+00:00"
+          "time": "2026-11-13T02:00Z"
         },
         {
           "id": "401892702",
@@ -1432,18 +1432,20 @@
         }
       ],
       "playerCounts": {
-        "401891808": 224,
+        "401891808": 226,
         "401892696": 228,
         "401892697": 204,
         "401892698": 234,
-        "401892699": 238,
+        "401892699": 242,
         "401892700": 242,
-        "401892701": 238
+        "401892701": 238,
+        "401892702": 220,
+        "401892703": 200
       }
     },
     "ufc": {
       "snapshotAt": "2026-11-12T12:57:02.818492+00:00",
-      "ageMinutes": 3,
+      "ageMinutes": 10,
       "markets": 212,
       "quotedMarkets": 212,
       "expiredQuotes": 0,
@@ -1544,41 +1546,18 @@
       "playerCounts": {}
     }
   },
-  "alerts": [],
-  "resolved": [
+  "alerts": [
     {
-      "id": "mlb:stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ncaaf:stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ncaaf:native-quotes-stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ufc:stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ufc:native-quotes-stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ncaaf:worker-overdue",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "ufc:worker-overdue",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
-    },
-    {
-      "id": "archive:stale",
-      "resolvedAt": "2026-11-12T12:59:40.103Z"
+      "id": "pipeline:evaluation-stale",
+      "sport": null,
+      "code": "evaluation-stale",
+      "severity": "warning",
+      "message": "Performance recording/settlement report is stale; betting edge remains unverified.",
+      "firstSeen": "2026-11-12T13:07:11.980Z",
+      "changedAt": "2026-11-12T13:07:11.980Z"
     }
   ],
+  "resolved": [],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43222566821",
   "refreshResults": {
     "mlb": {
@@ -1595,7 +1574,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-12T12:57:15.240257+00:00"
+      "at": "2026-11-12T13:07:11.960354+00:00"
     },
     "ufc": {
       "ok": true,
