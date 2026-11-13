@@ -12,7 +12,7 @@ function fixture(){
 }
 test('NBA ladders use consecutive integer milestones across count families with no inherited quotes',()=>{
  const {window:w,targets}=fixture();
- for(const kind of ['points','rebounds','assists','threes','pra']){
+ for(const kind of ['points','rebounds','assists','threes','pra','pr','pa','ra']){
   const rows=targets.filter(m=>m.kind===kind);assert.ok(rows.length,kind);
   rows.forEach((m,i)=>{assert.equal((m.line+.5)%1,0);if(i)assert.equal(m.line-rows[i-1].line,1);assert.equal(w.NBA_ALT_LINES.allowed(m,'alt'),true);assert.equal(w.NBA_ALT_LINES.allowed(m,'standard'),false);assert.equal(w.PICK_QUALITY.quote('nba',m).p,null);for(const key of ['price','yes_ask','probability','ticker','volume','spread','quotedAt'])assert.equal(m[key],undefined,key)});
   const probabilities=rows.map(m=>w.NBA_MODEL.estimate(m,fixture().context).modelP);for(let i=1;i<probabilities.length;i++)assert.ok(probabilities[i]<probabilities[i-1],kind);

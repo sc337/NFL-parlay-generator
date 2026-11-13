@@ -337,6 +337,7 @@ reference-only NFL idea cards are unchanged. No wager is placed.
 ### NBA Caesars-compatible research targets
 
 NBA ALT and Both filters now evaluate points, rebounds, assists, made threes,
+points + rebounds, points + assists, rebounds + assists,
 and points + rebounds + assists in integer milestones (N+ is Over N−0.5).
 Double-double and triple-double remain Yes milestones using the existing
 five-category history model. Standard-only continues to use quoted lines.
@@ -353,7 +354,7 @@ for double/triple-doubles), minutes, role and profile buffers remain required.
 The per-leg buffered minima stay 75% / 65% / 50%; an unpriced target is ranked
 near its profile threshold rather than choosing trivial 1+ milestones. Every SGP
 still uses distinct players and at most two props per team. Current targets are
-overs/Yes only; other NBA combo and defensive props retain their quoted path.
+overs/Yes only; defensive props retain their quoted path.
 Limited-history/traded-player fallback is not enabled by this change.
 
 NFL player-prop cards show a projected stat, experimental estimated hit percentage, and completed-game sample size when verified recent nflverse history supports the exact market. The hit percentage uses the existing player outcome distribution before market-price blending, so changing the offered price does not change it and ALT thresholds share one distribution. This display is separate from the buffered selection estimate used by the value screen. Integer lines with push outcomes currently show unavailable rather than a misleading binary probability. Insufficient or stale history also shows unavailable. These are unvalidated marginal estimates, not a joint SGP probability; the existing roster, injury, price and selection gates still apply.

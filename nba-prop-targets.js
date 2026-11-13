@@ -1,7 +1,7 @@
 // Unpriced Caesars-compatible research targets. Never synthesize bookmaker odds.
 (()=>{'use strict';
-const labels={points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'Threes',pra:'Pts + Reb + Ast',double_double:'Double Double',triple_double:'Triple Double'};
-const caps={points:80,rebounds:35,assists:25,threes:15,pra:120};
+const labels={points:'Points',rebounds:'Rebounds',assists:'Assists',threes:'Threes',pra:'Pts + Reb + Ast',pr:'Pts + Reb',pa:'Pts + Ast',ra:'Reb + Ast',double_double:'Double Double',triple_double:'Triple Double'};
+const caps={points:80,rebounds:35,assists:25,threes:15,pra:120,pr:115,pa:105,ra:60};
 const registered=new WeakSet();
 function isTarget(m){return !!m&&registered.has(m)}
 function* iterate(rows,context,{longshots=false}={}){
