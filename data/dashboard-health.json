@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-14T23:30:08.209Z",
+  "updated_at": "2026-11-14T23:32:44.557Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-14T23:21:29.010080+00:00",
-      "ageMinutes": 9,
+      "snapshotAt": "2026-11-14T23:31:29.170004+00:00",
+      "ageMinutes": 1,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-14T23:29:13.922352+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "markets": 3360,
       "quotedMarkets": 3360,
       "expiredQuotes": 0,
@@ -174,16 +174,16 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-14T23:22:11.027041+00:00",
-      "ageMinutes": 8,
-      "markets": 3417,
-      "quotedMarkets": 3417,
+      "snapshotAt": "2026-11-14T23:32:14.227029+00:00",
+      "ageMinutes": 1,
+      "markets": 3293,
+      "quotedMarkets": 3293,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 413,
-        "spread": 1814,
-        "total": 1190
+        "moneyline": 411,
+        "spread": 1740,
+        "total": 1142
       },
       "futureEvents": [
         {
@@ -907,7 +907,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-14T23:29:38.467341+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 3,
       "markets": 7114,
       "quotedMarkets": 7114,
       "expiredQuotes": 0,
@@ -1048,7 +1048,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-14T23:29:05.355002+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 4,
       "markets": 3720,
       "quotedMarkets": 3720,
       "expiredQuotes": 0,
@@ -1276,28 +1276,20 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-11-14T23:21:28.665899+00:00",
-      "ageMinutes": 9,
-      "markets": 180,
-      "quotedMarkets": 175,
+      "snapshotAt": "2026-11-14T23:31:28.275421+00:00",
+      "ageMinutes": 1,
+      "markets": 148,
+      "quotedMarkets": 148,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 22,
-        "distance": 11,
-        "method_finish": 44,
-        "method_victory": 77,
-        "round_finish": 26
+        "moneyline": 18,
+        "distance": 9,
+        "method_finish": 36,
+        "method_victory": 63,
+        "round_finish": 22
       },
       "futureEvents": [
-        {
-          "id": "KXUFCFIGHT-26NOV14CHIMES",
-          "time": "2026-11-15T00:00:00Z"
-        },
-        {
-          "id": "401931774",
-          "time": "2026-11-15T00:00:00Z"
-        },
         {
           "id": "401931773",
           "time": "2026-11-15T00:00:00Z"
@@ -1335,22 +1327,6 @@
           "time": "2026-11-15T00:00:00Z"
         },
         {
-          "id": "KXUFCDISTANCE-26NOV14CHIMES",
-          "time": "2026-11-15T00:00:00Z"
-        },
-        {
-          "id": "KXUFCMOF-26NOV14CHIMES",
-          "time": "2026-11-15T00:00:00Z"
-        },
-        {
-          "id": "KXUFCMOV-26NOV14CHIMES",
-          "time": "2026-11-15T00:00:00Z"
-        },
-        {
-          "id": "KXUFCROUNDS-26NOV14CHIMES",
-          "time": "2026-11-15T00:00:00Z"
-        },
-        {
           "id": "KXUFCDISTANCE-26NOV14MEDHOL",
           "time": "2026-11-15T00:00:00Z"
         },
@@ -1364,6 +1340,30 @@
         },
         {
           "id": "KXUFCROUNDS-26NOV14MEDHOL",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "KXUFCFIGHT-26NOV14CHIMES",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "401931774",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "KXUFCDISTANCE-26NOV14CHIMES",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "KXUFCMOF-26NOV14CHIMES",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "KXUFCMOV-26NOV14CHIMES",
+          "time": "2026-11-15T00:00:00Z"
+        },
+        {
+          "id": "KXUFCROUNDS-26NOV14CHIMES",
           "time": "2026-11-15T00:00:00Z"
         },
         {
@@ -1400,13 +1400,13 @@
   },
   "alerts": [
     {
-      "id": "ncaaf:starts-missing",
-      "sport": "ncaaf",
-      "code": "starts-missing",
+      "id": "ufc:market-drop",
+      "sport": "ufc",
+      "code": "market-drop",
       "severity": "warning",
-      "message": "772 upcoming markets lack verified start times.",
-      "firstSeen": "2026-11-14T23:02:50.945Z",
-      "changedAt": "2026-11-14T23:02:50.945Z"
+      "message": "13 of 26 previously available upcoming games disappeared.",
+      "firstSeen": "2026-11-14T23:32:44.557Z",
+      "changedAt": "2026-11-14T23:32:44.557Z"
     },
     {
       "id": "archive:stale",
@@ -1418,16 +1418,21 @@
       "changedAt": "2026-11-14T20:13:15.858Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "ncaaf:starts-missing",
+      "resolvedAt": "2026-11-14T23:32:44.557Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43631370616",
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-11-14T23:22:40.246543+00:00"
+      "at": "2026-11-14T23:32:44.538360+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-11-14T23:22:40.246543+00:00"
+      "at": "2026-11-14T23:32:44.538360+00:00"
     },
     "nfl": {
       "ok": true,
@@ -1439,7 +1444,7 @@
     },
     "ufc": {
       "ok": true,
-      "at": "2026-11-14T23:22:40.246543+00:00"
+      "at": "2026-11-14T23:32:44.538360+00:00"
     },
     "nba": {
       "ok": true,
