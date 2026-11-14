@@ -2,7 +2,6 @@
 const options={
  nba:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total'],['points','Points'],['rebounds','Rebounds'],['assists','Assist'],['threes','3pt FG'],['pr','Pts + Reb'],['pa','Pts + Ast'],['ra','Reb + Ast'],['steals','Steals'],['blocks','Blocks'],['double_double','Double Double'],['triple_double','Triple Double'],['pra','Pts+Reb+Assist']],
  mlb:[['moneyline','Moneyline'],['spread','Run Line'],['game_total','Game Total'],['team_total','Team Total'],['strikeouts','Pitcher Strikeouts'],['hits','Hits'],['home_runs','Home Runs'],['rbi','RBI'],['total_bases','Total Bases'],['hrr','Hits + Runs + RBI']],
- ncaab:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total']],
  ncaaf:[['moneyline','Moneyline'],['spread','Spread'],['total','Game Total']],
  ufc:[['moneyline','Fight Winner']]
 };

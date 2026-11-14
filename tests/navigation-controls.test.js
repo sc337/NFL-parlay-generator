@@ -46,7 +46,7 @@ test('shared builder reuses controls and keeps the same order across every sport
  controls.append(quality,nflMode,nbaField,new Node('nflParlayFilters'),new Node('sharedSportFilters'),new Node('generateBtn'),new Node('gameChooserWrap'),new Node('nbaGameField'),new Node('ufcCardWrap'));
  const document={readyState:'loading',addEventListener(){},querySelector:s=>nodes.get(s),createElement:()=>new Node()};const window={};
  vm.runInNewContext(fs.readFileSync('selection-ui.js','utf8'),{window,document,Event,requestAnimationFrame(){}});
- for(const sport of ['nfl','nba','mlb','ncaab','ncaaf','nhl','ufc','nba','nfl']){
+ for(const sport of ['nfl','nba','mlb','ncaaf','nhl','ufc','nba','nfl']){
   window.SELECTION_UI.mountBuilder(sport);const shell=nodes.get('#sharedBuilder'),filters=nodes.get(sport==='nfl'?'#nflParlayFilters':'#sharedSportFilters');
   assert.equal(shell.nextElementSibling,filters);assert.equal(filters.nextElementSibling,nodes.get('#generateBtn'));assert.equal(quality.parentElement,nodes.get('#builderLegs'));assert.equal(nflMode.hidden,sport!=='nfl');assert.equal(nbaField.hidden,sport!=='nba');assert.equal(nodes.get('#ufcCardWrap').parentElement,nodes.get('#builderGame'));assert.equal(nodes.get('#ufcCardWrap').classes.has('builder-inactive-game'),sport!=='ufc');
  }

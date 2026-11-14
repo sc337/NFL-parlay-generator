@@ -13,9 +13,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
-SPORTS = ('mlb', 'nba', 'ncaab', 'ncaaf', 'nfl', 'nhl', 'ufc')
+SPORTS = ('mlb', 'nba', 'ncaaf', 'nfl', 'nhl', 'ufc')
 STEPS = {
-    'ncaab': ['update_public_odds.py --sport ncaab'],
     'nba': ['update_kalshi_nba.py'],
     'nfl': ['update_kalshi.py', 'verify_snapshot_rosters.py'],
     'mlb': ['update_kalshi_mlb.py', 'update_mlb_context.py', 'attach_game_context.py'],
@@ -178,13 +177,13 @@ def refresh(sport):
         try:
             args=['python', 'scripts/update_public_odds.py', '--sport', sport]
             if sport == 'nfl': args.append('--skip-nfl-context')
-            if sport != 'ncaab': run(args, timeout=90)
+            run(args, timeout=90)
         except Exception as error:
             for name, raw in checkpoint.items(): Path(name).write_bytes(raw)
             print('Public references delayed; fresh native prices retained:',sport,error,flush=True)
         # Isolate the free exchange backup from primary and ESPN failures.
         try:
-            if sport != 'ncaab': run(['python', 'scripts/update_polymarket.py', '--sport', sport], timeout=90)
+            run(['python', 'scripts/update_polymarket.py', '--sport', sport], timeout=90)
         except Exception as error:
             print('Polymarket backup delayed; other sources retained:', sport, error, flush=True)
         if sport == 'nfl' and primary_error is None:
@@ -202,7 +201,7 @@ def refresh(sport):
             current.setdefault('espn_evidence', previous['espn_evidence'])
             target.write_text(json.dumps(current, separators=(',', ':'))+'\n')
         try:
-            if sport != 'ncaab': run(['python', 'scripts/update_espn_evidence.py', '--sport', sport], timeout=180)
+            run(['python', 'scripts/update_espn_evidence.py', '--sport', sport], timeout=180)
         except Exception as error:
             print('ESPN evidence check delayed; earlier dated evidence retained:', sport, error, flush=True)
         if sport == 'ncaaf':

@@ -16,7 +16,7 @@ try:
 except ImportError:
     from update_ncaaf_slate import normalize, instant, number
 
-PATHS = {'ncaab': 'basketball/mens-college-basketball', 'mlb': 'baseball/mlb', 'nba': 'basketball/nba', 'ncaaf': 'football/college-football',
+PATHS = {'mlb': 'baseball/mlb', 'nba': 'basketball/nba', 'ncaaf': 'football/college-football',
          'nfl': 'football/nfl', 'nhl': 'hockey/nhl', 'ufc': 'mma/ufc'}
 CODES = {'nba': {'GS': 'GSW', 'NY': 'NYK', 'NO': 'NOP', 'SA': 'SAS', 'WSH': 'WAS', 'UTAH': 'UTA'},
          'nhl': {'NJD': 'NJ', 'LAK': 'LA', 'SJS': 'SJ', 'TBL': 'TB', 'WAS': 'WSH'}}
@@ -268,8 +268,8 @@ def enrich(sport, snapshot, events, ctx, now):
 def collect(sport, now, fetch=None):
     def get(day):
         url = 'https://site.api.espn.com/apis/site/v2/sports/' + PATHS[sport] + '/scoreboard?dates=' + day + '&limit=500'
-        if sport in ('ncaaf', 'ncaab'):
-            url += '&groups=' + ('50' if sport == 'ncaab' else '80')
+        if sport == 'ncaaf':
+            url += '&groups=80'
         if fetch:
             payload = fetch(url)
         else:
