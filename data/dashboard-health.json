@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-14T09:25:36.610Z",
+  "updated_at": "2026-11-14T09:30:57.772Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-14T09:23:47.053844+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -15,16 +15,25 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-14T09:24:03.956070+00:00",
-      "ageMinutes": 2,
-      "markets": 692,
-      "quotedMarkets": 692,
-      "expiredQuotes": 662,
-      "playerMarkets": 0,
+      "snapshotAt": "2026-11-14T09:30:49.184779+00:00",
+      "ageMinutes": 0,
+      "markets": 2192,
+      "quotedMarkets": 2192,
+      "expiredQuotes": 0,
+      "playerMarkets": 1506,
       "families": {
-        "moneyline": 74,
-        "spread": 318,
-        "total": 300
+        "moneyline": 64,
+        "spread": 328,
+        "total": 294,
+        "points": 350,
+        "rebounds": 300,
+        "assists": 200,
+        "threes": 376,
+        "pra": 176,
+        "double_double": 44,
+        "triple_double": 12,
+        "steals": 34,
+        "blocks": 14
       },
       "futureEvents": [
         {
@@ -117,11 +126,11 @@
         },
         {
           "id": "401909984",
-          "time": "2026-11-15T01:00:00+00:00"
+          "time": "2026-11-15T01:00Z"
         },
         {
           "id": "401909981",
-          "time": "2026-11-15T00:30:00+00:00"
+          "time": "2026-11-15T00:30Z"
         },
         {
           "id": "401909991",
@@ -137,7 +146,7 @@
         },
         {
           "id": "401909982",
-          "time": "2026-11-15T01:00:00+00:00"
+          "time": "2026-11-15T01:00Z"
         },
         {
           "id": "401909986",
@@ -156,11 +165,17 @@
           "time": "2026-11-15T23:00Z"
         }
       ],
-      "playerCounts": {}
+      "playerCounts": {
+        "401909980": 334,
+        "401909981": 460,
+        "401909982": 378,
+        "401909983": 240,
+        "401909984": 94
+      }
     },
     "ncaaf": {
       "snapshotAt": "2026-11-14T09:24:57.577530+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 6,
       "markets": 9411,
       "quotedMarkets": 9411,
       "expiredQuotes": 0,
@@ -1124,7 +1139,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-14T09:23:44.930877+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "markets": 7099,
       "quotedMarkets": 7099,
       "expiredQuotes": 0,
@@ -1265,7 +1280,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-14T09:23:46.847605+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "markets": 1152,
       "quotedMarkets": 1152,
       "expiredQuotes": 0,
@@ -1475,7 +1490,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-14T09:23:49.115495+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 7,
       "markets": 199,
       "quotedMarkets": 199,
       "expiredQuotes": 0,
@@ -1577,15 +1592,6 @@
   },
   "alerts": [
     {
-      "id": "nba:native-quotes-stale",
-      "sport": "nba",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "662 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-14T06:43:52.707Z",
-      "changedAt": "2026-11-14T06:43:52.707Z"
-    },
-    {
       "id": "archive:stale",
       "sport": null,
       "code": "archive-stale",
@@ -1595,8 +1601,13 @@
       "changedAt": "2026-11-14T07:15:36.678Z"
     }
   ],
-  "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43567724190",
+  "resolved": [
+    {
+      "id": "nba:native-quotes-stale",
+      "resolvedAt": "2026-11-14T09:30:57.772Z"
+    }
+  ],
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43580854304",
   "refreshResults": {
     "mlb": {
       "ok": true,
@@ -1620,7 +1631,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-14T09:24:06.924694+00:00"
+      "at": "2026-11-14T09:30:57.752675+00:00"
     },
     "ncaab": {
       "ok": true,
