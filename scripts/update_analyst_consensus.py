@@ -56,26 +56,32 @@ def source_age(label):
     return bool(m and int(m[1]) <= {'minute':120, 'hour':168, 'day':7}[m[2]])
 
 
-def parse_page(raw, sport, games, now):
+def parse_page(raw, sport, games, now, diagnostics=None):
+    diagnostics = diagnostics if diagnostics is not None else {}
+    def reject(reason):
+        reasons=diagnostics.setdefault("rejected",{})
+        reasons[reason]=reasons.get(reason,0)+1
     tree = html.fromstring(raw)
     for node in tree.xpath('//script|//style'):
         node.drop_tree()
     output = []
     groups = tree.xpath('//*[contains(concat(" ",normalize-space(@class)," ")," picks-card ")]')
+    diagnostics["pageGroups"]=len(groups)
+    diagnostics["expertCards"]=len(tree.xpath('//*[@data-pick and contains(@class,"pick-cards-expert-component")]'))
     for group in groups:
         headers = group.xpath('.//*[contains(@class,"picks-card-header")]')
         if not headers:
-            continue
+            reject("missing_header");continue
         header = headers[0]
         names = [s.removesuffix(' image thumbnail') for s in header.xpath('.//img/@alt') if s.endswith(' image thumbnail')]
         if sport == 'ufc':
             headings = header.xpath('.//h3')
             names = re.split(r'\s+vs\s+', text(headings[0])) if headings else []
         if len(names) != 2 or norm(names[0]) == norm(names[1]):
-            continue
+            reject('participant_labels');continue
         date = re.search(r'\b([A-Z][a-z]{2}) (\d{1,2})\s*•(?:\s*(\d{1,2}:\d{2} [AP]M) ET)?', text(header))
         if not date or sport != 'ufc' and not date[3]:
-            continue
+            reject('schedule_label');continue
         # Resolve year against upcoming verified schedules, not the machine's year.
         matches = []
         for game in games:
@@ -93,6 +99,9 @@ def parse_page(raw, sport, games, now):
                     continue
             matches.append(game)
         if len(matches) != 1:
+            reject('unmatched_schedule')
+            samples=diagnostics.setdefault('scheduleSamples',[])
+            if len(samples)<3:samples.append({'participants':names,'dateLabel':date[0], 'matchingParticipantGames':[{'startAt':g['startAt'],'status':g.get('status')} for g in games if {norm(t['name']) for t in g.get('teams',[])}=={norm(n) for n in names}][:2]})
             continue
         game = matches[0]
         for card in group.xpath('.//*[@data-pick and contains(@class,"pick-cards-expert-component")]'):
@@ -100,11 +109,11 @@ def parse_page(raw, sport, games, now):
             titles = card.xpath('.//div[contains(@class,"fw-bold") and contains(@class,"small")]')
             ages = card.xpath('.//span[contains(@class,"badge-style-time-only")]')
             if not authors or not titles or not ages:
-                continue
+                reject('missing_author_selection_or_publication');continue
             author = text(authors[0])
             published = re.sub(r'^Pick made:\s*', '', text(ages[0]))
             if not author or not source_age(published):
-                continue
+                reject('publication_label');continue
             title = titles[0]
             for node in title.xpath('.//span[contains(@class,"ProfileAvatar")]'):
                 node.drop_tree()
@@ -114,7 +123,7 @@ def parse_page(raw, sport, games, now):
             participant = next((t for t in game['teams'] if norm(t['name']) == norm(selected_team)), None)
             odds = re.search(r'\(([+-]\d{3,6})\)$', label)
             if not odds:
-                continue
+                reject('selection_odds');continue
             selection = label[:odds.start()].strip()
             player = None; line = None; side = None; period = 'game'
             if kind in ('Moneyline', 'Fight Winner'):
@@ -204,7 +213,7 @@ def enrich(feed, sport, now, get=fetch, schedule=None):
     if sport=='ufc' and schedule:
         existing={(frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) for g in result['games']}
         result['games'] += [g for g in ufc_schedule_games(schedule,now) if (frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) not in existing]
-    status='ok'
+    status='ok';diagnostics={}
     try:
         raw=get('https://www.covers.com/picks/'+sport)
         page=html.fromstring(raw)
@@ -212,13 +221,13 @@ def enrich(feed, sport, now, get=fetch, schedule=None):
         expected='https://www.covers.com/picks/'+sport
         if not any(u.rstrip('/')==expected for u in canonical) or not ('ExpertPicks' in raw or 'pick-cards-expert-component' in raw):
             raise ValueError('Unrecognized source page')
-        rows=parse_page(raw,sport,result['games'],now)
+        rows=parse_page(raw,sport,result['games'],now,diagnostics)
     except Exception:
         rows=[];status='unavailable'
     for game in result['games']:
         game['analystConsensus']=consensus([r for r in rows if r['eventId']==game['eventId']])
         game['analystCoverage']={'source':'Covers','status':status,'checkedAt':now.isoformat()}
-    result['analystCollection']={'source':'Covers','status':status,'checkedAt':now.isoformat(),'picks':len(rows)}
+    result['analystCollection']={'source':'Covers','status':status,'checkedAt':now.isoformat(),'picks':len(rows),'diagnostics':diagnostics}
     # Publication helper uses the collection attempt, independently of ESPN data ages.
     result['lastAttemptAt']=now.isoformat()
     return result
