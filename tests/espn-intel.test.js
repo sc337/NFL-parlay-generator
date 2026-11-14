@@ -29,3 +29,15 @@ test('availability caveats show without duplicate QB alert; recent results remai
  const html=gameHTML({...g,evidence:[{label:'Availability',kind:'Injury report',text:'Example — Questionable',publishedAt:g.checkedAt,url:'https://www.espn.com/nfl/'},{label:'Prop context',kind:'Preview report',text:'Example is set to play.',caveat:'Availability unconfirmed',publishedAt:g.checkedAt,url:'https://www.espn.com/nfl/'}],injuries:[{teamId:'a',player:'Example',position:'QB',status:'Questionable'}],recentResults:[{teamId:'a',games:[{date:'2026-11-01T18:00Z',opponent:'OPP',result:'W',score:'20-10'}]}]},now);
  assert(html.includes('Availability unconfirmed'));assert(!html.includes('QB availability'));assert(html.includes('Recent results'));assert(html.includes('20-10'));assert(!html.includes('<details open'));
 });
+
+test('non-NFL consensus keeps attribution, exact lines and single opinions distinct from probabilities',()=>{
+ const {analystHTML}=require('../espn-intel.js');
+ const p={author:'Named Analyst',sourceUrl:'https://www.covers.com/picks/nba',checkedAt:g.checkedAt,startAt:g.startAt,eventId:g.eventId,selection:'Example Over 20.5 points',odds:-110,publishedLabel:'2 hours ago'};
+ const covered={...g,sport:'nba',analystCoverage:{checkedAt:g.checkedAt,status:'ok'},analystConsensus:[{market:'points',player:'Example',label:'Single opinion',agree:1,total:1,picks:[p],selection:p.selection}]};
+ const html=gameHTML(covered,now);assert(html.includes('Single opinion'));assert(html.includes('1 of 1'));assert(html.includes('20.5'));assert(html.includes('Named Analyst'));assert(html.includes('source label'));assert(html.includes('not win probability'));assert(!html.includes('No current score picks'));
+ const independent=gameHTML({...covered,checkedAt:'2020-01-01T00:00Z'},now,false);assert(independent.includes('Named Analyst'));assert(!independent.includes('60.0%'));
+ assert(analystHTML({...covered,analystCoverage:{checkedAt:g.checkedAt,status:'unavailable'}},now).signal.includes('Source refresh pending'));
+ assert(!analystHTML(covered,now+3*3600000).details.includes('Named Analyst'));
+ for(const row of [{...p,sourceUrl:'https://covers.com.evil.test/'},{...p,eventId:'other'},{...p,startAt:'2030-01-01'}])assert(!analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[row]}]},now).details);
+ assert(analystHTML({...g,sport:'mlb'},now).signal.includes('No published picks yet'));
+});

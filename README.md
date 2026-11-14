@@ -387,3 +387,9 @@ and `node --test tests/espn-intel.test.js`. Refresh with
 `python scripts/update_espn_intel.py`.
 
 ESPN intel uses daily scoreboards for the next eight days and sport-specific season comparisons. UFC lists individual bouts and available fighter records. Analyst score extraction remains limited to supported football previews; absent probabilities, stats, and reports are never invented. Intel remains research-only and does not change selection or projection logic.
+
+### Published analyst consensus
+
+NFL retains its ESPN weekly score picks. NBA, NHL, MLB, NCAAF and UFC collect named human opinions from public Covers expert cards on the existing half-hour matchup-intelligence schedule. Machine projections, unnamed picks, ambiguous game identities, unsupported period/specialty markets and unparseable selections are excluded. Exact team/fighter names and scheduled time are required; UFC uses a unique pairing and date when the source omits bout times.
+
+Opinions are grouped by event, market, period, player and exact line; spreads compare opposing teams at the same absolute handicap. Each analyst gets one vote per group, with conflicting simultaneous opinions omitted. A single opinion is explicitly labelled; strong agreement requires at least three analysts and 75% agreement. These labels describe editorial agreement, not estimated win probability or proven profitability. Original source links, analyst names, published odds, source-relative publication labels and collection timestamps are retained. Exact publication timestamps are not invented. Source failures clear opinions, and the display expires after two hours. This research never changes recommendation selection, staking or model inputs. Missing/off-season coverage is shown as no published picks yet.
