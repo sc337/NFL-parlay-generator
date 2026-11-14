@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone, timedelta
-from scripts.update_analyst_consensus import parse_page, consensus, enrich
+from scripts.update_analyst_consensus import parse_page, consensus, enrich, ufc_schedule_games
 
 NOW=datetime(2026,11,14,18,tzinfo=timezone.utc)
 GAME={'eventId':'g','startAt':'2026-11-15T00:00:00Z','status':'ok','teams':[{'id':'a','name':'Team A'},{'id':'b','name':'Team B'}]}
@@ -46,6 +46,13 @@ class AnalystTests(unittest.TestCase):
         result=enrich({'games':[]},'mlb',NOW,lambda url:raw)
         self.assertEqual(result['analystCollection']['status'],'ok')
         self.assertEqual(result['analystCollection']['picks'],0)
+    def test_ufc_schedule_requires_fresh_explicit_pregame_evidence(self):
+        row={'source':'ESPN','game_status':'pre','game_time':GAME['startAt'],'espn_game_id':'1','fighter1':'Team A','fighter2':'Team B'}
+        snap={'slate':{'updated_at':NOW.isoformat(),'games':[row]}}
+        self.assertEqual(len(ufc_schedule_games(snap,NOW)),1)
+        self.assertEqual(ufc_schedule_games(snap,NOW+timedelta(hours=3)),[])
+        snap['slate']['games']=[{**row,'game_status':'in'}]
+        self.assertEqual(ufc_schedule_games(snap,NOW),[])
     def test_ufc_requires_unique_exact_pair_and_date(self):
         raw=page('Fight Winner','Team A').replace('<img alt="Team A image thumbnail"><img alt="Team B image thumbnail">','<h3>Team A vs Team B</h3>').replace('7:00 PM ET','Venue')
         rows=parse_page(raw,'ufc',[GAME],NOW)

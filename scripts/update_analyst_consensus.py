@@ -179,8 +179,31 @@ def consensus(rows):
     return result
 
 
-def enrich(feed, sport, now, get=fetch):
+def ufc_schedule_games(snapshot, now):
+    """Use the dashboard's independently verified ESPN fight schedule when its
+    separate matchup-intel collector has no bout entries. Never use expiry as start."""
+    slate=snapshot.get('slate') or {}
+    checked=instant(slate.get('updated_at'))
+    if not checked or not now-timedelta(hours=2)<=checked<=now+timedelta(minutes=5):
+        return []
+    games=[]
+    for row in slate.get('games',[]):
+        at=instant(row.get('game_time'))
+        names=[row.get('fighter1'),row.get('fighter2')]
+        if row.get('source')!='ESPN' or row.get('game_status')!='pre' or not row.get('espn_game_id') or not at or not now<at<=now+timedelta(days=8) or not all(names) or norm(names[0])==norm(names[1]):
+            continue
+        games.append({'sport':'ufc','eventId':'schedule:'+str(row['espn_game_id']), 'startAt':row['game_time'],
+            'checkedAt':slate['updated_at'],'status':'ok','eventName':row.get('card_name','UFC'),
+            'teams':[{'id':'ufc:'+norm(n),'name':n,'code':n,'side':side} for n,side in zip(names,('away','home'))],
+            'probabilities':[],'statistics':[],'injuries':[],'expertPicks':[], 'url':'https://www.espn.com/mma/schedule'})
+    return games
+
+
+def enrich(feed, sport, now, get=fetch, schedule=None):
     result={**feed,'games':[{**g,'analystConsensus':[]} for g in feed.get('games',[])]}
+    if sport=='ufc' and schedule:
+        existing={(frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) for g in result['games']}
+        result['games'] += [g for g in ufc_schedule_games(schedule,now) if (frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) not in existing]
     status='ok'
     try:
         raw=get('https://www.covers.com/picks/'+sport)
@@ -206,7 +229,9 @@ def main():
     def update(sport):
         path=Path('data/espn-intel-'+sport+'.json')
         feed=json.loads(path.read_text())
-        result=enrich(feed,sport,now)
+        schedule_path=Path('data/kalshi-ufc.json')
+        schedule=json.loads(schedule_path.read_text()) if sport=='ufc' and schedule_path.exists() else None
+        result=enrich(feed,sport,now,schedule=schedule)
         temp=path.with_suffix('.tmp');temp.write_text(json.dumps(result,separators=(',',':'))+'\n');temp.replace(path)
         print(sport,result['analystCollection'])
     with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(update,SPORTS))
