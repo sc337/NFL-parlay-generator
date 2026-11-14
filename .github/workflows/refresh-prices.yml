@@ -57,7 +57,7 @@ jobs:
         env:
           TZ: America/Los_Angeles
           REFRESH_STATUS: success
-        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports mlb ncaaf ufc
+        run: python -u scripts/refresh_price_worker.py --minutes 330 --interval 600 --sports mlb ncaab ncaaf ufc
 
   nfl-prices:
     concurrency:

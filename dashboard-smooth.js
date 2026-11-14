@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const KEY='sportsDashboardUIV2',sports=['mlb','nba','ncaaf','nfl','nhl','ufc'];
+const KEY='sportsDashboardUIV2',sports=['mlb','nba','ncaab','ncaaf','nfl','nhl','ufc'];
 let preferences={};try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))preferences=saved}catch{}
 const initialSport=sports.includes(preferences.sport)?preferences.sport:'nfl';
 // Selection is always screened on a new visit. Exploration is session-only.
