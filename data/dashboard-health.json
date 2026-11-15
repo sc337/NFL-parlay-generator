@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-15T04:19:40.691Z",
+  "updated_at": "2026-11-15T04:19:59.556Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -15,16 +15,16 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-15T04:09:55.815532+00:00",
-      "ageMinutes": 10,
-      "markets": 812,
-      "quotedMarkets": 812,
-      "expiredQuotes": 0,
+      "snapshotAt": "2026-11-15T04:19:56.467763+00:00",
+      "ageMinutes": 0,
+      "markets": 844,
+      "quotedMarkets": 844,
+      "expiredQuotes": 790,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 68,
-        "spread": 384,
-        "total": 360
+        "moneyline": 86,
+        "spread": 392,
+        "total": 366
       },
       "futureEvents": [
         {
@@ -141,7 +141,7 @@
         },
         {
           "id": "401909987",
-          "time": "2026-11-15T21:30Z"
+          "time": "2026-11-15T21:30:00+00:00"
         },
         {
           "id": "401909991",
@@ -157,18 +157,18 @@
         },
         {
           "id": "401909986",
-          "time": "2026-11-15T21:00Z"
+          "time": "2026-11-15T21:00:00+00:00"
         },
         {
           "id": "401909989",
-          "time": "2026-11-15T23:00Z"
+          "time": "2026-11-15T23:00:00+00:00"
         }
       ],
       "playerCounts": {}
     },
     "ncaaf": {
       "snapshotAt": "2026-11-15T04:13:16.028843+00:00",
-      "ageMinutes": 6,
+      "ageMinutes": 7,
       "markets": 1124,
       "quotedMarkets": 1124,
       "expiredQuotes": 0,
@@ -812,7 +812,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-15T04:11:24.464265+00:00",
-      "ageMinutes": 8,
+      "ageMinutes": 9,
       "markets": 7172,
       "quotedMarkets": 7172,
       "expiredQuotes": 0,
@@ -1161,6 +1161,15 @@
   },
   "alerts": [
     {
+      "id": "nba:native-quotes-stale",
+      "sport": "nba",
+      "code": "native-quotes-stale",
+      "severity": "warning",
+      "message": "790 individual quotes expired; aggregate refresh time is not price freshness.",
+      "firstSeen": "2026-11-15T04:19:59.556Z",
+      "changedAt": "2026-11-15T04:19:59.556Z"
+    },
+    {
       "id": "ncaaf:starts-missing",
       "sport": "ncaaf",
       "code": "starts-missing",
@@ -1204,7 +1213,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-15T04:09:58.729698+00:00"
+      "at": "2026-11-15T04:19:59.539030+00:00"
     },
     "ncaab": {
       "ok": true,
