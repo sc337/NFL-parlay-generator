@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-15T00:09:01.849Z",
+  "updated_at": "2026-11-15T00:09:14.263Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -889,8 +889,8 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-14T23:59:38.263207+00:00",
-      "ageMinutes": 9,
+      "snapshotAt": "2026-11-15T00:08:52.223874+00:00",
+      "ageMinutes": 0,
       "markets": 7114,
       "quotedMarkets": 7114,
       "expiredQuotes": 0,
@@ -903,9 +903,9 @@
         "rushing": 1382,
         "passing": 598,
         "completions": 52,
-        "passing_tds": 218,
+        "receiving": 2997,
         "receptions": 304,
-        "receiving": 2997
+        "passing_tds": 218
       },
       "futureEvents": [
         {
@@ -1030,20 +1030,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-14T23:59:07.499542+00:00",
-      "ageMinutes": 10,
-      "markets": 1442,
-      "quotedMarkets": 1442,
+      "snapshotAt": "2026-11-15T00:09:04.848600+00:00",
+      "ageMinutes": 0,
+      "markets": 384,
+      "quotedMarkets": 384,
       "expiredQuotes": 0,
-      "playerMarkets": 1058,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 84,
         "spread": 98,
-        "total": 202,
-        "goals": 462,
-        "assists": 242,
-        "points": 340,
-        "saves": 14
+        "total": 202
       },
       "futureEvents": [
         {
@@ -1232,6 +1228,15 @@
   },
   "alerts": [
     {
+      "id": "nhl:props-missing",
+      "sport": "nhl",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-11-15T00:09:14.263Z",
+      "changedAt": "2026-11-15T00:09:14.263Z"
+    },
+    {
       "id": "archive:stale",
       "sport": null,
       "code": "archive-stale",
@@ -1242,7 +1247,7 @@
     }
   ],
   "resolved": [],
-  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43656675636",
+  "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43631370616",
   "refreshResults": {
     "mlb": {
       "ok": true,
@@ -1258,7 +1263,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-14T23:59:16.753171+00:00"
+      "at": "2026-11-15T00:09:14.243044+00:00"
     },
     "ufc": {
       "ok": true,
