@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-15T17:51:29.570Z",
+  "updated_at": "2026-11-15T17:51:34.087Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -934,23 +934,23 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-15T17:03:50.235318+00:00",
-      "ageMinutes": 48,
-      "markets": 6697,
-      "quotedMarkets": 6697,
-      "expiredQuotes": 6697,
-      "playerMarkets": 5443,
+      "snapshotAt": "2026-11-15T17:51:02.259244+00:00",
+      "ageMinutes": 1,
+      "markets": 6876,
+      "quotedMarkets": 6876,
+      "expiredQuotes": 0,
+      "playerMarkets": 5622,
       "families": {
         "h2h": 50,
-        "td": 239,
+        "td": 246,
         "totals": 516,
         "spreads": 688,
+        "rushing": 1356,
         "passing": 550,
-        "rushing": 1288,
-        "completions": 48,
+        "receptions": 306,
+        "receiving": 2918,
         "passing_tds": 198,
-        "receiving": 2826,
-        "receptions": 294
+        "completions": 48
       },
       "futureEvents": [
         {
@@ -1055,13 +1055,13 @@
         }
       ],
       "playerCounts": {
-        "kalshi-buffalo-bills-new-york-jets": 472,
+        "kalshi-buffalo-bills-new-york-jets": 501,
         "kalshi-indianapolis-colts-miami-dolphins": 417,
-        "kalshi-cleveland-browns-houston-texans": 427,
+        "kalshi-cleveland-browns-houston-texans": 442,
         "kalshi-atlanta-falcons-kansas-city-chiefs": 419,
-        "kalshi-jacksonville-jaguars-tennessee-titans": 491,
-        "kalshi-carolina-panthers-new-orleans-saints": 458,
-        "kalshi-green-bay-packers-minnesota-vikings": 395,
+        "kalshi-jacksonville-jaguars-tennessee-titans": 520,
+        "kalshi-carolina-panthers-new-orleans-saints": 526,
+        "kalshi-green-bay-packers-minnesota-vikings": 433,
         "kalshi-arizona-cardinals-los-angeles-rams": 499,
         "kalshi-las-vegas-raiders-seattle-seahawks": 457,
         "kalshi-dallas-cowboys-san-francisco-49ers": 505,
@@ -1385,24 +1385,6 @@
       "changedAt": "2026-11-15T08:14:58.972Z"
     },
     {
-      "id": "nfl:stale",
-      "sport": "nfl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 48 minutes old.",
-      "firstSeen": "2026-11-15T17:51:09.198Z",
-      "changedAt": "2026-11-15T17:51:09.198Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "6697 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-15T17:51:09.198Z",
-      "changedAt": "2026-11-15T17:51:09.198Z"
-    },
-    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
@@ -1430,15 +1412,6 @@
       "changedAt": "2026-11-15T17:51:09.198Z"
     },
     {
-      "id": "nfl:worker-overdue",
-      "sport": "nfl",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-15T17:51:09.198Z",
-      "changedAt": "2026-11-15T17:51:09.198Z"
-    },
-    {
       "id": "ufc:worker-overdue",
       "sport": "ufc",
       "code": "worker-overdue",
@@ -1459,12 +1432,16 @@
   ],
   "resolved": [
     {
-      "id": "nba:stale",
-      "resolvedAt": "2026-11-15T17:51:29.570Z"
+      "id": "nfl:stale",
+      "resolvedAt": "2026-11-15T17:51:34.087Z"
     },
     {
-      "id": "nba:worker-overdue",
-      "resolvedAt": "2026-11-15T17:51:29.570Z"
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-11-15T17:51:34.087Z"
+    },
+    {
+      "id": "nfl:worker-overdue",
+      "resolvedAt": "2026-11-15T17:51:34.087Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43743370839",
@@ -1479,7 +1456,7 @@
     },
     "nfl": {
       "ok": true,
-      "at": "2026-11-15T17:04:22.387226+00:00"
+      "at": "2026-11-15T17:51:34.060264+00:00"
     },
     "nhl": {
       "ok": true,
