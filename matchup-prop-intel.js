@@ -28,7 +28,7 @@ function inspect(s,m,ctx={},now=Date.now()){
 async function load(s=typeof window!=='undefined'?window.__ACTIVE_SPORT:null,force=false){
  if(!['nba','nhl','mlb','ncaaf','ufc'].includes(s))return;
  if(pending.has(s))return pending.get(s);if(!force&&Date.now()-(loaded.get(s)||0)<60000)return;
- const p=(async()=>{try{const r=await fetch('data/espn-intel-'+s+'.json?ts='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(10000)});if(!r.ok)throw Error('Source unavailable');const d=await r.json();if(!Array.isArray(d.games))throw Error('Invalid intel');register(s,d);loaded.set(s,Date.now())}catch{register(s,{})}finally{pending.delete(s)}})();pending.set(s,p);return p;
+ const p=(async()=>{try{const r=await fetch('data/espn-intel-'+s+'.json?ts='+Date.now(),{cache:'no-store',signal:typeof AbortSignal!=='undefined'?AbortSignal.timeout(10000):undefined});if(!r.ok)throw Error('Source unavailable');const d=await r.json();if(!Array.isArray(d.games))throw Error('Invalid intel');register(s,d);loaded.set(s,Date.now())}catch{register(s,{})}finally{pending.delete(s)}})();pending.set(s,p);return p;
 }
 if(typeof window!=='undefined'&&window.STARTER_STATUS){const original=window.STARTER_STATUS.load;window.STARTER_STATUS.load=async function(force=false){const [r]=await Promise.all([original(force),load(window.__ACTIVE_SPORT,force)]);return r}}
 return {inspect,register,load};
