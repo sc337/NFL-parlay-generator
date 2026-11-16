@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timezone": "America/Los_Angeles",
   "day": "2026-11-16",
-  "updated_at": "2026-11-16T11:05:01.300Z",
+  "updated_at": "2026-11-16T11:34:46.208Z",
   "sports": {
     "mlb": {
       "captured": 0,
@@ -26,7 +26,7 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-11-16T11:04:26.082229+00:00"
+      "snapshotAt": "2026-11-16T11:33:58.186435+00:00"
     },
     "nba": {
       "captured": 0,
@@ -35,12 +35,12 @@
           "reason": "Feed stale or timestamp invalid"
         }
       ],
-      "snapshotAt": "2026-11-16T09:52:30.892616+00:00"
+      "snapshotAt": "2026-11-16T11:03:43.161901+00:00"
     },
     "ncaaf": {
       "captured": 3,
       "passes": [],
-      "snapshotAt": "2026-11-16T11:04:16.791312+00:00"
+      "snapshotAt": "2026-11-16T11:33:47.234493+00:00"
     },
     "nfl": {
       "captured": 2,
@@ -106,17 +106,17 @@
           "reason": "No qualifying build"
         }
       ],
-      "snapshotAt": "2026-11-16T11:04:25.718705+00:00"
+      "snapshotAt": "2026-11-16T11:33:57.799381+00:00"
     },
     "nhl": {
       "captured": 3,
       "passes": [],
-      "snapshotAt": "2026-11-16T11:04:26.362200+00:00"
+      "snapshotAt": "2026-11-16T11:33:58.437889+00:00"
     },
     "ufc": {
       "captured": 3,
       "passes": [],
-      "snapshotAt": "2026-11-16T11:04:26.631044+00:00"
+      "snapshotAt": "2026-11-16T11:33:58.726348+00:00"
     }
   },
   "records": [
@@ -1066,6 +1066,241 @@
           "marketP": 0.565,
           "modelP": 0.5832743822829668,
           "rawModelP": 0.5832743822829668,
+          "coverage": 1,
+          "confidence": 72,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-11-16|nfl|sgp|Lotto|2|kalshi-baltimore-ravens-los-angeles-chargers|learning-20261019|3d34b551c51fb9a8",
+      "day": "2026-11-16",
+      "sport": "nfl",
+      "mode": "sgp",
+      "profile": "Lotto",
+      "requestedLegs": 2,
+      "actualLegs": 2,
+      "filters": {
+        "lines": "standard",
+        "date": "all",
+        "card": null,
+        "gameId": "kalshi-baltimore-ravens-los-angeles-chargers"
+      },
+      "capturedAt": "2026-11-16T11:34:46.208Z",
+      "snapshotAt": "2026-11-16T11:33:57.799381+00:00",
+      "sourceVersion": "02d6b766bb0b34ce880f788fd190c1d8f71700a3",
+      "priceEstimate": null,
+      "priceNote": "Same-game price unavailable; verify sportsbook quote.",
+      "risk": {
+        "modelP": 0.4705,
+        "scenario": {
+          "modelP": 0.4705,
+          "sensitivity": [
+            0.462625,
+            0.47375
+          ],
+          "trials": 24000,
+          "validated": false,
+          "empiricalPairs": 0,
+          "method": "Shared pace, team scoring, passing/rushing and player factors; assumed dependence; historical pairs collecting",
+          "version": "sgp-scenarios-v2"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "nfl|KXNFLRSHYDS-26NOV16LACBAL-LACKVIDAL28-20|yes",
+          "ticker": "KXNFLRSHYDS-26NOV16LACBAL-LACKVIDAL28-20",
+          "side": "yes",
+          "eventId": "kalshi-baltimore-ravens-los-angeles-chargers",
+          "event": "Los Angeles Chargers @ Baltimore Ravens",
+          "eventTime": "2026-11-17T01:15:00Z",
+          "closeTime": "2026-11-17T01:15:00Z",
+          "selection": "Kimani Vidal Over 19.5 rushing yards",
+          "market": "player_rush_yds",
+          "line": 19.5,
+          "player": "Kimani Vidal",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.53,
+          "referenceAmericanOdds": -113,
+          "marketP": 0.525,
+          "modelP": 0.6892865859826707,
+          "rawModelP": 0.6892865859826707,
+          "coverage": 0.55,
+          "confidence": 54,
+          "forecastType": "experimental",
+          "projectedLine": 32.09142857142857,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "nfl|KXNFLRECYDS-26NOV16LACBAL-LACKMITCHELL34-10|yes",
+          "ticker": "KXNFLRECYDS-26NOV16LACBAL-LACKMITCHELL34-10",
+          "side": "yes",
+          "eventId": "kalshi-baltimore-ravens-los-angeles-chargers",
+          "event": "Los Angeles Chargers @ Baltimore Ravens",
+          "eventTime": "2026-11-17T01:15:00Z",
+          "closeTime": "2026-11-17T01:15:00Z",
+          "selection": "Keaton Mitchell Over 9.5 receiving yards",
+          "market": "player_reception_yds",
+          "line": 9.5,
+          "player": "Keaton Mitchell",
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.54,
+          "referenceAmericanOdds": -117,
+          "marketP": 0.535,
+          "modelP": 0.6711929625745718,
+          "rawModelP": 0.6711929625745718,
+          "coverage": 0.55,
+          "confidence": 49,
+          "forecastType": "experimental",
+          "projectedLine": 18.393333333333338,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        }
+      ],
+      "result": null
+    },
+    {
+      "id": "2026-11-16|ufc|card|balanced|3|2026-11-21|learning-20261019|09ded19368c56734",
+      "day": "2026-11-16",
+      "sport": "ufc",
+      "mode": "card",
+      "profile": "balanced",
+      "requestedLegs": 3,
+      "actualLegs": 3,
+      "filters": {
+        "lines": "both",
+        "date": "all",
+        "card": "2026-11-21",
+        "gameId": null
+      },
+      "capturedAt": "2026-11-16T11:34:46.208Z",
+      "snapshotAt": "2026-11-16T11:33:58.726348+00:00",
+      "sourceVersion": "02d6b766bb0b34ce880f788fd190c1d8f71700a3",
+      "priceEstimate": 247,
+      "priceNote": "Combined reference asks; excludes fees.",
+      "risk": {
+        "modelP": 0.3469033461394764,
+        "conservativeP": 0.2642053671570273,
+        "profile": "Conservative",
+        "method": "Product of leg estimates; assumes independence",
+        "scenario": null,
+        "bounds": {
+          "lower": 0.1186963964784562,
+          "upper": 0.6506844621696732,
+          "method": "Dependence bounds; joint model unvalidated"
+        },
+        "version": "learning-20261019"
+      },
+      "legs": [
+        {
+          "id": "ufc|KXUFCFIGHT-26NOV21CANALI-ALI|yes",
+          "ticker": "KXUFCFIGHT-26NOV21CANALI-ALI",
+          "side": "yes",
+          "eventId": "401927851",
+          "event": "Ikram Aliskerov vs Jared Cannonier",
+          "eventTime": "2026-11-21T15:00:00Z",
+          "closeTime": "2026-11-23T18:00:00Z",
+          "selection": "Ikram Aliskerov",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.74,
+          "referenceAmericanOdds": null,
+          "marketP": 0.735,
+          "modelP": 0.8090306728513802,
+          "rawModelP": 0.8090306728513802,
+          "coverage": 1,
+          "confidence": 72,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ufc|KXUFCFIGHT-26NOV21PROSTI-STI|yes",
+          "ticker": "KXUFCFIGHT-26NOV21PROSTI-STI",
+          "side": "yes",
+          "eventId": "",
+          "event": "Jiri Prochazka vs Navajo Stirling",
+          "eventTime": "2026-11-21T15:00:00Z",
+          "closeTime": "2026-11-23T20:00:00Z",
+          "selection": "Navajo Stirling",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.6,
+          "referenceAmericanOdds": null,
+          "marketP": 0.595,
+          "modelP": 0.658981261457403,
+          "rawModelP": 0.658981261457403,
+          "coverage": 1,
+          "confidence": 73,
+          "forecastType": "model",
+          "projectedLine": null,
+          "projectedTotal": null,
+          "projectedMargin": null,
+          "projectedAway": null,
+          "projectedHome": null,
+          "isAltLine": false,
+          "altReferenceLine": null,
+          "altDistance": null,
+          "result": null
+        },
+        {
+          "id": "ufc|KXUFCFIGHT-26NOV21HORALM-HOR|yes",
+          "ticker": "KXUFCFIGHT-26NOV21HORALM-HOR",
+          "side": "yes",
+          "eventId": "401927855",
+          "event": "Asu Almabayev vs Kyoji Horiguchi",
+          "eventTime": "2026-11-21T15:00:00Z",
+          "closeTime": "2026-11-23T18:30:00Z",
+          "selection": "Kyoji Horiguchi",
+          "market": "moneyline",
+          "line": null,
+          "player": null,
+          "settlement": null,
+          "referenceOnly": false,
+          "ask": 0.65,
+          "referenceAmericanOdds": null,
+          "marketP": 0.645,
+          "modelP": 0.6506844621696732,
+          "rawModelP": 0.6506844621696732,
           "coverage": 1,
           "confidence": 72,
           "forecastType": "model",
