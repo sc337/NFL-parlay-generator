@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-16T01:53:48.197Z",
+  "updated_at": "2026-11-16T02:01:49.349Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-16T01:52:38.755308+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,24 +16,15 @@
     },
     "nba": {
       "snapshotAt": "2026-11-16T01:51:43.819214+00:00",
-      "ageMinutes": 2,
-      "markets": 986,
-      "quotedMarkets": 986,
+      "ageMinutes": 10,
+      "markets": 420,
+      "quotedMarkets": 420,
       "expiredQuotes": 0,
-      "playerMarkets": 442,
+      "playerMarkets": 0,
       "families": {
-        "moneyline": 60,
-        "spread": 248,
-        "total": 236,
-        "points": 90,
-        "rebounds": 78,
-        "assists": 62,
-        "threes": 76,
-        "pra": 56,
-        "double_double": 16,
-        "triple_double": 6,
-        "steals": 46,
-        "blocks": 12
+        "moneyline": 58,
+        "spread": 184,
+        "total": 178
       },
       "futureEvents": [
         {
@@ -149,21 +140,15 @@
           "time": "2026-11-17T01:00:00+00:00"
         },
         {
-          "id": "401909993",
-          "time": "2026-11-16T02:00Z"
-        },
-        {
           "id": "401909994",
           "time": "2026-11-17T00:00:00+00:00"
         }
       ],
-      "playerCounts": {
-        "401909993": 442
-      }
+      "playerCounts": {}
     },
     "ncaaf": {
       "snapshotAt": "2026-11-16T01:53:19.132453+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 9,
       "markets": 6571,
       "quotedMarkets": 6571,
       "expiredQuotes": 0,
@@ -935,7 +920,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-16T01:52:36.513738+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 1591,
       "quotedMarkets": 1591,
       "expiredQuotes": 0,
@@ -1015,16 +1000,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-16T01:51:44.814594+00:00",
-      "ageMinutes": 2,
-      "markets": 486,
-      "quotedMarkets": 486,
+      "snapshotAt": "2026-11-16T02:01:43.408763+00:00",
+      "ageMinutes": 0,
+      "markets": 430,
+      "quotedMarkets": 430,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 92,
-        "spread": 120,
-        "total": 274
+        "moneyline": 88,
+        "spread": 104,
+        "total": 238
       },
       "futureEvents": [
         {
@@ -1202,24 +1187,13 @@
         {
           "id": "401892726",
           "time": "2026-11-17T00:30:00+00:00"
-        },
-        {
-          "id": "401892725",
-          "time": "2026-11-16T02:00Z"
-        },
-        {
-          "id": "401892724",
-          "time": "2026-11-16T02:00Z"
         }
       ],
-      "playerCounts": {
-        "401892724": 254,
-        "401892725": 252
-      }
+      "playerCounts": {}
     },
     "ufc": {
       "snapshotAt": "2026-11-16T01:52:36.905204+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 20,
       "quotedMarkets": 20,
       "expiredQuotes": 0,
@@ -1283,15 +1257,6 @@
       "changedAt": "2026-11-15T08:14:58.972Z"
     },
     {
-      "id": "nhl:props-missing",
-      "sport": "nhl",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-11-16T00:01:49.742Z",
-      "changedAt": "2026-11-16T00:01:49.742Z"
-    },
-    {
       "id": "archive:stale",
       "sport": null,
       "code": "archive-stale",
@@ -1301,7 +1266,12 @@
       "changedAt": "2026-11-15T18:22:09.813Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:props-missing",
+      "resolvedAt": "2026-11-16T02:01:49.349Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43772187749",
   "refreshResults": {
     "mlb": {
@@ -1318,7 +1288,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-16T01:51:51.220133+00:00"
+      "at": "2026-11-16T02:01:49.329815+00:00"
     },
     "ufc": {
       "ok": true,
