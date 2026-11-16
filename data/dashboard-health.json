@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-16T19:52:18.735Z",
-  "status": "healthy",
+  "updated_at": "2026-11-16T19:52:28.473Z",
+  "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-16T19:42:50.214045+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -15,25 +15,25 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-16T19:45:00.343405+00:00",
-      "ageMinutes": 7,
-      "markets": 5826,
-      "quotedMarkets": 5826,
-      "expiredQuotes": 0,
-      "playerMarkets": 4778,
+      "snapshotAt": "2026-11-16T19:51:56.166133+00:00",
+      "ageMinutes": 1,
+      "markets": 5484,
+      "quotedMarkets": 5484,
+      "expiredQuotes": 5436,
+      "playerMarkets": 4400,
       "families": {
-        "moneyline": 60,
-        "spread": 514,
-        "total": 474,
-        "points": 782,
-        "rebounds": 852,
-        "assists": 662,
-        "threes": 890,
-        "pra": 584,
-        "double_double": 164,
+        "moneyline": 76,
+        "spread": 528,
+        "total": 480,
+        "points": 744,
+        "rebounds": 822,
+        "assists": 620,
+        "threes": 838,
+        "pra": 542,
+        "double_double": 168,
         "triple_double": 26,
-        "steals": 618,
-        "blocks": 200
+        "blocks": 144,
+        "steals": 496
       },
       "futureEvents": [
         {
@@ -138,11 +138,11 @@
         },
         {
           "id": "401909996",
-          "time": "2026-11-17T00:00Z"
+          "time": "2026-11-17T00:00:00+00:00"
         },
         {
           "id": "401909995",
-          "time": "2026-11-17T00:00Z"
+          "time": "2026-11-17T00:00:00+00:00"
         },
         {
           "id": "401909999",
@@ -150,7 +150,7 @@
         },
         {
           "id": "401910000",
-          "time": "2026-11-17T01:00Z"
+          "time": "2026-11-17T01:00:00+00:00"
         },
         {
           "id": "401909994",
@@ -158,14 +158,14 @@
         }
       ],
       "playerCounts": {
-        "401909994": 576,
-        "401909995": 532,
-        "401909996": 602,
-        "401909997": 544,
-        "401909998": 608,
-        "401909999": 760,
-        "401910000": 564,
-        "401910001": 592
+        "401909994": 542,
+        "401909995": 516,
+        "401909996": 494,
+        "401909997": 524,
+        "401909998": 566,
+        "401909999": 598,
+        "401910000": 570,
+        "401910001": 590
       }
     },
     "ncaaf": {
@@ -1175,7 +1175,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-16T19:42:50.838794+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 22,
       "quotedMarkets": 22,
       "expiredQuotes": 0,
@@ -1232,7 +1232,17 @@
       "playerCounts": {}
     }
   },
-  "alerts": [],
+  "alerts": [
+    {
+      "id": "nba:native-quotes-stale",
+      "sport": "nba",
+      "code": "native-quotes-stale",
+      "severity": "warning",
+      "message": "5436 individual quotes expired; aggregate refresh time is not price freshness.",
+      "firstSeen": "2026-11-16T19:52:28.473Z",
+      "changedAt": "2026-11-16T19:52:28.473Z"
+    }
+  ],
   "resolved": [],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/43941927456",
   "refreshResults": {
@@ -1258,7 +1268,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-16T19:45:45.221934+00:00"
+      "at": "2026-11-16T19:52:28.453764+00:00"
     }
   }
 }
