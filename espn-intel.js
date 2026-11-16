@@ -15,13 +15,25 @@ function analystHTML(g,now=Date.now()){
  if(groups.length)details='<details data-intel-detail="published-analysts"><summary><span>Published analyst picks</span><span class="intel-detail-count">'+groups.length+' market'+(groups.length===1?'':'s')+'</span></summary>'+groups.map(row=>'<div class="intel-section-title">'+esc(row.player||row.market.replaceAll('_',' '))+' · '+esc(row.label)+' · '+row.agree+' of '+row.total+'</div><ul>'+row.picks.map(p=>'<li><span>'+esc(p.author)+' · '+esc(p.selection)+'</span><b>'+esc((p.odds>0?'+':'')+p.odds)+'</b><small><a href="'+esc(safe(p.sourceUrl))+'" target="_blank" rel="noopener noreferrer">Covers</a> · Published '+esc(p.publishedLabel)+' (source label) · Checked '+esc(new Date(p.checkedAt).toLocaleTimeString())+'</small></li>').join('')+'</ul>').join('')+'<p class="intel-meta">Agreement at the published line, not win probability or proven value. One vote per analyst per exact market. Relative publication times are shown as supplied by the source. Research only · Does not change picks.</p></details>';
  return {signal,details};
 }
+function additionalHTML(g,now=Date.now()){
+ if((g.sport||'nfl')==='nfl'||Date.parse(g.startAt)<=now)return '';
+ const safe=value=>{try{const u=new URL(value);return u.protocol==='https:'&&['official.nba.com','ak-static.cms.nba.com','www.rotowire.com','www.dailyfaceoff.com','baseballsavant.mlb.com','www.ufc.com','ufc.com','www.actionnetwork.com','www.teamrankings.com','www.secsports.com','stats.vsinstats.com','vsin.com'].includes(u.hostname)?u.href:''}catch{return ''}};
+ const freshRow=(at,hours=2)=>Number.isFinite(Date.parse(at))&&Date.parse(at)<=now+300000&&now-Date.parse(at)<=Math.min(48,hours)*3600000;
+ const rows=(g.additionalIntel||[]).filter(r=>safe(r.sourceUrl)&&r.text&&freshRow(r.checkedAt,r.maxAgeHours||2));
+ const checks=(g.additionalSourceChecks||[]).filter(r=>safe(r.sourceUrl)&&freshRow(r.checkedAt));
+ if(!rows.length&&!checks.length)return '';
+ let h='<details data-intel-detail="additional-sources"><summary><span>Additional sources</span><span class="intel-detail-count">'+rows.length+' matched fact'+(rows.length===1?'':'s')+'</span></summary>';
+ if(rows.length)h+='<ul>'+rows.map(r=>'<li><span>'+esc(r.label)+'</span><b>'+esc(r.source)+'</b><small>'+esc(r.text)+'<br><a href="'+esc(safe(r.sourceUrl))+'" target="_blank" rel="noopener noreferrer">Source</a> · Checked '+esc(new Date(r.checkedAt).toLocaleString())+(r.publishedAt?' · Report '+esc(new Date(r.publishedAt).toLocaleString()):'')+'</small></li>').join('')+'</ul>';
+ if(checks.length)h+='<div class="intel-section-title">Source coverage</div><ul>'+checks.map(r=>'<li><span><a href="'+esc(safe(r.sourceUrl))+'" target="_blank" rel="noopener noreferrer">'+esc(r.source)+'</a></span><b>'+esc(r.state==='available'?'Available':r.state==='review_only'?'Review source':'Access unavailable')+'</b>'+(r.note?'<small>'+esc(r.note)+'</small>':'')+'</li>').join('')+'</ul>';
+ return h+'<p class="intel-meta">Availability reports do not confirm starters. Statistics describe past performance. These facts stay separate from analyst votes and model projections.</p></details>';
+}
 function gameHTML(g,now=Date.now(),sourceOK=true){
  const teams=[...g.teams].sort((a,b)=>(a.side==='away'?0:1)-(b.side==='away'?0:1));
  const name=id=>teams.find(t=>t.id===id)?.code||id;
  const date=value=>{const d=new Date(value);return Number.isFinite(+d)?d.toLocaleDateString(undefined,{month:'short',day:'numeric'}):'Date unavailable'};
  const stamp=new Date(g.checkedAt).toLocaleString();
  const age=Math.max(0,Math.floor((now-Date.parse(g.checkedAt))/60000));
- if(!sourceOK||!fresh(g,now)){const analysts=(g.sport||'nfl')==='nfl'?null:analystHTML(g,now);return '<div class="intel-unavailable"><b>Current ESPN evidence unavailable</b><p>Last checked '+esc(stamp)+'. Refresh pending.</p>'+link(g.url,'View matchup on ESPN')+'</div>'+(analysts?'<div class="intel-signals">'+analysts.signal+'</div><div class="intel-disclosures">'+analysts.details+'</div>':'')}
+ if(!sourceOK||!fresh(g,now)){const analysts=(g.sport||'nfl')==='nfl'?null:analystHTML(g,now);return '<div class="intel-unavailable"><b>Current ESPN evidence unavailable</b><p>Last checked '+esc(stamp)+'. Refresh pending.</p>'+link(g.url,'View matchup on ESPN')+'</div>'+(analysts?'<div class="intel-signals">'+analysts.signal+'</div><div class="intel-disclosures">'+analysts.details+additionalHTML(g,now)+'</div>':'')}
  let html='<div class="intel-status"><span>Research only · Does not change picks</span><span title="'+esc(stamp)+'">Checked '+(age<1?'just now':esc(age)+'m ago')+'</span></div>';
  const probabilities=[...(g.probabilities||[])].sort((a,b)=>b.percent-a.percent);
  const favorite=probabilities.length===2&&probabilities[0].percent>probabilities[1].percent?probabilities[0]:null;
@@ -46,7 +58,7 @@ function gameHTML(g,now=Date.now(),sourceOK=true){
  const qb=(g.injuries||[]).filter(r=>r.position==='QB'&&/out|doubtful|questionable|inactive/i.test(r.status));
  if(qb.length&&!evidence.some(r=>r.label==='Availability'))html+='<div class="intel-alert"><b>QB availability</b><span>'+qb.map(r=>esc(name(r.teamId)+' · '+r.player+' — '+r.status)).join('; ')+'</span></div>';
  html+='<div class="intel-disclosures">';
- if((g.sport||'nfl')!=='nfl')html+=analystHTML(g,now).details;
+ if((g.sport||'nfl')!=='nfl')html+=analystHTML(g,now).details+additionalHTML(g,now);
  const recent=(g.recentResults||[]).filter(r=>teams.some(t=>t.id===r.teamId));
  if(recent.length)html+='<details data-intel-detail="recent"><summary><span>Recent results</span><span class="intel-detail-count">Last 5 available</span></summary>'+recent.map(r=>'<div class="intel-section-title">'+esc(name(r.teamId))+'</div><ul>'+r.games.filter(v=>Number.isFinite(Date.parse(v.date))&&Date.parse(v.date)<now).slice(0,5).map(v=>'<li><span>'+esc(date(v.date)+' · '+v.opponent)+'</span><b>'+esc(v.result+' · '+v.score)+'</b></li>').join('')+'</ul>').join('')+'</details>';
  const playerLeaders=(g.leaders||[]).filter(r=>teams.some(t=>t.id===r.teamId)).slice(0,6);
@@ -82,5 +94,5 @@ if(typeof document!=='undefined'){
  function mount(){const results=document.querySelector('#results');if(!results)return;host=document.createElement('section');host.id='espnIntel';host.className='espn-intel';host.innerHTML='<details class="parlay-card"><summary class="intel-title">Matchup Intel</summary><div class="intel-content"><p class="intel-meta">Looking up ESPN matchups…</p></div></details>';results.after(host);new MutationObserver(render).observe(document.body,{attributes:true,attributeFilter:['data-sport']});document.addEventListener('change',()=>setTimeout(render,0));document.addEventListener('click',e=>{if(e.target.closest('#slateControls'))setTimeout(render,0)});refresh();setInterval(()=>{if(!document.hidden)refresh()},300000);setInterval(render,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})}
  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 }
-return {SPORTS,safeLink,fresh,gamesFor,gameHTML,analystHTML};
+return {SPORTS,safeLink,fresh,gamesFor,gameHTML,analystHTML,additionalHTML};
 });

@@ -7,6 +7,7 @@ on:
       - 'scripts/update_espn_intel.py'
       - 'scripts/publish_espn_intel.py'
       - 'scripts/update_analyst_consensus.py'
+      - 'scripts/update_source_intel.py'
       - 'espn-intel.js'
       - '.github/workflows/espn-intel.yml'
   schedule:
@@ -19,7 +20,7 @@ concurrency:
 jobs:
   lookup:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,14 +31,23 @@ jobs:
           node-version: '22'
       - name: Install analyst page parser
         run: python -m pip install "lxml>=5,<7"
+      - name: Ensure official report text extraction is available
+        run: |
+          if ! command -v pdftotext >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y poppler-utils
+          fi
       - name: Verify ESPN identity and freshness guards
         run: |
           python -m unittest discover -s tests -p 'test_espn_intel.py'
           node --test tests/espn-intel.test.js
           python -m unittest discover -s tests -p 'test_analyst_consensus.py'
+          python -m unittest discover -s tests -p 'test_source_intel.py'
       - name: Look up current games, previews and expert picks
         run: python scripts/update_espn_intel.py
       - name: Collect published non-NFL analyst opinions
         run: python scripts/update_analyst_consensus.py
+      - name: Collect additional verified sport-specific facts
+        run: python scripts/update_source_intel.py
       - name: Publish independently of market prices
         run: python scripts/publish_espn_intel.py

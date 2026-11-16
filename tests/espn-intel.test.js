@@ -41,3 +41,14 @@ test('non-NFL consensus keeps attribution, exact lines and single opinions disti
  for(const row of [{...p,sourceUrl:'https://covers.com.evil.test/'},{...p,eventId:'other'},{...p,startAt:'2030-01-01'}])assert(!analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[row]}]},now).details);
  assert(analystHTML({...g,sport:'mlb'},now).signal.includes('No published picks yet'));
 });
+
+test('additional intel is dated, attributed, escaped and separate from opinions',()=>{
+ const {additionalHTML}=require('../espn-intel.js');
+ const row={source:'NBA Official',sourceUrl:'https://ak-static.cms.nba.com/referee/injury/report.pdf',checkedAt:g.checkedAt,label:'Availability',text:'<script>Player Out</script>',maxAgeHours:2};
+ const html=additionalHTML({...g,sport:'nba',additionalIntel:[row],additionalSourceChecks:[{source:'Action Network',sourceUrl:'https://www.actionnetwork.com/',checkedAt:g.checkedAt,state:'unavailable',note:'Automated access unavailable'}]},now);
+ assert(html.includes('NBA Official'));assert(html.includes('&lt;script&gt;'));assert(!html.includes('<script>'));assert(html.includes('Access unavailable'));assert(html.includes('do not confirm starters'));
+ assert.equal(additionalHTML({...g,sport:'nfl',additionalIntel:[row]},now),'');
+ assert.equal(additionalHTML({...g,sport:'nba',additionalIntel:[{...row,sourceUrl:'https://official.nba.com.evil.test/'}]},now),'');
+ assert.equal(additionalHTML({...g,sport:'nba',additionalIntel:[row]},now+3*3600000),'');
+ const stale=gameHTML({...g,sport:'nba',checkedAt:'2020-01-01',additionalIntel:[row]},now,false);assert(stale.includes('NBA Official'));assert(!stale.includes('60.0%'));
+});
