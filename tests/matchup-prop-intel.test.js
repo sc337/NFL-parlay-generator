@@ -1,0 +1,15 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const I=require('../matchup-prop-intel.js'),now=Date.parse('2026-11-16T18:00Z');
+const m={player:'Paolo Banchero',game_id:'1',game_time:'2026-11-17T00:00Z',team_code:'ORL'};
+const row={player:'Banchero, Paolo',teamId:'19',status:'Out',source:'NBA Official',sourceUrl:'https://ak-static.cms.nba.com/referee/injury/report.pdf',checkedAt:new Date(now).toISOString(),publishedAt:new Date(now-900000).toISOString()};
+const game={sport:'nba',eventId:'1',startAt:m.game_time,teams:[{id:'19',code:'ORL'},{id:'2',code:'BOS'}],propAvailability:[row]};
+const run=(g=game,market=m,sport='nba')=>{I.register(sport,{games:[g]});return I.inspect(sport,market,{},now)};
+test('official exclusion blocks both over and under props with attribution',()=>{for(const side of ['yes','no']){const r=run(game,{...m,side});assert.match(r.blocked,/unavailable/);assert.match(r.note,/NBA Official/);assert.equal(r.checked,false)}});
+test('exact event, time, team and player identity required',()=>{for(const patch of [{game_id:'2'},{game_time:'2026-11-18T00:00Z'},{team_code:'BOS'},{player:'Another Banchero'},{player:null}])assert.equal(run(game,{...m,...patch}).blocked,null)});
+test('expired, future, or untrusted reports cannot block or confirm',()=>{for(const patch of [{checkedAt:new Date(now-7200001).toISOString()},{checkedAt:new Date(now+600000).toISOString()},{publishedAt:new Date(now-25*3600000).toISOString()},{sourceUrl:'https://ak-static.cms.nba.com.evil.test/report.pdf'}]){const r=run({...game,propAvailability:[{...row,...patch}]});assert.equal(r.blocked,null);assert.equal(r.checked,false)}});
+test('missing reports never establish availability',()=>{const r=run({...game,propAvailability:[]});assert.equal(r.checked,false);assert.equal(r.label,'Status unconfirmed')});
+test('available report never confirms a starting role or creates probability',()=>{const r=run({...game,propAvailability:[{...row,status:'Available'}]});assert.equal(r.checked,true);assert.match(r.label,/Role unconfirmed/);assert.equal(r.modelP,undefined)});
+test('conflicting available/out evidence requires review',()=>{const r=run({...game,propAvailability:[row,{...row,status:'Available'}]});assert.match(r.blocked,/Conflicting/)});
+test('fresh ESPN injury corroboration blocks uncertain participation',()=>{const r=run({...game,propAvailability:[],status:'ok',url:'https://www.espn.com/nba/game/_/gameId/1',checkedAt:row.checkedAt,injuries:[{teamId:'19',player:m.player,status:'Questionable',reportedAt:row.publishedAt}]});assert.match(r.blocked,/uncertain/)});
+test('ambiguous duplicate events and started games provide no evidence',()=>{I.register('nba',{games:[game,game]});assert.equal(I.inspect('nba',m,{},now).checked,false);assert.equal(I.inspect('nba',m,{},Date.parse(m.game_time)).blocked,null)});
+test('NFL retains existing ESPN checks',()=>assert.equal(run(game,m,'nfl').blocked,null));

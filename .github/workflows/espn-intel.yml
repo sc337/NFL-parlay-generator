@@ -40,7 +40,7 @@ jobs:
       - name: Verify ESPN identity and freshness guards
         run: |
           python -m unittest discover -s tests -p 'test_espn_intel.py'
-          node --test tests/espn-intel.test.js
+          node --test tests/espn-intel.test.js tests/matchup-prop-intel.test.js
           python -m unittest discover -s tests -p 'test_analyst_consensus.py'
           python -m unittest discover -s tests -p 'test_source_intel.py'
       - name: Look up current games, previews and expert picks

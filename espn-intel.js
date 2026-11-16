@@ -34,7 +34,7 @@ function gameHTML(g,now=Date.now(),sourceOK=true){
  const stamp=new Date(g.checkedAt).toLocaleString();
  const age=Math.max(0,Math.floor((now-Date.parse(g.checkedAt))/60000));
  if(!sourceOK||!fresh(g,now)){const analysts=(g.sport||'nfl')==='nfl'?null:analystHTML(g,now);return '<div class="intel-unavailable"><b>Current ESPN evidence unavailable</b><p>Last checked '+esc(stamp)+'. Refresh pending.</p>'+link(g.url,'View matchup on ESPN')+'</div>'+(analysts?'<div class="intel-signals">'+analysts.signal+'</div><div class="intel-disclosures">'+analysts.details+additionalHTML(g,now)+'</div>':'')}
- let html='<div class="intel-status"><span>Research only · Does not change picks</span><span title="'+esc(stamp)+'">Checked '+(age<1?'just now':esc(age)+'m ago')+'</span></div>';
+ let html='<div class="intel-status"><span>'+((g.sport||'nfl')==='nfl'?'Research only · Does not change picks':'Matchup context · Prop availability screened separately')+'</span><span title="'+esc(stamp)+'">Checked '+(age<1?'just now':esc(age)+'m ago')+'</span></div>';
  const probabilities=[...(g.probabilities||[])].sort((a,b)=>b.percent-a.percent);
  const favorite=probabilities.length===2&&probabilities[0].percent>probabilities[1].percent?probabilities[0]:null;
  const picks=g.expertPicks||[],votes={};picks.forEach(p=>{if(p.winnerId)votes[p.winnerId]=(votes[p.winnerId]||0)+1});

@@ -179,6 +179,7 @@ def enrich(feeds,now,read=get,root=Path('data')):
                 for team in g['teams']:
                     players=[r['player']+' — '+r['status'] for r in matched if norm(r['team'])==norm(team['name'])]
                     if players:rows.insert(0,fact('NBA Official',nba_check['sourceUrl'],now.isoformat(),'Official availability',team['code']+': '+'; '.join(players[:8]),2,published))
+            g['propAvailability']=[{**r,'teamId':next(t['id'] for t in g['teams'] if norm(t['name'])==norm(r['team'])),'source':'NBA Official','sourceUrl':nba_check['sourceUrl'],'checkedAt':now.isoformat(),'publishedAt':published} for r in nba_rows if sport=='nba' and r['eventId']==g['eventId']]
             g['additionalIntel']=rows
             sources=[dict(checks[0])]
             if sport=='nba':sources.append(nba_check)

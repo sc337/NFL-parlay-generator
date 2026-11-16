@@ -53,6 +53,7 @@ function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))
 function participation(s,m,f,game,warnings){
  const ctx=data.get(s)?.context||{},g=gameFor(s,m,game),starter=window.STARTER_STATUS?.evidence(s,m,ctx);
  if(starter?.blocked)return starter.blocked;
+ const matchup=window.MATCHUP_PROP_INTEL?.inspect(s,m,ctx);if(matchup?.blocked)return matchup.blocked;
  const injury=String(m.contextSignals?.injury_status||m.injury_status||m.injuryStatus||'').toLowerCase();
  if(/\b(out|doubtful|inactive|suspended|ir|pup|nfi)\b|injured reserve/.test(injury))return 'Player unavailable';
  if(s==='nfl'&&m.player){
@@ -125,7 +126,8 @@ function contextEvidence(s,m,f={},game){
   add(f.match?.opponentAdjusted===true,'Opponent-adjusted record');add(f.match?.weightClassVerified===true,'Weight class');
   add(f.match?.sample>=5,'Recent fight sample');
  }
- return {missing,starterEvidence:starter||null,penalty:Math.min(.04,missing.length*.008)};
+ const matchup=window.MATCHUP_PROP_INTEL?.inspect(s,m,ctx);if(m.player&&s!=='nfl'&&matchup&&!matchup.checked)missing.push('Current matchup availability');
+ return {missing,matchupEvidence:matchup||null,starterEvidence:starter||null,penalty:Math.min(.04,missing.length*.008)};
 }
 function unsupportedAltUnder(m){
  const key=String(m?.marketKey||'').toLowerCase();
@@ -305,6 +307,6 @@ function evidence(s,m,f={},game){const x=assess(s,m,f,{game}),anchored=f.marketA
  const tier=anchored?(s==='nba'?'Market-informed likelihood; value unverified':'Market-supported suggestion'):!(x.coverage>0)?'Market only':x.validated?'Validated model-supported':'Unvalidated model-supported';
  return {tier,likelihood:x.modelP,coverage:x.coverage,coverageLabel:x.coverage>=.75?'More complete':x.coverage>=.45?'Partial':'Limited',valueVerified:x.valueQualified===true,unconfirmed:x.warnings||[],reason:x.reason};
 }
-function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',s!=='ncaaf'&&x.sensitivity?'Opportunity scenarios: '+x.sensitivity.scenarios.map(row=>row.name+' '+(row.bufferedP==null?'unavailable':Math.round(row.bufferedP*100)+'% buffered')).join('; ')+' (policy scenarios, not confidence intervals)':'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'',x.minimumOdds==null?'':('Minimum acceptable odds '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line'),'Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
+function note(s,m,f,game){const x=assess(s,m,f,{game});if(!x.pass)return x.reason;const e=evidence(s,m,f,game);return [s==='ncaaf'?window.NCAAF_MODEL?.explain?.(m,f,x):'',s!=='ncaaf'&&x.sensitivity?'Opportunity scenarios: '+x.sensitivity.scenarios.map(row=>row.name+' '+(row.bufferedP==null?'unavailable':Math.round(row.bufferedP*100)+'% buffered')).join('; ')+' (policy scenarios, not confidence intervals)':'',e.tier,'Estimated likelihood '+Math.round(e.likelihood*100)+'% (not measured accuracy)','Selection buffer '+(x.buffer*100).toFixed(1)+' percentage points; not a confidence interval',x.bufferMethod,f.opportunity?'Projection: '+f.opportunity.method+' · '+f.opportunity.projectedExposure.toFixed(1)+' opportunities × '+(f.opportunity.conversionRate*f.opportunity.efficiency).toFixed(2)+' per opportunity':'',x.minimumOdds==null?'':('Minimum acceptable odds '+(x.minimumOdds>0?'+':'')+x.minimumOdds+' at the same line'),'Evidence '+e.coverageLabel+' · input coverage '+Math.round(e.coverage*100)+'%',x.context.starterEvidence?.note||'',x.context.matchupEvidence?.note||'',window.ESPN_EVIDENCE?.inspect(m).note||'',x.context.missing.length?'Missing: '+x.context.missing.join(', '):'',...x.warnings].filter(Boolean).join(' · ');}
 window.PICK_QUALITY={straightPolicy,straight,bestStraight,contextEvidence,unsupportedAltUnder,evidence,note,validatedRule,prepare,forecast,assess,quote,quoteLabel,estimateOdds,markets:s=>data.get(s)?.markets||[],context:s=>data.get(s)?.context||{},gameFor,id,line,group,joint,checkBuild,decimal,implied,odds};
 })();
