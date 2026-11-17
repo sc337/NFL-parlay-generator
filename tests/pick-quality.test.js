@@ -141,3 +141,11 @@ test('matchup prop intel gates selection and missing evidence widens buffer with
  r.window.MATCHUP_PROP_INTEL.inspect=()=>({checked:false,blocked:null});const missing=r.Q.assess('nhl',m,f);assert.ok(missing.buffer>available.buffer);assert.equal(missing.modelP,available.modelP);
  r.window.MATCHUP_PROP_INTEL.inspect=()=>({checked:false,blocked:'Matchup report: player unavailable'});for(const options of [{},{parlay:true},{featured:true}])assert.equal(r.Q.assess('nhl',m,f,options).reason,'Matchup report: player unavailable');
 });
+test('straight selection stays independent of safer-parlay threshold and records truthful exclusions',()=>{
+ const r=runtime(),{m,g,f}=fixture(r,{price:-110,marketProbability:110/210});r.window.PARLAY_POLICY={saferLegs:true,minBufferedP:.55,maxMarketP:.85,maxPriceGap:.06};
+ const forecast={...f,modelP:.604,marketP:110/210,coverage:.8};
+ assert.equal(r.Q.assess('nfl',m,forecast,{game:g,parlay:true}).pass,false);
+ const chosen=r.Q.bestStraight('nfl',[{market:m,forecast,game:g}]);assert.equal(chosen.market,m);assert.equal(r.Q.straightReport('nfl').passed,1);
+ r.Q.bestStraight('nfl',[{market:{...m,injury_status:'out'},forecast,game:g}]);const report=r.Q.straightReport('nfl');assert.equal(report.checked,1);assert.equal(report.passed,0);assert.equal(report.reasons[0][0],'Player unavailable');
+ r.Q.prepare('nfl',[],{},[],new Date(r.now()).toISOString());assert.equal(r.Q.straightReport('nfl'),null);
+});

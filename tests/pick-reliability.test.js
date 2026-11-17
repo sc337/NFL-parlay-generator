@@ -45,6 +45,7 @@ test('stale quotes and wide spreads cannot enter a recommendation',()=>{
  selection(w,'mlb',.6,.72);m.spread=.12;assert.equal(w.PICK_QUALITY.assess('mlb',m,f).reason,'Quote spread too wide');
 });
 test('featured candidate selectors enforce the shared featured policy in all sports',()=>{
- for(const s of ['mlb','ncaaf','nhl','ufc'])assert.match(fs.readFileSync(s+'-dashboard.js','utf8'),/featured:true/);
- assert.match(fs.readFileSync('app.js','utf8'),/featured:true/);
+ for(const s of ['mlb','ncaaf','nhl','ufc'])assert.match(fs.readFileSync(s+'-dashboard.js','utf8'),/bestStraight/);
+ assert.match(fs.readFileSync('app.js','utf8'),/bestStraight/);
+ assert.match(fs.readFileSync('pick-quality.js','utf8'),/assess\(s,m,\{\.\.\.f,selectionMode:'screened'\},\{\.\.\.options,featured:true\}\)/);
 });

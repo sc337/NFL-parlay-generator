@@ -1000,8 +1000,7 @@ function renderNflStraight(){
   const choices=(state.games||[]).filter(g=>g.game_status==='pre'&&(window.SLATE_UI?window.SLATE_UI.matches('nfl',{},g.commence_time):window.PICK_OF_DAY?.today?.(g.commence_time)))
     .flatMap(g=>(g.markets||[]).filter(m=>m.type!=='td'&&(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode))&&(!m.player||m._rosterVerified)&&Number.isFinite(Number(m.price))&&m.price!==0)
       .map(m=>({g,m,x:window.NFL_MODEL_V3?.evaluate?.(g,m)})))
-    .filter(row=>window.PICK_QUALITY?window.PICK_QUALITY.assess('nfl',row.m,{...(row.x||{}),selectionMode:state.recommendationTier},{game:row.g,featured:true}).pass:row.x?.actionable&&Number(row.x.coverage)>=.2&&Number(row.x.confidence)>=55)
-    .sort((a,b)=>window.PICK_QUALITY?window.PICK_QUALITY.assess('nfl',b.m,{...b.x,selectionMode:state.recommendationTier},{game:b.g}).rank-window.PICK_QUALITY.assess('nfl',a.m,{...a.x,selectionMode:state.recommendationTier},{game:a.g}).rank:(Number(b.x.confidence)+Math.max(0,Number(b.x.ev))*20)-(Number(a.x.confidence)+Math.max(0,Number(a.x.ev))*20));
+;
   const chosen=window.PICK_QUALITY?.bestStraight?.('nfl',choices.map(row=>({market:row.m,forecast:row.x,game:row.g})));
   const best=window.PICK_QUALITY?.bestStraight?(chosen?{m:chosen.market,x:chosen.forecast,g:chosen.game}:null):choices[0];
   window.PICK_OF_DAY?.show?.('nfl',best&&{market:best.m,eventTime:best.g.commence_time,label:best.m.name,

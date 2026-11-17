@@ -88,3 +88,8 @@ test('shared date selection gives NFL a future straight with analysis, source ti
  a.window.PICK_OF_DAY.show('nfl',{market:{price:-110},eventTime:future,label:'Team ML',note:'Confirm lineup/status. Model unvalidated.'});assert.equal(a.host.children.length,2);assert.equal(a.title.textContent,'Featured straight');const footer=a.host.children[1],details=footer.children[1];assert.match(footer.children[0].textContent,/FanDuel/);assert.equal(a.host.children[0].children[2].children[2].textContent,'-110');assert.equal(details.children[0].textContent,'Details');assert.match(details.children[2].textContent,/Confirm lineup/);assert.match(details.children[3].textContent,/FanDuel/);assert.doesNotMatch(details.children[3].textContent,/Caesars/);
  a.window.PICK_OF_DAY.show('nfl',null);assert.match(a.host.children[0].textContent,/No qualifying straight/);
 });
+test('empty straight banner explains current primary blockers without fabricating a pick',()=>{
+ const r=runtime();r.window.PICK_QUALITY={straightReport:()=>({checked:12,passed:0,checkedAt:Date.now(),reasons:[['Straight waiting for confirmed goalies and player role',8],['Straight price must be -250 to -110',4]]})};
+ r.window.PICK_OF_DAY.show('nfl');assert.match(JSON.stringify(r.host.children),/Why no straight\?/);assert.match(JSON.stringify(r.host.children),/confirmed goalies/);
+ r.window.PICK_QUALITY.straightReport=()=>({checked:12,passed:0,checkedAt:Date.now()-120000,reasons:[['Expired reason',12]]});r.window.PICK_OF_DAY.show('nfl');assert.doesNotMatch(JSON.stringify(r.host.children),/Expired reason/);
+});
