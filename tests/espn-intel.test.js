@@ -52,3 +52,9 @@ test('additional intel is dated, attributed, escaped and separate from opinions'
  assert.equal(additionalHTML({...g,sport:'nba',additionalIntel:[row]},now+3*3600000),'');
  const stale=gameHTML({...g,sport:'nba',checkedAt:'2020-01-01',additionalIntel:[row]},now,false);assert(stale.includes('NBA Official'));assert(!stale.includes('60.0%'));
 });
+test('research views keep detail categories, source access and status meanings distinct',()=>{
+ const x=require('../espn-intel.js');assert.equal(x.categories.injuries,'players');assert.equal(x.categories['published-analysts'],'analysts');assert.equal(x.categories.stats,'matchup');
+ assert.equal(x.statusTone('Out'),'out');assert.equal(x.statusTone('Questionable'),'review');assert.equal(x.statusTone('Available'),'ready');assert.equal(x.statusTone('Probable'),'muted');
+ const g={sport:'nba',teams:[],startAt:new Date(Date.now()+3600000).toISOString(),checkedAt:new Date().toISOString(),status:'ok'};
+ const h=x.gameHTML(g);for(const view of ['Overview','Players','Matchup','Analysts'])assert.ok(h.includes('>'+view+'</button>'));assert.match(h,/data-intel-view="overview"/);assert.match(h,/aria-pressed="true"/);
+});
