@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 function runtime(blocked=false){let now=Date.now();const state=new Map();class Clock extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
- const window={},ctx=vm.createContext({window,Date:Clock,console,localStorage:{getItem:k=>state.get(k)||null,setItem:(k,v)=>{if(blocked)throw Error('blocked');state.set(k,v)}}});
+ const window={NFL_PROP_SHADOW_MODE:false},ctx=vm.createContext({window,Date:Clock,console,localStorage:{getItem:k=>state.get(k)||null,setItem:(k,v)=>{if(blocked)throw Error('blocked');state.set(k,v)}}});
  for(const file of ['conservative-policy.js','model-calibration.js','pick-quality.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx,{filename:file});
  return {Q:window.PICK_QUALITY,window,ctx,state,now:()=>now,advance:ms=>now+=ms};}
 function fixture(r,patch={}){const m={ticker:'MATCH-45',type:'totals',marketKey:'totals',point:44.5,side:'over',name:'Over 44.5',price:100,marketProbability:.5,source:'Kalshi',game_status:'pre',...patch},g={id:'game',commence_time:new Date(r.now()+2*3600000).toISOString(),game_status:'pre',markets:[m]};r.Q.prepare('nfl',[m],{},[g],new Date(r.now()).toISOString());return {m,g,f:{modelP:.64,rawModelP:.64,coverage:.7,marketP:.5,uncertainty:.3}}}
@@ -148,4 +148,18 @@ test('straight selection stays independent of safer-parlay threshold and records
  const chosen=r.Q.bestStraight('nfl',[{market:m,forecast,game:g}]);assert.equal(chosen.market,m);assert.equal(r.Q.straightReport('nfl').passed,1);
  r.Q.bestStraight('nfl',[{market:{...m,injury_status:'out'},forecast,game:g}]);const report=r.Q.straightReport('nfl');assert.equal(report.checked,1);assert.equal(report.passed,0);assert.equal(report.reasons[0][0],'Player unavailable');
  r.Q.prepare('nfl',[],{},[],new Date(r.now()).toISOString());assert.equal(r.Q.straightReport('nfl'),null);
+});
+
+test('NFL standard and ALT props remain visible for audit but cannot produce automatic value picks',()=>{
+ const r=runtime();r.window.NFL_PROP_SHADOW_MODE=true;
+ for(const alt of [false,true]){
+  const {m,g,f}=fixture(r,{ticker:alt?'ALT':'STANDARD',player:'Runner',type:'rushing',marketKey:alt?'player_rush_yds_alternate':'player_rush_yds',isAltLine:alt,point:alt?69.5:67.5,side:'over',_rosterVerified:true});
+  const forecast={...f,modelP:.75,rawModelP:.75,marketP:.5};
+  const shadow=r.Q.forecast('nfl',m,forecast);
+  assert.equal(shadow.modelP,.5);assert.equal(shadow.rawModelP,.75);assert.equal(shadow.betEV,null);assert.equal(shadow.edge,null);
+  for(const options of [{},{featured:true},{parlay:true}]){
+   const result=r.Q.assess('nfl',m,forecast,{...options,game:g});
+   assert.equal(result.pass,false);assert.equal(result.valueQualified,false);assert.equal(result.ev,null);
+  }
+ }
 });
