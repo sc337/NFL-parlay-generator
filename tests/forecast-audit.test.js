@@ -85,3 +85,10 @@ assert.equal(underAudit.id,"mlb|PAIR|no");
 const hockey=record('nhl',{market:{ticker:'KXNHLPTS-26OCT03BOSNYR-PLAYER-1',kind:'points',line:.5,player_id:'100',game_id:'nhl1',game_status:'pre',game_time:'2026-09-28T00:00:00Z',probability:.55,yes_ask:.57,spread:.02,volume:100},forecast:{modelP:.65,rawModelP:.65,coverage:.5,experimental:true,projectedLine:1.1}},{updated_at:'2026-09-27T17:45:00Z'},now);
 assert.equal(hockey.forecastType,'experimental');assert.equal(hockey.quotedEV,null);assert.equal(hockey.point,.5);
 assert.equal(build([{...hockey,result:'win'}]).sports.nhl.experimentalRecorded,1);
+
+const prop={...market,ticker:'KXNFLPROP-26SEP27AWAHOM-PLAYER',type:'receiving',marketKey:'player_reception_yds',player:'Sample Receiver',point:59.5};
+const shadow={...forecast,modelP:.53,rawModelP:.68,coverage:.55,projectedLine:71,marketAnchored:true,experimental:true};
+const firstProp=record('nfl',{market:prop,forecast:shadow,game},{updated_at:'2026-09-27T18:00:00Z'},now);
+assert.equal(firstProp.checkpoint,null);assert.equal(firstProp.modelP,.68);assert.equal(firstProp.rawModelP,.68);assert.equal(firstProp.forecastType,'experimental');assert.equal(firstProp.quotedEV,null);
+const nearProp=record('nfl',{market:prop,forecast:shadow,game},{updated_at:'2026-09-27T23:50:00Z'},Date.parse('2026-09-27T23:50:00Z'));
+assert.equal(nearProp.checkpoint,'15m');assert.notEqual(nearProp.id,firstProp.id);
