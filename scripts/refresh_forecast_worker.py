@@ -66,7 +66,7 @@ def cycle(publish=True):
     # A settlement outage/timeout cannot hold current prospective records back.
     if publish:publish_records({name:Path(name).read_text() for name in ARCHIVES})
     rows = [r for payload in payloads.values() for r in payload['records']]
-    changed = settle_records(rows,limit=240,workers=8) + settle_references(rows,limit=60,workers=6)
+    changed = settle_records(rows,limit=400,workers=8) + settle_references(rows,limit=60,workers=6)
     changed += add_nfl_totals(payloads['data/forecast-audit-nfl.json']['records'],limit=100)
     for name,payload in payloads.items():
         payload['updated_at'] = datetime.now(timezone.utc).isoformat()

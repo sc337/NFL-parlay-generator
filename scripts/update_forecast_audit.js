@@ -51,7 +51,9 @@ function record(sport,entry,snapshot,now){
     if((finite(m.sourceQuality)||0)<60||m._invalidRoster===true)return null;
   }else if(!m.referenceOnly&&((finite(m.volume)||0)<25||!(finite(m.spread)>=0&&finite(m.spread)<=.16)||
            m.game_status==='Final'||m.game_status==='Live'||m.game_status==='in'||m.game_status==='post'))return null;
-  const modelP=finite(f.modelP),rawModelP=finite(f.rawModelP);
+  // The live player-prop gate uses market probability, but the immutable audit
+  // keeps the shadow model estimate that existed before kickoff.
+  const rawModelP=finite(f.rawModelP),modelP=sport==='nfl'&&m.player&&rawModelP>0&&rawModelP<1?rawModelP:finite(f.modelP);
   const coverage=finite(f.coverage??f.context?.coverage??f.match?.coverage)||0;
   const projectedLine=finite(f.projectedLine);
   const independent=sport==='nfl'?coverage>=.2&&(!m.player||projectedLine!=null):
@@ -61,11 +63,13 @@ function record(sport,entry,snapshot,now){
     (sport==='ncaaf'&&f.experimental===true&&coverage>=.6)||
     (sport==='mlb'&&['total','strikeouts','hits','home_runs','rbi','total_bases','hrr'].includes(m.kind)&&f.experimental===true&&coverage>=.45)||
     (sport==='nfl'&&f.experimental===true&&(m.type==='td'?coverage>=.3:!!m.player&&coverage>=.45&&projectedLine!=null));
-  const anchored=f.marketAnchored===true;
+  const anchored=f.marketAnchored===true&&!(sport==='nfl'&&m.player);
   const hasModel=(independent||experimental)&&modelP>0&&modelP<1;
   const contractId=[sport,ticker,side].join('|'),version=[f.modelVersion,f.forecastVersion].filter(Boolean).join('|')||null;
   const lead=Date.parse(eventTime)-now;
-  const checkpoint=sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)?
+  const checkpoint=sport==='nfl'&&m.player?
+    lead<=15*60000?'15m':null:
+    sport==='nfl'&&['totals','spreads','h2h'].includes(m.type)?
     lead<=15*60000?'15m':lead<=60*60000?'60m':lead<=6*3600000?'6h':lead<=24*3600000?'24h':null:null;
   const featureAsOf=f.featureAsOf||g.context?.updated_at||null;
   const featureAt=Date.parse(featureAsOf);
@@ -114,7 +118,7 @@ async function main(){
       if(!Number.isFinite(updated)||updated>now+60000||now-updated>(nearOnly?30:90)*60000)throw Error('Snapshot is stale or future dated');
       if(!nearOnly)track(rows,snapshot,sport,now);
       for(const choice of choices){const r=record(sport,choice,snapshot,now);
-        if(nearOnly&&!(sport==='nfl'&&['totals','spreads','moneyline'].includes(r?.marketGroup)&&r.checkpoint))continue;
+        if(nearOnly&&!(sport==='nfl'&&r?.checkpoint&&(r?.player||['totals','spreads','moneyline'].includes(r.marketGroup))))continue;
         if(r&&!seen.has(r.id)){rows.push(r);seen.add(r.id);added[sport]=(added[sport]||0)+1}}
     }catch(error){
       if(nearOnly)throw error;

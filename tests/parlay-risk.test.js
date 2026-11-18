@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-function setup(){const window={};const ctx=vm.createContext({window,Date,console});for(const file of ['market-guards.js','model-calibration.js','pick-quality.js','parlay-risk.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx);return window}
+function setup(){const window={NFL_PROP_SHADOW_MODE:false};const ctx=vm.createContext({window,Date,console});for(const file of ['market-guards.js','model-calibration.js','pick-quality.js','parlay-risk.js'])vm.runInContext(fs.readFileSync(file,'utf8'),ctx);return window}
 function fixture(w){
  const start=new Date(Date.now()+86400000).toISOString(),stamp=new Date().toISOString();
  const g={id:'game',away:'Away',home:'Home',commence_time:start,game_status:'pre',context:{updated_at:stamp,weather:{available:true}}};

@@ -46,8 +46,8 @@ function forecast(s,m,f={}){
  const raw=num(f.rawModelP??f.modelP),market=num(f.marketP??m.marketProbability??m.probability),key=group(s,m)+(f.experimental?':experimental':'');
  const active=validatedRule(s,m,f);
  const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):raw??num(f.modelP);
- const q=quote(s,m),ev=p!=null&&q.p>0?p/q.p-1:null;
- return {...f,modelVersion:window.MODEL_LEARNING?.VERSION,baselines:{market:market,...(f.baselines||{})},modelP:p,rawModelP:raw,marketP:market,edge:p!=null&&q.p>0?p-q.p:null,betEV:s==='nba'&&f.marketAnchored?null:ev,ev:f.experimental||s==='nba'&&f.marketAnchored?null:ev,calibrationValidated:active};
+ const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false,ev=!shadow&&p!=null&&q.p>0?p/q.p-1:null;
+ return {...f,modelVersion:window.MODEL_LEARNING?.VERSION,baselines:{market:market,...(f.baselines||{})},modelP:shadow?(market??q.p):p,rawModelP:raw,marketP:market,edge:shadow?null:p!=null&&q.p>0?p-q.p:null,betEV:shadow||s==='nba'&&f.marketAnchored?null:ev,ev:shadow||f.experimental||s==='nba'&&f.marketAnchored?null:ev,calibrationValidated:active};
 }
 function quoteLabel(s,m){if(s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m))return 'Model estimate · Check Caesars';const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);if(m.referenceOnly)return q.source+' '+fmt(q.odds)+' · Reference';if(window.ODDS_DISPLAY)return window.ODDS_DISPLAY.label(q);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
 function estimateOdds(s,markets){if(!window.MARKET_GUARDS?.independent(markets))return null;const prices=markets.map(m=>quote(s,m).odds);if(prices.some(o=>!odds(o)))return null;const d=prices.reduce((value,o)=>value*decimal(o),1);return Math.round(d>=2?(d-1)*100:-100/(d-1));}
@@ -146,10 +146,11 @@ function assess(s,m,f={},options={}){
  const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
  const selectionMode=target?'ideas':options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
- const q=quote(s,m);let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
+ const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false;let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
  const ruleKey=group(s,m)+(f.experimental?':experimental':'');const validated=validatedRule(s,m,f);
  const raw=num(f.rawModelP??m.rawModelProbability),market=num(f.marketP??m.marketProbability??m.probability);if(validated&&raw>0&&raw<1&&market>0&&market<1)p=window.MODEL_CALIBRATION.apply(s,ruleKey,raw,market);
+  if(shadow)p=market>0&&market<1?market:q.p;
  const uncertainty=clamp(num(f.uncertainty??m.modelUncertainty)??.5,0,1);
  // A selection buffer, not a statistical confidence interval. Unvalidated
  // models need more headroom and retain their experimental labels.
@@ -189,7 +190,8 @@ function assess(s,m,f={},options={}){
     history?.status==='inactive_latest_game'?'No activity in latest completed team game':
     history?.status==='identity_unresolved'?'Player history identity unresolved':'Independent projection too thin';
  }
- else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
+ else if(shadow)reason='NFL player-prop model in shadow evaluation';
+  else if(p===num(f.marketP??m.marketProbability??m.probability)&&!f.experimental)reason='Market-only estimate';
  else reason=participation(s,m,f,g,warnings);
  if(monitored){warnings.push(...monitored.warnings);if(!reason&&monitored.blocked)reason=monitored.blocked;}
  if(!reason&&roleChange?.status==='falling')reason='Recent opportunity decreased; waiting for a stable role';
@@ -256,7 +258,7 @@ function assess(s,m,f={},options={}){
  // is short, but don't let extreme juice masquerade as better pick quality.
  const juicePenalty=Math.max(0,(q.p||0)-.75)*100;
  if(!reason&&juicePenalty>0)warnings.push('Short price; limited payout for the risk');
- return {pass:!reason,reason,modelOnly:target,selectionMode,dataPass,dataReason,pricePass:!(nbaTeam&&anchored)&&clearsValue,provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:nbaTeam&&anchored?null:ev,conservativeEV:nbaTeam&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
+ return {pass:!reason,reason,modelOnly:target,selectionMode,dataPass,dataReason,pricePass:!shadow&&!(nbaTeam&&anchored)&&clearsValue,provisionalValue:!shadow&&provisionalValue,priceGap:conservativeP!=null&&q.p>0?Math.max(0,q.p-conservativeP):null,modelP:p,conservativeP,rankingP,buffer,bufferParts,bufferMethod:learned?.method||'Fixed policy buffer; empirical evidence collecting',roleChange,ev:shadow||nbaTeam&&anchored?null:ev,conservativeEV:shadow||nbaTeam&&anchored?null:conservativeEV,coverage,validated,quote:q,warnings,tier:likelihoodMode?'likelihood':provisionalValue?'potential':tier,valueQualified,context,sensitivity,minimumOdds,bufferLabel:'Selection buffer; not a confidence interval',evidence:validated?'Calibrated estimate':'Unvalidated model',juicePenalty,rank:!reason?(likelihoodMode?rankingP*100:matchupMode?coverage*60+rankingP*30:Math.min(conservativeEV||0,.30)*100+coverage*20+rankingP*10)+(validated?8:0)-Math.min(warnings.length,4)-juicePenalty:-999};
 }
 function joint(legs){
  const ps=legs.map(l=>num(l.modelP??l.modelProbability));

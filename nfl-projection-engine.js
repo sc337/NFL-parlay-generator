@@ -144,7 +144,10 @@
     const lineEdge=(upFinal&&num(m.point)!=null)?upFinal.line-num(m.point):null;
     const quotedP=typeof window.MODEL_CORE?.implied==='function'?window.MODEL_CORE.implied(m.price):null;
     const ev=quotedP>0?modelP/quotedP-1:null;
-    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:!m.player,forecastVersion:distributionP==null?null:'nfl-team-distribution-v1',probabilityMethod:distributionP==null?null:'Shared normal game distribution; provisional width',marketP,rawModelP:modelP,modelP,edge,ev,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,marginProjection:marginLine,studyVariants,lineEdge};
+    const shadow=!!m.player&&window.NFL_PROP_SHADOW_MODE!==false;
+    // Keep player-prop estimates in shadow until a forward holdout beats the same-time market.
+    // The market is a display baseline, never an independent value signal.
+    return {experimental:upFinal?.experimental===true,opportunity:upFinal?.opportunity,roleChange:upFinal?.roleChange,simpleLine:upFinal?.simpleLine,projectionSD:upFinal?.sd,roleStability:upFinal?.roleStability,marketAnchored:shadow||!m.player,forecastVersion:distributionP==null?null:'nfl-team-distribution-v1',probabilityMethod:distributionP==null?null:'Shared normal game distribution; provisional width',marketP,rawModelP:modelP,modelP:shadow?marketP:modelP,edge:shadow?null:edge,ev:shadow?null:ev,confidence:core?.confidence??0,uncertainty:core?.uncertainty??null,coverage:clamp(coverage,0,1),team:tp,projectionLine:totalLine??upFinal?.line??null,marginProjection:marginLine,studyVariants,lineEdge};
   }
   let enrichedRef=null;
   function enrich(force=false){
@@ -157,7 +160,7 @@
       m.projectionCoverage=p.coverage;
       m.nflPropExperimental=!!m.player&&m.type!=='td'&&p.experimental===true;
       m.tdExperimental=m.type==='td'&&p.experimental===true;
-      m.fairPrice=typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
+      m.fairPrice=!(m.player&&window.NFL_PROP_SHADOW_MODE!==false)&&typeof decimalToAmerican==='function'?decimalToAmerican(1/p.modelP):null;
       m.projectedLine=p.projectionLine;
       m.projectedMargin=p.marginProjection;m.forecastVersion=p.forecastVersion;m.probabilityMethod=p.probabilityMethod;
       m.studyVariants=p.studyVariants;m.featureAsOf=g.context?.updated_at||null;
