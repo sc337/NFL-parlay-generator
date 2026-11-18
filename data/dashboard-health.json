@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-18T00:00:39.663Z",
+  "updated_at": "2026-11-18T00:09:28.350Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-17T23:59:21.857952+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-17T23:59:31.881568+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 4260,
       "quotedMarkets": 4260,
       "expiredQuotes": 0,
@@ -183,7 +183,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-11-17T23:59:55.613612+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 6555,
       "quotedMarkets": 6555,
       "expiredQuotes": 0,
@@ -911,7 +911,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-17T23:59:24.503560+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 2932,
       "quotedMarkets": 2932,
       "expiredQuotes": 0,
@@ -1059,20 +1059,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-17T23:59:25.146943+00:00",
-      "ageMinutes": 1,
-      "markets": 2244,
-      "quotedMarkets": 2244,
+      "snapshotAt": "2026-11-18T00:09:26.348345+00:00",
+      "ageMinutes": 0,
+      "markets": 648,
+      "quotedMarkets": 648,
       "expiredQuotes": 0,
-      "playerMarkets": 1596,
+      "playerMarkets": 0,
       "families": {
         "moneyline": 94,
         "spread": 174,
-        "total": 380,
-        "goals": 568,
-        "assists": 428,
-        "points": 580,
-        "saves": 20
+        "total": 380
       },
       "futureEvents": [
         {
@@ -1275,7 +1271,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-17T23:59:22.412397+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 22,
       "quotedMarkets": 22,
       "expiredQuotes": 0,
@@ -1334,6 +1330,15 @@
   },
   "alerts": [
     {
+      "id": "nhl:props-missing",
+      "sport": "nhl",
+      "code": "props-missing",
+      "severity": "warning",
+      "message": "Player props disappeared for games that still have team markets.",
+      "firstSeen": "2026-11-18T00:09:28.350Z",
+      "changedAt": "2026-11-18T00:09:28.350Z"
+    },
+    {
       "id": "archive:stale",
       "sport": null,
       "code": "archive-stale",
@@ -1360,7 +1365,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-17T23:59:33.515493+00:00"
+      "at": "2026-11-18T00:09:28.332151+00:00"
     },
     "ufc": {
       "ok": true,
