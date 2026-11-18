@@ -46,7 +46,7 @@ function forecast(s,m,f={}){
  const raw=num(f.rawModelP??f.modelP),market=num(f.marketP??m.marketProbability??m.probability),key=group(s,m)+(f.experimental?':experimental':'');
  const active=validatedRule(s,m,f);
  const p=active&&raw>0&&raw<1&&market>0&&market<1?window.MODEL_CALIBRATION.apply(s,key,raw,market):raw??num(f.modelP);
- const q=quote(s,m),shadow=s==='nfl'&&!!m.player,ev=!shadow&&p!=null&&q.p>0?p/q.p-1:null;
+ const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false,ev=!shadow&&p!=null&&q.p>0?p/q.p-1:null;
  return {...f,modelVersion:window.MODEL_LEARNING?.VERSION,baselines:{market:market,...(f.baselines||{})},modelP:shadow?(market??q.p):p,rawModelP:raw,marketP:market,edge:shadow?null:p!=null&&q.p>0?p-q.p:null,betEV:shadow||s==='nba'&&f.marketAnchored?null:ev,ev:shadow||f.experimental||s==='nba'&&f.marketAnchored?null:ev,calibrationValidated:active};
 }
 function quoteLabel(s,m){if(s==='nba'&&window.NBA_PROP_TARGETS?.isTarget(m))return 'Model estimate · Check Caesars';const q=quote(s,m);if(q.odds==null)return 'Quote unavailable';const fmt=o=>o>0?'+'+o:String(o);if(m.referenceOnly)return q.source+' '+fmt(q.odds)+' · Reference';if(window.ODDS_DISPLAY)return window.ODDS_DISPLAY.label(q);return /^Caesars/.test(q.source)?'Caesars '+fmt(q.odds):s==='nfl'?(['Kalshi','FanDuel'].includes(q.source)?q.source:'Reference')+' '+fmt(q.odds):'Kalshi '+Math.round(q.p*100)+'¢';}
@@ -146,7 +146,7 @@ function assess(s,m,f={},options={}){
  const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
  const selectionMode=target?'ideas':options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
- const q=quote(s,m),shadow=s==='nfl'&&!!m.player;let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
+ const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false;let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
  const ruleKey=group(s,m)+(f.experimental?':experimental':'');const validated=validatedRule(s,m,f);
  const raw=num(f.rawModelP??m.rawModelProbability),market=num(f.marketP??m.marketProbability??m.probability);if(validated&&raw>0&&raw<1&&market>0&&market<1)p=window.MODEL_CALIBRATION.apply(s,ruleKey,raw,market);
