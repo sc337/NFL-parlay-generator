@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {runtime}=require('../scripts/update_pick_history');
 const app=fs.readFileSync('app.js','utf8');
 function setup(){
- const now=Date.parse('2026-10-12T05:00:00Z'),r=runtime('nfl',{now});
+ const now=Date.parse('2026-10-12T05:00:00Z'),r=runtime('nfl',{now});r.window.NFL_PROP_SHADOW_MODE=false;
  const m={ticker:'runner',type:'rushing',marketKey:'player_rush_yds',player:'Runner',team:'Home',point:49.5,side:'over',price:-150,source:'Kalshi',sourceQuality:80,_rosterVerified:true,contextSignals:{injury_checked:true,injury_status:'none_reported'},propHistory:{source:'nflverse completed plays',games:4,played:4,latest_game:'2026-10-04',metrics:{player_rush_yds:[55,45,72,60]}}};
  const g={id:'fixture',away:'Away',home:'Home',dataSource:'Kalshi',game_status:'pre',commence_time:'2026-10-13T00:15:00Z',context:{updated_at:'2026-10-12T04:59:00Z',recent_form:{Away:{available:true,games:4},Home:{available:true,games:4}}},markets:[m]};
  Object.assign(r.ctx.state,{apiKey:'',recommendationTier:'ideas',mode:'sgp',lineMode:'both',selectedMarkets:new Set(['rushing','passing','receiving','receptions','spreads','h2h','totals']),games:[g]});
