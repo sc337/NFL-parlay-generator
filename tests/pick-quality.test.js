@@ -150,16 +150,19 @@ test('straight selection stays independent of safer-parlay threshold and records
  r.Q.prepare('nfl',[],{},[],new Date(r.now()).toISOString());assert.equal(r.Q.straightReport('nfl'),null);
 });
 
-test('NFL standard and ALT props remain visible for audit but cannot produce automatic value picks',()=>{
+test('NFL props remain shadowed for straights but may pass parlay quality checks',()=>{
  const r=runtime();r.window.NFL_PROP_SHADOW_MODE=true;
  for(const alt of [false,true]){
   const {m,g,f}=fixture(r,{ticker:alt?'ALT':'STANDARD',player:'Runner',type:'rushing',marketKey:alt?'player_rush_yds_alternate':'player_rush_yds',isAltLine:alt,point:alt?69.5:67.5,side:'over',_rosterVerified:true});
   const forecast={...f,modelP:.75,rawModelP:.75,marketP:.5};
   const shadow=r.Q.forecast('nfl',m,forecast);
   assert.equal(shadow.modelP,.5);assert.equal(shadow.rawModelP,.75);assert.equal(shadow.betEV,null);assert.equal(shadow.edge,null);
-  for(const options of [{},{featured:true},{parlay:true}]){
+  for(const options of [{},{featured:true}]){
    const result=r.Q.assess('nfl',m,forecast,{...options,game:g});
    assert.equal(result.pass,false);assert.equal(result.valueQualified,false);assert.equal(result.ev,null);
   }
+  const parlay=r.Q.assess('nfl',m,forecast,{parlay:true,game:g});
+  assert.notEqual(parlay.reason,'NFL player-prop model in shadow evaluation');
+  assert.ok(parlay.ev!==null);assert.equal(parlay.validated,false);
  }
 });
