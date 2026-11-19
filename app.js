@@ -1080,7 +1080,7 @@ function render(parlays){
       notice.textContent='Showing '+shownCount+' legs of '+sgpResult.requested+' requested. '+sgpResult.reason;
       node.querySelector('.legs').before(notice);
     }
-    node.querySelector('.grade').textContent=p.altIdea?'ALT IDEA · VALUE UNCHECKED':p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
+    node.querySelector('.grade').textContent=p.legs.some(m=>m.player)?'EXPERIMENTAL · PAPER ONLY':p.altIdea?'ALT IDEA · VALUE UNCHECKED':p.likelihoodTier?'WIN CHANCE · ESTIMATE':p.ideaTier?'PARLAY IDEA':window.PICK_QUALITY&&p.legs.some(m=>!window.PICK_QUALITY.validatedRule('nfl',m,nflQualityForecast(m)))?'UNVALIDATED':p.grade;
     node.querySelector('.parlay-name').textContent=p.ideaTier?'Other picks · Value unverified':p.name;
     node.querySelector('.parlay-card').dataset.profile=p.profile||'';
     const sb=node.querySelector('.script-badge');
@@ -1089,11 +1089,11 @@ function render(parlays){
     const estimateLabel=sources.size===1&&['FanDuel','Kalshi'].includes([...sources][0])?[...sources][0]+' est.':'Reference est.';
     node.querySelector('.odds').textContent=state.mode==='sgp'?'—':fmtOdds(p.odds);node.querySelector('.odds-label').textContent=state.mode==='sgp'?'Check SGP offer':estimateLabel;
     node.querySelector('.odds-label').title=state.mode==='sgp'?'Check your sportsbook for correlated SGP odds':'Combined individual quotes; actual sportsbook parlay odds may differ';
-    node.querySelector('.summary').textContent=(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
+    node.querySelector('.summary').textContent=(p.legs.some(m=>m.player)?'NFL prop forecasts have not beaten the market in forward validation. Paper research only. ':'')+(state.mode==='sgp'&&p.gameLabel?p.gameLabel+' · ':'')+p.summary+(state.mode==='multi'?' Price estimate combines individual quotes; check your sportsbook for actual parlay odds.':'')+
       (state.mode==='sgp'&&p.teamMix==='Concentrated'?' One-team concentration.':'');
     const matchup=nflMatchup(p.gameLabel);
     node.querySelector('.summary').dataset.shortText=(state.mode==='sgp'?(nflKickoff(p.kickoff)?nflKickoff(p.kickoff)+' · ':'')+(matchup||'Same game'):'Multi-game · '+p.legs.length+' legs'+(state.nflWeek&&state.nflWeek!=='all'?' · '+nflWeekLabel(state.nflWeek):' · All upcoming'))+
-      (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'')+'. '+(p.altIdea?'ALT research idea; value unchecked.':p.likelihoodTier?'Favors buffered win estimates; value unchecked.':p.ideaTier?'Recent matchup context checked; value unverified.':'Each leg clears the buffered value screen; estimates unvalidated.');
+      (p.requestedLegs&&p.legs.length<p.requestedLegs?' · '+p.legs.length+' of '+p.requestedLegs+' requested':'')+'. '+(p.legs.some(m=>m.player)?'Experimental NFL prop parlay; paper only; no validated edge.':p.altIdea?'ALT research idea; value unchecked.':p.likelihoodTier?'Favors buffered win estimates; value unchecked.':p.ideaTier?'Recent matchup context checked; value unverified.':'Each leg clears the buffered value screen; estimates unvalidated.');
     if(state.mode==='sgp'&&p.gameLabel){const teams=p.gameLabel.split(/\s+@\s+/);if(teams.length===2){node.querySelector('.summary').dataset.away=teams[0];node.querySelector('.summary').dataset.home=teams[1]}}
     node.querySelector('.score').textContent=p.likelihoodTier?'Win Chance estimate · Value unchecked':p.ideaTier?'Reference-market idea · Not verified value':`Rating ${p.score}/100 · Not win chance`;
     node.querySelector('.correlation').textContent=state.mode==='sgp' ? 'Joint value unverified' : `${p.legs.length} games/legs`;
@@ -1103,7 +1103,7 @@ function render(parlays){
       if(l.isAltLine||state.lineMode==='alt'&&l.type==='receptions'&&l.side==='over'){d.dataset.altLine='true';const milestone=window.NFL_ALT_LINES?.label?.(l);if(milestone)d.dataset.altLabel=milestone;}
       d.dataset.eventTime=l.kickoff||'';d.dataset.matchup=l.gameLabel||'';
       if(state.mode==='multi')d.dataset.compactMatchup=[nflKickoff(l.kickoff),nflMatchup(l.gameLabel)].filter(Boolean).join(' · ');
-      const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l,p.altIdea?'safe':null));const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
+      const originalPx=window.NFL_PROJECTIONS?.describe?.(l)||{},quality=window.PICK_QUALITY?.assess('nfl',l,nflQualityForecast(l,p.altIdea?'safe':null),{parlay:true});const px=quality?{...originalPx,modelProbability:quality.modelP,ev:quality.ev,edge:quality.modelP-quality.quote.p}:originalPx;
       const mp=Number(px.modelProbability??px.modelP??l.modelProbability),mk=Number(px.marketProbability??px.marketP??l.marketProbability),ed=Number(px.edge??l.modelEdge),ev=Number(px.ev??l.modelEV),rawPl=px.projectedLine??px.projectionLine??l.projectedLine,pl=rawPl==null?NaN:Number(rawPl),ln=l.point==null?NaN:Number(l.point);
       const metrics=[];
       if(p.likelihoodTier&&quality)metrics.push('Buffered estimate '+Math.round(quality.conservativeP*100)+'% · Not measured accuracy');
