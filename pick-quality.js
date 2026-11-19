@@ -146,7 +146,9 @@ function assess(s,m,f={},options={}){
  const saferMode=!options.featured&&window.PARLAY_POLICY?.saferLegs===true&&(s==='nba'?nbaProfile==='safe':true);
  const selectionMode=target?'ideas':options.featured?'screened':saferMode?'likelihood':nbaProfile==='safe'?'likelihood':nbaProfile?'ideas':f.selectionMode||window.DASHBOARD_UI?.get(s,'selectionMode','screened')||'screened';
  const likelihoodMode=selectionMode==='likelihood',matchupMode=selectionMode==='ideas';
- const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false;let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
+ // Experimental NFL props may enter parlays only after the ordinary quality gates.
+ // Keep featured and straight selections in shadow evaluation.
+ const q=quote(s,m),shadow=s==='nfl'&&!!m.player&&window.NFL_PROP_SHADOW_MODE!==false&&!options.parlay;let p=num(f.modelP??f.modelProbability??m.modelProbability),coverage=clamp(num(f.coverage??f.context?.coverage??f.match?.coverage??m.projectionCoverage)||0,0,1);
  const minCoverage=s==='nfl'&&!m.player ? .2 : s==='ncaaf' ? .6 : .45;
  const ruleKey=group(s,m)+(f.experimental?':experimental':'');const validated=validatedRule(s,m,f);
  const raw=num(f.rawModelP??m.rawModelProbability),market=num(f.marketP??m.marketProbability??m.probability);if(validated&&raw>0&&raw<1&&market>0&&market<1)p=window.MODEL_CALIBRATION.apply(s,ruleKey,raw,market);
