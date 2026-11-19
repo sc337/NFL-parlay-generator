@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-19T02:51:22.082Z",
+  "updated_at": "2026-11-19T03:00:00.153Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-19T02:49:55.502198+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,24 +16,15 @@
     },
     "nba": {
       "snapshotAt": "2026-11-19T02:50:00.530580+00:00",
-      "ageMinutes": 1,
-      "markets": 1514,
-      "quotedMarkets": 1514,
+      "ageMinutes": 10,
+      "markets": 178,
+      "quotedMarkets": 178,
       "expiredQuotes": 0,
-      "playerMarkets": 1082,
+      "playerMarkets": 0,
       "families": {
-        "moneyline": 66,
-        "spread": 190,
-        "total": 176,
-        "points": 204,
-        "rebounds": 220,
-        "assists": 142,
-        "threes": 222,
-        "pra": 156,
-        "double_double": 28,
-        "triple_double": 4,
-        "steals": 94,
-        "blocks": 12
+        "moneyline": 62,
+        "spread": 58,
+        "total": 58
       },
       "futureEvents": [
         {
@@ -159,24 +150,13 @@
         {
           "id": "401910021",
           "time": "2026-11-20T01:00Z"
-        },
-        {
-          "id": "401910017",
-          "time": "2026-11-19T03:00Z"
-        },
-        {
-          "id": "401910018",
-          "time": "2026-11-19T03:00:00+00:00"
         }
       ],
-      "playerCounts": {
-        "401910017": 524,
-        "401910018": 558
-      }
+      "playerCounts": {}
     },
     "ncaaf": {
       "snapshotAt": "2026-11-19T02:50:38.284273+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 8527,
       "quotedMarkets": 8527,
       "expiredQuotes": 0,
@@ -904,7 +884,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-19T02:49:58.411337+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 5378,
       "quotedMarkets": 5378,
       "expiredQuotes": 0,
@@ -1056,16 +1036,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-19T02:49:55.955756+00:00",
-      "ageMinutes": 1,
-      "markets": 776,
-      "quotedMarkets": 776,
+      "snapshotAt": "2026-11-19T02:59:56.156118+00:00",
+      "ageMinutes": 0,
+      "markets": 750,
+      "quotedMarkets": 750,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 102,
-        "spread": 210,
-        "total": 464
+        "moneyline": 100,
+        "spread": 202,
+        "total": 448
       },
       "futureEvents": [
         {
@@ -1267,19 +1247,13 @@
         {
           "id": "401892744",
           "time": "2026-11-20T00:30:00+00:00"
-        },
-        {
-          "id": "401892741",
-          "time": "2026-11-19T03:00Z"
         }
       ],
-      "playerCounts": {
-        "401892741": 334
-      }
+      "playerCounts": {}
     },
     "ufc": {
       "snapshotAt": "2026-11-19T02:49:55.409107+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 10,
       "markets": 178,
       "quotedMarkets": 178,
       "expiredQuotes": 0,
@@ -1374,15 +1348,6 @@
   },
   "alerts": [
     {
-      "id": "nhl:props-missing",
-      "sport": "nhl",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-11-19T00:10:00.138Z",
-      "changedAt": "2026-11-19T00:10:00.138Z"
-    },
-    {
       "id": "archive:stale",
       "sport": null,
       "code": "archive-stale",
@@ -1392,7 +1357,12 @@
       "changedAt": "2026-11-18T22:41:41.079Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:props-missing",
+      "resolvedAt": "2026-11-19T03:00:00.153Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/44408812385",
   "refreshResults": {
     "mlb": {
@@ -1409,7 +1379,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-19T02:49:59.932749+00:00"
+      "at": "2026-11-19T03:00:00.128974+00:00"
     },
     "ufc": {
       "ok": true,
