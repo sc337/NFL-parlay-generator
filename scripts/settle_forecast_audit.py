@@ -80,7 +80,9 @@ def main():
     if not payloads:
         return
     records = [row for payload in payloads.values() for row in payload.get('records', [])]
-    changed = settle_records(records, limit=100) + settle_references(records, limit=100) + add_nfl_totals(records)
+    # Each market/event is fetched once per cycle, then reused across its
+    # correlated thresholds and snapshots. Work through the backlog in parallel.
+    changed = settle_records(records, limit=300, workers=8) + settle_references(records, limit=200, workers=8) + add_nfl_totals(records)
     if changed or any(r.get('settlementAttemptAt') or r.get('scoreAttemptAt') for r in records):
         for file, payload in payloads.items():
             payload['updated_at'] = datetime.now(timezone.utc).isoformat()

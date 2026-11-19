@@ -32,12 +32,12 @@ function captureRecord(sport,build,snapshot,now,version){
  const mode=build.mode||'multi',day=dayKey(now),signature=legs.map(l=>[l.id,l.selection,l.line]).sort().map(x=>JSON.stringify(x)).join('|');
  const id=[day,sport,mode,build.profile||'best',build.requestedLegs||legs.length,build.card||build.gameId||'','learning-20261019',crypto.createHash('sha256').update(signature).digest('hex').slice(0,16)].join('|');
  const independent=mode!=='sgp'&&new Set(legs.map(l=>l.eventId||l.event)).size===legs.length;
- const decimal=independent?legs.reduce((value,l)=>value/l.ask,1):null;
+ const referenceOnly=legs.some(l=>l.referenceOnly),decimal=independent&&!referenceOnly?legs.reduce((value,l)=>value/l.ask,1):null;
  return {id,day,sport,mode,profile:build.profile||'best',requestedLegs:build.requestedLegs||legs.length,actualLegs:legs.length,
   filters:{lines:['nfl','nba'].includes(sport)?'standard':'both',date:'all',card:build.card||null,gameId:build.gameId||null},
   capturedAt:new Date(now).toISOString(),snapshotAt:at,sourceVersion:version,
   priceEstimate:decimal===null?null:Math.round(decimal>=2?(decimal-1)*100:-100/(decimal-1)),
-  priceNote:independent?'Combined reference asks; excludes fees.':'Same-game price unavailable; verify sportsbook quote.',
+  priceNote:referenceOnly?'Includes a public reference-only line; no executable combined price.':independent?'Combined exchange reference asks; excludes fees.':'Same-game price unavailable; verify sportsbook quote.',
   risk:build.risk?.pass?{modelP:build.risk.modelP,conservativeP:build.risk.conservativeP,profile:build.risk.profile,
     method:build.risk.method,scenario:build.risk.scenario,bounds:build.risk.bounds,version:'learning-20261019'}:null,legs,result:null};
 }

@@ -58,6 +58,11 @@ function build(data,previous={},now=Date.now(),refreshStatus='success'){
  const archive=data['daily-picks.json'];
  const performance=data['forecast-report.json'];
  if(performance&&(!Number.isFinite(Date.parse(performance.updated_at))||now-Date.parse(performance.updated_at)>6*3600000))alerts.push({id:'pipeline:evaluation-stale',sport:null,code:'evaluation-stale',severity:'warning',message:'Performance recording/settlement report is stale; betting edge remains unverified.'});
+ for(const [sport,report] of Object.entries(performance?.sports||{})){
+  const pending=report.settlementHealth?.pending||0,overdue=report.settlementHealth?.overdue||0;
+  if(overdue>=100&&overdue/Math.max(1,pending)>.5)addSettlementAlert(sport,overdue,pending);
+ }
+ function addSettlementAlert(sport,overdue,pending){alerts.push({id:sport+':settlement-backlog',sport,code:'settlement-backlog',severity:'warning',message:overdue+' of '+pending+' pending forecasts are more than 24 hours past event start. Review settlement attempts and source coverage.'})}
  if(!archive||!Number.isFinite(Date.parse(archive.updated_at))||now-Date.parse(archive.updated_at)>1800000)alerts.push({id:'archive:stale',sport:null,code:'archive-stale',severity:'warning',message:'Daily recommendation archive has not refreshed successfully.'});
  for(const [sport,status] of Object.entries(archive?.sports||{}))if(status.error)alerts.push({id:sport+':capture-failed',sport,code:'capture-failed',severity:'warning',message:'Recommendation capture failed: '+status.error});
  const old=new Map((previous.alerts||[]).map(a=>[a.id,a]));

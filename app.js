@@ -1060,6 +1060,21 @@ function render(parlays){
       const selected=allowed.filter(m=>(window.NFL_ALT_LINES?.selected?.(m,state.selectedMarkets)??state.selectedMarkets.has(m.type))&&(!window.NFL_ALT_LINES||window.NFL_ALT_LINES.matches(m,state.lineMode)));
       const profileCounts=['safe','balanced','long'].map(v=>({v,n:selected.filter(m=>candidateScore(m,state.risk,v)>-900).length}));
       const scored=selected.filter(m=>['safe','balanced','long'].some(v=>candidateScore(m,state.risk,v)>-900));
+      const propReasons=new Map();
+      for(const m of all.filter(m=>m.player)){
+        let reason;
+        if(!isParlayEligible(m))reason=window.PICK_QUALITY?.unsupportedAltUnder?.(m)?'ALT unders unavailable in parlays':'Straight-only or unsupported prop';
+        else if(!selected.includes(m))reason='Excluded by market or line filters';
+        else{
+          const checks=['safe','balanced','long'].map(v=>window.PICK_QUALITY?.assess('nfl',m,nflQualityForecast(m,v),{parlay:true}));
+          if(checks.some(q=>q?.pass)){
+            if(['safe','balanced','long'].some(v=>candidateScore(m,state.risk,v)>-900))continue;
+            reason='Below Conservative, Balanced and Lotto profile thresholds';
+          }else reason=checks.find(q=>q?.reason)?.reason||'Did not meet quality checks';
+        }
+        propReasons.set(reason,(propReasons.get(reason)||0)+1);
+      }
+      const propDetail=[...propReasons].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([reason,n])=>n+' '+reason).join(' · ');
       const details=[
         all.length+' quoted markets',
         all.filter(m=>m.player).length+' player props',
@@ -1068,7 +1083,7 @@ function render(parlays){
         profileCounts.map(({v,n})=>({safe:'Conservative 75%',balanced:'Balanced 65%',long:'Lotto 50%'})[v]+': '+n+' qualifying legs').join(' · ')
       ];
       const why=!all.length?'No quoted markets loaded. Check the NFL feed and refresh.':!selected.length?'Filters excluded every eligible market. Review Filters.':scored.length<count?'Too few qualifying legs for this build. Try fewer legs or review Filters.':'Available legs could not satisfy combination, quality, or profile checks.';
-      wrap.innerHTML+='<p class="summary" role="status">SGP diagnostics: '+esc(details.join(' · '))+'. '+esc(sgpResult?.reason||why)+'</p>';
+      wrap.innerHTML+='<p class="summary" role="status">SGP diagnostics: '+esc(details.join(' · '))+'. '+esc(sgpResult?.reason||why)+(propDetail?' Player prop exclusions: '+esc(propDetail)+'.':'')+'</p>';
     }
     return;
   }
