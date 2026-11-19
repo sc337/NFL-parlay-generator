@@ -19,6 +19,9 @@ test('stale, started, missing-price or unverified games never become archived re
  }
  assert.equal(captureRecord('mlb',recommendation(),{updated_at:new Date(now-31*60000).toISOString()},now,'c'),null);
  const sgp=recommendation({mode:'sgp'}),record=captureRecord('mlb',sgp,{updated_at:at},now,'c');assert.equal(record.priceEstimate,null);
+ const publicLine=recommendation();publicLine.legs[0].market=market(1,{referenceOnly:true,espn_game_id:'1',quotedAt:at,teams:[{id:'1'},{id:'2'}],point:8.5,side:'over'});
+ const publicRecord=captureRecord('mlb',publicLine,{updated_at:at},now,'c');
+ assert.equal(publicRecord?.priceEstimate,null);assert.match(publicRecord.priceNote,/no executable combined price/);
 });
 test('settlement attaches actual contract outcomes without rewriting captured forecasts',()=>{
  const record=captureRecord('mlb',recommendation(),{updated_at:at},now,'c');
@@ -32,6 +35,14 @@ test('empty offseason feeds are healthy but stale feeds and failed refreshes ale
  const repeat=build(data,warning,now+60000);assert.equal(repeat.alerts[0].firstSeen,warning.alerts[0].firstSeen);assert.equal(repeat.alerts[0].changedAt,warning.alerts[0].changedAt);
  data['kalshi-mlb.json'].updated_at=at;assert.deepEqual(build(data,warning,now).resolved.map(r=>r.id),['mlb:stale']);
  assert.equal(build(data,{},now,'failure').status,'critical');
+});
+test('health exposes a sustained settlement backlog separately from fresh prices',()=>{
+ const data=feeds();data['forecast-report.json']={updated_at:at,sports:{nfl:{settlementHealth:{pending:180,overdue:140}}}};
+ const report=build(data,{},now);
+ assert.equal(report.status,'warning');
+ assert.equal(report.alerts.find(a=>a.id==='nfl:settlement-backlog')?.severity,'warning');
+ data['forecast-report.json'].sports.nfl.settlementHealth.overdue=20;
+ assert.ok(!build(data,{},now).alerts.some(a=>a.code==='settlement-backlog'));
 });
 test('market-drop alerts compare still-upcoming games and ignore completed games',()=>{
  const previous={snapshotAt:at,futureEvents:[1,2,3].map(id=>({id:String(id),time:future})),playerCounts:{}};

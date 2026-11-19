@@ -33,7 +33,16 @@ function metrics(rows){
   const qualifiedPriced=qualified.filter(r=>r.ask>0&&r.ask<1);
   const rejectionReasons={};for(const r of rows)if(r.qualification?.pass===false){const reason=r.qualification.reason||'Other';rejectionReasons[reason]=(rejectionReasons[reason]||0)+1}
   const allBins=source=>[[0,.4],[.4,.6],[.6,.8],[.8,1]].map(([lo,hi])=>{const part=source.filter(r=>r.modelP>=lo&&r.modelP<hi);return {range:[lo,hi],count:part.length,predicted:part.length?round(part.reduce((s,r)=>s+r.modelP,0)/part.length):null,observed:part.length?round(part.filter(r=>r.result==='win').length/part.length):null}});
-  return {recorded:rows.length,settlementHealth:{pending:rows.filter(r=>!r.result).length,overdue:rows.filter(r=>!r.result&&Date.parse(r.eventTime)<Date.now()-86400000).length,oldestPending:rows.filter(r=>!r.result&&Date.parse(r.eventTime)<Date.now()).map(r=>r.eventTime).sort()[0]||null},independentRecorded:rows.filter(r=>r.forecastType==='model').length,
+  const pending=rows.filter(r=>!r.result),overdue=pending.filter(r=>Date.parse(r.eventTime)<Date.now()-86400000);
+  const settlementReasons={neverAttempted:0,retryScheduled:0,attemptedUnresolved:0,missingTicker:0,missingEventTime:0};
+  for(const r of overdue){
+    if(!Number.isFinite(Date.parse(r.eventTime)))settlementReasons.missingEventTime++;
+    else if(!r.ticker&&(r.settlement||{}).provider!=='ESPN')settlementReasons.missingTicker++;
+    else if(!r.settlementAttemptAt)settlementReasons.neverAttempted++;
+    else if(Date.parse(r.settlementRetryAt)>Date.now())settlementReasons.retryScheduled++;
+    else settlementReasons.attemptedUnresolved++;
+  }
+  return {recorded:rows.length,settlementHealth:{pending:pending.length,overdue:overdue.length,oldestPending:pending.filter(r=>Date.parse(r.eventTime)<Date.now()).map(r=>r.eventTime).sort()[0]||null,reasons:settlementReasons},independentRecorded:rows.filter(r=>r.forecastType==='model').length,
     qualified:{recorded:rows.filter(r=>r.qualification?.pass===true).length,settled:qualified.length,distinctEvents:qualifiedEvents,
       winRate:qualified.length?round(qualified.filter(r=>r.result==='win').length/qualified.length):null,
       brier:qualified.length?round(qualified.reduce((s,r)=>s+(r.modelP-(r.result==='win'?1:0))**2,0)/qualified.length):null,

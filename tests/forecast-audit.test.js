@@ -61,6 +61,11 @@ assert.equal(record('nfl',{market:{...market,type:'td',player:'Scorer'},forecast
 const rows=[{...row,result:'win',actualTotal:42},{...row,id:'under',result:'loss',actualTotal:42},
   {...row,id:'other',eventId:'456',result:'loss',actualTotal:50,point:47.5,projectedLine:48}];
 assert.equal(metrics(rows).settled,3);
+const overdue=metrics([{...row,eventTime:'2026-09-28T00:00:00Z',result:null,settlementAttemptAt:null},
+  {...row,eventTime:'2026-09-28T00:00:00Z',result:null,settlementAttemptAt:'2026-10-01T00:00:00Z',settlementRetryAt:'2026-10-02T00:00:00Z'}]);
+assert.equal(overdue.settlementHealth.overdue,2);
+assert.equal(overdue.settlementHealth.reasons.neverAttempted,1);
+assert.equal(overdue.settlementHealth.reasons.attemptedUnresolved,1);
 assert.equal(totals(rows).games,2,'over and under of one game count once');
 assert.equal(totals(rows).modelMAE,2.9);
 const alt={...row,id:'alt',contractId:'nfl|ALT|yes',isAltLine:true,marketGroup:'totals',point:30.5,marketP:.9,modelP:.9,result:'win'};
