@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-20T21:48:12.917Z",
+  "updated_at": "2026-11-20T21:50:07.898Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-20T21:37:38.599761+00:00",
-      "ageMinutes": 11,
+      "snapshotAt": "2026-11-20T21:47:39.049829+00:00",
+      "ageMinutes": 2,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-20T21:47:44.293390+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 6450,
       "quotedMarkets": 6450,
       "expiredQuotes": 0,
@@ -186,8 +186,8 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-20T21:38:45.730047+00:00",
-      "ageMinutes": 9,
+      "snapshotAt": "2026-11-20T21:48:44.923389+00:00",
+      "ageMinutes": 1,
       "markets": 9144,
       "quotedMarkets": 9144,
       "expiredQuotes": 0,
@@ -895,7 +895,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-20T21:47:41.013699+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 6548,
       "quotedMarkets": 6548,
       "expiredQuotes": 0,
@@ -1043,7 +1043,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-20T21:47:43.254118+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 622,
       "quotedMarkets": 622,
       "expiredQuotes": 0,
@@ -1254,16 +1254,18 @@
       "playerCounts": {}
     },
     "ufc": {
-      "snapshotAt": "2026-11-20T21:37:38.331148+00:00",
-      "ageMinutes": 11,
-      "markets": 156,
-      "quotedMarkets": 156,
+      "snapshotAt": "2026-11-20T21:47:38.425330+00:00",
+      "ageMinutes": 2,
+      "markets": 194,
+      "quotedMarkets": 194,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
         "moneyline": 24,
+        "distance": 12,
         "method_finish": 48,
-        "method_victory": 84
+        "method_victory": 84,
+        "round_finish": 26
       },
       "futureEvents": [
         {
@@ -1315,6 +1317,10 @@
           "time": "2026-11-21T15:00:00Z"
         },
         {
+          "id": "KXUFCDISTANCE-26NOV21HOOORT",
+          "time": "2026-11-21T15:00:00Z"
+        },
+        {
           "id": "KXUFCMOF-26NOV21HOOORT",
           "time": "2026-11-21T15:00:00Z"
         },
@@ -1323,23 +1329,19 @@
           "time": "2026-11-21T15:00:00Z"
         },
         {
-          "id": "KXUFCMOF-26NOV21PROSTI",
-          "time": "2026-11-21T15:00:00Z"
-        },
-        {
-          "id": "KXUFCMOV-26NOV21PROSTI",
-          "time": "2026-11-21T15:00:00Z"
-        },
-        {
-          "id": "KXUFCDISTANCE-26NOV21HOOORT",
-          "time": "2026-11-21T15:00:00Z"
-        },
-        {
           "id": "KXUFCROUNDS-26NOV21HOOORT",
           "time": "2026-11-21T15:00:00Z"
         },
         {
           "id": "KXUFCDISTANCE-26NOV21PROSTI",
+          "time": "2026-11-21T15:00:00Z"
+        },
+        {
+          "id": "KXUFCMOF-26NOV21PROSTI",
+          "time": "2026-11-21T15:00:00Z"
+        },
+        {
+          "id": "KXUFCMOV-26NOV21PROSTI",
           "time": "2026-11-21T15:00:00Z"
         },
         {
@@ -1404,6 +1406,15 @@
       "message": "676 of 698 pending forecasts are more than 24 hours past event start. Review settlement attempts and source coverage.",
       "firstSeen": "2026-11-19T22:14:53.773Z",
       "changedAt": "2026-11-19T22:14:53.773Z"
+    },
+    {
+      "id": "archive:stale",
+      "sport": null,
+      "code": "archive-stale",
+      "severity": "warning",
+      "message": "Daily recommendation archive has not refreshed successfully.",
+      "firstSeen": "2026-11-20T21:50:07.898Z",
+      "changedAt": "2026-11-20T21:50:07.898Z"
     }
   ],
   "resolved": [],
@@ -1423,15 +1434,15 @@
     },
     "mlb": {
       "ok": true,
-      "at": "2026-11-20T21:40:09.006805+00:00"
+      "at": "2026-11-20T21:50:07.876637+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-11-20T21:40:09.006805+00:00"
+      "at": "2026-11-20T21:50:07.876637+00:00"
     },
     "ufc": {
       "ok": true,
-      "at": "2026-11-20T21:40:09.006805+00:00"
+      "at": "2026-11-20T21:50:07.876637+00:00"
     }
   }
 }
