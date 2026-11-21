@@ -24,6 +24,23 @@ class AnalystTests(unittest.TestCase):
         self.assertEqual(rows[0]['player'],'Player Name');self.assertEqual(rows[0]['side'],'over')
         self.assertIsNone(rows[0]['publishedAt']);self.assertEqual(rows[0]['publishedLabel'],'2 hours ago')
         self.assertEqual(rows[0]['sourceUrl'],'https://www.covers.com/picks/nba')
+    def test_second_source_keeps_attribution_and_exact_game(self):
+        raw=page('Total Points, Rebounds, and Assists','Player Name o37.5 Total Points, Rebounds, and Assists').replace('<span class="badge-style-time-only">Pick made: 2 hours ago</span>','')
+        rows=parse_page(raw,'nba',[GAME],NOW,source='Sportsbook Review')
+        self.assertEqual(len(rows),1)
+        self.assertEqual((rows[0]['market'],rows[0]['line'],rows[0]['source']),('pra',37.5,'Sportsbook Review'))
+        self.assertEqual(rows[0]['publishedLabel'],'Time not shown')
+        self.assertEqual(rows[0]['sourceUrl'],'https://www.sportsbookreview.com/picks/nba/')
+        self.assertEqual(parse_page(raw.replace('Team B image thumbnail','Other image thumbnail'),'nba',[GAME],NOW,source='Sportsbook Review'),[])
+    def test_second_source_survives_covers_failure(self):
+        raw='<link rel="canonical" href="https://www.sportsbookreview.com/picks/nba/">'+page()
+        def get(url):
+            if 'covers.com' in url:raise OSError('offline')
+            return raw.replace('<span class="badge-style-time-only">Pick made: 2 hours ago</span>','')
+        result=enrich({'games':[GAME]},'nba',NOW,get)
+        self.assertEqual(result['analystCollection']['status'],'ok')
+        self.assertEqual(result['analystCollection']['sources']['Covers']['status'],'unavailable')
+        self.assertEqual(result['games'][0]['analystConsensus'][0]['picks'][0]['source'],'Sportsbook Review')
     def test_individual_analysts_exact_lines_and_conflicts(self):
         r=parse_page(page(),'nba',[GAME],NOW)[0]
         self.assertEqual(consensus([r,r])[0]['total'],1)
