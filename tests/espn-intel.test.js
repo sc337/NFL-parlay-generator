@@ -45,10 +45,13 @@ test('non-NFL consensus keeps attribution, exact lines and single opinions disti
  const html=gameHTML(covered,now);assert(html.includes('Single opinion'));assert(html.includes('1 of 1'));assert(html.includes('20.5'));assert(html.includes('Named Analyst'));assert(html.includes('source label'));assert(html.includes('not win probability'));assert(!html.includes('No current score picks'));
  const independent=gameHTML({...covered,checkedAt:'2020-01-01T00:00Z'},now,false);assert(independent.includes('Named Analyst'));assert(!independent.includes('60.0%'));
  const empty=analystHTML({...covered,analystConsensus:[]},now).signal;
- assert(empty.includes('No matched picks'));assert(empty.includes('Covers checked 10m ago'));assert(empty.includes('View Covers picks'));assert(empty.includes('https://www.covers.com/picks/nba'));
- assert(analystHTML({...covered,analystCoverage:{checkedAt:g.checkedAt,status:'unavailable'}},now).signal.includes('Covers unavailable'));
+ assert(empty.includes('No matched picks'));assert(empty.includes('Sources checked 10m ago'));assert(empty.includes('Sportsbook Review'));assert(empty.includes('https://www.covers.com/picks/nba'));
+ assert(analystHTML({...covered,analystCoverage:{checkedAt:g.checkedAt,status:'unavailable'}},now).signal.includes('Analyst sources unavailable'));
+ const sbr={...p,source:'Sportsbook Review',sourceUrl:'https://www.sportsbookreview.com/picks/nba/',publishedLabel:'Time not shown'};
+ const sbrHTML=analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[sbr]}]},now).details;
+ assert(sbrHTML.includes('Sportsbook Review'));assert(sbrHTML.includes('Publication time not shown'));
  assert(!analystHTML(covered,now+3*3600000).details.includes('Named Analyst'));
- for(const row of [{...p,sourceUrl:'https://covers.com.evil.test/'},{...p,eventId:'other'},{...p,startAt:'2030-01-01'}])assert(!analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[row]}]},now).details);
+ for(const row of [{...p,sourceUrl:'https://covers.com.evil.test/'},{...sbr,sourceUrl:'https://www.sportsbookreview.com.evil.test/'},{...p,eventId:'other'},{...p,startAt:'2030-01-01'}])assert(!analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[row]}]},now).details);
  assert(analystHTML({...g,sport:'mlb'},now).signal.includes('Not checked yet'));
 });
 

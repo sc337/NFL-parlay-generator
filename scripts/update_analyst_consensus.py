@@ -15,6 +15,7 @@ from lxml import html
 
 SPORTS = ('nba', 'nhl', 'mlb', 'ncaaf', 'ufc')
 ET = ZoneInfo('America/New_York')
+SBR_SPORT = {'nba':'nba', 'nhl':'nhl', 'mlb':'mlb', 'ncaaf':'college-football', 'ufc':'ufc'}
 
 
 def instant(value):
@@ -35,7 +36,7 @@ def text(node):
 
 def safe_url(url):
     u = urlparse(url)
-    return u.scheme == 'https' and u.hostname in ('www.covers.com', 'covers.com')
+    return u.scheme == 'https' and u.hostname in ('www.covers.com', 'covers.com', 'www.sportsbookreview.com')
 
 
 def fetch(url):
@@ -56,7 +57,7 @@ def source_age(label):
     return bool(m and int(m[1]) <= {'minute':120, 'hour':168, 'day':7}[m[2]])
 
 
-def parse_page(raw, sport, games, now, diagnostics=None):
+def parse_page(raw, sport, games, now, diagnostics=None, source='Covers'):
     diagnostics = diagnostics if diagnostics is not None else {}
     def reject(reason):
         reasons=diagnostics.setdefault("rejected",{})
@@ -80,7 +81,8 @@ def parse_page(raw, sport, games, now, diagnostics=None):
         if len(names) != 2 or norm(names[0]) == norm(names[1]):
             reject('participant_labels');continue
         date = re.search(r'\b([A-Z][a-z]{2}) (\d{1,2})\s*•(?:\s*(\d{1,2}:\d{2} [AP]M) ET)?', text(header))
-        if not date or sport != 'ufc' and not date[3]:
+        relative = re.search(r'\b(Today|Tomorrow)\s*•\s*(\d{1,2}:\d{2} [AP]M) ET', text(header))
+        if not date and not relative or sport != 'ufc' and not (date and date[3] or relative):
             reject('schedule_label');continue
         # Resolve year against upcoming verified schedules, not the machine's year.
         matches = []
@@ -91,28 +93,30 @@ def parse_page(raw, sport, games, now, diagnostics=None):
             if {norm(t['name']) for t in game.get('teams', [])} != {norm(n) for n in names}:
                 continue
             local = at.astimezone(ET)
-            if local.strftime('%b') != date[1] or local.day != int(date[2]):
+            day = now.astimezone(ET).date() + timedelta(days=int(relative[1]=='Tomorrow')) if relative else None
+            if date and (local.strftime('%b') != date[1] or local.day != int(date[2])) or relative and local.date() != day:
                 continue
-            if date[3]:
-                scheduled = datetime.strptime(date[3], '%I:%M %p')
+            clock = date[3] if date else relative[2]
+            if clock:
+                scheduled = datetime.strptime(clock, '%I:%M %p')
                 if abs((local.hour*60+local.minute)-(scheduled.hour*60+scheduled.minute)) > 5:
                     continue
             matches.append(game)
         if len(matches) != 1:
             reject('unmatched_schedule')
             samples=diagnostics.setdefault('scheduleSamples',[])
-            if len(samples)<3:samples.append({'participants':names,'dateLabel':date[0], 'matchingParticipantGames':[{'startAt':g['startAt'],'status':g.get('status')} for g in games if {norm(t['name']) for t in g.get('teams',[])}=={norm(n) for n in names}][:2]})
+            if len(samples)<3:samples.append({'participants':names,'dateLabel':(date or relative)[0], 'matchingParticipantGames':[{'startAt':g['startAt'],'status':g.get('status')} for g in games if {norm(t['name']) for t in g.get('teams',[])}=={norm(n) for n in names}][:2]})
             continue
         game = matches[0]
         for card in group.xpath('.//*[@data-pick and contains(@class,"pick-cards-expert-component")]'):
             authors = card.xpath('.//a[contains(@href,"/writers/")]')
             titles = card.xpath('.//div[contains(@class,"fw-bold") and contains(@class,"small")]')
             ages = card.xpath('.//span[contains(@class,"badge-style-time-only")]')
-            if not authors or not titles or not ages:
+            if not authors or not titles or source=='Covers' and not ages:
                 reject('missing_author_selection_or_publication');continue
             author = text(authors[0])
-            published = re.sub(r'^Pick made:\s*', '', text(ages[0]))
-            if not author or not source_age(published):
+            published = re.sub(r'^Pick made:\s*', '', text(ages[0])) if ages else 'Time not shown'
+            if not author or source=='Covers' and not source_age(published):
                 reject('publication_label');continue
             title = titles[0]
             for node in title.xpath('.//span[contains(@class,"ProfileAvatar")]'):
@@ -141,7 +145,7 @@ def parse_page(raw, sport, games, now, diagnostics=None):
             else:
                 # Only explicit over/under lines can be aggregated. Specials and
                 # quarter/half bets stay out rather than borrowing full-game labels.
-                supported = {'Total':'total', 'Points Scored':'points', 'Total Rebounds':'rebounds', 'Assists':'assists', '3-Pointers Made':'threes', 'Points':'player_points', 'Goals Scored':'goals', 'Shots On Goal':'shots', 'Rushing Yards':'rushing_yards', 'Passing Yards':'passing_yards', 'Receiving Yards':'receiving_yards', 'Strikeouts':'strikeouts', 'Hits':'hits', 'Total Bases':'total_bases', 'Runs Batted In':'rbi'}
+                supported = {'Total':'total', 'Points Scored':'points', 'Total Rebounds':'rebounds', 'Assists':'assists', '3-Pointers Made':'threes', 'Points':'player_points', 'Total Points, Rebounds, and Assists':'pra', 'Goals Scored':'goals', 'Shots On Goal':'shots', 'Rushing Yards':'rushing_yards', 'Passing Yards':'passing_yards', 'Receiving Yards':'receiving_yards', 'Strikeouts':'strikeouts', 'Hits':'hits', 'Total Bases':'total_bases', 'Runs Batted In':'rbi'}
                 market = supported.get(kind)
                 if sport == 'ufc' and re.fullmatch(r'\d+(?:\.\d+)? Total Rounds', kind):
                     market = 'total_rounds'
@@ -155,9 +159,10 @@ def parse_page(raw, sport, games, now, diagnostics=None):
                         continue
                 selection = (player+' ' if player else '')+side.title()+' '+format(line,'g')+' '+(kind if player else 'rounds' if sport=='ufc' else '')
             urls = card.xpath('.//a[contains(@href,"covers.com/" )]/@href')
-            article = next((u for u in reversed(urls) if safe_url(u) and '/'+sport+'/' in u and '/sport/' not in u), None)
+            article = next((u for u in reversed(urls) if safe_url(u) and '/'+sport+'/' in u and '/sport/' not in u), None) if source=='Covers' else None
+            source_url=article or ('https://www.covers.com/picks/'+sport if source=='Covers' else 'https://www.sportsbookreview.com/picks/'+SBR_SPORT[sport]+'/')
             output.append({'eventId':game['eventId'], 'startAt':game['startAt'], 'sport':sport, 'author':author,
-                'source':'Covers', 'sourceUrl':article or 'https://www.covers.com/picks/'+sport,
+                'source':source, 'sourceUrl':source_url,
                 'publishedLabel':published, 'publishedAt':None, 'checkedAt':now.isoformat(),
                 'market':market, 'period':period, 'player':player, 'teamId':participant['id'] if participant else None,
                 'line':line, 'side':side, 'selection':selection.strip(), 'odds':int(odds[1])})
@@ -213,21 +218,25 @@ def enrich(feed, sport, now, get=fetch, schedule=None):
     if sport=='ufc' and schedule:
         existing={(frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) for g in result['games']}
         result['games'] += [g for g in ufc_schedule_games(schedule,now) if (frozenset(norm(t['name']) for t in g['teams']),instant(g['startAt'])) not in existing]
-    status='ok';diagnostics={}
-    try:
-        raw=get('https://www.covers.com/picks/'+sport)
-        page=html.fromstring(raw)
-        canonical=page.xpath('//link[@rel="canonical"]/@href')
-        expected='https://www.covers.com/picks/'+sport
-        if not any(u.rstrip('/')==expected for u in canonical) or not ('ExpertPicks' in raw or 'pick-cards-expert-component' in raw):
-            raise ValueError('Unrecognized source page')
-        rows=parse_page(raw,sport,result['games'],now,diagnostics)
-    except Exception:
-        rows=[];status='unavailable'
+    rows=[];sources={}
+    for source,url in (('Covers','https://www.covers.com/picks/'+sport),('Sportsbook Review','https://www.sportsbookreview.com/picks/'+SBR_SPORT[sport]+'/')):
+        diagnostics={};status='ok'
+        try:
+            raw=get(url)
+            page=html.fromstring(raw)
+            canonical=page.xpath('//link[@rel="canonical"]/@href')
+            if not any(u.rstrip('/')==url.rstrip('/') for u in canonical) or not ('ExpertPicks' in raw or 'pick-cards-expert-component' in raw):
+                raise ValueError('Unrecognized source page')
+            selected=parse_page(raw,sport,result['games'],now,diagnostics,source=source)
+            rows.extend(selected)
+        except Exception:
+            selected=[];status='unavailable'
+        sources[source]={'status':status,'picks':len(selected),'diagnostics':diagnostics}
+    status='ok' if any(v['status']=='ok' for v in sources.values()) else 'unavailable'
     for game in result['games']:
         game['analystConsensus']=consensus([r for r in rows if r['eventId']==game['eventId']])
-        game['analystCoverage']={'source':'Covers','status':status,'checkedAt':now.isoformat()}
-    result['analystCollection']={'source':'Covers','status':status,'checkedAt':now.isoformat(),'picks':len(rows),'diagnostics':diagnostics}
+        game['analystCoverage']={'source':'Covers + Sportsbook Review','status':status,'checkedAt':now.isoformat(),'sources':{k:v['status'] for k,v in sources.items()}}
+    result['analystCollection']={'source':'Covers + Sportsbook Review','status':status,'checkedAt':now.isoformat(),'picks':len(rows),'sources':sources}
     # Publication helper uses the collection attempt, independently of ESPN data ages.
     result['lastAttemptAt']=now.isoformat()
     return result
