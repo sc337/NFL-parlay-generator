@@ -2,6 +2,14 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const {safeLink,fresh,gamesFor,gameHTML}=require('../espn-intel.js');
 const now=Date.parse('2026-11-08T00:00Z');
 const g={eventId:'1',startAt:'2026-11-09T18:00Z',checkedAt:'2026-11-07T23:50Z',status:'ok',teams:[{id:'a',code:'A'},{id:'b',code:'B'}],probabilities:[{teamId:'a',percent:60},{teamId:'b',percent:40}],expertPicks:[],injuries:[],statistics:[]};
+test('on-demand summary requires exact event, teams and start; it keeps editorial facts separate',()=>{
+ const {normalizeLiveSummary}=require('../espn-intel.js');
+ const summary={header:{id:'1',competitions:[{date:g.startAt,competitors:[{team:{id:'a'}},{team:{id:'b'}}]}]},predictor:{homeTeam:{id:'a',gameProjection:'64'},awayTeam:{id:'b',gameProjection:'36'}},boxscore:{teams:[{team:{id:'a'},statistics:[{name:'avgPoints',displayValue:'110'}]}]}};
+ const updated=normalizeLiveSummary({...g,sport:'nba',analystConsensus:[{label:'Saved'}]},summary,now);
+ assert.equal(updated.probabilities[0].percent,64);assert.equal(updated.statistics[0].values.avgPoints,'110');assert.equal(updated.analystConsensus[0].label,'Saved');
+ assert.equal(normalizeLiveSummary(g,{...summary,header:{...summary.header,id:'2'}},now),null);
+ assert.equal(normalizeLiveSummary(g,{...summary,header:{...summary.header,competitions:[{...summary.header.competitions[0],date:'2026-11-09T19:00Z'}]}},now),null);
+});
 test('stale and failed checks do not display probabilities',()=>{assert(fresh(g,now));assert(!fresh({...g,status:'unavailable'},now));assert(!fresh({...g,checkedAt:'2026-11-07T00:00Z'},now));assert(!gameHTML(g,now,false).includes('60.0%'));assert(!gameHTML(g,now+3*3600000).includes('60.0%'))});
 test('date filtering and completed events',()=>{assert.equal(gamesFor({games:[g]},'2026-11-09',s=>s.slice(0,10),now).length,1);assert.equal(gamesFor({games:[g]},'2026-11-08',s=>s.slice(0,10),now).length,0);assert.equal(gamesFor({games:[g]},'2026-11-09',s=>s.slice(0,10),now+3*86400000).length,0)});
 test('source links and feed text cannot inject markup',()=>{assert.equal(safeLink('javascript:alert(1)'), '');assert.equal(safeLink('https://espn.com.evil.test/'),'');const html=gameHTML({...g,expertPicks:[{author:'<script>bad</script>',scores:{a:24,b:17},winnerId:'a'}],expertSource:{url:'https://www.espn.com/nfl/',publishedAt:g.checkedAt}},now);assert(html.includes('&lt;script&gt;'));assert(!html.includes('<script>'))});
