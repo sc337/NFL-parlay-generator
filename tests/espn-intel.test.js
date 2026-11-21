@@ -44,10 +44,12 @@ test('non-NFL consensus keeps attribution, exact lines and single opinions disti
  const covered={...g,sport:'nba',analystCoverage:{checkedAt:g.checkedAt,status:'ok'},analystConsensus:[{market:'points',player:'Example',label:'Single opinion',agree:1,total:1,picks:[p],selection:p.selection}]};
  const html=gameHTML(covered,now);assert(html.includes('Single opinion'));assert(html.includes('1 of 1'));assert(html.includes('20.5'));assert(html.includes('Named Analyst'));assert(html.includes('source label'));assert(html.includes('not win probability'));assert(!html.includes('No current score picks'));
  const independent=gameHTML({...covered,checkedAt:'2020-01-01T00:00Z'},now,false);assert(independent.includes('Named Analyst'));assert(!independent.includes('60.0%'));
- assert(analystHTML({...covered,analystCoverage:{checkedAt:g.checkedAt,status:'unavailable'}},now).signal.includes('Source refresh pending'));
+ const empty=analystHTML({...covered,analystConsensus:[]},now).signal;
+ assert(empty.includes('No matched picks'));assert(empty.includes('Covers checked 10m ago'));assert(empty.includes('View Covers picks'));assert(empty.includes('https://www.covers.com/picks/nba'));
+ assert(analystHTML({...covered,analystCoverage:{checkedAt:g.checkedAt,status:'unavailable'}},now).signal.includes('Covers unavailable'));
  assert(!analystHTML(covered,now+3*3600000).details.includes('Named Analyst'));
  for(const row of [{...p,sourceUrl:'https://covers.com.evil.test/'},{...p,eventId:'other'},{...p,startAt:'2030-01-01'}])assert(!analystHTML({...covered,analystConsensus:[{...covered.analystConsensus[0],picks:[row]}]},now).details);
- assert(analystHTML({...g,sport:'mlb'},now).signal.includes('No published picks yet'));
+ assert(analystHTML({...g,sport:'mlb'},now).signal.includes('Not checked yet'));
 });
 
 test('additional intel is dated, attributed, escaped and separate from opinions',()=>{
