@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-21T11:25:33.715Z",
+  "updated_at": "2026-11-21T11:25:53.756Z",
   "status": "critical",
   "sports": {
     "mlb": {
@@ -167,7 +167,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-11-21T08:01:11.862705+00:00",
-      "ageMinutes": 204,
+      "ageMinutes": 205,
       "markets": 8815,
       "quotedMarkets": 8815,
       "expiredQuotes": 8815,
@@ -850,12 +850,12 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-21T10:14:50.680026+00:00",
-      "ageMinutes": 71,
-      "markets": 6724,
-      "quotedMarkets": 6724,
-      "expiredQuotes": 6724,
-      "playerMarkets": 5121,
+      "snapshotAt": "2026-11-21T11:25:26.594738+00:00",
+      "ageMinutes": 0,
+      "markets": 6737,
+      "quotedMarkets": 6737,
+      "expiredQuotes": 0,
+      "playerMarkets": 5134,
       "families": {
         "h2h": 56,
         "td": 245,
@@ -863,10 +863,10 @@
         "spreads": 901,
         "rushing": 1232,
         "passing": 510,
+        "passing_tds": 190,
         "completions": 44,
-        "receptions": 262,
-        "receiving": 2640,
-        "passing_tds": 188
+        "receiving": 2651,
+        "receptions": 262
       },
       "futureEvents": [
         {
@@ -984,17 +984,17 @@
       ],
       "playerCounts": {
         "kalshi-philadelphia-eagles-pittsburgh-steelers": 354,
-        "kalshi-detroit-lions-tampa-bay-buccaneers": 428,
-        "kalshi-baltimore-ravens-carolina-panthers": 440,
+        "kalshi-detroit-lions-tampa-bay-buccaneers": 429,
+        "kalshi-baltimore-ravens-carolina-panthers": 444,
         "kalshi-buffalo-bills-miami-dolphins": 482,
         "kalshi-arizona-cardinals-kansas-city-chiefs": 451,
         "kalshi-dallas-cowboys-tennessee-titans": 398,
-        "kalshi-chicago-bears-new-orleans-saints": 521,
+        "kalshi-chicago-bears-new-orleans-saints": 522,
         "kalshi-los-angeles-chargers-new-york-jets": 350,
-        "kalshi-jacksonville-jaguars-new-york-giants": 512,
-        "kalshi-denver-broncos-las-vegas-raiders": 353,
+        "kalshi-jacksonville-jaguars-new-york-giants": 516,
+        "kalshi-denver-broncos-las-vegas-raiders": 355,
         "kalshi-minnesota-vikings-san-francisco-49ers": 432,
-        "kalshi-cincinnati-bengals-washington-commanders": 400
+        "kalshi-cincinnati-bengals-washington-commanders": 401
       }
     },
     "nhl": {
@@ -1368,7 +1368,7 @@
       "sport": "ncaaf",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 204 minutes old.",
+      "message": "Feed is 205 minutes old.",
       "firstSeen": "2026-11-21T08:39:54.923Z",
       "changedAt": "2026-11-21T10:15:02.065Z"
     },
@@ -1378,24 +1378,6 @@
       "code": "native-quotes-stale",
       "severity": "warning",
       "message": "8815 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-21T08:39:54.923Z",
-      "changedAt": "2026-11-21T08:39:54.923Z"
-    },
-    {
-      "id": "nfl:stale",
-      "sport": "nfl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 71 minutes old.",
-      "firstSeen": "2026-11-21T08:39:54.923Z",
-      "changedAt": "2026-11-21T11:25:33.715Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "6724 individual quotes expired; aggregate refresh time is not price freshness.",
       "firstSeen": "2026-11-21T08:39:54.923Z",
       "changedAt": "2026-11-21T08:39:54.923Z"
     },
@@ -1492,12 +1474,12 @@
   ],
   "resolved": [
     {
-      "id": "nhl:stale",
-      "resolvedAt": "2026-11-21T11:25:33.715Z"
+      "id": "nfl:stale",
+      "resolvedAt": "2026-11-21T11:25:53.756Z"
     },
     {
-      "id": "nhl:native-quotes-stale",
-      "resolvedAt": "2026-11-21T11:25:33.715Z"
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-11-21T11:25:53.756Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/44899004265",
@@ -1509,6 +1491,10 @@
     "nhl": {
       "ok": true,
       "at": "2026-11-21T11:25:33.690349+00:00"
+    },
+    "nfl": {
+      "ok": true,
+      "at": "2026-11-21T11:25:53.733461+00:00"
     }
   }
 }
