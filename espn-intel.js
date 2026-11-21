@@ -4,6 +4,16 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 function safeLink(value){try{const u=new URL(value);return u.protocol==='https:'&&(u.hostname==='espn.com'||u.hostname.endsWith('.espn.com'))?u.href:''}catch{return ''}}
 function fresh(g,now=Date.now()){const at=Date.parse(g.checkedAt);return Number.isFinite(at)&&at<=now+300000&&now-at<=7200000&&g.status==='ok'}
 function gamesFor(feed,date,day,now=Date.now()){return (feed?.games||[]).filter(g=>Date.parse(g.startAt)>now&&day(g.startAt)===date)}
+function normalizeLiveSummary(g,summary,now=Date.now()){
+ const header=summary?.header,comp=header?.competitions?.[0],ids=(g.teams||[]).map(t=>String(t.id)).sort();
+ if(String(header?.id)!==String(g.eventId)||Date.parse(comp?.date)!==Date.parse(g.startAt)||
+   ids.length!==2||JSON.stringify((comp?.competitors||[]).map(c=>String(c.team?.id)).sort())!==JSON.stringify(ids))return null;
+ const probabilities=['homeTeam','awayTeam'].map(side=>summary.predictor?.[side]).filter(p=>ids.includes(String(p?.id))&&Number.isFinite(Number(p?.gameProjection))&&Number(p.gameProjection)>=0&&Number(p.gameProjection)<=100).map(p=>({teamId:String(p.id),percent:Number(p.gameProjection)}));
+ if(probabilities.length!==2||new Set(probabilities.map(p=>p.teamId)).size!==2||Math.abs(probabilities.reduce((a,p)=>a+p.percent,0)-100)>2)probabilities.length=0;
+ const statistics=(summary.boxscore?.teams||[]).filter(b=>ids.includes(String(b.team?.id))).map(b=>({teamId:String(b.team.id),values:Object.fromEntries((b.statistics||[]).filter(s=>typeof s.name==='string'&&typeof s.displayValue==='string').map(s=>[s.name,s.displayValue]))}));
+ const injuries=(summary.injuries||[]).filter(b=>ids.includes(String(b.team?.id))).flatMap(b=>(b.injuries||[]).filter(r=>r.athlete?.displayName&&typeof r.status==='string'&&Number.isFinite(Date.parse(r.date))&&Date.parse(r.date)<=now+300000&&now-Date.parse(r.date)<=14*86400000).map(r=>({teamId:String(b.team.id),player:r.athlete.displayName,position:r.athlete.position?.abbreviation||'',status:r.status,reportedAt:r.date})));
+ return {...g,checkedAt:new Date(now).toISOString(),status:'ok',probabilities,statistics,injuries,evidence:[],recentResults:[],leaders:[]};
+}
 const link=(url,text)=>safeLink(url)?'<a href="'+esc(safeLink(url))+'" target="_blank" rel="noopener noreferrer">'+esc(text)+'</a>':'';
 function analystHTML(g,now=Date.now()){
  const coverage=g.analystCoverage,at=Date.parse(coverage?.checkedAt),current=Date.parse(g.startAt)>now&&coverage?.status==='ok'&&Number.isFinite(at)&&at<=now+300000&&now-at<=7200000;
@@ -88,29 +98,43 @@ function selectView(research,view){
  const empty=research.querySelector('.intel-view-empty');if(empty)empty.hidden=view==='overview'||shown.length>0;
 }
 if(typeof document!=='undefined'){
- const feeds={},pending=new Set(),attempts={};
+ const feeds={},pending=new Set(),attempts={},liveState={};
  let feed=null,host,selected='',signature='',renderedGame='',selectedView='overview';
  function render(){
   if(!host)return;const sport=window.__ACTIVE_SPORT||'nfl';const heading=host.querySelector('.intel-title');if(heading)heading.textContent=sport==='nfl'?'ESPN Matchup Intel':'Matchup Intel';host.hidden=!SPORTS.includes(sport);if(host.hidden)return;feed=feeds[sport]||null;if(!attempts[sport]&&!pending.has(sport))refresh(sport);
   const day=window.SLATE_UI?.day|| (v=>new Date(v).toLocaleDateString('en-CA'));
   const date=window.SLATE_UI?.date(sport)||day(Date.now());const rows=gamesFor(feed,date,day);
   if(!rows.some(g=>g.eventId===selected))selected=rows[0]?.eventId||'';
-  const key=JSON.stringify([sport,feed?.lastAttemptAt,date,selected,rows.map(g=>[g.eventId,fresh(g)]),feed?.status,Math.floor(Date.now()/60000)]);if(key===signature)return;signature=key;
+  const key=JSON.stringify([sport,feed?.lastAttemptAt,date,selected,rows.map(g=>[g.eventId,g.checkedAt,fresh(g)]),feed?.status,liveState[sport+'|'+selected]?.status,Math.floor(Date.now()/60000)]);if(key===signature)return;signature=key;
   const content=host.querySelector('.intel-content');
   if(!feed&&pending.has(sport)){content.innerHTML='<p class="intel-meta">Looking up ESPN matchups…</p>';return}
   if(!feed){content.innerHTML='<p class="intel-meta">ESPN unavailable · Retrying automatically.</p>';return}
   if(!rows.length){content.innerHTML='<p class="intel-meta">'+(feed.status==='unavailable'?'ESPN lookup unavailable.':'No upcoming ESPN matchups on this date.')+'</p>';return}
   const expanded=renderedGame===selected?[...content.querySelectorAll('details[open][data-intel-detail]')].map(el=>el.dataset.intelDetail):[];
-  content.innerHTML='<label class="intel-select">Matchup<select aria-label="ESPN matchup">'+rows.map(g=>'<option value="'+esc(g.eventId)+'"'+(g.eventId===selected?' selected':'')+'>'+esc([...g.teams].sort((a,b)=>a.side==='away'?-1:1).map(t=>t.code).join(sport==='ufc'?' vs ':' at '))+'</option>').join('')+'</select></label>'+gameHTML(rows.find(g=>g.eventId===selected),Date.now(),feed.status!=='unavailable');
+  const state=liveState[sport+'|'+selected]||{};
+  content.innerHTML='<label class="intel-select">Matchup<select aria-label="ESPN matchup">'+rows.map(g=>'<option value="'+esc(g.eventId)+'"'+(g.eventId===selected?' selected':'')+'>'+esc([...g.teams].sort((a,b)=>a.side==='away'?-1:1).map(t=>t.code).join(sport==='ufc'?' vs ':' at '))+'</option>').join('')+'</select></label><div class="intel-refresh"><button type="button" data-intel-refresh'+(state.status==='loading'?' disabled':'')+'>Refresh matchup intel</button><span role="status">'+esc(state.status==='loading'?'Checking ESPN…':state.status==='error'?'ESPN unavailable · Showing saved intel':state.status==='ok'?'Checked ESPN just now':'ESPN lookup on demand')+'</span></div>'+gameHTML(rows.find(g=>g.eventId===selected),Date.now(),feed.status!=='unavailable');
   if(renderedGame!==selected)selectedView='overview';renderedGame=selected;for(const detail of content.querySelectorAll('details[data-intel-detail]'))detail.open=expanded.includes(detail.dataset.intelDetail);
   selectView(content.querySelector('.intel-research'),selectedView);
   for(const button of content.querySelectorAll('[data-intel-view-button]'))button.addEventListener('click',()=>{selectedView=button.dataset.intelViewButton;selectView(content.querySelector('.intel-research'),selectedView)});
   content.querySelector('select').addEventListener('change',e=>{selected=e.target.value;render()});
+  content.querySelector('[data-intel-refresh]').addEventListener('click',()=>refreshSelected(sport,selected));
+ }
+ async function refreshSelected(sport,eventId){
+  const key=sport+'|'+eventId,state=liveState[key]||{};if(state.status==='loading'||Date.now()-(state.at||0)<60000)return;
+  const g=feeds[sport]?.games?.find(row=>row.eventId===eventId);if(!g)return;
+  liveState[key]={status:'loading',at:Date.now()};signature='';render();
+  try{
+   const league={nfl:'football/nfl',nba:'basketball/nba',nhl:'hockey/nhl',mlb:'baseball/mlb',ncaaf:'football/college-football',ufc:'mma/ufc'}[sport];
+   const response=await fetch('https://site.api.espn.com/apis/site/v2/sports/'+league+'/summary?event='+encodeURIComponent(eventId),{cache:'no-store',signal:AbortSignal.timeout(12000)});
+   if(!response.ok)throw Error('ESPN unavailable');const updated=normalizeLiveSummary(g,await response.json());if(!updated)throw Error('Matchup identity mismatch');
+   feeds[sport]={...feeds[sport],status:'ok',games:feeds[sport].games.map(row=>row.eventId===eventId?updated:row)};
+   liveState[key]={status:'ok',at:Date.now()};
+  }catch{liveState[key]={status:'error',at:Date.now()}}finally{signature='';render()}
  }
  async function refresh(sport=window.__ACTIVE_SPORT||'nfl'){if(!SPORTS.includes(sport)||pending.has(sport))return;pending.add(sport);attempts[sport]=Date.now();try{const r=await fetch('data/espn-intel-'+sport+'.json',{cache:'no-store',signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('HTTP');const d=await r.json();if(d.schemaVersion!==1||!Array.isArray(d.games)||(d.sport&&d.sport!==sport)||d.games.some(g=>g.sport&&g.sport!==sport))throw Error('Schema');feeds[sport]=d}catch{if(feeds[sport])feeds[sport]={...feeds[sport],status:'unavailable'}}finally{pending.delete(sport);signature='';render()}}
 
  function mount(){const results=document.querySelector('#results');if(!results)return;host=document.createElement('section');host.id='espnIntel';host.className='espn-intel';host.innerHTML='<details class="parlay-card"><summary class="intel-title">Matchup Intel</summary><div class="intel-content"><p class="intel-meta">Looking up ESPN matchups…</p></div></details>';results.after(host);new MutationObserver(render).observe(document.body,{attributes:true,attributeFilter:['data-sport']});document.addEventListener('change',()=>setTimeout(render,0));document.addEventListener('click',e=>{if(e.target.closest('#slateControls'))setTimeout(render,0)});refresh();setInterval(()=>{if(!document.hidden)refresh()},300000);setInterval(render,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})}
  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount,{once:true}):mount();
 }
-return {SPORTS,safeLink,fresh,gamesFor,gameHTML,analystHTML,additionalHTML,statusTone,categories};
+return {SPORTS,safeLink,fresh,gamesFor,gameHTML,analystHTML,additionalHTML,statusTone,categories,normalizeLiveSummary};
 });
