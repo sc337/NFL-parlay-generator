@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-22T04:40:30.176Z",
+  "updated_at": "2026-11-22T04:41:44.020Z",
   "status": "critical",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-22T04:31:28.085953+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-22T04:40:25.355552+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 1326,
       "quotedMarkets": 1326,
       "expiredQuotes": 0,
@@ -181,7 +181,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-11-22T04:31:40.613713+00:00",
-      "ageMinutes": 9,
+      "ageMinutes": 10,
       "markets": 1000,
       "quotedMarkets": 1000,
       "expiredQuotes": 0,
@@ -420,23 +420,23 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-22T04:31:18.076061+00:00",
-      "ageMinutes": 9,
-      "markets": 6926,
-      "quotedMarkets": 6926,
+      "snapshotAt": "2026-11-22T04:41:16.718322+00:00",
+      "ageMinutes": 0,
+      "markets": 6934,
+      "quotedMarkets": 6934,
       "expiredQuotes": 0,
-      "playerMarkets": 5324,
+      "playerMarkets": 5332,
       "families": {
         "h2h": 56,
         "td": 248,
         "totals": 646,
         "spreads": 900,
-        "passing": 508,
-        "receptions": 282,
-        "completions": 44,
         "rushing": 1240,
-        "passing_tds": 188,
-        "receiving": 2814
+        "passing": 508,
+        "completions": 44,
+        "receiving": 2822,
+        "receptions": 282,
+        "passing_tds": 188
       },
       "futureEvents": [
         {
@@ -553,23 +553,23 @@
         }
       ],
       "playerCounts": {
-        "kalshi-philadelphia-eagles-pittsburgh-steelers": 357,
+        "kalshi-philadelphia-eagles-pittsburgh-steelers": 358,
         "kalshi-detroit-lions-tampa-bay-buccaneers": 447,
         "kalshi-baltimore-ravens-carolina-panthers": 454,
-        "kalshi-buffalo-bills-miami-dolphins": 480,
-        "kalshi-arizona-cardinals-kansas-city-chiefs": 443,
+        "kalshi-buffalo-bills-miami-dolphins": 481,
+        "kalshi-arizona-cardinals-kansas-city-chiefs": 441,
         "kalshi-dallas-cowboys-tennessee-titans": 417,
         "kalshi-chicago-bears-new-orleans-saints": 525,
         "kalshi-los-angeles-chargers-new-york-jets": 421,
-        "kalshi-jacksonville-jaguars-new-york-giants": 512,
+        "kalshi-jacksonville-jaguars-new-york-giants": 517,
         "kalshi-denver-broncos-las-vegas-raiders": 354,
-        "kalshi-minnesota-vikings-san-francisco-49ers": 472,
-        "kalshi-cincinnati-bengals-washington-commanders": 442
+        "kalshi-minnesota-vikings-san-francisco-49ers": 473,
+        "kalshi-cincinnati-bengals-washington-commanders": 444
       }
     },
     "nhl": {
       "snapshotAt": "2026-11-22T04:39:57.901310+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 453,
       "quotedMarkets": 453,
       "expiredQuotes": 0,
@@ -801,7 +801,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-22T04:11:27.009307+00:00",
-      "ageMinutes": 29,
+      "ageMinutes": 30,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -820,6 +820,15 @@
       "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
       "firstSeen": "2026-11-22T04:22:16.773Z",
       "changedAt": "2026-11-22T04:22:16.773Z"
+    },
+    {
+      "id": "ufc:stale",
+      "sport": "ufc",
+      "code": "stale",
+      "severity": "warning",
+      "message": "Feed is 30 minutes old.",
+      "firstSeen": "2026-11-22T04:41:44.020Z",
+      "changedAt": "2026-11-22T04:41:44.020Z"
     },
     {
       "id": "mlb:settlement-backlog",
@@ -898,7 +907,7 @@
     },
     "nfl": {
       "ok": true,
-      "at": "2026-11-22T04:31:56.996836+00:00"
+      "at": "2026-11-22T04:41:44.000525+00:00"
     },
     "mlb": {
       "ok": true,
