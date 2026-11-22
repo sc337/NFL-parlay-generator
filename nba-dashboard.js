@@ -197,7 +197,10 @@ function requestRender(){
  const token=window.__SPORT_TOKEN;
  if(pendingRender&&pendingRender.token===token){pendingRender.dirty=true;renderRevision++;return pendingRender.promise}
  const job={token,promise:null,dirty:false},ui=window.DASHBOARD_UI?.begin('nba');pendingRender=job;
- job.promise=new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))).then(async()=>{
+ job.promise=new Promise(resolve=>{
+  if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>requestAnimationFrame(resolve));
+  else resolve(); // Snapshot collector runs the same builder without a browser frame scheduler.
+ }).then(async()=>{
   do{job.dirty=false;if(window.__ACTIVE_SPORT!=='nba'||window.__SPORT_TOKEN!==token)return;await render()}while(job.dirty);
  }).finally(()=>{window.DASHBOARD_UI?.end(ui);if(pendingRender===job)pendingRender=null});
  return job.promise;
