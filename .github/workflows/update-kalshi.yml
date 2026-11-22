@@ -328,7 +328,14 @@ jobs:
           cp /tmp/daily-pick-archive/*.json data/daily-picks/
 
           python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(('mlb','ncaaf','nfl','nhl','ufc'), True))"
-          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-audit-nfl.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+          git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+          for audit in data/forecast-audit.json data/forecast-audit-nfl.json; do
+            if [ "$(stat -c %s "$audit")" -lt 95000000 ]; then
+              git add "$audit"
+            else
+              echo "::warning::$audit exceeds the safe GitHub commit size; publishing other refreshed data"
+            fi
+          done
           if git diff --cached --quiet; then
             echo "No market changes"
             exit 0
@@ -382,7 +389,14 @@ jobs:
             mkdir -p data/daily-picks
             cp /tmp/daily-pick-archive/*.json data/daily-picks/
             python -c "from scripts.refresh_price_worker import refresh_health, SPORTS; refresh_health(dict.fromkeys(SPORTS, True))"
-            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-audit.json data/forecast-audit-nfl.json data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+            git add data/kalshi-nfl.json data/kalshi-ufc.json data/kalshi-ncaaf.json data/kalshi-mlb.json data/kalshi-nhl.json data/nhl-context.json data/mlb-context.json data/ncaaf-context.json data/sports-media.json data/pick-history.json data/model-calibration.js data/model-learning.js data/forecast-report.json data/daily-picks.json data/dashboard-health.json data/daily-picks/
+            for audit in data/forecast-audit.json data/forecast-audit-nfl.json; do
+              if [ "$(stat -c %s "$audit")" -lt 95000000 ]; then
+                git add "$audit"
+              else
+                echo "::warning::$audit exceeds the safe GitHub commit size; publishing other refreshed data"
+              fi
+            done
             if git diff --cached --quiet; then
               echo "Newer snapshot already landed"
               exit 0
