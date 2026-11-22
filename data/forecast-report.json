@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-11-22T15:37:43.057Z",
+  "updated_at": "2026-11-22T15:38:17.706Z",
   "method": "Immutable first observed pregame quote plus near-start NFL checkpoints; NFL line calibration uses the latest eligible snapshot per contract. Settled contract outcomes, or final ESPN score for half-point totals when settlement is missing; no postgame forecast backfill. Lower Brier/log loss is better. Market-only rows are identical by design. Gross positive-EV return excludes fees and is not a placed-bet ledger.",
   "pregameViolations": 0,
   "sports": {
     "mlb": {
       "recorded": 7686,
       "settlementHealth": {
-        "pending": 3484,
-        "overdue": 3484,
+        "pending": 3436,
+        "overdue": 3436,
         "oldestPending": "2026-09-30T00:00:00Z",
         "reasons": {
-          "neverAttempted": 2699,
-          "retryScheduled": 0,
+          "neverAttempted": 2642,
+          "retryScheduled": 9,
           "attemptedUnresolved": 785,
           "missingTicker": 0,
           "missingEventTime": 0
@@ -71,9 +71,9 @@
             0,
             0.4
           ],
-          "count": 325,
-          "predicted": 0.1898,
-          "observed": 0.2185
+          "count": 330,
+          "predicted": 0.1893,
+          "observed": 0.2273
         },
         {
           "range": [
@@ -89,18 +89,18 @@
             0.6,
             0.8
           ],
-          "count": 142,
-          "predicted": 0.7046,
-          "observed": 0.6831
+          "count": 144,
+          "predicted": 0.7051,
+          "observed": 0.6806
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 185,
-          "predicted": 0.9063,
-          "observed": 0.8541
+          "count": 188,
+          "predicted": 0.9065,
+          "observed": 0.8404
         }
       ],
       "rejectionReasons": {
@@ -116,7 +116,7 @@
       "sources": {
         "Kalshi": {
           "recorded": 7668,
-          "settled": 4184,
+          "settled": 4232,
           "pushes": 0,
           "distinctEvents": 34
         },
@@ -129,17 +129,17 @@
       },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 1516,
-      "settled": 4202,
+      "settled": 4250,
       "distinctEvents": 39,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1611,
-        "market": 0.1561
+        "model": 0.1622,
+        "market": 0.1567
       },
       "logLoss": {
-        "model": 0.4911,
-        "market": 0.4784
+        "model": 0.4946,
+        "market": 0.4801
       },
       "independentComparison": {
         "brierModel": null,
@@ -148,10 +148,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 789,
+        "settled": 799,
         "distinctEvents": 31,
-        "brierEstimate": 0.1789,
-        "brierMarket": 0.1521
+        "brierEstimate": 0.1846,
+        "brierMarket": 0.1558
       },
       "calibrationBins": [
         {
@@ -206,11 +206,11 @@
         "total": {
           "recorded": 1582,
           "settlementHealth": {
-            "pending": 694,
-            "overdue": 694,
+            "pending": 680,
+            "overdue": 680,
             "oldestPending": "2026-10-04T20:00:00Z",
             "reasons": {
-              "neverAttempted": 538,
+              "neverAttempted": 524,
               "retryScheduled": 0,
               "attemptedUnresolved": 156,
               "missingTicker": 0,
@@ -271,9 +271,9 @@
                 0,
                 0.4
               ],
-              "count": 325,
-              "predicted": 0.1898,
-              "observed": 0.2185
+              "count": 330,
+              "predicted": 0.1893,
+              "observed": 0.2273
             },
             {
               "range": [
@@ -289,18 +289,18 @@
                 0.6,
                 0.8
               ],
-              "count": 139,
-              "predicted": 0.7052,
-              "observed": 0.6906
+              "count": 141,
+              "predicted": 0.7057,
+              "observed": 0.6879
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 185,
-              "predicted": 0.9063,
-              "observed": 0.8541
+              "count": 188,
+              "predicted": 0.9065,
+              "observed": 0.8404
             }
           ],
           "rejectionReasons": {
@@ -312,24 +312,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1582,
-              "settled": 888,
+              "settled": 902,
               "pushes": 0,
               "distinctEvents": 32
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1386,
-          "settled": 888,
+          "settled": 902,
           "distinctEvents": 33,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1722,
-            "market": 0.1486
+            "model": 0.1782,
+            "market": 0.1527
           },
           "logLoss": {
-            "model": 0.5284,
-            "market": 0.4687
+            "model": 0.5474,
+            "market": 0.4793
           },
           "independentComparison": {
             "brierModel": null,
@@ -338,10 +338,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 782,
+            "settled": 792,
             "distinctEvents": 31,
-            "brierEstimate": 0.1775,
-            "brierMarket": 0.1507
+            "brierEstimate": 0.1834,
+            "brierMarket": 0.1544
           },
           "calibrationBins": [
             {
@@ -772,12 +772,12 @@
         "hits": {
           "recorded": 1237,
           "settlementHealth": {
-            "pending": 542,
-            "overdue": 542,
+            "pending": 536,
+            "overdue": 536,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 425,
-              "retryScheduled": 0,
+              "neverAttempted": 416,
+              "retryScheduled": 3,
               "attemptedUnresolved": 117,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -880,24 +880,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1237,
-              "settled": 695,
+              "settled": 701,
               "pushes": 0,
               "distinctEvents": 31
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 38,
-          "settled": 695,
+          "settled": 701,
           "distinctEvents": 34,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1509,
-            "market": 0.1504
+            "model": 0.1513,
+            "market": 0.1508
           },
           "logLoss": {
-            "model": 0.456,
-            "market": 0.4549
+            "model": 0.4567,
+            "market": 0.4557
           },
           "independentComparison": {
             "brierModel": null,
@@ -1156,12 +1156,12 @@
         "strikeouts": {
           "recorded": 502,
           "settlementHealth": {
-            "pending": 223,
-            "overdue": 223,
+            "pending": 207,
+            "overdue": 207,
             "oldestPending": "2026-10-04T20:00:00Z",
             "reasons": {
-              "neverAttempted": 181,
-              "retryScheduled": 0,
+              "neverAttempted": 164,
+              "retryScheduled": 1,
               "attemptedUnresolved": 42,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -1263,24 +1263,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 502,
-              "settled": 279,
+              "settled": 295,
               "pushes": 0,
-              "distinctEvents": 24
+              "distinctEvents": 25
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 8,
-          "settled": 279,
-          "distinctEvents": 24,
+          "settled": 295,
+          "distinctEvents": 25,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1566,
-            "market": 0.1566
+            "model": 0.155,
+            "market": 0.155
           },
           "logLoss": {
-            "model": 0.4775,
-            "market": 0.4775
+            "model": 0.4741,
+            "market": 0.4741
           },
           "independentComparison": {
             "brierModel": null,
@@ -1347,12 +1347,12 @@
         "hrr": {
           "recorded": 1628,
           "settlementHealth": {
-            "pending": 805,
-            "overdue": 805,
+            "pending": 801,
+            "overdue": 801,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 617,
-              "retryScheduled": 0,
+              "neverAttempted": 612,
+              "retryScheduled": 1,
               "attemptedUnresolved": 188,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -1454,24 +1454,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1628,
-              "settled": 823,
+              "settled": 827,
               "pushes": 0,
               "distinctEvents": 28
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 14,
-          "settled": 823,
+          "settled": 827,
           "distinctEvents": 31,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2038,
-            "market": 0.2038
+            "model": 0.2032,
+            "market": 0.2032
           },
           "logLoss": {
-            "model": 0.5918,
-            "market": 0.5918
+            "model": 0.5905,
+            "market": 0.5906
           },
           "independentComparison": {
             "brierModel": null,
@@ -1538,12 +1538,12 @@
         "total_bases": {
           "recorded": 1158,
           "settlementHealth": {
-            "pending": 545,
-            "overdue": 545,
+            "pending": 540,
+            "overdue": 540,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 415,
-              "retryScheduled": 0,
+              "neverAttempted": 406,
+              "retryScheduled": 4,
               "attemptedUnresolved": 130,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -1647,24 +1647,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1158,
-              "settled": 613,
+              "settled": 618,
               "pushes": 0,
-              "distinctEvents": 29
+              "distinctEvents": 30
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 37,
-          "settled": 613,
-          "distinctEvents": 32,
+          "settled": 618,
+          "distinctEvents": 33,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1491,
-            "market": 0.1494
+            "model": 0.149,
+            "market": 0.1493
           },
           "logLoss": {
-            "model": 0.467,
-            "market": 0.4676
+            "model": 0.4669,
+            "market": 0.4674
           },
           "independentComparison": {
             "brierModel": null,
@@ -1731,11 +1731,11 @@
         "rbi": {
           "recorded": 633,
           "settlementHealth": {
-            "pending": 280,
-            "overdue": 280,
+            "pending": 277,
+            "overdue": 277,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 223,
+              "neverAttempted": 220,
               "retryScheduled": 0,
               "attemptedUnresolved": 57,
               "missingTicker": 0,
@@ -1840,24 +1840,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 633,
-              "settled": 353,
+              "settled": 356,
               "pushes": 0,
               "distinctEvents": 27
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 17,
-          "settled": 353,
+          "settled": 356,
           "distinctEvents": 30,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1325,
-            "market": 0.1325
+            "model": 0.1315,
+            "market": 0.1315
           },
           "logLoss": {
-            "model": 0.4227,
-            "market": 0.4227
+            "model": 0.4204,
+            "market": 0.4204
           },
           "independentComparison": {
             "brierModel": null,
@@ -2489,12 +2489,12 @@
         "legacy": {
           "recorded": 7545,
           "settlementHealth": {
-            "pending": 3372,
-            "overdue": 3372,
+            "pending": 3324,
+            "overdue": 3324,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 2587,
-              "retryScheduled": 0,
+              "neverAttempted": 2530,
+              "retryScheduled": 9,
               "attemptedUnresolved": 785,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -2554,9 +2554,9 @@
                 0,
                 0.4
               ],
-              "count": 318,
-              "predicted": 0.1897,
-              "observed": 0.217
+              "count": 323,
+              "predicted": 0.1891,
+              "observed": 0.226
             },
             {
               "range": [
@@ -2572,18 +2572,18 @@
                 0.6,
                 0.8
               ],
-              "count": 137,
-              "predicted": 0.7057,
-              "observed": 0.6934
+              "count": 139,
+              "predicted": 0.7062,
+              "observed": 0.6906
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 181,
-              "predicted": 0.9068,
-              "observed": 0.8508
+              "count": 184,
+              "predicted": 0.907,
+              "observed": 0.837
             }
           ],
           "rejectionReasons": {
@@ -2599,7 +2599,7 @@
           "sources": {
             "Kalshi": {
               "recorded": 7530,
-              "settled": 4158,
+              "settled": 4206,
               "pushes": 0,
               "distinctEvents": 33
             },
@@ -2612,17 +2612,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1399,
-          "settled": 4173,
+          "settled": 4221,
           "distinctEvents": 38,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1608,
-            "market": 0.156
+            "model": 0.1619,
+            "market": 0.1566
           },
           "logLoss": {
-            "model": 0.4905,
-            "market": 0.478
+            "model": 0.494,
+            "market": 0.4797
           },
           "independentComparison": {
             "brierModel": null,
@@ -2631,10 +2631,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 763,
+            "settled": 773,
             "distinctEvents": 30,
-            "brierEstimate": 0.1779,
-            "brierMarket": 0.1515
+            "brierEstimate": 0.1839,
+            "brierMarket": 0.1553
           },
           "calibrationBins": [
             {
@@ -2887,12 +2887,12 @@
         "legacy": {
           "recorded": 6406,
           "settlementHealth": {
-            "pending": 2315,
-            "overdue": 2315,
+            "pending": 2267,
+            "overdue": 2267,
             "oldestPending": "2026-09-30T00:00:00Z",
             "reasons": {
-              "neverAttempted": 1530,
-              "retryScheduled": 0,
+              "neverAttempted": 1473,
+              "retryScheduled": 9,
               "attemptedUnresolved": 785,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -2952,9 +2952,9 @@
                 0,
                 0.4
               ],
-              "count": 299,
-              "predicted": 0.1899,
-              "observed": 0.2274
+              "count": 304,
+              "predicted": 0.1892,
+              "observed": 0.2368
             },
             {
               "range": [
@@ -2970,42 +2970,42 @@
                 0.6,
                 0.8
               ],
-              "count": 128,
-              "predicted": 0.7056,
-              "observed": 0.6875
+              "count": 130,
+              "predicted": 0.7061,
+              "observed": 0.6846
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 170,
-              "predicted": 0.9077,
-              "observed": 0.8412
+              "count": 173,
+              "predicted": 0.9079,
+              "observed": 0.8266
             }
           ],
           "rejectionReasons": {},
           "sources": {
             "Kalshi": {
               "recorded": 6406,
-              "settled": 4091,
+              "settled": 4139,
               "pushes": 0,
               "distinctEvents": 30
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1139,
-          "settled": 4091,
+          "settled": 4139,
           "distinctEvents": 33,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1605,
-            "market": 0.1552
+            "model": 0.1615,
+            "market": 0.1558
           },
           "logLoss": {
-            "model": 0.4899,
-            "market": 0.476
+            "model": 0.4935,
+            "market": 0.4778
           },
           "independentComparison": {
             "brierModel": null,
@@ -3014,10 +3014,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 710,
+            "settled": 720,
             "distinctEvents": 27,
-            "brierEstimate": 0.182,
-            "brierMarket": 0.1514
+            "brierEstimate": 0.1883,
+            "brierMarket": 0.1555
           },
           "calibrationBins": [
             {
@@ -3859,8 +3859,8 @@
         "oldestPending": "2026-10-14T23:30Z",
         "reasons": {
           "neverAttempted": 20124,
-          "retryScheduled": 0,
-          "attemptedUnresolved": 2,
+          "retryScheduled": 2,
+          "attemptedUnresolved": 0,
           "missingTicker": 0,
           "missingEventTime": 0
         }
@@ -5040,8 +5040,8 @@
             "oldestPending": "2026-10-21T01:30:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 2,
+              "retryScheduled": 2,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -6974,8 +6974,8 @@
             "oldestPending": "2026-10-14T23:30Z",
             "reasons": {
               "neverAttempted": 3214,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 2,
+              "retryScheduled": 2,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -7787,8 +7787,8 @@
             "oldestPending": "2026-10-20T19:00Z",
             "reasons": {
               "neverAttempted": 1002,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 2,
+              "retryScheduled": 2,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -8386,13 +8386,13 @@
     "ncaaf": {
       "recorded": 15290,
       "settlementHealth": {
-        "pending": 9107,
-        "overdue": 8406,
+        "pending": 8964,
+        "overdue": 8311,
         "oldestPending": "2026-10-07T00:00Z",
         "reasons": {
-          "neverAttempted": 8022,
-          "retryScheduled": 58,
-          "attemptedUnresolved": 326,
+          "neverAttempted": 7825,
+          "retryScheduled": 178,
+          "attemptedUnresolved": 308,
           "missingTicker": 0,
           "missingEventTime": 0
         }
@@ -8451,27 +8451,27 @@
             0,
             0.4
           ],
-          "count": 1529,
-          "predicted": 0.2951,
-          "observed": 0.3551
+          "count": 1559,
+          "predicted": 0.2946,
+          "observed": 0.3541
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 2594,
+          "count": 2649,
           "predicted": 0.4968,
-          "observed": 0.4969
+          "observed": 0.4972
         },
         {
           "range": [
             0.6,
             0.8
           ],
-          "count": 802,
+          "count": 804,
           "predicted": 0.664,
-          "observed": 0.5786
+          "observed": 0.5796
         },
         {
           "range": [
@@ -8495,21 +8495,21 @@
       "sources": {
         "Kalshi": {
           "recorded": 13288,
-          "settled": 4317,
+          "settled": 4412,
           "pushes": 0,
-          "distinctEvents": 329
+          "distinctEvents": 331
         },
         "DraftKings via ESPN": {
           "recorded": 1226,
-          "settled": 1155,
-          "pushes": 14,
-          "distinctEvents": 213
+          "settled": 1194,
+          "pushes": 16,
+          "distinctEvents": 220
         },
         "Draft Kings via ESPN": {
           "recorded": 670,
-          "settled": 633,
+          "settled": 642,
           "pushes": 10,
-          "distinctEvents": 167
+          "distinctEvents": 170
         },
         "Polymarket": {
           "recorded": 106,
@@ -8520,17 +8520,17 @@
       },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 12515,
-      "settled": 6159,
-      "distinctEvents": 424,
+      "settled": 6300,
+      "distinctEvents": 429,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.2333,
-        "market": 0.2144
+        "model": 0.2328,
+        "market": 0.2142
       },
       "logLoss": {
-        "model": 0.656,
-        "market": 0.615
+        "model": 0.655,
+        "market": 0.6143
       },
       "independentComparison": {
         "brierModel": null,
@@ -8539,9 +8539,9 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 5004,
-        "distinctEvents": 369,
-        "brierEstimate": 0.2427,
+        "settled": 5091,
+        "distinctEvents": 374,
+        "brierEstimate": 0.2425,
         "brierMarket": 0.2195
       },
       "calibrationBins": [
@@ -8597,11 +8597,11 @@
         "moneyline": {
           "recorded": 1376,
           "settlementHealth": {
-            "pending": 1025,
-            "overdue": 866,
+            "pending": 1019,
+            "overdue": 860,
             "oldestPending": "2026-10-08T23:00Z",
             "reasons": {
-              "neverAttempted": 833,
+              "neverAttempted": 827,
               "retryScheduled": 0,
               "attemptedUnresolved": 33,
               "missingTicker": 0,
@@ -8671,9 +8671,9 @@
                 0.4,
                 0.6
               ],
-              "count": 86,
-              "predicted": 0.5075,
-              "observed": 0.4535
+              "count": 92,
+              "predicted": 0.5047,
+              "observed": 0.4674
             },
             {
               "range": [
@@ -8705,24 +8705,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1376,
-              "settled": 351,
+              "settled": 357,
               "pushes": 0,
-              "distinctEvents": 180
+              "distinctEvents": 182
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 846,
-          "settled": 351,
-          "distinctEvents": 180,
+          "settled": 357,
+          "distinctEvents": 182,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.208,
-            "market": 0.1933
+            "model": 0.2092,
+            "market": 0.1955
           },
           "logLoss": {
-            "model": 0.5913,
-            "market": 0.5651
+            "model": 0.5939,
+            "market": 0.5698
           },
           "independentComparison": {
             "brierModel": null,
@@ -8731,10 +8731,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 143,
-            "distinctEvents": 78,
-            "brierEstimate": 0.2557,
-            "brierMarket": 0.2195
+            "settled": 149,
+            "distinctEvents": 80,
+            "brierEstimate": 0.2565,
+            "brierMarket": 0.2237
           },
           "calibrationBins": [
             {
@@ -8789,12 +8789,12 @@
         "spread": {
           "recorded": 7332,
           "settlementHealth": {
-            "pending": 4845,
-            "overdue": 4529,
+            "pending": 4810,
+            "overdue": 4494,
             "oldestPending": "2026-10-07T00:00Z",
             "reasons": {
-              "neverAttempted": 4368,
-              "retryScheduled": 0,
+              "neverAttempted": 4281,
+              "retryScheduled": 52,
               "attemptedUnresolved": 161,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -8854,16 +8854,16 @@
                 0,
                 0.4
               ],
-              "count": 1020,
-              "predicted": 0.2733,
-              "observed": 0.3206
+              "count": 1048,
+              "predicted": 0.273,
+              "observed": 0.3197
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 817,
+              "count": 823,
               "predicted": 0.4894,
               "observed": 0.5055
             },
@@ -8872,9 +8872,9 @@
                 0.6,
                 0.8
               ],
-              "count": 293,
+              "count": 294,
               "predicted": 0.6721,
-              "observed": 0.5324
+              "observed": 0.534
             },
             {
               "range": [
@@ -8897,24 +8897,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 7332,
-              "settled": 2487,
+              "settled": 2522,
               "pushes": 0,
               "distinctEvents": 226
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 6576,
-          "settled": 2487,
+          "settled": 2522,
           "distinctEvents": 226,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2322,
-            "market": 0.2042
+            "model": 0.2318,
+            "market": 0.2037
           },
           "logLoss": {
-            "model": 0.6566,
-            "market": 0.5934
+            "model": 0.6556,
+            "market": 0.5921
           },
           "independentComparison": {
             "brierModel": null,
@@ -8923,10 +8923,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 2168,
+            "settled": 2203,
             "distinctEvents": 204,
-            "brierEstimate": 0.2359,
-            "brierMarket": 0.2038
+            "brierEstimate": 0.2353,
+            "brierMarket": 0.2032
           },
           "calibrationBins": [
             {
@@ -8981,12 +8981,12 @@
         "total": {
           "recorded": 4580,
           "settlementHealth": {
-            "pending": 3101,
-            "overdue": 2935,
+            "pending": 3047,
+            "overdue": 2881,
             "oldestPending": "2026-10-07T00:00Z",
             "reasons": {
-              "neverAttempted": 2821,
-              "retryScheduled": 0,
+              "neverAttempted": 2717,
+              "retryScheduled": 50,
               "attemptedUnresolved": 114,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -9087,24 +9087,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 4580,
-              "settled": 1479,
+              "settled": 1533,
               "pushes": 0,
-              "distinctEvents": 188
+              "distinctEvents": 189
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 3143,
-          "settled": 1479,
-          "distinctEvents": 188,
+          "settled": 1533,
+          "distinctEvents": 189,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2212,
-            "market": 0.2014
+            "model": 0.2195,
+            "market": 0.2004
           },
           "logLoss": {
-            "model": 0.6261,
-            "market": 0.585
+            "model": 0.6227,
+            "market": 0.5829
           },
           "independentComparison": {
             "brierModel": null,
@@ -9171,13 +9171,13 @@
         "spread:public": {
           "recorded": 1103,
           "settlementHealth": {
-            "pending": 48,
+            "pending": 20,
             "overdue": 14,
             "oldestPending": "2026-10-25T02:00:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 12,
-              "attemptedUnresolved": 2,
+              "retryScheduled": 14,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -9245,9 +9245,9 @@
                 0.4,
                 0.6
               ],
-              "count": 616,
-              "predicted": 0.5014,
-              "observed": 0.5032
+              "count": 642,
+              "predicted": 0.5013,
+              "observed": 0.5031
             },
             {
               "range": [
@@ -9279,30 +9279,30 @@
           "sources": {
             "DraftKings via ESPN": {
               "recorded": 720,
-              "settled": 680,
-              "pushes": 14,
-              "distinctEvents": 205
+              "settled": 702,
+              "pushes": 16,
+              "distinctEvents": 211
             },
             "Draft Kings via ESPN": {
               "recorded": 383,
-              "settled": 375,
+              "settled": 381,
               "pushes": 10,
-              "distinctEvents": 140
+              "distinctEvents": 143
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1091,
-          "settled": 1031,
-          "distinctEvents": 214,
+          "settled": 1057,
+          "distinctEvents": 220,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2603,
-            "market": 0.2504
+            "model": 0.2602,
+            "market": 0.2505
           },
           "logLoss": {
-            "model": 0.7153,
-            "market": 0.6939
+            "model": 0.7151,
+            "market": 0.6941
           },
           "independentComparison": {
             "brierModel": null,
@@ -9311,10 +9311,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1019,
-            "distinctEvents": 211,
-            "brierEstimate": 0.2605,
-            "brierMarket": 0.2504
+            "settled": 1045,
+            "distinctEvents": 217,
+            "brierEstimate": 0.2604,
+            "brierMarket": 0.2505
           },
           "calibrationBins": [
             {
@@ -9369,13 +9369,13 @@
         "total:public": {
           "recorded": 623,
           "settlementHealth": {
-            "pending": 53,
+            "pending": 37,
             "overdue": 31,
             "oldestPending": "2026-10-25T02:00:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 27,
-              "attemptedUnresolved": 4,
+              "retryScheduled": 31,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -9443,9 +9443,9 @@
                 0.4,
                 0.6
               ],
-              "count": 452,
-              "predicted": 0.4945,
-              "observed": 0.4867
+              "count": 468,
+              "predicted": 0.4947,
+              "observed": 0.4872
             },
             {
               "range": [
@@ -9474,30 +9474,30 @@
           "sources": {
             "DraftKings via ESPN": {
               "recorded": 402,
-              "settled": 375,
+              "settled": 389,
               "pushes": 0,
-              "distinctEvents": 159
+              "distinctEvents": 165
             },
             "Draft Kings via ESPN": {
               "recorded": 221,
-              "settled": 195,
+              "settled": 197,
               "pushes": 0,
-              "distinctEvents": 112
+              "distinctEvents": 113
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 615,
-          "settled": 570,
-          "distinctEvents": 189,
+          "settled": 586,
+          "distinctEvents": 196,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2477,
-            "market": 0.2516
+            "model": 0.2483,
+            "market": 0.2517
           },
           "logLoss": {
-            "model": 0.6885,
-            "market": 0.6964
+            "model": 0.6897,
+            "market": 0.6965
           },
           "independentComparison": {
             "brierModel": null,
@@ -9506,9 +9506,9 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 562,
-            "distinctEvents": 186,
-            "brierEstimate": 0.248,
+            "settled": 578,
+            "distinctEvents": 193,
+            "brierEstimate": 0.2486,
             "brierMarket": 0.252
           },
           "calibrationBins": [
@@ -9564,13 +9564,13 @@
         "moneyline:public": {
           "recorded": 276,
           "settlementHealth": {
-            "pending": 35,
+            "pending": 31,
             "overdue": 31,
             "oldestPending": "2026-10-25T02:00:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 19,
-              "attemptedUnresolved": 12,
+              "retryScheduled": 31,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -9629,27 +9629,27 @@
                 0,
                 0.4
               ],
-              "count": 64,
-              "predicted": 0.3225,
-              "observed": 0.25
+              "count": 66,
+              "predicted": 0.323,
+              "observed": 0.2576
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 101,
-              "predicted": 0.5019,
-              "observed": 0.5248
+              "count": 102,
+              "predicted": 0.5017,
+              "observed": 0.5196
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 55,
-              "predicted": 0.6818,
-              "observed": 0.7818
+              "count": 56,
+              "predicted": 0.6816,
+              "observed": 0.7857
             },
             {
               "range": [
@@ -9671,15 +9671,15 @@
           "sources": {
             "DraftKings via ESPN": {
               "recorded": 104,
-              "settled": 100,
+              "settled": 103,
               "pushes": 0,
-              "distinctEvents": 65
+              "distinctEvents": 67
             },
             "Draft Kings via ESPN": {
               "recorded": 66,
-              "settled": 63,
+              "settled": 64,
               "pushes": 0,
-              "distinctEvents": 44
+              "distinctEvents": 45
             },
             "Polymarket": {
               "recorded": 106,
@@ -9690,17 +9690,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 244,
-          "settled": 241,
-          "distinctEvents": 105,
+          "settled": 245,
+          "distinctEvents": 108,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2049,
+            "model": 0.2051,
             "market": 0.1893
           },
           "logLoss": {
-            "model": 0.5982,
-            "market": 0.5644
+            "model": 0.5987,
+            "market": 0.5642
           },
           "independentComparison": {
             "brierModel": null,
@@ -9709,9 +9709,9 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 221,
-            "distinctEvents": 105,
-            "brierEstimate": 0.2039,
+            "settled": 225,
+            "distinctEvents": 108,
+            "brierEstimate": 0.2042,
             "brierMarket": 0.1869
           },
           "calibrationBins": [
@@ -9769,12 +9769,12 @@
         "legacy": {
           "recorded": 7132,
           "settlementHealth": {
-            "pending": 3075,
-            "overdue": 3075,
+            "pending": 2980,
+            "overdue": 2980,
             "oldestPending": "2026-10-07T00:00Z",
             "reasons": {
-              "neverAttempted": 2751,
-              "retryScheduled": 16,
+              "neverAttempted": 2554,
+              "retryScheduled": 118,
               "attemptedUnresolved": 308,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -9834,27 +9834,27 @@
                 0,
                 0.4
               ],
-              "count": 1100,
-              "predicted": 0.2849,
-              "observed": 0.3191
+              "count": 1128,
+              "predicted": 0.2843,
+              "observed": 0.3183
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 1376,
-              "predicted": 0.4935,
-              "observed": 0.4935
+              "count": 1388,
+              "predicted": 0.4934,
+              "observed": 0.4942
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 400,
+              "count": 401,
               "predicted": 0.6637,
-              "observed": 0.6175
+              "observed": 0.6185
             },
             {
               "range": [
@@ -9878,9 +9878,9 @@
           "sources": {
             "Kalshi": {
               "recorded": 6135,
-              "settled": 3076,
+              "settled": 3171,
               "pushes": 0,
-              "distinctEvents": 223
+              "distinctEvents": 225
             },
             "DraftKings via ESPN": {
               "recorded": 641,
@@ -9897,17 +9897,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 5314,
-          "settled": 4043,
-          "distinctEvents": 293,
+          "settled": 4138,
+          "distinctEvents": 294,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2196,
-            "market": 0.2058
+            "model": 0.2189,
+            "market": 0.2052
           },
           "logLoss": {
-            "model": 0.6256,
-            "market": 0.5947
+            "model": 0.6242,
+            "market": 0.5933
           },
           "independentComparison": {
             "brierModel": null,
@@ -9916,10 +9916,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 2919,
-            "distinctEvents": 238,
-            "brierEstimate": 0.2301,
-            "brierMarket": 0.2109
+            "settled": 2960,
+            "distinctEvents": 239,
+            "brierEstimate": 0.2298,
+            "brierMarket": 0.2106
           },
           "calibrationBins": [
             {
@@ -9974,13 +9974,13 @@
         "forward-20261022-v1": {
           "recorded": 8158,
           "settlementHealth": {
-            "pending": 6032,
+            "pending": 5984,
             "overdue": 5331,
             "oldestPending": "2026-10-22T23:00Z",
             "reasons": {
               "neverAttempted": 5271,
-              "retryScheduled": 42,
-              "attemptedUnresolved": 18,
+              "retryScheduled": 60,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -10039,27 +10039,27 @@
                 0,
                 0.4
               ],
-              "count": 429,
-              "predicted": 0.3214,
-              "observed": 0.4476
+              "count": 431,
+              "predicted": 0.3215,
+              "observed": 0.4478
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 1218,
-              "predicted": 0.5005,
-              "observed": 0.5008
+              "count": 1261,
+              "predicted": 0.5004,
+              "observed": 0.5004
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 402,
-              "predicted": 0.6642,
-              "observed": 0.5398
+              "count": 403,
+              "predicted": 0.6643,
+              "observed": 0.5409
             },
             {
               "range": [
@@ -10087,15 +10087,15 @@
             },
             "Draft Kings via ESPN": {
               "recorded": 314,
-              "settled": 283,
+              "settled": 292,
               "pushes": 4,
-              "distinctEvents": 104
+              "distinctEvents": 107
             },
             "DraftKings via ESPN": {
               "recorded": 585,
-              "settled": 524,
-              "pushes": 6,
-              "distinctEvents": 119
+              "settled": 563,
+              "pushes": 8,
+              "distinctEvents": 126
             },
             "Polymarket": {
               "recorded": 106,
@@ -10106,17 +10106,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 7201,
-          "settled": 2116,
-          "distinctEvents": 180,
+          "settled": 2162,
+          "distinctEvents": 184,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
             "model": 0.2593,
-            "market": 0.231
+            "market": 0.2313
           },
           "logLoss": {
-            "model": 0.7141,
-            "market": 0.6539
+            "model": 0.714,
+            "market": 0.6546
           },
           "independentComparison": {
             "brierModel": null,
@@ -10125,10 +10125,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 2085,
-            "distinctEvents": 180,
+            "settled": 2131,
+            "distinctEvents": 184,
             "brierEstimate": 0.2603,
-            "brierMarket": 0.2316
+            "brierMarket": 0.2319
           },
           "calibrationBins": [
             {
@@ -10185,12 +10185,12 @@
         "legacy": {
           "recorded": 3847,
           "settlementHealth": {
-            "pending": 1119,
-            "overdue": 1119,
+            "pending": 1027,
+            "overdue": 1027,
             "oldestPending": "2026-10-07T00:00Z",
             "reasons": {
-              "neverAttempted": 825,
-              "retryScheduled": 0,
+              "neverAttempted": 632,
+              "retryScheduled": 101,
               "attemptedUnresolved": 294,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -10250,27 +10250,27 @@
                 0,
                 0.4
               ],
-              "count": 858,
-              "predicted": 0.2674,
-              "observed": 0.2751
+              "count": 886,
+              "predicted": 0.2672,
+              "observed": 0.2754
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 568,
-              "predicted": 0.4877,
-              "observed": 0.5018
+              "count": 577,
+              "predicted": 0.4875,
+              "observed": 0.5026
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 180,
+              "count": 181,
               "predicted": 0.6785,
-              "observed": 0.7278
+              "observed": 0.7293
             },
             {
               "range": [
@@ -10286,24 +10286,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 3847,
-              "settled": 2728,
+              "settled": 2820,
               "pushes": 0,
-              "distinctEvents": 208
+              "distinctEvents": 210
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2304,
-          "settled": 2728,
-          "distinctEvents": 208,
+          "settled": 2820,
+          "distinctEvents": 210,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2023,
-            "market": 0.1883
+            "model": 0.2017,
+            "market": 0.1879
           },
           "logLoss": {
-            "model": 0.5876,
-            "market": 0.555
+            "model": 0.5865,
+            "market": 0.5539
           },
           "independentComparison": {
             "brierModel": null,
@@ -10312,10 +10312,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1645,
-            "distinctEvents": 153,
-            "brierEstimate": 0.2091,
-            "brierMarket": 0.186
+            "settled": 1683,
+            "distinctEvents": 155,
+            "brierEstimate": 0.209,
+            "brierMarket": 0.1857
           },
           "calibrationBins": [
             {
@@ -10370,12 +10370,12 @@
         "learning-20261015": {
           "recorded": 2625,
           "settlementHealth": {
-            "pending": 1511,
-            "overdue": 1511,
+            "pending": 1508,
+            "overdue": 1508,
             "oldestPending": "2026-10-15T23:30Z",
             "reasons": {
-              "neverAttempted": 1483,
-              "retryScheduled": 14,
+              "neverAttempted": 1479,
+              "retryScheduled": 15,
               "attemptedUnresolved": 14,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -10444,9 +10444,9 @@
                 0.4,
                 0.6
               ],
-              "count": 682,
-              "predicted": 0.497,
-              "observed": 0.4853
+              "count": 685,
+              "predicted": 0.4969,
+              "observed": 0.4861
             },
             {
               "range": [
@@ -10491,24 +10491,24 @@
             },
             "Kalshi": {
               "recorded": 1741,
-              "settled": 244,
+              "settled": 247,
               "pushes": 0,
-              "distinctEvents": 34
+              "distinctEvents": 36
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2358,
-          "settled": 1102,
-          "distinctEvents": 109,
+          "settled": 1105,
+          "distinctEvents": 110,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.255,
-            "market": 0.2422
+            "model": 0.2551,
+            "market": 0.2426
           },
           "logLoss": {
-            "model": 0.703,
-            "market": 0.6773
+            "model": 0.7032,
+            "market": 0.6782
           },
           "independentComparison": {
             "brierModel": null,
@@ -10517,10 +10517,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1061,
-            "distinctEvents": 106,
-            "brierEstimate": 0.2567,
-            "brierMarket": 0.2434
+            "settled": 1064,
+            "distinctEvents": 107,
+            "brierEstimate": 0.2568,
+            "brierMarket": 0.2439
           },
           "calibrationBins": [
             {
@@ -10772,13 +10772,13 @@
         "learning-20261022": {
           "recorded": 8158,
           "settlementHealth": {
-            "pending": 6032,
+            "pending": 5984,
             "overdue": 5331,
             "oldestPending": "2026-10-22T23:00Z",
             "reasons": {
               "neverAttempted": 5271,
-              "retryScheduled": 42,
-              "attemptedUnresolved": 18,
+              "retryScheduled": 60,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -10837,27 +10837,27 @@
                 0,
                 0.4
               ],
-              "count": 429,
-              "predicted": 0.3214,
-              "observed": 0.4476
+              "count": 431,
+              "predicted": 0.3215,
+              "observed": 0.4478
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 1218,
-              "predicted": 0.5005,
-              "observed": 0.5008
+              "count": 1261,
+              "predicted": 0.5004,
+              "observed": 0.5004
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 402,
-              "predicted": 0.6642,
-              "observed": 0.5398
+              "count": 403,
+              "predicted": 0.6643,
+              "observed": 0.5409
             },
             {
               "range": [
@@ -10885,15 +10885,15 @@
             },
             "Draft Kings via ESPN": {
               "recorded": 314,
-              "settled": 283,
+              "settled": 292,
               "pushes": 4,
-              "distinctEvents": 104
+              "distinctEvents": 107
             },
             "DraftKings via ESPN": {
               "recorded": 585,
-              "settled": 524,
-              "pushes": 6,
-              "distinctEvents": 119
+              "settled": 563,
+              "pushes": 8,
+              "distinctEvents": 126
             },
             "Polymarket": {
               "recorded": 106,
@@ -10904,17 +10904,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 7201,
-          "settled": 2116,
-          "distinctEvents": 180,
+          "settled": 2162,
+          "distinctEvents": 184,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
             "model": 0.2593,
-            "market": 0.231
+            "market": 0.2313
           },
           "logLoss": {
-            "model": 0.7141,
-            "market": 0.6539
+            "model": 0.714,
+            "market": 0.6546
           },
           "independentComparison": {
             "brierModel": null,
@@ -10923,10 +10923,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 2085,
-            "distinctEvents": 180,
+            "settled": 2131,
+            "distinctEvents": 184,
             "brierEstimate": 0.2603,
-            "brierMarket": 0.2316
+            "brierMarket": 0.2319
           },
           "calibrationBins": [
             {
@@ -10983,11 +10983,11 @@
     "nfl": {
       "recorded": 55324,
       "settlementHealth": {
-        "pending": 46126,
-        "overdue": 43260,
+        "pending": 46120,
+        "overdue": 43254,
         "oldestPending": "2026-10-04T13:30:00Z",
         "reasons": {
-          "neverAttempted": 43149,
+          "neverAttempted": 43143,
           "retryScheduled": 10,
           "attemptedUnresolved": 101,
           "missingTicker": 0,
@@ -11112,29 +11112,29 @@
         },
         "DraftKings via ESPN": {
           "recorded": 166,
-          "settled": 112,
+          "settled": 114,
           "pushes": 4,
-          "distinctEvents": 25
+          "distinctEvents": 26
         },
         "Draft Kings via ESPN": {
           "recorded": 58,
-          "settled": 42,
+          "settled": 46,
           "pushes": 4,
-          "distinctEvents": 13
+          "distinctEvents": 14
         }
       },
       "marketSupportedRecorded": 14940,
       "experimentalRecorded": 17476,
-      "settled": 9190,
+      "settled": 9196,
       "distinctEvents": 74,
       "independentSettled": 4646,
       "independentEvents": 43,
       "brier": {
         "model": 0.2011,
-        "market": 0.1914
+        "market": 0.1915
       },
       "logLoss": {
-        "model": 0.5983,
+        "model": 0.5984,
         "market": 0.5635
       },
       "independentComparison": {
@@ -12182,11 +12182,11 @@
         "spreads:public": {
           "recorded": 128,
           "settlementHealth": {
-            "pending": 42,
-            "overdue": 4,
-            "oldestPending": "2026-11-20T01:15:00Z",
+            "pending": 38,
+            "overdue": 0,
+            "oldestPending": null,
             "reasons": {
-              "neverAttempted": 4,
+              "neverAttempted": 0,
               "retryScheduled": 0,
               "attemptedUnresolved": 0,
               "missingTicker": 0,
@@ -12286,30 +12286,30 @@
           "sources": {
             "DraftKings via ESPN": {
               "recorded": 88,
-              "settled": 58,
+              "settled": 60,
               "pushes": 4,
-              "distinctEvents": 21
+              "distinctEvents": 22
             },
             "Draft Kings via ESPN": {
               "recorded": 40,
-              "settled": 28,
+              "settled": 30,
               "pushes": 4,
-              "distinctEvents": 9
+              "distinctEvents": 10
             }
           },
           "marketSupportedRecorded": 128,
           "experimentalRecorded": 0,
-          "settled": 78,
-          "distinctEvents": 22,
+          "settled": 82,
+          "distinctEvents": 23,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2544,
+            "model": 0.2549,
             "market": 0.2521
           },
           "logLoss": {
-            "model": 0.7019,
-            "market": 0.6975
+            "model": 0.703,
+            "market": 0.6973
           },
           "independentComparison": {
             "brierModel": null,
@@ -12376,11 +12376,11 @@
         "totals:public": {
           "recorded": 94,
           "settlementHealth": {
-            "pending": 28,
-            "overdue": 2,
-            "oldestPending": "2026-11-20T01:15:00Z",
+            "pending": 26,
+            "overdue": 0,
+            "oldestPending": null,
             "reasons": {
-              "neverAttempted": 2,
+              "neverAttempted": 0,
               "retryScheduled": 0,
               "attemptedUnresolved": 0,
               "missingTicker": 0,
@@ -12487,24 +12487,24 @@
             },
             "Draft Kings via ESPN": {
               "recorded": 18,
-              "settled": 14,
+              "settled": 16,
               "pushes": 0,
-              "distinctEvents": 6
+              "distinctEvents": 7
             }
           },
           "marketSupportedRecorded": 94,
           "experimentalRecorded": 0,
-          "settled": 66,
-          "distinctEvents": 19,
+          "settled": 68,
+          "distinctEvents": 20,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2361,
-            "market": 0.2494
+            "model": 0.2385,
+            "market": 0.2495
           },
           "logLoss": {
-            "model": 0.6652,
-            "market": 0.692
+            "model": 0.6699,
+            "market": 0.6921
           },
           "independentComparison": {
             "brierModel": null,
@@ -15590,11 +15590,11 @@
         "forward-20261022-v1": {
           "recorded": 20917,
           "settlementHealth": {
-            "pending": 20035,
-            "overdue": 18335,
+            "pending": 20031,
+            "overdue": 18331,
             "oldestPending": "2026-10-23T00:15:00Z",
             "reasons": {
-              "neverAttempted": 18325,
+              "neverAttempted": 18321,
               "retryScheduled": 10,
               "attemptedUnresolved": 0,
               "missingTicker": 0,
@@ -15709,15 +15709,15 @@
           "sources": {
             "Draft Kings via ESPN": {
               "recorded": 26,
-              "settled": 14,
+              "settled": 16,
               "pushes": 2,
-              "distinctEvents": 6
+              "distinctEvents": 7
             },
             "DraftKings via ESPN": {
               "recorded": 44,
-              "settled": 14,
+              "settled": 16,
               "pushes": 0,
-              "distinctEvents": 5
+              "distinctEvents": 6
             },
             "Kalshi": {
               "recorded": 20847,
@@ -15728,7 +15728,7 @@
           },
           "marketSupportedRecorded": 7068,
           "experimentalRecorded": 10751,
-          "settled": 880,
+          "settled": 884,
           "distinctEvents": 30,
           "independentSettled": 0,
           "independentEvents": 0,
@@ -15738,7 +15738,7 @@
           },
           "logLoss": {
             "model": 0.7239,
-            "market": 0.6704
+            "market": 0.6705
           },
           "independentComparison": {
             "brierModel": null,
@@ -15805,11 +15805,11 @@
         "nfl-total-shadow-20261027-v1": {
           "recorded": 4036,
           "settlementHealth": {
-            "pending": 3698,
-            "overdue": 2532,
+            "pending": 3696,
+            "overdue": 2530,
             "oldestPending": "2026-11-13T01:15:00Z",
             "reasons": {
-              "neverAttempted": 2532,
+              "neverAttempted": 2530,
               "retryScheduled": 0,
               "attemptedUnresolved": 0,
               "missingTicker": 0,
@@ -15922,24 +15922,24 @@
             },
             "Draft Kings via ESPN": {
               "recorded": 6,
-              "settled": 2,
+              "settled": 4,
               "pushes": 0,
-              "distinctEvents": 1
+              "distinctEvents": 2
             }
           },
           "marketSupportedRecorded": 4036,
           "experimentalRecorded": 0,
-          "settled": 338,
+          "settled": 340,
           "distinctEvents": 10,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2961,
-            "market": 0.2681
+            "model": 0.2962,
+            "market": 0.268
           },
           "logLoss": {
-            "model": 0.7926,
-            "market": 0.7312
+            "model": 0.7928,
+            "market": 0.7309
           },
           "independentComparison": {
             "brierModel": null,
@@ -16619,11 +16619,11 @@
         "learning-20261022": {
           "recorded": 24953,
           "settlementHealth": {
-            "pending": 23733,
-            "overdue": 20867,
+            "pending": 23727,
+            "overdue": 20861,
             "oldestPending": "2026-10-23T00:15:00Z",
             "reasons": {
-              "neverAttempted": 20857,
+              "neverAttempted": 20851,
               "retryScheduled": 10,
               "attemptedUnresolved": 0,
               "missingTicker": 0,
@@ -16739,15 +16739,15 @@
           "sources": {
             "Draft Kings via ESPN": {
               "recorded": 32,
-              "settled": 16,
+              "settled": 20,
               "pushes": 2,
-              "distinctEvents": 7
+              "distinctEvents": 8
             },
             "DraftKings via ESPN": {
               "recorded": 84,
-              "settled": 30,
+              "settled": 32,
               "pushes": 0,
-              "distinctEvents": 8
+              "distinctEvents": 9
             },
             "Kalshi": {
               "recorded": 24837,
@@ -16758,7 +16758,7 @@
           },
           "marketSupportedRecorded": 11104,
           "experimentalRecorded": 10751,
-          "settled": 1218,
+          "settled": 1224,
           "distinctEvents": 30,
           "independentSettled": 0,
           "independentEvents": 0,
@@ -16767,7 +16767,7 @@
             "market": 0.247
           },
           "logLoss": {
-            "model": 0.743,
+            "model": 0.7431,
             "market": 0.6873
           },
           "independentComparison": {
@@ -17024,13 +17024,13 @@
     "nhl": {
       "recorded": 22473,
       "settlementHealth": {
-        "pending": 16525,
-        "overdue": 16514,
+        "pending": 16429,
+        "overdue": 16418,
         "oldestPending": "2026-10-03T23:00Z",
         "reasons": {
-          "neverAttempted": 15396,
-          "retryScheduled": 2,
-          "attemptedUnresolved": 1116,
+          "neverAttempted": 15119,
+          "retryScheduled": 193,
+          "attemptedUnresolved": 1106,
           "missingTicker": 0,
           "missingEventTime": 0
         }
@@ -17089,16 +17089,16 @@
             0,
             0.4
           ],
-          "count": 2201,
-          "predicted": 0.2003,
-          "observed": 0.2117
+          "count": 2236,
+          "predicted": 0.2004,
+          "observed": 0.212
         },
         {
           "range": [
             0.4,
             0.6
           ],
-          "count": 1208,
+          "count": 1228,
           "predicted": 0.5001,
           "observed": 0.4967
         },
@@ -17107,18 +17107,18 @@
             0.6,
             0.8
           ],
-          "count": 1105,
-          "predicted": 0.7053,
-          "observed": 0.6905
+          "count": 1120,
+          "predicted": 0.7051,
+          "observed": 0.6911
         },
         {
           "range": [
             0.8,
             1
           ],
-          "count": 1113,
-          "predicted": 0.8909,
-          "observed": 0.8832
+          "count": 1131,
+          "predicted": 0.8908,
+          "observed": 0.8815
         }
       ],
       "rejectionReasons": {
@@ -17136,7 +17136,7 @@
       "sources": {
         "Kalshi": {
           "recorded": 21992,
-          "settled": 5477,
+          "settled": 5573,
           "pushes": 0,
           "distinctEvents": 164
         },
@@ -17161,17 +17161,17 @@
       },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 20813,
-      "settled": 5948,
+      "settled": 6044,
       "distinctEvents": 190,
       "independentSettled": 0,
       "independentEvents": 0,
       "brier": {
-        "model": 0.1721,
-        "market": 0.1689
+        "model": 0.1727,
+        "market": 0.1694
       },
       "logLoss": {
-        "model": 0.5163,
-        "market": 0.5078
+        "model": 0.5184,
+        "market": 0.5097
       },
       "independentComparison": {
         "brierModel": null,
@@ -17180,10 +17180,10 @@
         "logLossMarket": null
       },
       "experimentalComparison": {
-        "settled": 5627,
+        "settled": 5715,
         "distinctEvents": 190,
-        "brierEstimate": 0.1734,
-        "brierMarket": 0.17
+        "brierEstimate": 0.174,
+        "brierMarket": 0.1706
       },
       "calibrationBins": [
         {
@@ -17238,12 +17238,12 @@
         "moneyline": {
           "recorded": 656,
           "settlementHealth": {
-            "pending": 493,
-            "overdue": 482,
+            "pending": 491,
+            "overdue": 480,
             "oldestPending": "2026-10-05T23:30Z",
             "reasons": {
-              "neverAttempted": 458,
-              "retryScheduled": 0,
+              "neverAttempted": 455,
+              "retryScheduled": 1,
               "attemptedUnresolved": 24,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -17303,9 +17303,9 @@
                 0,
                 0.4
               ],
-              "count": 21,
-              "predicted": 0.3339,
-              "observed": 0.3333
+              "count": 23,
+              "predicted": 0.3272,
+              "observed": 0.3043
             },
             {
               "range": [
@@ -17344,24 +17344,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 656,
-              "settled": 163,
+              "settled": 165,
               "pushes": 0,
-              "distinctEvents": 97
+              "distinctEvents": 98
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 636,
-          "settled": 163,
-          "distinctEvents": 97,
+          "settled": 165,
+          "distinctEvents": 98,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2335,
-            "market": 0.2341
+            "model": 0.2315,
+            "market": 0.2321
           },
           "logLoss": {
-            "model": 0.6606,
-            "market": 0.6604
+            "model": 0.6562,
+            "market": 0.6561
           },
           "independentComparison": {
             "brierModel": null,
@@ -17370,10 +17370,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 160,
-            "distinctEvents": 96,
-            "brierEstimate": 0.235,
-            "brierMarket": 0.2356
+            "settled": 162,
+            "distinctEvents": 97,
+            "brierEstimate": 0.2329,
+            "brierMarket": 0.2335
           },
           "calibrationBins": [
             {
@@ -17428,12 +17428,12 @@
         "spread": {
           "recorded": 1510,
           "settlementHealth": {
-            "pending": 1084,
-            "overdue": 1084,
+            "pending": 1068,
+            "overdue": 1068,
             "oldestPending": "2026-10-04T17:00Z",
             "reasons": {
-              "neverAttempted": 1008,
-              "retryScheduled": 0,
+              "neverAttempted": 974,
+              "retryScheduled": 18,
               "attemptedUnresolved": 76,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -17493,16 +17493,16 @@
                 0,
                 0.4
               ],
-              "count": 190,
-              "predicted": 0.2076,
-              "observed": 0.2579
+              "count": 197,
+              "predicted": 0.2079,
+              "observed": 0.2589
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 20,
+              "count": 22,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -17511,18 +17511,18 @@
                 0.6,
                 0.8
               ],
-              "count": 101,
-              "predicted": 0.7256,
-              "observed": 0.703
+              "count": 105,
+              "predicted": 0.726,
+              "observed": 0.6952
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 89,
-              "predicted": 0.8682,
-              "observed": 0.7865
+              "count": 92,
+              "predicted": 0.8676,
+              "observed": 0.7935
             }
           ],
           "rejectionReasons": {
@@ -17535,24 +17535,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 1510,
-              "settled": 426,
+              "settled": 442,
               "pushes": 0,
-              "distinctEvents": 81
+              "distinctEvents": 86
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 1406,
-          "settled": 426,
-          "distinctEvents": 81,
+          "settled": 442,
+          "distinctEvents": 86,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1878,
-            "market": 0.1794
+            "model": 0.1883,
+            "market": 0.1803
           },
           "logLoss": {
-            "model": 0.5612,
-            "market": 0.5381
+            "model": 0.5618,
+            "market": 0.5398
           },
           "independentComparison": {
             "brierModel": null,
@@ -17561,10 +17561,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 400,
-            "distinctEvents": 81,
-            "brierEstimate": 0.1889,
-            "brierMarket": 0.18
+            "settled": 416,
+            "distinctEvents": 86,
+            "brierEstimate": 0.1894,
+            "brierMarket": 0.1808
           },
           "calibrationBins": [
             {
@@ -17619,12 +17619,12 @@
         "total": {
           "recorded": 2968,
           "settlementHealth": {
-            "pending": 2196,
-            "overdue": 2196,
+            "pending": 2170,
+            "overdue": 2170,
             "oldestPending": "2026-10-04T01:00Z",
             "reasons": {
-              "neverAttempted": 2002,
-              "retryScheduled": 0,
+              "neverAttempted": 1946,
+              "retryScheduled": 30,
               "attemptedUnresolved": 194,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -17684,16 +17684,16 @@
                 0,
                 0.4
               ],
-              "count": 292,
-              "predicted": 0.1592,
-              "observed": 0.137
+              "count": 298,
+              "predicted": 0.1623,
+              "observed": 0.1409
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 154,
+              "count": 168,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -17702,18 +17702,18 @@
                 0.6,
                 0.8
               ],
-              "count": 112,
-              "predicted": 0.7061,
-              "observed": 0.7143
+              "count": 117,
+              "predicted": 0.7025,
+              "observed": 0.7094
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 180,
-              "predicted": 0.9247,
-              "observed": 0.9556
+              "count": 181,
+              "predicted": 0.925,
+              "observed": 0.9558
             }
           ],
           "rejectionReasons": {
@@ -17725,24 +17725,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 2968,
-              "settled": 772,
+              "settled": 798,
               "pushes": 0,
-              "distinctEvents": 82
+              "distinctEvents": 85
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2752,
-          "settled": 772,
-          "distinctEvents": 82,
+          "settled": 798,
+          "distinctEvents": 85,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1354,
-            "market": 0.1318
+            "model": 0.1387,
+            "market": 0.135
           },
           "logLoss": {
-            "model": 0.4139,
-            "market": 0.4081
+            "model": 0.4215,
+            "market": 0.4159
           },
           "independentComparison": {
             "brierModel": null,
@@ -17751,10 +17751,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 738,
-            "distinctEvents": 81,
-            "brierEstimate": 0.133,
-            "brierMarket": 0.1291
+            "settled": 764,
+            "distinctEvents": 84,
+            "brierEstimate": 0.1364,
+            "brierMarket": 0.1326
           },
           "calibrationBins": [
             {
@@ -17809,12 +17809,12 @@
         "goals": {
           "recorded": 8778,
           "settlementHealth": {
-            "pending": 6570,
-            "overdue": 6570,
+            "pending": 6540,
+            "overdue": 6540,
             "oldestPending": "2026-10-03T23:00Z",
             "reasons": {
-              "neverAttempted": 6112,
-              "retryScheduled": 0,
+              "neverAttempted": 5972,
+              "retryScheduled": 110,
               "attemptedUnresolved": 458,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -17874,9 +17874,9 @@
                 0,
                 0.4
               ],
-              "count": 1026,
-              "predicted": 0.1702,
-              "observed": 0.1725
+              "count": 1041,
+              "predicted": 0.1701,
+              "observed": 0.1729
             },
             {
               "range": [
@@ -17892,18 +17892,18 @@
                 0.6,
                 0.8
               ],
-              "count": 379,
-              "predicted": 0.7288,
-              "observed": 0.7282
+              "count": 382,
+              "predicted": 0.7287,
+              "observed": 0.7304
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 647,
-              "predicted": 0.8889,
-              "observed": 0.8856
+              "count": 659,
+              "predicted": 0.8886,
+              "observed": 0.8832
             }
           ],
           "rejectionReasons": {
@@ -17921,24 +17921,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 8778,
-              "settled": 2208,
+              "settled": 2238,
               "pushes": 0,
-              "distinctEvents": 81
+              "distinctEvents": 87
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 8226,
-          "settled": 2208,
-          "distinctEvents": 81,
+          "settled": 2238,
+          "distinctEvents": 87,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1334,
-            "market": 0.131
+            "model": 0.1342,
+            "market": 0.1317
           },
           "logLoss": {
-            "model": 0.4302,
-            "market": 0.4209
+            "model": 0.4327,
+            "market": 0.4233
           },
           "independentComparison": {
             "brierModel": null,
@@ -17947,10 +17947,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 2084,
-            "distinctEvents": 81,
-            "brierEstimate": 0.1362,
-            "brierMarket": 0.1336
+            "settled": 2114,
+            "distinctEvents": 87,
+            "brierEstimate": 0.1369,
+            "brierMarket": 0.1343
           },
           "calibrationBins": [
             {
@@ -18005,11 +18005,11 @@
         "assists": {
           "recorded": 2648,
           "settlementHealth": {
-            "pending": 1914,
-            "overdue": 1914,
+            "pending": 1910,
+            "overdue": 1910,
             "oldestPending": "2026-10-04T22:00Z",
             "reasons": {
-              "neverAttempted": 1776,
+              "neverAttempted": 1772,
               "retryScheduled": 0,
               "attemptedUnresolved": 138,
               "missingTicker": 0,
@@ -18070,9 +18070,9 @@
                 0,
                 0.4
               ],
-              "count": 266,
-              "predicted": 0.2511,
-              "observed": 0.2895
+              "count": 268,
+              "predicted": 0.2507,
+              "observed": 0.291
             },
             {
               "range": [
@@ -18088,18 +18088,18 @@
                 0.6,
                 0.8
               ],
-              "count": 182,
-              "predicted": 0.6905,
-              "observed": 0.6648
+              "count": 183,
+              "predicted": 0.6901,
+              "observed": 0.6667
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 84,
-              "predicted": 0.8756,
-              "observed": 0.8095
+              "count": 85,
+              "predicted": 0.8768,
+              "observed": 0.8
             }
           ],
           "rejectionReasons": {
@@ -18114,24 +18114,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 2648,
-              "settled": 734,
+              "settled": 738,
               "pushes": 0,
-              "distinctEvents": 98
+              "distinctEvents": 99
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 2524,
-          "settled": 734,
-          "distinctEvents": 98,
+          "settled": 738,
+          "distinctEvents": 99,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2098,
-            "market": 0.2092
+            "model": 0.2116,
+            "market": 0.2109
           },
           "logLoss": {
-            "model": 0.6078,
-            "market": 0.6064
+            "model": 0.6159,
+            "market": 0.6135
           },
           "independentComparison": {
             "brierModel": null,
@@ -18140,10 +18140,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 702,
-            "distinctEvents": 98,
-            "brierEstimate": 0.2108,
-            "brierMarket": 0.2101
+            "settled": 706,
+            "distinctEvents": 99,
+            "brierEstimate": 0.2127,
+            "brierMarket": 0.2119
           },
           "calibrationBins": [
             {
@@ -18198,12 +18198,12 @@
         "points": {
           "recorded": 5000,
           "settlementHealth": {
-            "pending": 3886,
-            "overdue": 3886,
+            "pending": 3872,
+            "overdue": 3872,
             "oldestPending": "2026-10-03T23:00Z",
             "reasons": {
-              "neverAttempted": 3674,
-              "retryScheduled": 2,
+              "neverAttempted": 3638,
+              "retryScheduled": 24,
               "attemptedUnresolved": 210,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -18263,16 +18263,16 @@
                 0,
                 0.4
               ],
-              "count": 297,
-              "predicted": 0.2495,
-              "observed": 0.2862
+              "count": 300,
+              "predicted": 0.2491,
+              "observed": 0.2833
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 478,
+              "count": 482,
               "predicted": 0.5,
               "observed": 0.5
             },
@@ -18281,18 +18281,18 @@
                 0.6,
                 0.8
               ],
-              "count": 199,
-              "predicted": 0.6849,
-              "observed": 0.6332
+              "count": 201,
+              "predicted": 0.6853,
+              "observed": 0.6368
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 98,
-              "predicted": 0.8835,
-              "observed": 0.8776
+              "count": 99,
+              "predicted": 0.884,
+              "observed": 0.8788
             }
           ],
           "rejectionReasons": {
@@ -18306,24 +18306,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 5000,
-              "settled": 1114,
+              "settled": 1128,
               "pushes": 0,
-              "distinctEvents": 93
+              "distinctEvents": 95
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 4788,
-          "settled": 1114,
-          "distinctEvents": 93,
+          "settled": 1128,
+          "distinctEvents": 95,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2087,
-            "market": 0.2007
+            "model": 0.2077,
+            "market": 0.1997
           },
           "logLoss": {
-            "model": 0.5999,
-            "market": 0.5827
+            "model": 0.5975,
+            "market": 0.5804
           },
           "independentComparison": {
             "brierModel": null,
@@ -18332,10 +18332,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 1072,
-            "distinctEvents": 93,
-            "brierEstimate": 0.2125,
-            "brierMarket": 0.2042
+            "settled": 1082,
+            "distinctEvents": 94,
+            "brierEstimate": 0.2118,
+            "brierMarket": 0.2034
           },
           "calibrationBins": [
             {
@@ -18390,11 +18390,11 @@
         "saves": {
           "recorded": 432,
           "settlementHealth": {
-            "pending": 372,
-            "overdue": 372,
+            "pending": 368,
+            "overdue": 368,
             "oldestPending": "2026-10-08T02:00Z",
             "reasons": {
-              "neverAttempted": 366,
+              "neverAttempted": 362,
               "retryScheduled": 0,
               "attemptedUnresolved": 6,
               "missingTicker": 0,
@@ -18493,24 +18493,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 432,
-              "settled": 60,
+              "settled": 64,
               "pushes": 0,
-              "distinctEvents": 27
+              "distinctEvents": 29
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 60,
-          "distinctEvents": 27,
+          "settled": 64,
+          "distinctEvents": 29,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2493,
-            "market": 0.2493
+            "model": 0.247,
+            "market": 0.247
           },
           "logLoss": {
-            "model": 0.6918,
-            "market": 0.6918
+            "model": 0.687,
+            "market": 0.687
           },
           "independentComparison": {
             "brierModel": null,
@@ -18582,8 +18582,8 @@
             "oldestPending": "2026-10-21T02:30:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 6,
+              "retryScheduled": 6,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -18782,8 +18782,8 @@
             "oldestPending": "2026-10-21T02:30:00+00:00",
             "reasons": {
               "neverAttempted": 0,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 4,
+              "retryScheduled": 4,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -19180,13 +19180,13 @@
         "legacy": {
           "recorded": 16024,
           "settlementHealth": {
-            "pending": 10720,
-            "overdue": 10720,
+            "pending": 10624,
+            "overdue": 10624,
             "oldestPending": "2026-10-03T23:00Z",
             "reasons": {
-              "neverAttempted": 9602,
-              "retryScheduled": 2,
-              "attemptedUnresolved": 1116,
+              "neverAttempted": 9325,
+              "retryScheduled": 193,
+              "attemptedUnresolved": 1106,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -19245,36 +19245,36 @@
                 0,
                 0.4
               ],
-              "count": 2003,
-              "predicted": 0.1949,
-              "observed": 0.1982
+              "count": 2038,
+              "predicted": 0.1952,
+              "observed": 0.1987
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 985,
+              "count": 1005,
               "predicted": 0.5001,
-              "observed": 0.4964
+              "observed": 0.4965
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 957,
-              "predicted": 0.7083,
-              "observed": 0.7043
+              "count": 972,
+              "predicted": 0.708,
+              "observed": 0.7047
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1052,
-              "predicted": 0.892,
-              "observed": 0.8907
+              "count": 1070,
+              "predicted": 0.8918,
+              "observed": 0.8888
             }
           ],
           "rejectionReasons": {
@@ -19289,7 +19289,7 @@
           "sources": {
             "Kalshi": {
               "recorded": 15877,
-              "settled": 5167,
+              "settled": 5263,
               "pushes": 0,
               "distinctEvents": 109
             },
@@ -19308,17 +19308,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 14798,
-          "settled": 5304,
+          "settled": 5400,
           "distinctEvents": 121,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1646,
-            "market": 0.162
+            "model": 0.1654,
+            "market": 0.1628
           },
           "logLoss": {
-            "model": 0.4985,
-            "market": 0.4917
+            "model": 0.5011,
+            "market": 0.4941
           },
           "independentComparison": {
             "brierModel": null,
@@ -19327,10 +19327,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 4997,
+            "settled": 5085,
             "distinctEvents": 121,
-            "brierEstimate": 0.1655,
-            "brierMarket": 0.1627
+            "brierEstimate": 0.1663,
+            "brierMarket": 0.1635
           },
           "calibrationBins": [
             {
@@ -19600,12 +19600,12 @@
         "legacy": {
           "recorded": 11945,
           "settlementHealth": {
-            "pending": 6987,
-            "overdue": 6987,
+            "pending": 6892,
+            "overdue": 6892,
             "oldestPending": "2026-10-03T23:00Z",
             "reasons": {
-              "neverAttempted": 5881,
-              "retryScheduled": 0,
+              "neverAttempted": 5605,
+              "retryScheduled": 181,
               "attemptedUnresolved": 1106,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -19665,36 +19665,36 @@
                 0,
                 0.4
               ],
-              "count": 1904,
-              "predicted": 0.1921,
-              "observed": 0.1917
+              "count": 1938,
+              "predicted": 0.1924,
+              "observed": 0.1925
             },
             {
               "range": [
                 0.4,
                 0.6
               ],
-              "count": 825,
+              "count": 845,
               "predicted": 0.4995,
-              "observed": 0.4958
+              "observed": 0.4959
             },
             {
               "range": [
                 0.6,
                 0.8
               ],
-              "count": 885,
-              "predicted": 0.7091,
-              "observed": 0.7073
+              "count": 900,
+              "predicted": 0.7088,
+              "observed": 0.7078
             },
             {
               "range": [
                 0.8,
                 1
               ],
-              "count": 1023,
-              "predicted": 0.8926,
-              "observed": 0.8964
+              "count": 1041,
+              "predicted": 0.8925,
+              "observed": 0.8943
             }
           ],
           "rejectionReasons": {
@@ -19703,24 +19703,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 11945,
-              "settled": 4958,
+              "settled": 5053,
               "pushes": 0,
-              "distinctEvents": 91
+              "distinctEvents": 92
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 10287,
-          "settled": 4958,
-          "distinctEvents": 91,
+          "settled": 5053,
+          "distinctEvents": 92,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1595,
-            "market": 0.1572
+            "model": 0.1604,
+            "market": 0.1581
           },
           "logLoss": {
-            "model": 0.485,
-            "market": 0.4801
+            "model": 0.488,
+            "market": 0.4829
           },
           "independentComparison": {
             "brierModel": null,
@@ -19729,10 +19729,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 4637,
-            "distinctEvents": 84,
-            "brierEstimate": 0.1602,
-            "brierMarket": 0.1578
+            "settled": 4724,
+            "distinctEvents": 85,
+            "brierEstimate": 0.1611,
+            "brierMarket": 0.1587
           },
           "calibrationBins": [
             {
@@ -19787,13 +19787,13 @@
         "learning-20261015": {
           "recorded": 3943,
           "settlementHealth": {
-            "pending": 3655,
-            "overdue": 3655,
+            "pending": 3654,
+            "overdue": 3654,
             "oldestPending": "2026-10-15T23:00Z",
             "reasons": {
-              "neverAttempted": 3647,
-              "retryScheduled": 2,
-              "attemptedUnresolved": 6,
+              "neverAttempted": 3646,
+              "retryScheduled": 8,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -19852,9 +19852,9 @@
                 0,
                 0.4
               ],
-              "count": 83,
-              "predicted": 0.2476,
-              "observed": 0.3253
+              "count": 84,
+              "predicted": 0.2478,
+              "observed": 0.3214
             },
             {
               "range": [
@@ -19901,7 +19901,7 @@
             },
             "Kalshi": {
               "recorded": 3834,
-              "settled": 185,
+              "settled": 186,
               "pushes": 0,
               "distinctEvents": 31
             },
@@ -19914,17 +19914,17 @@
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 3943,
-          "settled": 288,
+          "settled": 289,
           "distinctEvents": 43,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2332,
-            "market": 0.2225
+            "model": 0.2327,
+            "market": 0.2219
           },
           "logLoss": {
-            "model": 0.6717,
-            "market": 0.639
+            "model": 0.6704,
+            "market": 0.6378
           },
           "independentComparison": {
             "brierModel": null,
@@ -19933,10 +19933,10 @@
             "logLossMarket": null
           },
           "experimentalComparison": {
-            "settled": 288,
+            "settled": 289,
             "distinctEvents": 43,
-            "brierEstimate": 0.2332,
-            "brierMarket": 0.2225
+            "brierEstimate": 0.2327,
+            "brierMarket": 0.2219
           },
           "calibrationBins": [
             {
@@ -20184,8 +20184,8 @@
             "oldestPending": "2026-10-19T23:00Z",
             "reasons": {
               "neverAttempted": 476,
-              "retryScheduled": 0,
-              "attemptedUnresolved": 4,
+              "retryScheduled": 4,
+              "attemptedUnresolved": 0,
               "missingTicker": 0,
               "missingEventTime": 0
             }
@@ -20590,12 +20590,12 @@
     "ufc": {
       "recorded": 1062,
       "settlementHealth": {
-        "pending": 687,
-        "overdue": 687,
+        "pending": 680,
+        "overdue": 680,
         "oldestPending": "2026-10-03T22:00:00Z",
         "reasons": {
-          "neverAttempted": 645,
-          "retryScheduled": 0,
+          "neverAttempted": 627,
+          "retryScheduled": 11,
           "attemptedUnresolved": 42,
           "missingTicker": 0,
           "missingEventTime": 0
@@ -20697,24 +20697,24 @@
       "sources": {
         "Kalshi": {
           "recorded": 1062,
-          "settled": 375,
+          "settled": 382,
           "pushes": 0,
           "distinctEvents": 85
         }
       },
       "marketSupportedRecorded": 0,
       "experimentalRecorded": 0,
-      "settled": 375,
+      "settled": 382,
       "distinctEvents": 85,
       "independentSettled": 95,
       "independentEvents": 46,
       "brier": {
-        "model": 0.1597,
-        "market": 0.1582
+        "model": 0.1589,
+        "market": 0.1575
       },
       "logLoss": {
-        "model": 0.4802,
-        "market": 0.477
+        "model": 0.4783,
+        "market": 0.4752
       },
       "independentComparison": {
         "brierModel": 0.2198,
@@ -21160,12 +21160,12 @@
         "method_victory": {
           "recorded": 466,
           "settlementHealth": {
-            "pending": 322,
-            "overdue": 322,
+            "pending": 319,
+            "overdue": 319,
             "oldestPending": "2026-10-10T21:00:00Z",
             "reasons": {
-              "neverAttempted": 294,
-              "retryScheduled": 0,
+              "neverAttempted": 285,
+              "retryScheduled": 6,
               "attemptedUnresolved": 28,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -21264,24 +21264,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 466,
-              "settled": 144,
+              "settled": 147,
               "pushes": 0,
               "distinctEvents": 47
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 144,
+          "settled": 147,
           "distinctEvents": 47,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1019,
-            "market": 0.1019
+            "model": 0.1005,
+            "market": 0.1005
           },
           "logLoss": {
-            "model": 0.3361,
-            "market": 0.3361
+            "model": 0.3323,
+            "market": 0.3323
           },
           "independentComparison": {
             "brierModel": null,
@@ -21348,12 +21348,12 @@
         "round_finish": {
           "recorded": 113,
           "settlementHealth": {
-            "pending": 76,
-            "overdue": 76,
+            "pending": 75,
+            "overdue": 75,
             "oldestPending": "2026-10-10T21:00:00Z",
             "reasons": {
-              "neverAttempted": 74,
-              "retryScheduled": 0,
+              "neverAttempted": 71,
+              "retryScheduled": 2,
               "attemptedUnresolved": 2,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -21452,24 +21452,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 113,
-              "settled": 37,
+              "settled": 38,
               "pushes": 0,
-              "distinctEvents": 23
+              "distinctEvents": 24
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 37,
-          "distinctEvents": 23,
+          "settled": 38,
+          "distinctEvents": 24,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.2235,
-            "market": 0.2235
+            "model": 0.2349,
+            "market": 0.2349
           },
           "logLoss": {
-            "model": 0.634,
-            "market": 0.634
+            "model": 0.661,
+            "market": 0.661
           },
           "independentComparison": {
             "brierModel": null,
@@ -21536,12 +21536,12 @@
         "method_finish": {
           "recorded": 163,
           "settlementHealth": {
-            "pending": 105,
-            "overdue": 105,
+            "pending": 102,
+            "overdue": 102,
             "oldestPending": "2026-10-10T21:00:00Z",
             "reasons": {
-              "neverAttempted": 97,
-              "retryScheduled": 0,
+              "neverAttempted": 91,
+              "retryScheduled": 3,
               "attemptedUnresolved": 8,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -21640,24 +21640,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 163,
-              "settled": 58,
+              "settled": 61,
               "pushes": 0,
-              "distinctEvents": 26
+              "distinctEvents": 28
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 58,
-          "distinctEvents": 26,
+          "settled": 61,
+          "distinctEvents": 28,
           "independentSettled": 0,
           "independentEvents": 0,
           "brier": {
-            "model": 0.1626,
-            "market": 0.1626
+            "model": 0.156,
+            "market": 0.156
           },
           "logLoss": {
-            "model": 0.4756,
-            "market": 0.4756
+            "model": 0.4611,
+            "market": 0.4611
           },
           "independentComparison": {
             "brierModel": null,
@@ -21726,12 +21726,12 @@
         "legacy": {
           "recorded": 712,
           "settlementHealth": {
-            "pending": 367,
-            "overdue": 367,
+            "pending": 360,
+            "overdue": 360,
             "oldestPending": "2026-10-03T22:00:00Z",
             "reasons": {
-              "neverAttempted": 325,
-              "retryScheduled": 0,
+              "neverAttempted": 307,
+              "retryScheduled": 11,
               "attemptedUnresolved": 42,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -21833,24 +21833,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 712,
-              "settled": 345,
+              "settled": 352,
               "pushes": 0,
               "distinctEvents": 67
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 345,
+          "settled": 352,
           "distinctEvents": 67,
           "independentSettled": 65,
           "independentEvents": 27,
           "brier": {
-            "model": 0.1539,
-            "market": 0.153
+            "model": 0.1532,
+            "market": 0.1523
           },
           "logLoss": {
-            "model": 0.4653,
-            "market": 0.463
+            "model": 0.4635,
+            "market": 0.4613
           },
           "independentComparison": {
             "brierModel": 0.217,
@@ -22109,12 +22109,12 @@
         "legacy": {
           "recorded": 474,
           "settlementHealth": {
-            "pending": 151,
-            "overdue": 151,
+            "pending": 144,
+            "overdue": 144,
             "oldestPending": "2026-10-03T22:00:00Z",
             "reasons": {
-              "neverAttempted": 109,
-              "retryScheduled": 0,
+              "neverAttempted": 91,
+              "retryScheduled": 11,
               "attemptedUnresolved": 42,
               "missingTicker": 0,
               "missingEventTime": 0
@@ -22210,24 +22210,24 @@
           "sources": {
             "Kalshi": {
               "recorded": 474,
-              "settled": 323,
+              "settled": 330,
               "pushes": 0,
               "distinctEvents": 64
             }
           },
           "marketSupportedRecorded": 0,
           "experimentalRecorded": 0,
-          "settled": 323,
+          "settled": 330,
           "distinctEvents": 64,
           "independentSettled": 45,
           "independentEvents": 24,
           "brier": {
-            "model": 0.1506,
-            "market": 0.1497
+            "model": 0.1499,
+            "market": 0.1491
           },
           "logLoss": {
-            "model": 0.4564,
-            "market": 0.4544
+            "model": 0.4547,
+            "market": 0.4528
           },
           "independentComparison": {
             "brierModel": 0.216,
