@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-22T21:44:06.658Z",
-  "status": "warning",
+  "updated_at": "2026-11-22T21:45:19.737Z",
+  "status": "critical",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-22T21:41:43.108763+00:00",
+      "snapshotAt": "2026-11-22T21:43:43.117638+00:00",
       "ageMinutes": 2,
       "markets": 0,
       "quotedMarkets": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-22T21:42:46.242814+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 3,
       "markets": 3948,
       "quotedMarkets": 3948,
       "expiredQuotes": 0,
@@ -183,16 +183,16 @@
       }
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-22T21:42:20.573115+00:00",
-      "ageMinutes": 2,
-      "markets": 6521,
-      "quotedMarkets": 6521,
+      "snapshotAt": "2026-11-22T21:44:08.910263+00:00",
+      "ageMinutes": 1,
+      "markets": 6515,
+      "quotedMarkets": 6515,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
         "moneyline": 191,
-        "spread": 3900,
-        "total": 2430
+        "spread": 3886,
+        "total": 2438
       },
       "futureEvents": [
         {
@@ -492,7 +492,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-22T21:43:09.094640+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 2,
       "markets": 1586,
       "quotedMarkets": 1586,
       "expiredQuotes": 0,
@@ -590,7 +590,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-22T21:42:11.552161+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 3,
       "markets": 1232,
       "quotedMarkets": 1232,
       "expiredQuotes": 0,
@@ -835,7 +835,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-22T21:41:42.583521+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 4,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -846,6 +846,24 @@
     }
   },
   "alerts": [
+    {
+      "id": "pipeline:refresh-failed",
+      "sport": null,
+      "code": "refresh-failed",
+      "severity": "critical",
+      "message": "The scheduled refresh pipeline failed. Check the GitHub Actions run.",
+      "firstSeen": "2026-11-22T21:45:19.737Z",
+      "changedAt": "2026-11-22T21:45:19.737Z"
+    },
+    {
+      "id": "ncaaf:starts-missing",
+      "sport": "ncaaf",
+      "code": "starts-missing",
+      "severity": "warning",
+      "message": "1304 upcoming markets lack verified start times.",
+      "firstSeen": "2026-11-22T21:45:19.737Z",
+      "changedAt": "2026-11-22T21:45:19.737Z"
+    },
     {
       "id": "mlb:settlement-backlog",
       "sport": "mlb",
@@ -906,11 +924,11 @@
   "refreshResults": {
     "mlb": {
       "ok": true,
-      "at": "2026-11-22T21:43:26.204502+00:00"
+      "at": "2026-11-22T21:45:19.719547+00:00"
     },
     "ncaaf": {
       "ok": true,
-      "at": "2026-11-22T21:43:26.204502+00:00"
+      "at": "2026-11-22T21:45:19.719547+00:00"
     },
     "nfl": {
       "ok": true,
@@ -921,8 +939,8 @@
       "at": "2026-11-22T21:42:56.669978+00:00"
     },
     "ufc": {
-      "ok": true,
-      "at": "2026-11-22T21:43:26.204502+00:00"
+      "ok": false,
+      "at": "2026-11-22T21:45:19.719547+00:00"
     },
     "nba": {
       "ok": true,
