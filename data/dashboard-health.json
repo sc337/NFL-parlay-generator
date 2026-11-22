@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-22T02:52:22.885Z",
+  "updated_at": "2026-11-22T03:00:03.655Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-22T02:51:27.784474+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,24 +16,22 @@
     },
     "nba": {
       "snapshotAt": "2026-11-22T02:50:26.057351+00:00",
-      "ageMinutes": 2,
-      "markets": 1736,
-      "quotedMarkets": 1736,
+      "ageMinutes": 10,
+      "markets": 1106,
+      "quotedMarkets": 1106,
       "expiredQuotes": 0,
-      "playerMarkets": 932,
+      "playerMarkets": 428,
       "families": {
-        "moneyline": 68,
-        "spread": 386,
-        "total": 350,
-        "points": 168,
-        "rebounds": 200,
-        "assists": 130,
-        "threes": 178,
-        "pra": 132,
-        "double_double": 34,
-        "triple_double": 10,
-        "steals": 54,
-        "blocks": 26
+        "moneyline": 66,
+        "spread": 320,
+        "total": 292,
+        "points": 84,
+        "rebounds": 94,
+        "assists": 74,
+        "threes": 90,
+        "pra": 62,
+        "double_double": 20,
+        "triple_double": 4
       },
       "futureEvents": [
         {
@@ -165,22 +163,17 @@
           "time": "2026-11-23T01:30Z"
         },
         {
-          "id": "401910028",
-          "time": "2026-11-22T03:00Z"
-        },
-        {
           "id": "401910030",
           "time": "2026-11-22T23:00:00+00:00"
         }
       ],
       "playerCounts": {
-        "401910028": 504,
         "401910029": 428
       }
     },
     "ncaaf": {
       "snapshotAt": "2026-11-22T02:51:45.877869+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 8,
       "markets": 1357,
       "quotedMarkets": 1357,
       "expiredQuotes": 0,
@@ -432,7 +425,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-22T02:51:17.530122+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 6902,
       "quotedMarkets": 6902,
       "expiredQuotes": 0,
@@ -579,16 +572,16 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-22T02:49:58.453709+00:00",
-      "ageMinutes": 2,
-      "markets": 517,
-      "quotedMarkets": 517,
+      "snapshotAt": "2026-11-22T03:00:00.212395+00:00",
+      "ageMinutes": 0,
+      "markets": 461,
+      "quotedMarkets": 461,
       "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 113,
-        "spread": 126,
-        "total": 278
+        "moneyline": 109,
+        "spread": 110,
+        "total": 242
       },
       "futureEvents": [
         {
@@ -806,24 +799,13 @@
         {
           "id": "401892768",
           "time": "2026-11-22T17:30:00+00:00"
-        },
-        {
-          "id": "401892767",
-          "time": "2026-11-22T03:00Z"
-        },
-        {
-          "id": "401892766",
-          "time": "2026-11-22T03:00Z"
         }
       ],
-      "playerCounts": {
-        "401892766": 240,
-        "401892767": 252
-      }
+      "playerCounts": {}
     },
     "ufc": {
       "snapshotAt": "2026-11-22T02:51:27.009249+00:00",
-      "ageMinutes": 1,
+      "ageMinutes": 9,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -834,15 +816,6 @@
     }
   },
   "alerts": [
-    {
-      "id": "nhl:props-missing",
-      "sport": "nhl",
-      "code": "props-missing",
-      "severity": "warning",
-      "message": "Player props disappeared for games that still have team markets.",
-      "firstSeen": "2026-11-22T00:09:25.792Z",
-      "changedAt": "2026-11-22T00:09:25.792Z"
-    },
     {
       "id": "mlb:settlement-backlog",
       "sport": "mlb",
@@ -909,12 +882,8 @@
   ],
   "resolved": [
     {
-      "id": "pipeline:refresh-failed",
-      "resolvedAt": "2026-11-22T02:52:22.885Z"
-    },
-    {
-      "id": "ufc:stale",
-      "resolvedAt": "2026-11-22T02:52:22.885Z"
+      "id": "nhl:props-missing",
+      "resolvedAt": "2026-11-22T03:00:03.655Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/44966710049",
@@ -925,7 +894,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-22T02:50:01.868644+00:00"
+      "at": "2026-11-22T03:00:03.632696+00:00"
     },
     "nfl": {
       "ok": true,
