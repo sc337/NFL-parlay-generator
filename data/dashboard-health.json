@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-22T08:10:56.379Z",
+  "updated_at": "2026-11-22T08:11:09.477Z",
   "status": "critical",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-22T06:11:27.785867+00:00",
-      "ageMinutes": 119,
+      "ageMinutes": 120,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -15,22 +15,22 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-22T06:10:25.253392+00:00",
-      "ageMinutes": 121,
-      "markets": 1374,
-      "quotedMarkets": 1374,
-      "expiredQuotes": 1374,
-      "playerMarkets": 440,
+      "snapshotAt": "2026-11-22T08:11:01.306536+00:00",
+      "ageMinutes": 0,
+      "markets": 2216,
+      "quotedMarkets": 2216,
+      "expiredQuotes": 0,
+      "playerMarkets": 1282,
       "families": {
         "moneyline": 70,
-        "spread": 446,
-        "total": 418,
-        "points": 86,
-        "rebounds": 98,
+        "spread": 444,
+        "total": 420,
+        "points": 444,
+        "rebounds": 146,
         "assists": 74,
-        "threes": 92,
+        "threes": 530,
         "pra": 62,
-        "double_double": 22,
+        "double_double": 20,
         "triple_double": 6
       },
       "futureEvents": [
@@ -164,7 +164,7 @@
         },
         {
           "id": "401910029",
-          "time": "2026-11-22T20:30Z"
+          "time": "2026-11-22T20:30:00+00:00"
         },
         {
           "id": "401910035",
@@ -176,12 +176,17 @@
         }
       ],
       "playerCounts": {
-        "401910029": 440
+        "401910029": 442,
+        "401910030": 146,
+        "401910031": 180,
+        "401910032": 224,
+        "401910033": 162,
+        "401910034": 128
       }
     },
     "ncaaf": {
       "snapshotAt": "2026-11-22T06:11:38.254040+00:00",
-      "ageMinutes": 119,
+      "ageMinutes": 120,
       "markets": 1037,
       "quotedMarkets": 1037,
       "expiredQuotes": 1037,
@@ -838,7 +843,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-22T04:11:27.009307+00:00",
-      "ageMinutes": 239,
+      "ageMinutes": 240,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -854,25 +859,7 @@
       "sport": "mlb",
       "code": "stale",
       "severity": "warning",
-      "message": "Feed is 119 minutes old.",
-      "firstSeen": "2026-11-22T08:10:56.379Z",
-      "changedAt": "2026-11-22T08:10:56.379Z"
-    },
-    {
-      "id": "nba:stale",
-      "sport": "nba",
-      "code": "stale",
-      "severity": "critical",
-      "message": "Feed is 121 minutes old.",
-      "firstSeen": "2026-11-22T08:10:56.379Z",
-      "changedAt": "2026-11-22T08:10:56.379Z"
-    },
-    {
-      "id": "nba:native-quotes-stale",
-      "sport": "nba",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "1374 individual quotes expired; aggregate refresh time is not price freshness.",
+      "message": "Feed is 120 minutes old.",
       "firstSeen": "2026-11-22T08:10:56.379Z",
       "changedAt": "2026-11-22T08:10:56.379Z"
     },
@@ -881,7 +868,7 @@
       "sport": "ncaaf",
       "code": "stale",
       "severity": "warning",
-      "message": "Feed is 119 minutes old.",
+      "message": "Feed is 120 minutes old.",
       "firstSeen": "2026-11-22T08:10:56.379Z",
       "changedAt": "2026-11-22T08:10:56.379Z"
     },
@@ -917,18 +904,9 @@
       "sport": "ufc",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 239 minutes old.",
+      "message": "Feed is 240 minutes old.",
       "firstSeen": "2026-11-22T04:41:44.020Z",
       "changedAt": "2026-11-22T06:11:41.864Z"
-    },
-    {
-      "id": "nba:worker-overdue",
-      "sport": "nba",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-22T08:10:56.379Z",
-      "changedAt": "2026-11-22T08:10:56.379Z"
     },
     {
       "id": "nfl:worker-overdue",
@@ -1014,15 +992,23 @@
   ],
   "resolved": [
     {
-      "id": "pipeline:refresh-failed",
-      "resolvedAt": "2026-11-22T08:10:56.379Z"
+      "id": "nba:stale",
+      "resolvedAt": "2026-11-22T08:11:09.477Z"
+    },
+    {
+      "id": "nba:native-quotes-stale",
+      "resolvedAt": "2026-11-22T08:11:09.477Z"
+    },
+    {
+      "id": "nba:worker-overdue",
+      "resolvedAt": "2026-11-22T08:11:09.477Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45001556980",
   "refreshResults": {
     "nba": {
       "ok": true,
-      "at": "2026-11-22T06:10:30.150498+00:00"
+      "at": "2026-11-22T08:11:09.455428+00:00"
     },
     "nhl": {
       "ok": true,
