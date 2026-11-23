@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-23T14:56:55.722Z",
+  "updated_at": "2026-11-23T14:57:07.353Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-23T13:44:30.713794+00:00",
-      "ageMinutes": 72,
+      "ageMinutes": 73,
       "markets": 6162,
       "quotedMarkets": 6162,
       "expiredQuotes": 6162,
@@ -483,23 +483,23 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-23T13:46:19.497704+00:00",
-      "ageMinutes": 71,
-      "markets": 3607,
-      "quotedMarkets": 3607,
-      "expiredQuotes": 3607,
-      "playerMarkets": 2124,
+      "snapshotAt": "2026-11-23T14:56:49.532934+00:00",
+      "ageMinutes": 0,
+      "markets": 3657,
+      "quotedMarkets": 3657,
+      "expiredQuotes": 0,
+      "playerMarkets": 2172,
       "families": {
         "h2h": 34,
         "td": 114,
         "totals": 610,
-        "spreads": 839,
-        "rushing": 438,
-        "receiving": 1226,
+        "spreads": 841,
+        "rushing": 450,
+        "receiving": 1258,
         "passing": 196,
-        "receptions": 44,
+        "completions": 8,
         "passing_tds": 98,
-        "completions": 8
+        "receptions": 48
       },
       "futureEvents": [
         {
@@ -573,7 +573,7 @@
       ],
       "playerCounts": {
         "kalshi-cincinnati-bengals-washington-commanders": 445,
-        "kalshi-green-bay-packers-los-angeles-rams": 385,
+        "kalshi-green-bay-packers-los-angeles-rams": 433,
         "kalshi-chicago-bears-detroit-lions": 425,
         "kalshi-dallas-cowboys-philadelphia-eagles": 255,
         "kalshi-buffalo-bills-kansas-city-chiefs": 286,
@@ -841,7 +841,7 @@
       "sport": "nba",
       "code": "stale",
       "severity": "warning",
-      "message": "Feed is 72 minutes old.",
+      "message": "Feed is 73 minutes old.",
       "firstSeen": "2026-11-23T14:56:55.722Z",
       "changedAt": "2026-11-23T14:56:55.722Z"
     },
@@ -882,24 +882,6 @@
       "changedAt": "2026-11-23T05:16:36.420Z"
     },
     {
-      "id": "nfl:stale",
-      "sport": "nfl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 71 minutes old.",
-      "firstSeen": "2026-11-23T14:56:55.722Z",
-      "changedAt": "2026-11-23T14:56:55.722Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "3607 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-23T14:56:55.722Z",
-      "changedAt": "2026-11-23T14:56:55.722Z"
-    },
-    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
@@ -920,15 +902,6 @@
     {
       "id": "nba:worker-overdue",
       "sport": "nba",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-23T14:56:55.722Z",
-      "changedAt": "2026-11-23T14:56:55.722Z"
-    },
-    {
-      "id": "nfl:worker-overdue",
-      "sport": "nfl",
       "code": "worker-overdue",
       "severity": "warning",
       "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
@@ -999,7 +972,20 @@
       "changedAt": "2026-11-23T14:56:55.722Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nfl:stale",
+      "resolvedAt": "2026-11-23T14:57:07.353Z"
+    },
+    {
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-11-23T14:57:07.353Z"
+    },
+    {
+      "id": "nfl:worker-overdue",
+      "resolvedAt": "2026-11-23T14:57:07.353Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45199598535",
   "refreshResults": {
     "mlb": {
@@ -1024,7 +1010,7 @@
     },
     "nfl": {
       "ok": true,
-      "at": "2026-11-23T13:46:33.423713+00:00"
+      "at": "2026-11-23T14:57:07.329412+00:00"
     }
   }
 }
