@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-24T23:32:04.013Z",
+  "updated_at": "2026-11-24T23:32:08.241Z",
   "status": "critical",
   "sports": {
     "mlb": {
@@ -472,23 +472,23 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-24T22:54:35.482556+00:00",
-      "ageMinutes": 37,
-      "markets": 4121,
-      "quotedMarkets": 4121,
-      "expiredQuotes": 4121,
-      "playerMarkets": 2614,
+      "snapshotAt": "2026-11-24T23:31:48.313512+00:00",
+      "ageMinutes": 0,
+      "markets": 4398,
+      "quotedMarkets": 4398,
+      "expiredQuotes": 0,
+      "playerMarkets": 2891,
       "families": {
         "h2h": 60,
-        "td": 115,
+        "td": 131,
         "totals": 610,
         "spreads": 837,
-        "rushing": 574,
-        "receiving": 1501,
-        "passing": 194,
+        "receiving": 1656,
+        "rushing": 664,
+        "passing": 196,
+        "receptions": 126,
         "completions": 18,
-        "passing_tds": 86,
-        "receptions": 126
+        "passing_tds": 100
       },
       "futureEvents": [
         {
@@ -614,10 +614,12 @@
       ],
       "playerCounts": {
         "kalshi-green-bay-packers-los-angeles-rams": 512,
-        "kalshi-chicago-bears-detroit-lions": 546,
+        "kalshi-chicago-bears-detroit-lions": 548,
         "kalshi-dallas-cowboys-philadelphia-eagles": 325,
-        "kalshi-buffalo-bills-kansas-city-chiefs": 342,
-        "kalshi-denver-broncos-pittsburgh-steelers": 479,
+        "kalshi-buffalo-bills-kansas-city-chiefs": 344,
+        "kalshi-denver-broncos-pittsburgh-steelers": 478,
+        "kalshi-miami-dolphins-new-york-jets": 271,
+        "kalshi-atlanta-falcons-minnesota-vikings": 3,
         "kalshi-san-francisco-49ers-seattle-seahawks": 410
       }
     },
@@ -888,24 +890,6 @@
       "changedAt": "2026-11-24T20:23:19.753Z"
     },
     {
-      "id": "nfl:stale",
-      "sport": "nfl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 37 minutes old.",
-      "firstSeen": "2026-11-24T23:31:54.063Z",
-      "changedAt": "2026-11-24T23:31:54.063Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "4121 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-24T23:31:54.063Z",
-      "changedAt": "2026-11-24T23:31:54.063Z"
-    },
-    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
@@ -980,16 +964,12 @@
   ],
   "resolved": [
     {
-      "id": "nba:stale",
-      "resolvedAt": "2026-11-24T23:32:04.013Z"
+      "id": "nfl:stale",
+      "resolvedAt": "2026-11-24T23:32:08.241Z"
     },
     {
-      "id": "nba:native-quotes-stale",
-      "resolvedAt": "2026-11-24T23:32:04.013Z"
-    },
-    {
-      "id": "nba:worker-overdue",
-      "resolvedAt": "2026-11-24T23:32:04.013Z"
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-11-24T23:32:08.241Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45510667156",
@@ -1001,6 +981,10 @@
     "nhl": {
       "ok": true,
       "at": "2026-11-24T23:31:54.045961+00:00"
+    },
+    "nfl": {
+      "ok": true,
+      "at": "2026-11-24T23:32:08.219215+00:00"
     }
   }
 }
