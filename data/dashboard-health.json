@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-25T19:26:49.959Z",
+  "updated_at": "2026-11-25T19:27:00.608Z",
   "status": "critical",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-25T16:20:25.554242+00:00",
-      "ageMinutes": 186,
+      "ageMinutes": 187,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -458,23 +458,23 @@
       "playerCounts": {}
     },
     "nfl": {
-      "snapshotAt": "2026-11-25T16:20:25.053474+00:00",
-      "ageMinutes": 186,
-      "markets": 5073,
-      "quotedMarkets": 5073,
-      "expiredQuotes": 5073,
-      "playerMarkets": 3562,
+      "snapshotAt": "2026-11-25T19:26:39.667315+00:00",
+      "ageMinutes": 0,
+      "markets": 5630,
+      "quotedMarkets": 5630,
+      "expiredQuotes": 0,
+      "playerMarkets": 4119,
       "families": {
         "h2h": 60,
-        "td": 223,
+        "td": 225,
         "totals": 614,
         "spreads": 837,
-        "rushing": 803,
-        "receiving": 1898,
+        "rushing": 990,
         "passing": 330,
-        "receptions": 132,
+        "receptions": 138,
+        "receiving": 2242,
         "completions": 18,
-        "passing_tds": 158
+        "passing_tds": 176
       },
       "futureEvents": [
         {
@@ -601,16 +601,16 @@
       "playerCounts": {
         "kalshi-green-bay-packers-los-angeles-rams": 555,
         "kalshi-chicago-bears-detroit-lions": 551,
-        "kalshi-dallas-cowboys-philadelphia-eagles": 365,
-        "kalshi-buffalo-bills-kansas-city-chiefs": 375,
-        "kalshi-denver-broncos-pittsburgh-steelers": 484,
+        "kalshi-dallas-cowboys-philadelphia-eagles": 390,
+        "kalshi-buffalo-bills-kansas-city-chiefs": 463,
+        "kalshi-denver-broncos-pittsburgh-steelers": 485,
         "kalshi-jacksonville-jaguars-tennessee-titans": 74,
-        "kalshi-miami-dolphins-new-york-jets": 270,
-        "kalshi-indianapolis-colts-new-york-giants": 57,
-        "kalshi-cincinnati-bengals-new-orleans-saints": 53,
-        "kalshi-atlanta-falcons-minnesota-vikings": 334,
-        "kalshi-baltimore-ravens-houston-texans": 34,
-        "kalshi-san-francisco-49ers-seattle-seahawks": 410
+        "kalshi-miami-dolphins-new-york-jets": 271,
+        "kalshi-indianapolis-colts-new-york-giants": 221,
+        "kalshi-cincinnati-bengals-new-orleans-saints": 339,
+        "kalshi-atlanta-falcons-minnesota-vikings": 332,
+        "kalshi-baltimore-ravens-houston-texans": 33,
+        "kalshi-san-francisco-49ers-seattle-seahawks": 405
       }
     },
     "nhl": {
@@ -886,7 +886,7 @@
     },
     "ufc": {
       "snapshotAt": "2026-11-25T16:20:26.387032+00:00",
-      "ageMinutes": 186,
+      "ageMinutes": 187,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -902,7 +902,7 @@
       "sport": "mlb",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 186 minutes old.",
+      "message": "Feed is 187 minutes old.",
       "firstSeen": "2026-11-25T19:26:49.959Z",
       "changedAt": "2026-11-25T19:26:49.959Z"
     },
@@ -943,44 +943,17 @@
       "changedAt": "2026-11-25T19:26:49.959Z"
     },
     {
-      "id": "nfl:stale",
-      "sport": "nfl",
-      "code": "stale",
-      "severity": "critical",
-      "message": "Feed is 186 minutes old.",
-      "firstSeen": "2026-11-25T19:26:49.959Z",
-      "changedAt": "2026-11-25T19:26:49.959Z"
-    },
-    {
-      "id": "nfl:native-quotes-stale",
-      "sport": "nfl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "5073 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-25T19:26:49.959Z",
-      "changedAt": "2026-11-25T19:26:49.959Z"
-    },
-    {
       "id": "ufc:stale",
       "sport": "ufc",
       "code": "stale",
       "severity": "critical",
-      "message": "Feed is 186 minutes old.",
+      "message": "Feed is 187 minutes old.",
       "firstSeen": "2026-11-25T19:26:49.959Z",
       "changedAt": "2026-11-25T19:26:49.959Z"
     },
     {
       "id": "ncaaf:worker-overdue",
       "sport": "ncaaf",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-25T19:26:49.959Z",
-      "changedAt": "2026-11-25T19:26:49.959Z"
-    },
-    {
-      "id": "nfl:worker-overdue",
-      "sport": "nfl",
       "code": "worker-overdue",
       "severity": "warning",
       "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
@@ -1051,7 +1024,20 @@
       "changedAt": "2026-11-25T19:26:49.959Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nfl:stale",
+      "resolvedAt": "2026-11-25T19:27:00.608Z"
+    },
+    {
+      "id": "nfl:native-quotes-stale",
+      "resolvedAt": "2026-11-25T19:27:00.608Z"
+    },
+    {
+      "id": "nfl:worker-overdue",
+      "resolvedAt": "2026-11-25T19:27:00.608Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45685142714",
   "refreshResults": {
     "mlb": {
@@ -1064,7 +1050,7 @@
     },
     "nfl": {
       "ok": true,
-      "at": "2026-11-25T16:23:58.730139+00:00"
+      "at": "2026-11-25T19:27:00.590001+00:00"
     },
     "nhl": {
       "ok": true,
