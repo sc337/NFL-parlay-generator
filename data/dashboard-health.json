@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-25T22:18:47.211Z",
+  "updated_at": "2026-11-25T22:26:45.221Z",
   "status": "warning",
   "sports": {
     "mlb": {
       "snapshotAt": "2026-11-25T22:16:24.700823+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-25T22:16:40.511517+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 5404,
       "quotedMarkets": 5404,
       "expiredQuotes": 0,
@@ -166,7 +166,7 @@
     },
     "ncaaf": {
       "snapshotAt": "2026-11-25T22:17:07.389417+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 7052,
       "quotedMarkets": 7052,
       "expiredQuotes": 0,
@@ -498,7 +498,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-25T22:16:40.081372+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 6012,
       "quotedMarkets": 6012,
       "expiredQuotes": 0,
@@ -654,17 +654,17 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-25T22:16:38.889847+00:00",
-      "ageMinutes": 2,
-      "markets": 4424,
-      "quotedMarkets": 4424,
+      "snapshotAt": "2026-11-25T22:26:37.987999+00:00",
+      "ageMinutes": 0,
+      "markets": 4428,
+      "quotedMarkets": 4428,
       "expiredQuotes": 0,
-      "playerMarkets": 3552,
+      "playerMarkets": 3556,
       "families": {
         "moneyline": 118,
         "spread": 232,
         "total": 522,
-        "goals": 1356,
+        "goals": 1360,
         "assists": 902,
         "points": 1248,
         "saves": 46
@@ -908,7 +908,7 @@
         }
       ],
       "playerCounts": {
-        "401892781": 246,
+        "401892781": 248,
         "401892782": 236,
         "401892783": 224,
         "401892784": 226,
@@ -917,16 +917,16 @@
         "401892787": 292,
         "401892788": 256,
         "401892789": 254,
-        "401892790": 248,
+        "401892790": 246,
         "401892791": 256,
         "401892792": 282,
         "401892793": 294,
-        "401892794": 294
+        "401892794": 298
       }
     },
     "ufc": {
       "snapshotAt": "2026-11-25T22:16:24.024363+00:00",
-      "ageMinutes": 2,
+      "ageMinutes": 10,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -937,6 +937,15 @@
     }
   },
   "alerts": [
+    {
+      "id": "pipeline:evaluation-stale",
+      "sport": null,
+      "code": "evaluation-stale",
+      "severity": "warning",
+      "message": "Performance recording/settlement report is stale; betting edge remains unverified.",
+      "firstSeen": "2026-11-25T22:26:45.221Z",
+      "changedAt": "2026-11-25T22:26:45.221Z"
+    },
     {
       "id": "mlb:settlement-backlog",
       "sport": "mlb",
@@ -1009,7 +1018,7 @@
     },
     "nhl": {
       "ok": true,
-      "at": "2026-11-25T22:16:46.275402+00:00"
+      "at": "2026-11-25T22:26:45.203527+00:00"
     },
     "ufc": {
       "ok": true,
