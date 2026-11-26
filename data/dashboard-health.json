@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-26T02:55:15.777Z",
+  "updated_at": "2026-11-26T02:55:29.899Z",
   "status": "critical",
   "sports": {
     "mlb": {
@@ -15,27 +15,35 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-26T00:46:40.636747+00:00",
-      "ageMinutes": 129,
-      "markets": 1274,
-      "quotedMarkets": 1274,
-      "expiredQuotes": 1274,
-      "playerMarkets": 970,
+      "snapshotAt": "2026-11-26T02:55:23.451236+00:00",
+      "ageMinutes": 0,
+      "markets": 1242,
+      "quotedMarkets": 1242,
+      "expiredQuotes": 0,
+      "playerMarkets": 940,
       "families": {
-        "moneyline": 54,
-        "spread": 130,
-        "total": 120,
-        "points": 164,
-        "rebounds": 190,
-        "assists": 126,
-        "threes": 194,
-        "pra": 134,
-        "double_double": 38,
+        "moneyline": 58,
+        "spread": 128,
+        "total": 116,
+        "points": 156,
+        "rebounds": 182,
+        "assists": 118,
+        "threes": 182,
+        "pra": 128,
+        "double_double": 36,
         "triple_double": 8,
-        "steals": 92,
-        "blocks": 24
+        "steals": 94,
+        "blocks": 36
       },
       "futureEvents": [
+        {
+          "id": "401910065",
+          "time": "2026-12-01T01:00Z"
+        },
+        {
+          "id": "401910059",
+          "time": "2026-11-30T01:30Z"
+        },
         {
           "id": "401910058",
           "time": "2026-11-29T23:00Z"
@@ -134,11 +142,11 @@
         },
         {
           "id": "401909325",
-          "time": "2026-11-26T03:00:00+00:00"
+          "time": "2026-11-26T03:00Z"
         },
         {
           "id": "401909324",
-          "time": "2026-11-26T03:00:00+00:00"
+          "time": "2026-11-26T03:00Z"
         },
         {
           "id": "401909330",
@@ -146,8 +154,8 @@
         }
       ],
       "playerCounts": {
-        "401909324": 428,
-        "401909325": 542
+        "401909324": 426,
+        "401909325": 514
       }
     },
     "ncaaf": {
@@ -866,24 +874,6 @@
       "changedAt": "2026-11-26T02:55:15.777Z"
     },
     {
-      "id": "nba:stale",
-      "sport": "nba",
-      "code": "stale",
-      "severity": "critical",
-      "message": "Feed is 129 minutes old.",
-      "firstSeen": "2026-11-26T02:55:15.777Z",
-      "changedAt": "2026-11-26T02:55:15.777Z"
-    },
-    {
-      "id": "nba:native-quotes-stale",
-      "sport": "nba",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "1274 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-26T02:55:15.777Z",
-      "changedAt": "2026-11-26T02:55:15.777Z"
-    },
-    {
       "id": "ncaaf:stale",
       "sport": "ncaaf",
       "code": "stale",
@@ -940,15 +930,6 @@
     {
       "id": "nfl:worker-overdue",
       "sport": "nfl",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-26T02:55:15.777Z",
-      "changedAt": "2026-11-26T02:55:15.777Z"
-    },
-    {
-      "id": "nba:worker-overdue",
-      "sport": "nba",
       "code": "worker-overdue",
       "severity": "warning",
       "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
@@ -1021,8 +1002,16 @@
   ],
   "resolved": [
     {
-      "id": "nhl:props-missing",
-      "resolvedAt": "2026-11-26T02:55:15.777Z"
+      "id": "nba:stale",
+      "resolvedAt": "2026-11-26T02:55:29.899Z"
+    },
+    {
+      "id": "nba:native-quotes-stale",
+      "resolvedAt": "2026-11-26T02:55:29.899Z"
+    },
+    {
+      "id": "nba:worker-overdue",
+      "resolvedAt": "2026-11-26T02:55:29.899Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45745523816",
@@ -1049,7 +1038,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-26T00:47:05.804546+00:00"
+      "at": "2026-11-26T02:55:29.878631+00:00"
     }
   }
 }
