@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-26T15:12:20.232Z",
+  "updated_at": "2026-11-26T15:12:28.204Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -15,16 +15,16 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-26T15:02:27.313298+00:00",
-      "ageMinutes": 10,
-      "markets": 694,
-      "quotedMarkets": 694,
-      "expiredQuotes": 664,
+      "snapshotAt": "2026-11-26T15:12:26.607514+00:00",
+      "ageMinutes": 0,
+      "markets": 672,
+      "quotedMarkets": 672,
+      "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 64,
-        "spread": 330,
-        "total": 300
+        "moneyline": 54,
+        "spread": 320,
+        "total": 298
       },
       "futureEvents": [
         {
@@ -113,7 +113,7 @@
         },
         {
           "id": "401909334",
-          "time": "2026-11-28T02:30:00+00:00"
+          "time": "2026-11-28T02:30Z"
         },
         {
           "id": "401909333",
@@ -847,15 +847,6 @@
   },
   "alerts": [
     {
-      "id": "nba:native-quotes-stale",
-      "sport": "nba",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "664 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-26T15:02:22.489Z",
-      "changedAt": "2026-11-26T15:02:22.489Z"
-    },
-    {
       "id": "mlb:settlement-backlog",
       "sport": "mlb",
       "code": "settlement-backlog",
@@ -910,7 +901,12 @@
       "changedAt": "2026-11-19T22:14:53.773Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nba:native-quotes-stale",
+      "resolvedAt": "2026-11-26T15:12:28.204Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45823632134",
   "refreshResults": {
     "mlb": {
@@ -935,7 +931,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-26T15:02:28.882161+00:00"
+      "at": "2026-11-26T15:12:28.179882+00:00"
     }
   }
 }
