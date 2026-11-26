@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-26T12:52:22.749Z",
+  "updated_at": "2026-11-26T12:52:28.323Z",
   "status": "critical",
   "sports": {
     "mlb": {
@@ -15,15 +15,15 @@
       "playerCounts": {}
     },
     "nba": {
-      "snapshotAt": "2026-11-26T08:15:12.935322+00:00",
-      "ageMinutes": 277,
-      "markets": 662,
-      "quotedMarkets": 662,
-      "expiredQuotes": 662,
+      "snapshotAt": "2026-11-26T12:52:24.709157+00:00",
+      "ageMinutes": 0,
+      "markets": 674,
+      "quotedMarkets": 674,
+      "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
-        "moneyline": 60,
-        "spread": 304,
+        "moneyline": 54,
+        "spread": 322,
         "total": 298
       },
       "futureEvents": [
@@ -856,24 +856,6 @@
       "changedAt": "2026-11-26T12:52:22.749Z"
     },
     {
-      "id": "nba:stale",
-      "sport": "nba",
-      "code": "stale",
-      "severity": "critical",
-      "message": "Feed is 277 minutes old.",
-      "firstSeen": "2026-11-26T12:52:22.749Z",
-      "changedAt": "2026-11-26T12:52:22.749Z"
-    },
-    {
-      "id": "nba:native-quotes-stale",
-      "sport": "nba",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "662 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-26T12:52:22.749Z",
-      "changedAt": "2026-11-26T12:52:22.749Z"
-    },
-    {
       "id": "ncaaf:stale",
       "sport": "ncaaf",
       "code": "stale",
@@ -930,15 +912,6 @@
     {
       "id": "nfl:worker-overdue",
       "sport": "nfl",
-      "code": "worker-overdue",
-      "severity": "warning",
-      "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
-      "firstSeen": "2026-11-26T12:52:22.749Z",
-      "changedAt": "2026-11-26T12:52:22.749Z"
-    },
-    {
-      "id": "nba:worker-overdue",
-      "sport": "nba",
       "code": "worker-overdue",
       "severity": "warning",
       "message": "No refresh worker completion in the last 30 minutes; its session may have ended or schedule dispatch is delayed.",
@@ -1018,7 +991,20 @@
       "changedAt": "2026-11-26T12:52:22.749Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nba:stale",
+      "resolvedAt": "2026-11-26T12:52:28.323Z"
+    },
+    {
+      "id": "nba:native-quotes-stale",
+      "resolvedAt": "2026-11-26T12:52:28.323Z"
+    },
+    {
+      "id": "nba:worker-overdue",
+      "resolvedAt": "2026-11-26T12:52:28.323Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/45823632134",
   "refreshResults": {
     "mlb": {
@@ -1043,7 +1029,7 @@
     },
     "nba": {
       "ok": true,
-      "at": "2026-11-26T08:15:16.494034+00:00"
+      "at": "2026-11-26T12:52:28.298201+00:00"
     }
   }
 }
