@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-27T15:19:02.982Z",
+  "updated_at": "2026-11-27T15:20:22.855Z",
   "status": "warning",
   "sports": {
     "mlb": {
-      "snapshotAt": "2026-11-27T14:46:11.236997+00:00",
-      "ageMinutes": 33,
+      "snapshotAt": "2026-11-27T15:18:31.154580+00:00",
+      "ageMinutes": 2,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -16,7 +16,7 @@
     },
     "nba": {
       "snapshotAt": "2026-11-27T15:18:53.303827+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 1,
       "markets": 1446,
       "quotedMarkets": 1446,
       "expiredQuotes": 0,
@@ -175,16 +175,16 @@
       "playerCounts": {}
     },
     "ncaaf": {
-      "snapshotAt": "2026-11-27T14:45:49.812460+00:00",
-      "ageMinutes": 33,
-      "markets": 7019,
-      "quotedMarkets": 7019,
-      "expiredQuotes": 7019,
+      "snapshotAt": "2026-11-27T15:19:13.123874+00:00",
+      "ageMinutes": 1,
+      "markets": 7021,
+      "quotedMarkets": 7021,
+      "expiredQuotes": 0,
       "playerMarkets": 0,
       "families": {
         "moneyline": 171,
         "spread": 4108,
-        "total": 2740
+        "total": 2742
       },
       "futureEvents": [
         {
@@ -221,7 +221,7 @@
         },
         {
           "id": "401864546",
-          "time": "2026-11-27T21:30Z"
+          "time": "2026-11-27T21:30:00+00:00"
         },
         {
           "id": "401858544",
@@ -305,7 +305,7 @@
         },
         {
           "id": "401862837",
-          "time": "2026-11-28T18:00Z"
+          "time": "2026-11-28T18:00:00+00:00"
         },
         {
           "id": "401871102",
@@ -369,7 +369,7 @@
         },
         {
           "id": "401858542",
-          "time": "2026-11-28T21:15:00+00:00"
+          "time": "2026-11-28T21:15Z"
         },
         {
           "id": "401856763",
@@ -504,7 +504,7 @@
     },
     "nfl": {
       "snapshotAt": "2026-11-27T15:18:36.924334+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 5969,
       "quotedMarkets": 5969,
       "expiredQuotes": 0,
@@ -644,7 +644,7 @@
     },
     "nhl": {
       "snapshotAt": "2026-11-27T15:18:50.009836+00:00",
-      "ageMinutes": 0,
+      "ageMinutes": 2,
       "markets": 4414,
       "quotedMarkets": 4414,
       "expiredQuotes": 0,
@@ -919,8 +919,8 @@
       }
     },
     "ufc": {
-      "snapshotAt": "2026-11-27T14:46:12.156866+00:00",
-      "ageMinutes": 33,
+      "snapshotAt": "2026-11-27T15:18:30.180766+00:00",
+      "ageMinutes": 2,
       "markets": 0,
       "quotedMarkets": 0,
       "expiredQuotes": 0,
@@ -931,42 +931,6 @@
     }
   },
   "alerts": [
-    {
-      "id": "mlb:stale",
-      "sport": "mlb",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 33 minutes old.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
-    {
-      "id": "ncaaf:stale",
-      "sport": "ncaaf",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 33 minutes old.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
-    {
-      "id": "ncaaf:native-quotes-stale",
-      "sport": "ncaaf",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "7019 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
-    {
-      "id": "ufc:stale",
-      "sport": "ufc",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 33 minutes old.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
     {
       "id": "mlb:settlement-backlog",
       "sport": "mlb",
@@ -1024,12 +988,20 @@
   ],
   "resolved": [
     {
-      "id": "nfl:stale",
-      "resolvedAt": "2026-11-27T15:19:02.982Z"
+      "id": "mlb:stale",
+      "resolvedAt": "2026-11-27T15:20:22.855Z"
     },
     {
-      "id": "nfl:native-quotes-stale",
-      "resolvedAt": "2026-11-27T15:19:02.982Z"
+      "id": "ncaaf:stale",
+      "resolvedAt": "2026-11-27T15:20:22.855Z"
+    },
+    {
+      "id": "ncaaf:native-quotes-stale",
+      "resolvedAt": "2026-11-27T15:20:22.855Z"
+    },
+    {
+      "id": "ufc:stale",
+      "resolvedAt": "2026-11-27T15:20:22.855Z"
     }
   ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/46023670610",
@@ -1045,6 +1017,18 @@
     "nfl": {
       "ok": true,
       "at": "2026-11-27T15:19:02.962194+00:00"
+    },
+    "mlb": {
+      "ok": true,
+      "at": "2026-11-27T15:20:22.831805+00:00"
+    },
+    "ncaaf": {
+      "ok": true,
+      "at": "2026-11-27T15:20:22.831805+00:00"
+    },
+    "ufc": {
+      "ok": true,
+      "at": "2026-11-27T15:20:22.831805+00:00"
     }
   }
 }
