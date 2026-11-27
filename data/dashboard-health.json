@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated_at": "2026-11-27T15:18:55.724Z",
+  "updated_at": "2026-11-27T15:18:58.896Z",
   "status": "warning",
   "sports": {
     "mlb": {
@@ -643,17 +643,17 @@
       }
     },
     "nhl": {
-      "snapshotAt": "2026-11-27T14:46:11.555438+00:00",
-      "ageMinutes": 33,
-      "markets": 4430,
-      "quotedMarkets": 4430,
-      "expiredQuotes": 4430,
-      "playerMarkets": 3524,
+      "snapshotAt": "2026-11-27T15:18:50.009836+00:00",
+      "ageMinutes": 0,
+      "markets": 4414,
+      "quotedMarkets": 4414,
+      "expiredQuotes": 0,
+      "playerMarkets": 3508,
       "families": {
         "moneyline": 120,
         "spread": 242,
         "total": 544,
-        "goals": 1548,
+        "goals": 1532,
         "assists": 866,
         "points": 1104,
         "saves": 6
@@ -901,16 +901,16 @@
         }
       ],
       "playerCounts": {
-        "401892795": 256,
+        "401892795": 254,
         "401892796": 260,
         "401892797": 260,
         "401892798": 210,
         "401892799": 224,
-        "401892800": 242,
-        "401892801": 278,
-        "401892802": 218,
-        "401892803": 214,
-        "401892804": 232,
+        "401892800": 240,
+        "401892801": 262,
+        "401892802": 216,
+        "401892803": 218,
+        "401892804": 234,
         "401892805": 260,
         "401892806": 202,
         "401892807": 222,
@@ -973,24 +973,6 @@
       "code": "native-quotes-stale",
       "severity": "warning",
       "message": "5970 individual quotes expired; aggregate refresh time is not price freshness.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
-    {
-      "id": "nhl:stale",
-      "sport": "nhl",
-      "code": "stale",
-      "severity": "warning",
-      "message": "Feed is 33 minutes old.",
-      "firstSeen": "2026-11-27T15:18:55.724Z",
-      "changedAt": "2026-11-27T15:18:55.724Z"
-    },
-    {
-      "id": "nhl:native-quotes-stale",
-      "sport": "nhl",
-      "code": "native-quotes-stale",
-      "severity": "warning",
-      "message": "4430 individual quotes expired; aggregate refresh time is not price freshness.",
       "firstSeen": "2026-11-27T15:18:55.724Z",
       "changedAt": "2026-11-27T15:18:55.724Z"
     },
@@ -1058,12 +1040,25 @@
       "changedAt": "2026-11-19T22:14:53.773Z"
     }
   ],
-  "resolved": [],
+  "resolved": [
+    {
+      "id": "nhl:stale",
+      "resolvedAt": "2026-11-27T15:18:58.896Z"
+    },
+    {
+      "id": "nhl:native-quotes-stale",
+      "resolvedAt": "2026-11-27T15:18:58.896Z"
+    }
+  ],
   "runUrl": "https://github.com/sc337/NFL-parlay-generator/actions/runs/46023670610",
   "refreshResults": {
     "nba": {
       "ok": true,
       "at": "2026-11-27T15:18:55.707390+00:00"
+    },
+    "nhl": {
+      "ok": true,
+      "at": "2026-11-27T15:18:58.875724+00:00"
     }
   }
 }
